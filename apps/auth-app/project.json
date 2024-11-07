@@ -10,7 +10,7 @@
       "defaultConfiguration": "production",
       "options": {
         "outputPath": "dist/apps/auth-app",
-        "postcssConfig": "apps/postcss.config.js"
+        "postcssConfig": "postcss.config.js"
       },
       "configurations": {
         "development": {

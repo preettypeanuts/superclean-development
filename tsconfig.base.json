@@ -16,7 +16,9 @@
     "baseUrl": ".",
     "paths": {
       "@fe-portal-workspace/shared": ["libs/shared/src/index.ts"],
-      "@fe-portal-workspace/shared/styles": ["libs/shared/src/styles/global.css"],
+      "@fe-portal-workspace/shared/styles": [
+        "libs/shared/src/styles/global.css"
+      ],
       "@fe-portal-workspace/ui-components": ["libs/ui-components/src/index.ts"]
     }
   },
