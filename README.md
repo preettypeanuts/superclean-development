@@ -67,10 +67,50 @@ NEXT_PUBLIC_API_URL=https://your-api-url.com
 Start the development server:
 
 ```bash
-npm run dev
+npx nx s main-app --port 3000
+```
+The application will be available at **http://localhost:3000**.
+
+### 5. Add new application (zones)
+
+If you want to add new application or zone. You just run command below:
+
+```bash
+npx nx g @nx/next:app dashboard-app
 ```
 
-The application will be available at **http://localhost:3000**.
+Then clean project by deleting folder **/api** and **global.css**. And then, update file **layout.tsx** :
+```bash
+...
+import '@fe-portal-workspace/shared/styles';
+...
+```
+And update **project.json** on target build option, add this configuration
+```bash
+...
+   "postcssConfig": "postcss.config.js"
+...
+```
+Update **/apps/main-app/next.config.js** with adding this configuration :
+
+```bash
+  {
+    source: '/dashboard/:path*',
+    destination: `http://localhost:3002/:path*`
+  }
+```
+
+### 6. Add new page for application
+If you want generate new page for application, you can also run this command:
+
+```bash
+nx g @nx/next:page page-name
+```
+
+And then follow the instruction as below :
+```bash
+√ What is the name of the project for this component? · main-app
+```
 
 ## Folder Structure
 
