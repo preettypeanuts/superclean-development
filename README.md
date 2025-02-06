@@ -59,7 +59,7 @@ npm install
 Start the development server:
 
 ```bash
-npx nx s main-app --port 3000
+npx nx s mitra-app --port 3000
 ```
 The application will be available at **http://localhost:3000**.
 
@@ -83,7 +83,7 @@ And update **project.json** on target build option, add this configuration
    "postcssConfig": "postcss.config.js"
 ...
 ```
-Update **/apps/main-app/next.config.js** with adding this configuration :
+Update **/apps/mitra-app/next.config.js** with adding this configuration :
 
 ```bash
   {

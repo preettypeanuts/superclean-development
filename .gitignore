@@ -39,6 +39,6 @@ testem.log
 Thumbs.db
 
 # Next.js
-/apps/main-app/.next
-/apps/auth-app/.next
+/apps/mitra-app/.next
+/apps/admin-app/.next
 .next
