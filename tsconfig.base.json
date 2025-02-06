@@ -15,11 +15,11 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@fe-portal-workspace/shared": ["libs/shared/src/index.ts"],
-      "@fe-portal-workspace/shared/styles": [
+      "@superclean-workspace/shared": ["libs/shared/src/index.ts"],
+      "@superclean-workspace/shared/styles": [
         "libs/shared/src/styles/global.css"
       ],
-      "@fe-portal-workspace/ui-components": ["libs/ui-components/src/index.ts"]
+      "@superclean-workspace/ui-components": ["libs/ui-components/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

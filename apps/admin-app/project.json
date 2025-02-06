@@ -1,7 +1,7 @@
 {
-  "name": "main-app",
+  "name": "admin-app",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/main-app",
+  "sourceRoot": "apps/admin-app",
   "projectType": "application",
   "targets": {
     "build": {
@@ -9,12 +9,12 @@
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/apps/main-app",
+        "outputPath": "dist/apps/admin-app",
         "postcssConfig": "postcss.config.js"
       },
       "configurations": {
         "development": {
-          "outputPath": "apps/main-app"
+          "outputPath": "apps/admin-app"
         },
         "production": {}
       }
@@ -23,16 +23,16 @@
       "executor": "@nx/next:server",
       "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "main-app:build",
+        "buildTarget": "admin-app:build",
         "dev": true
       },
       "configurations": {
         "development": {
-          "buildTarget": "main-app:build:development",
+          "buildTarget": "admin-app:build:development",
           "dev": true
         },
         "production": {
-          "buildTarget": "main-app:build:production",
+          "buildTarget": "admin-app:build:production",
           "dev": false
         }
       }
@@ -40,14 +40,14 @@
     "export": {
       "executor": "@nx/next:export",
       "options": {
-        "buildTarget": "main-app:build:production"
+        "buildTarget": "admin-app:build:production"
       }
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "apps/main-app/jest.config.ts",
+        "jestConfig": "apps/admin-app/jest.config.ts",
         "passWithNoTests": true
       },
       "configurations": {
@@ -61,7 +61,7 @@
       "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["apps/main-app/**/*.{ts,tsx,js,jsx}"]
+        "lintFilePatterns": ["apps/admin-app/**/*.{ts,tsx,js,jsx}"]
       }
     }
   },

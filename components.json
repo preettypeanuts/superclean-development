@@ -9,7 +9,7 @@
       "cssVariables": true
     },
     "aliases": {
-      "components": "@fe-portal-workspace/ui-components/components",
-      "utils": "@fe-portal-workspace/ui-components/utils"
+      "components": "@superclean-workspace/ui-components/components",
+      "utils": "@superclean-workspace/ui-components/utils"
     }
   }

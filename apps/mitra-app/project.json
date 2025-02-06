@@ -1,7 +1,7 @@
 {
-  "name": "auth-app",
+  "name": "mitra-app",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/auth-app",
+  "sourceRoot": "apps/mitra-app",
   "projectType": "application",
   "targets": {
     "build": {
@@ -9,12 +9,12 @@
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/apps/auth-app",
+        "outputPath": "dist/apps/mitra-app",
         "postcssConfig": "postcss.config.js"
       },
       "configurations": {
         "development": {
-          "outputPath": "apps/auth-app"
+          "outputPath": "apps/mitra-app"
         },
         "production": {}
       }
@@ -23,16 +23,16 @@
       "executor": "@nx/next:server",
       "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "auth-app:build",
+        "buildTarget": "mitra-app:build",
         "dev": true
       },
       "configurations": {
         "development": {
-          "buildTarget": "auth-app:build:development",
+          "buildTarget": "mitra-app:build:development",
           "dev": true
         },
         "production": {
-          "buildTarget": "auth-app:build:production",
+          "buildTarget": "mitra-app:build:production",
           "dev": false
         }
       }
@@ -40,14 +40,14 @@
     "export": {
       "executor": "@nx/next:export",
       "options": {
-        "buildTarget": "auth-app:build:production"
+        "buildTarget": "mitra-app:build:production"
       }
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "apps/auth-app/jest.config.ts",
+        "jestConfig": "apps/mitra-app/jest.config.ts",
         "passWithNoTests": true
       },
       "configurations": {
@@ -61,7 +61,7 @@
       "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["apps/auth-app/**/*.{ts,tsx,js,jsx}"]
+        "lintFilePatterns": ["apps/mitra-app/**/*.{ts,tsx,js,jsx}"]
       }
     }
   },

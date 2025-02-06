@@ -42,8 +42,8 @@ To get started with the application, follow these steps:
 ### 1. Clone the repository
 
 ```bash
-git clone https://git.enigmacamp.com/enigma-camp-apps/humanika/fe-portal-workspace.git
-cd fe-portal-workspace
+git clone https://git.enigmacamp.com/enigma-camp-apps/humanika/superclean-workspace.git
+cd superclean-workspace
 ```
 
 ### 2. Install dependencies
@@ -54,15 +54,7 @@ Make sure you have Node.js installed. Then, install the project dependencies:
 npm install
 ```
 
-### 3. Set up environment variables
-
-Create a .env.local file in the root directory and add your environment-specific variables. Example:
-
-```bash
-NEXT_PUBLIC_API_URL=https://your-api-url.com
-```
-
-### 4. Run the development server
+### 3. Run the development server
 
 Start the development server:
 
@@ -71,18 +63,18 @@ npx nx s main-app --port 3000
 ```
 The application will be available at **http://localhost:3000**.
 
-### 5. Add new application (zones)
+### 4. Add new application
 
 If you want to add new application or zone. You just run command below:
 
 ```bash
-npx nx g @nx/next:app dashboard-app
+npx nx g @nx/next:application mitra-app --directory apps
 ```
 
 Then clean project by deleting folder **/api** and **global.css**. And then, update file **layout.tsx** :
 ```bash
 ...
-import '@fe-portal-workspace/shared/styles';
+import '@superclean-workspace/shared/styles';
 ...
 ```
 And update **project.json** on target build option, add this configuration
@@ -100,7 +92,7 @@ Update **/apps/main-app/next.config.js** with adding this configuration :
   }
 ```
 
-### 6. Add new page for application
+### 5. Add new page for application
 If you want generate new page for application, you can also run this command:
 
 ```bash
@@ -109,7 +101,7 @@ nx g @nx/next:page page-name
 
 And then follow the instruction as below :
 ```bash
-√ What is the name of the project for this component? · main-app
+√ What is the name of the project for this component? · mitra-app
 ```
 
 ## Folder Structure
@@ -118,8 +110,8 @@ Here is a high-level overview of the folder structure:
 
 ```bash
 /apps
-  /main-app                 # Main Next.js app
-  /auth-app                 # Auth Next.js app
+  /mitra-app                 # Mitra Next.js app
+  /admin-app                 # Admin Next.js app
 /libs
   /ui-components            # Shared UI components
   /shared                   # Shared Apollo Client, Styles, etc.
@@ -137,8 +129,8 @@ npm run run:all
 or
 
 ```bash
-npx nx s main-app --port 3000
-npx nx s auth-app --port 3001
+npx nx s admin-app --port 3000
+npx nx s mitra-app --port 3001
 ```
 
 ### Building the Application

@@ -2,8 +2,8 @@
     "compilerOptions": {
       "baseUrl": ".",
       "paths": {
-        "@fe-portal-workspace/ui-components": ["libs/ui-components/src/index.ts"],
-        "@fe-portal-workspace/ui-components/*": ["libs/ui-components/src/*"]
+        "@superclean-workspace/ui-components": ["libs/ui-components/src/index.ts"],
+        "@superclean-workspace/ui-components/*": ["libs/ui-components/src/*"]
       }
     }
   }
