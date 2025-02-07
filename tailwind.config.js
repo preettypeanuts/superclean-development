@@ -22,6 +22,12 @@ module.exports = {
     },
     extend: {
       colors: {
+        mainColor: "#1E9692",
+        secondaryColor: "#2973B2",
+        thirdColor: "#9ACBD0",
+        baseColor: "#F2EFE7",
+        darkColor: '#232323',
+        lightColor: '#efefef',
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',

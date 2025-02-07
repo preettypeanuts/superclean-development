@@ -1,4 +1,5 @@
 import '@superclean-workspace/shared/styles';
+import { ThemeProvider } from 'next-themes';
 
 export const metadata = {
   title: 'Welcome to admin-app',
@@ -11,8 +12,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body>{children}</body>
+    <html lang="en" suppressHydrationWarning className='scroll-smooth'>
+      <ThemeProvider enableSystem={true} attribute="class">
+        <body>
+          {children}
+        </body>
+      </ThemeProvider>
     </html>
   );
 }
