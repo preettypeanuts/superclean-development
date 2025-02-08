@@ -1,5 +1,11 @@
 import '@superclean-workspace/shared/styles';
 import { ThemeProvider } from 'next-themes';
+import { Figtree } from "next/font/google";
+
+const fightree = Figtree({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700", "800", "900"]
+});
 
 export const metadata = {
   title: 'Welcome to admin-app',
@@ -13,11 +19,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning className='scroll-smooth'>
-      <ThemeProvider enableSystem={true} attribute="class">
-        <body>
+      <body
+        className={`${fightree.className} antialiased`}
+      >
+        <ThemeProvider enableSystem={true} defaultTheme='system' attribute="class">
           {children}
-        </body>
-      </ThemeProvider>
+        </ThemeProvider>
+      </body>
     </html>
   );
 }

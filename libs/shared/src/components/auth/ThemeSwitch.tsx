@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useTheme } from 'next-themes';
-import { TbMoonFilled, TbSunFilled } from "react-icons/tb";
+import { TbMoonFilled, TbSunFilled, TbAdjustmentsFilled } from "react-icons/tb";
 
 export default function ThemeSwitch() {
   const { theme, setTheme } = useTheme();
@@ -34,6 +34,14 @@ export default function ThemeSwitch() {
             <TbMoonFilled className="text-xl text-neutral-500 dark:text-neutral-300 group-hover:rotate-90 duration-300" />
           </div>
         </label>
+
+        {/* Optional settings icon */}
+        <button 
+          onClick={() => setTheme('system')} 
+          className={`z-20 duration-300 ${theme === 'system' ? 'text-black' : 'text-gray-500'} text-xl`}
+        >
+          <TbAdjustmentsFilled />
+        </button>
       </div>
     </div>
   );

@@ -16,10 +16,10 @@
     "baseUrl": ".",
     "paths": {
       "@superclean-workspace/shared": ["libs/shared/src/index.ts"],
-      "@superclean-workspace/shared/styles": [
-        "libs/shared/src/styles/global.css"
-      ],
-      "@superclean-workspace/ui-components": ["libs/ui-components/src/index.ts"]
+      "@superclean-workspace/shared/styles": ["libs/shared/src/styles/global.css"],
+      "@superclean-workspace/ui-components": ["libs/ui-components/src/index.ts"],
+      "@shared/*": ["libs/shared/src/*"],
+      "@shared/data": ["libs/shared/src/data/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
