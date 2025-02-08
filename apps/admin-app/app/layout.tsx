@@ -1,7 +1,7 @@
 import '@superclean-workspace/shared/styles';
 import { ThemeProvider } from 'next-themes';
 import { Figtree } from "next/font/google";
-
+import { Sidebar } from "@shared/components/ui/Sidebar"
 const fightree = Figtree({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700", "800", "900"]
@@ -23,6 +23,7 @@ export default function RootLayout({
         className={`${fightree.className} antialiased`}
       >
         <ThemeProvider enableSystem={true} defaultTheme='system' attribute="class">
+          <Sidebar />
           {children}
         </ThemeProvider>
       </body>

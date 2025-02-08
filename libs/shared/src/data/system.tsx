@@ -1,3 +1,55 @@
+import { FaClipboardList, FaFileInvoice, FaCog, FaUserCircle } from "react-icons/fa";
+import { TbLayoutDashboardFilled } from "react-icons/tb";
+
+export const navigationItems = {
+    menu: {
+        label: "Main Menu",
+        contents: [
+            {
+                label: "Dashboard",
+                path: "/",
+                icon: <TbLayoutDashboardFilled />,
+            },
+            {
+                label: "Management",
+                path: "/management",
+                icon: <FaClipboardList />,
+                subs: [
+                    { name: "Orders", path: "/orders" },
+                    { name: "Clients", path: "/clients" },
+                    { name: "Partners", path: "/partners" },
+                ]
+            },
+            {
+                label: "Finance",
+                path: "/finance",
+                icon: <FaFileInvoice />,
+                subs: [
+                    { name: "Orders", path: "/orders" },
+                    { name: "Clients", path: "/clients" },
+                    { name: "Partners", path: "/partners" },
+                ]
+            }
+        ]
+    },
+    settings: {
+        label: "Settings",
+        contents: [
+            {
+                label: "Profile",
+                path: "/profile",
+                icon: <FaUserCircle />,
+            },
+            {
+                label: "Preferences",
+                path: "/preferences",
+                icon: <FaCog />,
+            }
+        ]
+    }
+};
+
+
 export const registerPageData = {
     headLine: "Daftar Sebagai Admin",
     tagLine: "Hanya pengguna yang berwenang yang dapat mendaftar sebagai admin.",

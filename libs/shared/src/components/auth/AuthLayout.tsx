@@ -60,7 +60,7 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({ form, headline, tagline,
                 <div className="hidden md:block absolute inset-0 w-full h-full bg-gradient-to-l dark:from-black dark:via-black/30 from-white via-white/50 to-transparent"></div>
 
                 {/* Register Form */}
-                <div className="md:absolute flex justify-center items-center min-h-screen right-0 w-full md:w-[40lvw] h-full md:rounded-l-[30px] bg-white dark:bg-black md:px-12 px-5 py-10">
+                <div className="md:absolute flex justify-center items-center min-h-screen right-0 w-full md:w-[40lvw] h-full md:rounded-l-[30px] bg-lightColor dark:bg-darkColor md:px-12 px-5 py-10">
                     <div className="flex flex-col justify-center w-full h-full ">
 
                         {/* Header */}
@@ -132,7 +132,7 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({ form, headline, tagline,
 
                         {/* Google Login */}
                         <div className="w-full">
-                            <button className="btn rounded-xl dark:border-neutral-500 w-full bg-transparent dark:text-white">
+                            <button className="btn border-0 rounded-xl dark:border-neutral-500 w-full bg-white dark:bg-black dark:text-white">
                                 <FcGoogle className="text-2xl" />
                                 Lanjutkan dengan Google
                             </button>
