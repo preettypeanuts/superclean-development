@@ -7,6 +7,7 @@ import { IoIosArrowDown } from "react-icons/io";
 import { SiCcleaner } from "react-icons/si";
 import { ThemeSwitch } from "../auth/ThemeSwitch";
 import { LuSquareArrowLeft } from "react-icons/lu";
+import { TbLayoutSidebarLeftExpand, TbLayoutSidebarLeftExpandFilled, TbLayoutSidebarRightExpandFilled } from "react-icons/tb";
 
 export const Sidebar = () => {
     const [isExpanded, setIsExpanded] = useState(true);
@@ -26,21 +27,33 @@ export const Sidebar = () => {
             <div className="rounded-3xl w-full grow bg-white dark:bg-black py-2 pl-2 flex flex-col">
                 {/* Header */}
                 <div
-                    onClick={toggleSidebar}
                     className={`${!isExpanded && "mx-auto border rounded-2xl border-neutral-500/10 bg-mainColor/20"} flex justify-between items-center gap-2 mb-3 p-3 cursor-pointer group`}>
                     <div
 
-                        className={`${isExpanded ? "group-hover:scale-90 origin-left group-hover:-translate-x-1" : "group-hover:scale-110 origin-right group-hover:translate-x-1"} flex items-center gap-2  duration-300`}
+                        className={`flex items-center gap-2  duration-300`}
                     >
                         <SiCcleaner className="text-xl" />
                         <h1 className={`${isExpanded ? "opacity-100" : "opacity-0 hidden"} text-lg font-semibold truncate max-w-32`}>
                             Superclean
                         </h1>
                     </div>
-                    <div className={`${isExpanded ? "bg-baseLight dark:bg-baseDark btn border-neutral-500/10 btn-circle btn-xs border-none " : "hidden"} transition-all text-darkColor dark:text-lightColor`} >
-                        <LuSquareArrowLeft />
+                    <div
+                        onClick={toggleSidebar}
+                        className={`${isExpanded ? "btn btn-circle btn-sm btn-ghost border-none " : "hidden"} transition-all text-darkColor dark:text-lightColor`} >
+                        <TbLayoutSidebarRightExpandFilled className="text-xl" />
                     </div>
                 </div>
+                {!isExpanded && (
+                    <button
+                        onClick={toggleSidebar}
+                        className={`mb-3 py-2 px-3 rounded-xl hover:bg-mainColor/50 flex items-center gap-2 w-full duration-300 ${!isExpanded ? "justify-center w-9 h-9 p-5 mx-auto scale-100" : "scale-0"}`}
+                    >
+                        <span>
+                            <TbLayoutSidebarLeftExpandFilled />
+                        </span>
+                    </button>
+                )}
+
 
                 {/* Navigation Sections */}
                 {Object.entries(navigationItems).map(([key, section]) => (
