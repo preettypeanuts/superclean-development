@@ -22,12 +22,12 @@ export const Sidebar = () => {
     };
 
     return (
-        <nav className={`fixed inset-2 ${isExpanded ? "w-60" : "w-16"} flex transition-all duration-300`}>
-            <div className="rounded-3xl w-full grow bg-lightColor dark:bg-darkColor p-2 flex flex-col">
+        <nav className={`h-screen ${isExpanded ? "w-60" : "w-16"} flex transition-all duration-300`}>
+            <div className="rounded-3xl w-full grow bg-white dark:bg-black py-2 pl-2 flex flex-col">
                 {/* Header */}
                 <div
                     onClick={toggleSidebar}
-                    className="flex justify-between items-center gap-2 mb-3 p-3 border rounded-2xl border-neutral-500/10 bg-mainColor/20 cursor-pointer group">
+                    className={`${!isExpanded && "mx-auto border rounded-2xl border-neutral-500/10 bg-mainColor/20"} flex justify-between items-center gap-2 mb-3 p-3 cursor-pointer group`}>
                     <div
 
                         className={`${isExpanded ? "group-hover:scale-90 origin-left group-hover:-translate-x-1" : "group-hover:scale-110 origin-right group-hover:translate-x-1"} flex items-center gap-2  duration-300`}

@@ -9,7 +9,7 @@ export const navigationItems = {
                 label: "Dashboard",
                 path: "/",
                 icon: <TbLayoutDashboardFilled />,
-                subs:[]
+                subs: []
             },
             {
                 label: "Management",
@@ -40,18 +40,17 @@ export const navigationItems = {
                 label: "Profile",
                 path: "/profile",
                 icon: <FaUserCircle />,
-                subs:[]
+                subs: []
             },
             {
                 label: "Preferences",
                 path: "/preferences",
                 icon: <FaCog />,
-                subs:[]
+                subs: []
             }
         ]
     }
 };
-
 
 export const registerPageData = {
     headLine: "Daftar Sebagai Admin",

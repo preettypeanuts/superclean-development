@@ -20,11 +20,13 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className='scroll-smooth'>
       <body
-        className={`${fightree.className} antialiased`}
+        className={`${fightree.className} antialiased md:flex`}
       >
         <ThemeProvider enableSystem={true} defaultTheme='system' attribute="class">
           <Sidebar />
+          <div className='bg-lightColor dark:bg-darkColor m-2 rounded-3xl w-full'>
           {children}
+          </div>
         </ThemeProvider>
       </body>
     </html>
