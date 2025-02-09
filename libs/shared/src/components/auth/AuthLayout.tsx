@@ -119,7 +119,7 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({ form, headline, tagline,
 
                             {/* Register Button */}
                             <div className="mt-8">
-                                <button className="btn w-full rounded-xl bg-mainColor text-white">Register</button>
+                                <button className="btn w-full rounded-xl border-none bg-mainColor text-white">Register</button>
                             </div>
                         </form>
 
@@ -132,7 +132,7 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({ form, headline, tagline,
 
                         {/* Google Login */}
                         <div className="w-full">
-                            <button className="btn border-0 rounded-xl dark:border-neutral-500 w-full bg-white dark:bg-black dark:text-white">
+                            <button className="btn border-0 rounded-xl dark:border-neutral-500 w-full bg-white dark:bg-black dark:text-white text-darkColor dark:text-lightColor">
                                 <FcGoogle className="text-2xl" />
                                 Lanjutkan dengan Google
                             </button>

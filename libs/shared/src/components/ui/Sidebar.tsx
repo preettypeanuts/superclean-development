@@ -1,13 +1,12 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 import { navigationItems } from "@shared/data/system";
-import { IoIosArrowForward, IoIosArrowDown, IoIosLogOut } from "react-icons/io";
-import { HiLogout } from "react-icons/hi";
+import { IoIosArrowDown } from "react-icons/io";
 import { SiCcleaner } from "react-icons/si";
 import { ThemeSwitch } from "../auth/ThemeSwitch";
-import Image from "next/image";
-import { LuSquareArrowLeft, LuSquareArrowRight } from "react-icons/lu";
+import { LuSquareArrowLeft } from "react-icons/lu";
 
 export const Sidebar = () => {
     const [isExpanded, setIsExpanded] = useState(true);
@@ -39,7 +38,7 @@ export const Sidebar = () => {
                         </h1>
                     </div>
                     <div className={`${isExpanded ? "bg-baseLight dark:bg-baseDark btn border-neutral-500/10 btn-circle btn-xs border-none " : "hidden"} transition-all text-darkColor dark:text-lightColor`} >
-                    <LuSquareArrowLeft/>
+                        <LuSquareArrowLeft />
                     </div>
                 </div>
 
@@ -61,7 +60,7 @@ export const Sidebar = () => {
                                         {/* Main Menu Item */}
                                         <button
                                             onClick={(e) => {
-                                                if (item.subs) {
+                                                if (item.subs?.length) {
                                                     e.preventDefault();
                                                     toggleSubmenu(item.label);
                                                 }
@@ -73,7 +72,7 @@ export const Sidebar = () => {
                                                 <span className={`${isExpanded ? "block" : "hidden"}`}>{item.label}</span>
                                             </div>
                                             {/* Arrow Icon */}
-                                            {item.subs && (
+                                            {item.subs.length > 1 && (
                                                 <IoIosArrowDown
                                                     className={`text-neutral-400 transition-transform duration-200 ${openSubmenus[item.label] ? "rotate-180" : ""
                                                         } ${!isExpanded ? "hidden" : "block"}`}
@@ -92,7 +91,7 @@ export const Sidebar = () => {
                                                             className="group pl-3 flex items-center text-sm text-neutral-600 dark:text-neutral-300 duration-150"
                                                         >
                                                             <p className="group-hover:bg-mainColor/20 px-3 py-2 w-full rounded-xl duration-150">
-                                                            {sub.name}
+                                                                {sub.name}
                                                             </p>
                                                         </a>
                                                     </li>
