@@ -24,8 +24,8 @@ export default function RootLayout({
       >
         <ThemeProvider enableSystem={true} defaultTheme='system' attribute="class">
           <Sidebar />
-          <div className='bg-lightColor dark:bg-darkColor m-2 rounded-3xl w-full'>
-          {children}
+          <div className='bg-lightColor dark:bg-darkColor my-2 mr-2 rounded-3xl w-full'>
+            {children}
           </div>
         </ThemeProvider>
       </body>

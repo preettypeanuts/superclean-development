@@ -1,5 +1,8 @@
-import { FaClipboardList, FaFileInvoice, FaCog, FaUserCircle } from "react-icons/fa";
+import { FaCog, FaUserCircle, FaHandsHelping, FaGlobe } from "react-icons/fa";
 import { TbLayoutDashboardFilled } from "react-icons/tb";
+import { HiDocumentReport } from "react-icons/hi";
+import { FaChartSimple } from "react-icons/fa6";
+import { RiNotification4Fill } from "react-icons/ri";
 
 export const navigationItems = {
     menu: {
@@ -12,40 +15,59 @@ export const navigationItems = {
                 subs: []
             },
             {
-                label: "Management",
-                path: "/management",
-                icon: <FaClipboardList />,
+                label: "master data",
+                path: "/",
+                icon: <FaChartSimple />,
                 subs: [
-                    { name: "Orders", path: "/orders" },
-                    { name: "Clients", path: "/clients" },
+                    { name: "user", path: "/user" },
+                    { name: "pelanggan", path: "/pelanggan" },
+                    { name: "layanan", path: "/layanan" },
+                ]
+            },
+            {
+                label: "transaksi",
+                path: "/transaksi",
+                icon: <FaHandsHelping />,
+                subs: [
+                    { name: "pemesanan", path: "/pemesanan" },
+                    { name: "tracking pemesanan", path: "/tracking-pemesanan" },
+                    { name: "inquiry pembayaran", path: "/inquiry-pembayaran" },
+                ]
+            },
+            {
+                label: "public",
+                path: "/public",
+                icon: <FaGlobe />,
+                subs: [
+                    { name: "konfirmasi pembayaran", path: "/konfirmasi-pembayaran" },
+                    { name: "rating", path: "/rating" },
                     { name: "Partners", path: "/partners" },
                 ]
             },
             {
-                label: "Finance",
-                path: "/finance",
-                icon: <FaFileInvoice />,
+                label: "laporan",
+                path: "/laporan",
+                icon: <HiDocumentReport />,
                 subs: [
-                    { name: "Orders", path: "/orders" },
-                    { name: "Clients", path: "/clients" },
-                    { name: "Partners", path: "/partners" },
+                    { name: "pemesanan", path: "/pemesanan" },
+                    { name: "teknisi", path: "/teknisi" },
                 ]
             }
         ]
     },
     settings: {
-        label: "Settings",
+        label: "Pengaturan",
         contents: [
             {
-                label: "Profile",
-                path: "/profile",
+                label: "profil",
+                path: "/profil",
                 icon: <FaUserCircle />,
                 subs: []
             },
             {
-                label: "Preferences",
-                path: "/preferences",
-                icon: <FaCog />,
+                label: "pemberitahuan",
+                path: "/pemberitahuan",
+                icon: <RiNotification4Fill />,
                 subs: []
             }
         ]

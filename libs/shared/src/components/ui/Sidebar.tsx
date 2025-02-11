@@ -24,10 +24,10 @@ export const Sidebar = () => {
 
     return (
         <nav className={`h-screen ${isExpanded ? "w-60" : "w-16"} flex transition-all duration-300`}>
-            <div className="rounded-3xl w-full grow bg-white dark:bg-black py-2 pl-2 flex flex-col">
+            <div className="rounded-3xl w-full grow bg-white dark:bg-black flex flex-col relative">
                 {/* Header */}
                 <div
-                    className={`${!isExpanded && "mx-auto border rounded-2xl border-neutral-500/10 bg-mainColor/20"} flex justify-between items-center gap-2 mb-3 p-3 cursor-pointer group`}>
+                    className={`${!isExpanded ? "border rounded-2xl border-neutral-500/10 bg-mainColor/20 mx-[7px] mt-2 w-fit p-3" : "py-3 pl-5 pr-[15px] w-full"} z-50 absolute backdrop-blur-sm flex justify-between items-center gap-2 mb-3 cursor-pointer group`}>
                     <div
 
                         className={`flex items-center gap-2  duration-300`}
@@ -39,87 +39,111 @@ export const Sidebar = () => {
                     </div>
                     <div
                         onClick={toggleSidebar}
-                        className={`${isExpanded ? "btn btn-circle btn-sm btn-ghost border-none " : "hidden"} transition-all text-darkColor dark:text-lightColor`} >
+                        className={`${isExpanded ? "btn btn-circle btn-sm btn-ghost border-none" : "hidden"} transition-all text-darkColor dark:text-lightColor`} >
                         <TbLayoutSidebarRightExpandFilled className="text-xl" />
                     </div>
                 </div>
-                {!isExpanded && (
-                    <button
-                        onClick={toggleSidebar}
-                        className={`mb-3 py-2 px-3 rounded-xl hover:bg-mainColor/50 flex items-center gap-2 w-full duration-300 ${!isExpanded ? "justify-center w-9 h-9 p-5 mx-auto scale-100" : "scale-0"}`}
-                    >
-                        <span>
-                            <TbLayoutSidebarLeftExpandFilled />
-                        </span>
-                    </button>
-                )}
 
-
-                {/* Navigation Sections */}
-                {Object.entries(navigationItems).map(([key, section]) => (
-                    <div key={key}>
-                        {/* Section Title */}
-                        <p className={`${!isExpanded && "w-full h-[1px] bg-neutral-500/30 rounded-full mb-3"} text-neutral-500/90 text-[10px] uppercase tracking-wide font-semibold px-3`}>
-                            <span className={`${!isExpanded && "hidden"}`}>
-                                {section.label}
+                <div className={`${!isExpanded ? "pt-14" : "pt-20 pb-28 overflow-y-scroll"} max-h-[100vh] mx-2 my-2 no-scrollbar overflow-visible`}>
+                    {!isExpanded && (
+                        <button
+                            onClick={toggleSidebar}
+                            className={`mb-3 py-2 px-3 rounded-xl hover:bg-mainColor/50 flex items-center gap-2 w-fit  duration-300 ${!isExpanded ? "justify-center w-9 h-9 p-5 mx-auto scale-100" : "scale-0"}`}
+                        >
+                            <span>
+                                <TbLayoutSidebarLeftExpandFilled />
                             </span>
-                        </p>
+                        </button>
+                    )}
 
-                        {/* Section Links */}
-                        <ul className="space-y-2 mb-3">
-                            {section.contents.map((item, idx) => (
-                                <li key={idx}>
-                                    <div className="flex flex-col">
-                                        {/* Main Menu Item */}
-                                        <button
-                                            onClick={(e) => {
-                                                if (item.subs?.length) {
-                                                    e.preventDefault();
-                                                    toggleSubmenu(item.label);
-                                                }
-                                            }}
-                                            className={`py-2 px-3 rounded-xl hover:bg-mainColor/50 duration-150 flex items-center gap-2 w-full ${!isExpanded ? "justify-center w-9 h-9 p-5 mx-auto " : "justify-between"}`}
-                                        >
-                                            <div className="flex items-center gap-2">
-                                                {item.icon}
-                                                <span className={`${isExpanded ? "block" : "hidden"}`}>{item.label}</span>
-                                            </div>
-                                            {/* Arrow Icon */}
-                                            {item.subs.length > 1 && (
-                                                <IoIosArrowDown
-                                                    className={`text-neutral-400 transition-transform duration-200 ${openSubmenus[item.label] ? "rotate-180" : ""
-                                                        } ${!isExpanded ? "hidden" : "block"}`}
-                                                />
-                                            )}
-                                        </button>
 
-                                        {/* Submenu (if exists) */}
-                                        {item.subs && openSubmenus[item.label] && (
-                                            <ul className={`ml-[19px] mt-1 space-y-1 border-l border-neutral-500/50 ${!isExpanded ? "hidden" : "block"}`}>
-                                                {item.subs.map((sub, subIdx) => (
-                                                    <li key={subIdx}
-                                                    >
-                                                        <a
-                                                            href={sub.path}
-                                                            className="group pl-3 flex items-center text-sm text-neutral-600 dark:text-neutral-300 duration-150"
+                    {/* Navigation Sections */}
+                    {Object.entries(navigationItems).map(([key, section]) => (
+                        <div key={key}>
+                            {/* Section Title */}
+                            <p className={`${!isExpanded && "w-full h-[1px] bg-neutral-500/30 rounded-full mb-3"} text-neutral-500/90 text-[10px] uppercase tracking-wide font-semibold px-3`}>
+                                <span className={`${!isExpanded && "hidden"}`}>
+                                    {section.label}
+                                </span>
+                            </p>
+
+                            {/* Section Links */}
+                            <ul className="space-y-2 mb-3">
+                                {section.contents.map((item, idx) => (
+                                    <li key={idx} className={`${!isExpanded && "dropdown dropdown-hover dropdown-right"}`}>
+                                        <div tabIndex={idx} className="flex flex-col">
+                                            {/* Main Menu Item */}
+                                            <button
+                                                onClick={(e) => {
+                                                    if (item.subs?.length) {
+                                                        e.preventDefault();
+                                                        toggleSubmenu(item.label);
+                                                    }
+                                                }}
+                                                className={`capitalize group py-2 px-3 rounded-xl hover:bg-mainColor/50 duration-150 flex items-center gap-2 w-full ${!isExpanded ? "justify-center w-9 h-9 p-5 mx-auto " : "justify-between"}`}
+                                            >
+                                                <div className="flex items-center gap-2 relative">
+                                                    {item.subs.length > 0 && !isExpanded && (
+                                                        <div className="absolute left-[-8px] w-[3px] h-[3px] group-hover:h-[14px] duration-200 ease-in-out transition-all dark:bg-white bg-black rounded-full"></div>
+                                                    )}
+                                                    {item.icon}
+                                                    <span className={`${isExpanded ? "block" : "hidden"} capitalize`}>{item.label}</span>
+                                                </div>
+                                                {/* Arrow Icon */}
+                                                {item.subs.length > 1 && (
+                                                    <IoIosArrowDown
+                                                        className={`text-neutral-400 transition-transform duration-200 ${openSubmenus[item.label] ? "rotate-180" : ""
+                                                            } ${!isExpanded ? "hidden" : "block"}`}
+                                                    />
+                                                )}
+                                            </button>
+
+                                            {/* Submenu (if exists) */}
+                                            {item.subs && openSubmenus[item.label] && (
+                                                <ul className={`ml-[19px] mt-1 space-y-1 border-l border-neutral-500/50 ${!isExpanded ? "hidden" : "block"}`}>
+                                                    {item.subs.map((sub, subIdx) => (
+                                                        <li key={subIdx}
                                                         >
-                                                            <p className="group-hover:bg-mainColor/20 px-3 py-2 w-full rounded-xl duration-150">
+                                                            <a
+                                                                href={sub.path}
+                                                                className="capitalize group pl-3 flex items-center text-sm text-neutral-600 dark:text-neutral-300 duration-150"
+                                                            >
+                                                                <p className="group-hover:bg-mainColor/20 px-3 py-2 w-full rounded-xl duration-150">
+                                                                    {sub.name}
+                                                                </p>
+                                                            </a>
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            )}
+
+                                            {item.subs.length > 0 && !isExpanded && (
+                                                <ul tabIndex={idx} className="dropdown-content menu bg-baseLight dark:bg-baseDark rounded-box z-[999] w-56 p-2 shadow">
+                                                    <p className="block px-6 py-3 bg-mainColor/50 -m-2 rounded-t-box capitalize mb-2 font-bold text-sm">{item.label}</p>
+                                                    {item.subs.map((sub, subIdx) => (
+                                                        <li key={subIdx}
+                                                        >
+                                                            <a
+                                                                href={sub.path}
+                                                                className="capitalize group text-neutral-600 dark:text-neutral-300"
+                                                            >
                                                                 {sub.name}
-                                                            </p>
-                                                        </a>
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        )}
-                                    </div>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                ))}
+                                                            </a>
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            )}
+                                        </div>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    ))}
+                </div>
+
 
                 {/* Theme Switch */}
-                <div className="mt-auto w-full space-y-2">
+                <div className={`${isExpanded ? "bottom-2 left-2 backdrop-blur-sm w-[13lvw]" : "bottom-0 left-0 w-fit p-3"} fixed space-y-2`}>
                     <ThemeSwitch isExpanded={isExpanded} />
                     <div className={`${isExpanded ? "px-3 py-3 flex items-center gap-2 rounded-2xl hover:bg-mainColor/20 duration-150" : "flex justify-center pb-1"}  cursor-pointer`}>
                         <Image
