@@ -23,15 +23,13 @@ export const Sidebar = () => {
     };
 
     return (
-        <nav className={`h-screen ${isExpanded ? "w-60" : "w-16"} flex transition-all duration-300`}>
+        <nav className={`${isExpanded ? "w-60" : "w-16"} sticky top-0 h-screen flex transition-all duration-300`}>
             <div className="rounded-3xl w-full grow bg-white dark:bg-black flex flex-col relative">
-                {/* Header */}
+
+                {/* Header*/}
                 <div
                     className={`${!isExpanded ? "border rounded-2xl border-neutral-500/10 bg-mainColor/20 mx-[7px] mt-2 w-fit p-3" : "py-3 pl-5 pr-[15px] w-full"} z-50 absolute backdrop-blur-sm flex justify-between items-center gap-2 mb-3 cursor-pointer group`}>
-                    <div
-
-                        className={`flex items-center gap-2  duration-300`}
-                    >
+                    <div className={`flex items-center gap-2  duration-300`}>
                         <SiCcleaner className="text-xl" />
                         <h1 className={`${isExpanded ? "opacity-100" : "opacity-0 hidden"} text-lg font-semibold truncate max-w-32`}>
                             Superclean
@@ -44,6 +42,7 @@ export const Sidebar = () => {
                     </div>
                 </div>
 
+                {/* Expand Button on Minimize */}
                 <div className={`${!isExpanded ? "pt-14" : "pt-20 pb-28 overflow-y-scroll"} max-h-[100vh] mx-2 my-2 no-scrollbar overflow-visible`}>
                     {!isExpanded && (
                         <button
@@ -80,7 +79,7 @@ export const Sidebar = () => {
                                                         toggleSubmenu(item.label);
                                                     }
                                                 }}
-                                                className={`capitalize group py-2 px-3 rounded-xl hover:bg-mainColor/50 duration-150 flex items-center gap-2 w-full ${!isExpanded ? "justify-center w-9 h-9 p-5 mx-auto " : "justify-between"}`}
+                                                className={`capitalize group py-2 px-3 rounded-xl hover:bg-mainColor/50 duration-150 flex items-center gap-2 w-full ${!isExpanded ? "justify-center w-9 h-9 p-5 mx-auto" : "justify-between"}`}
                                             >
                                                 <div className="flex items-center gap-2 relative">
                                                     {item.subs.length > 0 && !isExpanded && (
@@ -117,6 +116,7 @@ export const Sidebar = () => {
                                                 </ul>
                                             )}
 
+                                            {/* Submenu on hover (minimize) */}
                                             {item.subs.length > 0 && !isExpanded && (
                                                 <ul tabIndex={idx} className="dropdown-content menu bg-baseLight dark:bg-baseDark rounded-box z-[999] w-56 p-2 shadow">
                                                     <p className="block px-6 py-3 bg-mainColor/50 -m-2 rounded-t-box capitalize mb-2 font-bold text-sm">{item.label}</p>
@@ -141,8 +141,7 @@ export const Sidebar = () => {
                     ))}
                 </div>
 
-
-                {/* Theme Switch */}
+                {/* Absolute components */}
                 <div className={`${isExpanded ? "bottom-2 left-2 backdrop-blur-sm w-[13lvw]" : "bottom-0 left-0 w-fit p-3"} fixed space-y-2`}>
                     <ThemeSwitch isExpanded={isExpanded} />
                     <div className={`${isExpanded ? "px-3 py-3 flex items-center gap-2 rounded-2xl hover:bg-mainColor/20 duration-150" : "flex justify-center pb-1"}  cursor-pointer`}>
@@ -163,6 +162,7 @@ export const Sidebar = () => {
                         </div>
                     </div>
                 </div>
+
             </div>
         </nav>
     );

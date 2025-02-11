@@ -31,7 +31,7 @@ export const ThemeSwitch: React.FC<ThemeSwitchProps> = ({ isExpanded }) => {
           onClick={() => setIsOpen(!isOpen)}
           tabIndex={0} 
           role="button" 
-          className={` py-2 px-3 rounded-xl hover:bg-mainColor/50 duration-150 flex items-center gap-2 w-full ${!isExpanded ? "justify-center w-9 h-9 p-5 mx-auto " : ""}`}
+          className={`rounded-xl hover:bg-mainColor/50 duration-150 flex items-center gap-2 ${!isExpanded ? "justify-center w-9 h-9 p-5 mx-auto" : "w-full py-2 px-3 "}`}
           >
             <span className='text-xl'>
           {getIcon()}
