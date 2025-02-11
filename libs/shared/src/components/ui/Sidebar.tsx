@@ -67,7 +67,7 @@ export const Sidebar = () => {
                             </p>
 
                             {/* Section Links */}
-                            <ul className="flex flex-col items-center justify-center gap-2 mb-3">
+                            <ul className={`${isExpanded ? "" : "items-center justify-center"} flex flex-col gap-2 mb-3`}>
                                 {section.contents.map((item, idx) => (
                                     <li key={idx} className={`${!isExpanded && "dropdown dropdown-hover dropdown-right"}`}>
                                         <div tabIndex={idx} className="flex flex-col">
