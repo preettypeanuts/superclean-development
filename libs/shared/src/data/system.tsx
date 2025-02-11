@@ -1,4 +1,4 @@
-import { FaCog, FaUserCircle, FaHandsHelping, FaGlobe } from "react-icons/fa";
+import { FaUserCircle, FaHandsHelping, FaGlobe } from "react-icons/fa";
 import { TbLayoutDashboardFilled } from "react-icons/tb";
 import { HiDocumentReport } from "react-icons/hi";
 import { FaChartSimple } from "react-icons/fa6";

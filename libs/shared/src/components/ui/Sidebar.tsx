@@ -67,7 +67,7 @@ export const Sidebar = () => {
                             </p>
 
                             {/* Section Links */}
-                            <ul className="space-y-2 mb-3">
+                            <ul className="flex flex-col items-center justify-center gap-2 mb-3">
                                 {section.contents.map((item, idx) => (
                                     <li key={idx} className={`${!isExpanded && "dropdown dropdown-hover dropdown-right"}`}>
                                         <div tabIndex={idx} className="flex flex-col">
@@ -118,7 +118,7 @@ export const Sidebar = () => {
 
                                             {/* Submenu on hover (minimize) */}
                                             {item.subs.length > 0 && !isExpanded && (
-                                                <ul tabIndex={idx} className="dropdown-content menu bg-baseLight dark:bg-baseDark rounded-box z-[999] w-56 p-2 shadow">
+                                                <ul tabIndex={idx} className="ml-1 dropdown-content menu bg-baseLight dark:bg-baseDark rounded-box z-[999] w-56 p-2 shadow">
                                                     <p className="block px-6 py-3 bg-mainColor/50 -m-2 rounded-t-box capitalize mb-2 font-bold text-sm">{item.label}</p>
                                                     {item.subs.map((sub, subIdx) => (
                                                         <li key={subIdx}
