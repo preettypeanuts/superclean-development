@@ -72,30 +72,42 @@ export const Sidebar = () => {
                                     <li key={idx} className={`${!isExpanded && "dropdown dropdown-hover dropdown-right"}`}>
                                         <div tabIndex={idx} className="flex flex-col">
                                             {/* Main Menu Item */}
-                                            <button
-                                                onClick={(e) => {
-                                                    if (item.subs?.length) {
-                                                        e.preventDefault();
-                                                        toggleSubmenu(item.label);
-                                                    }
-                                                }}
-                                                className={`capitalize group py-2 px-3 rounded-xl hover:bg-mainColor/50 duration-150 flex items-center gap-2 w-full ${!isExpanded ? "justify-center w-9 h-9 p-5 mx-auto" : "justify-between"}`}
-                                            >
-                                                <div className="flex items-center gap-2 relative">
-                                                    {item.subs.length > 0 && !isExpanded && (
-                                                        <div className="absolute left-[-8px] w-[3px] h-[3px] group-hover:h-[14px] duration-200 ease-in-out transition-all dark:bg-white bg-black rounded-full"></div>
-                                                    )}
+                                            {!item.subs?.length ? (
+                                                <a
+                                                    href={item.path}
+                                                    className={`capitalize py-2 px-3 rounded-xl hover:bg-mainColor/50 duration-150 flex items-center gap-2 w-full 
+                        ${!isExpanded ? "justify-center w-9 h-9 p-5 mx-auto" : "justify-start"}`}
+                                                >
                                                     {item.icon}
                                                     <span className={`${isExpanded ? "block" : "hidden"} capitalize`}>{item.label}</span>
-                                                </div>
-                                                {/* Arrow Icon */}
-                                                {item.subs.length > 1 && (
-                                                    <IoIosArrowDown
-                                                        className={`text-neutral-400 transition-transform duration-200 ${openSubmenus[item.label] ? "rotate-180" : ""
-                                                            } ${!isExpanded ? "hidden" : "block"}`}
-                                                    />
-                                                )}
-                                            </button>
+                                                </a>
+                                            ) : (
+                                                /* Jika ada submenu → Gunakan <button> */
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        toggleSubmenu(item.label);
+                                                    }}
+                                                    className={`capitalize group py-2 px-3 rounded-xl hover:bg-mainColor/50 duration-150 flex items-center gap-2 w-full 
+                        ${!isExpanded ? "justify-center w-9 h-9 p-5 mx-auto" : "justify-between"}`}
+                                                >
+                                                    <div className="flex items-center gap-2 relative">
+                                                        {item.subs.length > 0 && !isExpanded && (
+                                                            <div className="absolute left-[-8px] w-[3px] h-[3px] group-hover:h-[14px] duration-200 ease-in-out transition-all dark:bg-white bg-black rounded-full"></div>
+                                                        )}
+                                                        {item.icon}
+                                                        <span className={`${isExpanded ? "block" : "hidden"} capitalize`}>{item.label}</span>
+                                                    </div>
+
+                                                    {/* Arrow Icon */}
+                                                    {item.subs.length > 1 && (
+                                                        <IoIosArrowDown
+                                                            className={`text-neutral-400 transition-transform duration-200 
+                                ${openSubmenus[item.label] ? "rotate-180" : ""} ${!isExpanded ? "hidden" : "block"}`}
+                                                        />
+                                                    )}
+                                                </button>
+                                            )}
 
                                             {/* Submenu (if exists) */}
                                             {item.subs && openSubmenus[item.label] && (
