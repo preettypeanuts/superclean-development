@@ -5,9 +5,8 @@ import { useState } from "react";
 import { navigationItems } from "@shared/data/system";
 import { IoIosArrowDown } from "react-icons/io";
 import { SiCcleaner } from "react-icons/si";
-import { ThemeSwitch } from "../auth/ThemeSwitch";
-import { LuSquareArrowLeft } from "react-icons/lu";
-import { TbLayoutSidebarLeftExpand, TbLayoutSidebarLeftExpandFilled, TbLayoutSidebarRightExpandFilled } from "react-icons/tb";
+import { ThemeSwitch } from "./ThemeSwitch";
+import { TbLayoutSidebarLeftExpandFilled, TbLayoutSidebarRightExpandFilled } from "react-icons/tb";
 
 export const Sidebar = () => {
     const [isExpanded, setIsExpanded] = useState(true);
@@ -24,7 +23,7 @@ export const Sidebar = () => {
 
     return (
         <nav className={`${isExpanded ? "w-60" : "w-16"} sticky top-0 h-screen flex transition-all duration-300`}>
-            <div className="rounded-3xl w-full grow bg-white dark:bg-black flex flex-col relative">
+            <div className="w-full grow bg-white dark:bg-black flex flex-col relative">
 
                 {/* Header*/}
                 <div
@@ -43,7 +42,7 @@ export const Sidebar = () => {
                 </div>
 
                 {/* Expand Button on Minimize */}
-                <div className={`${!isExpanded ? "pt-14" : "pt-20 pb-28 overflow-y-scroll"} max-h-[100vh] mx-2 my-2 no-scrollbar overflow-visible`}>
+                <div className={`${!isExpanded ? "pt-14" : "pt-16 pb-28 overflow-y-scroll"} max-h-[100vh] mx-2 my-2 no-scrollbar overflow-visible`}>
                     {!isExpanded && (
                         <button
                             onClick={toggleSidebar}
@@ -76,7 +75,7 @@ export const Sidebar = () => {
                                                 <a
                                                     href={item.path}
                                                     className={`capitalize py-2 px-3 rounded-xl hover:bg-mainColor/50 duration-150 flex items-center gap-2 w-full 
-                        ${!isExpanded ? "justify-center w-9 h-9 p-5 mx-auto" : "justify-start"}`}
+                                                                ${!isExpanded ? "justify-center w-9 h-9 p-5 mx-auto" : "justify-start"}`}
                                                 >
                                                     {item.icon}
                                                     <span className={`${isExpanded ? "block" : "hidden"} capitalize`}>{item.label}</span>
@@ -89,7 +88,7 @@ export const Sidebar = () => {
                                                         toggleSubmenu(item.label);
                                                     }}
                                                     className={`capitalize group py-2 px-3 rounded-xl hover:bg-mainColor/50 duration-150 flex items-center gap-2 w-full 
-                        ${!isExpanded ? "justify-center w-9 h-9 p-5 mx-auto" : "justify-between"}`}
+                                                              ${!isExpanded ? "justify-center w-9 h-9 p-5 mx-auto" : "justify-between"}`}
                                                 >
                                                     <div className="flex items-center gap-2 relative">
                                                         {item.subs.length > 0 && !isExpanded && (
@@ -103,7 +102,7 @@ export const Sidebar = () => {
                                                     {item.subs.length > 1 && (
                                                         <IoIosArrowDown
                                                             className={`text-neutral-400 transition-transform duration-200 
-                                ${openSubmenus[item.label] ? "rotate-180" : ""} ${!isExpanded ? "hidden" : "block"}`}
+                                                                        ${openSubmenus[item.label] ? "rotate-180" : ""} ${!isExpanded ? "hidden" : "block"}`}
                                                         />
                                                     )}
                                                 </button>
@@ -155,7 +154,6 @@ export const Sidebar = () => {
 
                 {/* Absolute components */}
                 <div className={`${isExpanded ? "bottom-2 left-2 backdrop-blur-sm w-[13lvw]" : "bottom-0 left-0 w-fit p-3"} fixed space-y-2`}>
-                    <ThemeSwitch isExpanded={isExpanded} />
                     <div className={`${isExpanded ? "px-3 py-3 flex items-center gap-2 rounded-2xl hover:bg-mainColor/20 duration-150" : "flex justify-center pb-1"}  cursor-pointer`}>
                         <Image
                             width={50}

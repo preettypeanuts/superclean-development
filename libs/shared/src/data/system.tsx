@@ -1,8 +1,8 @@
-import { FaUserCircle, FaHandsHelping, FaGlobe } from "react-icons/fa";
+import { FaHandsHelping, FaGlobe } from "react-icons/fa";
 import { TbLayoutDashboardFilled } from "react-icons/tb";
 import { HiDocumentReport } from "react-icons/hi";
 import { FaChartSimple } from "react-icons/fa6";
-import { RiNotification4Fill } from "react-icons/ri";
+import { RiNotification4Fill, RiUserSettingsFill } from "react-icons/ri";
 
 export const navigationItems = {
     menu: {
@@ -19,9 +19,9 @@ export const navigationItems = {
                 path: "/",
                 icon: <FaChartSimple />,
                 subs: [
-                    { name: "user", path: "/user" },
-                    { name: "pelanggan", path: "/pelanggan" },
-                    { name: "layanan", path: "/layanan" },
+                    { name: "user", path: "/master-data/user" },
+                    { name: "pelanggan", path: "/master-data/pelanggan" },
+                    { name: "layanan", path: "/master-data/layanan" },
                 ]
             },
             {
@@ -61,7 +61,7 @@ export const navigationItems = {
             {
                 label: "profil",
                 path: "/profil",
-                icon: <FaUserCircle />,
+                icon: <RiUserSettingsFill />,
                 subs: []
             },
             {

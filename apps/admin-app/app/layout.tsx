@@ -2,6 +2,8 @@ import '@superclean-workspace/shared/styles';
 import { ThemeProvider } from 'next-themes';
 import { Figtree } from "next/font/google";
 import { Sidebar } from "@shared/components/ui/Sidebar"
+import { Navbar } from "@shared/components/ui/Navbar"
+
 const fightree = Figtree({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700", "800", "900"]
@@ -24,9 +26,12 @@ export default function RootLayout({
       >
         <ThemeProvider enableSystem={true} defaultTheme='system' attribute="class">
           <Sidebar />
-          <div className='bg-lightColor dark:bg-darkColor my-2 mr-2 rounded-3xl w-full max-h-[98lvh] overflow-y-scroll p-10'>
-            {children}
-          </div>
+          <section className='flex flex-col w-full h-full gap-2'>
+            <Navbar />
+            <main className='bg-lightColor dark:bg-darkColor rounded-t-3xl w-full min-h-screen overflow-y-scroll p-10'>
+              {children}
+            </main>
+          </section>
         </ThemeProvider>
       </body>
     </html>
