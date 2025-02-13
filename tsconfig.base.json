@@ -1,6 +1,7 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "jsx": "react-jsx",
     "rootDir": ".",
     "sourceMap": true,
     "declaration": false,
@@ -19,7 +20,9 @@
       "@superclean-workspace/shared/styles": ["libs/shared/src/styles/global.css"],
       "@superclean-workspace/ui-components": ["libs/ui-components/src/index.ts"],
       "@shared/*": ["libs/shared/src/*"],
-      "@shared/data": ["libs/shared/src/data/index.ts"]
+      "@shared/data": ["libs/shared/src/data/index.ts"],
+      "@ui-components/*": ["libs/ui-components/src/*"],
+      "@superclean-workspace/ui-components/*": ["libs/ui-components/src/*"]
     }
   },
   "exclude": ["node_modules", "tmp"]

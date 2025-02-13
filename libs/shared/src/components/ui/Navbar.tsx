@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ThemeSwitch } from "./ThemeSwitch";
+import { Searchbar } from "./Searchbar";
 
 export const Navbar = () => {
     const pathname = usePathname();
@@ -35,7 +36,8 @@ export const Navbar = () => {
                 </div>
             </div>
 
-            <div className="flex-none">
+            <div className="flex-none space-x-3">
+                <Searchbar />
                 <ThemeSwitch />
             </div>
         </div>
