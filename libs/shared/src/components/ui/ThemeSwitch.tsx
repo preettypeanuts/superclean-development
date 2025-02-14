@@ -8,7 +8,7 @@ export const ThemeSwitch = () => {
   return (
     <div
       data-tip={'Theme'}
-      className="flex gap-2 w-full tooltip tooltip-bottom">
+      className="flex gap-2 w-full tooltip tooltip-left">
       <label className="swap swap-rotate group">
         <input
           type="checkbox"

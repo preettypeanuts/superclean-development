@@ -6,16 +6,16 @@ import {
     Card,
     CardContent,
     CardDescription,
-    CardFooter,
     CardHeader,
     CardTitle,
-  } from "../card"
+  } from "./ui/card"
   import {
     ChartConfig,
     ChartContainer,
     ChartTooltip,
     ChartTooltipContent,
-  } from "../chart"
+  } from "./ui/chart"
+
 const chartData = [
   { date: "2024-04-01", desktop: 222, mobile: 150 },
   { date: "2024-04-02", desktop: 97, mobile: 180 },

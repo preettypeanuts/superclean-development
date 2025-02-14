@@ -5,11 +5,10 @@ import { useState } from "react";
 import { navigationItems } from "../../data/system";
 import { IoIosArrowDown } from "react-icons/io";
 import { SiCcleaner } from "react-icons/si";
-import { ThemeSwitch } from "./ThemeSwitch";
 import { TbLayoutSidebarLeftExpandFilled, TbLayoutSidebarRightExpandFilled } from "react-icons/tb";
 
 export const Sidebar = () => {
-    const [isExpanded, setIsExpanded] = useState(true);
+    const [isExpanded, setIsExpanded] = useState(false);
     const [openSubmenus, setOpenSubmenus] = useState<{ [key: string]: boolean }>({});
 
     const toggleSidebar = () => setIsExpanded((prev) => !prev);
@@ -22,9 +21,9 @@ export const Sidebar = () => {
     };
 
     return (
-        <nav className={`${isExpanded ? "w-60" : "w-16"} sticky top-0 h-screen flex transition-all duration-300`}>
-            <div className="w-full grow bg-lightColor dark:bg-darkColor rounded-r-3xl flex flex-col relative">
-
+        <nav
+            className={`${isExpanded ? "w-60" : "w-16"} sticky top-0 h-screen flex transition-all duration-300 z-[999]`}>
+            <div className={`w-full grow bg-white dark:bg-black rounded-r-3xl flex flex-col relative`}>
                 {/* Header*/}
                 <div
                     className={`${!isExpanded ? "border rounded-2xl border-neutral-500/10 bg-mainColor/20 mx-[7px] mt-2 w-fit p-3" : "py-3 pl-5 pr-[15px] w-full"} z-[666] absolute flex justify-between items-center gap-2 mb-3 cursor-pointer group`}>
@@ -40,7 +39,7 @@ export const Sidebar = () => {
                         <TbLayoutSidebarRightExpandFilled className="text-xl" />
                     </div>
                 </div>
-                <div className={`absolute w-full ${!isExpanded && "hidden"} h-[10%] top-0 gradient-blur-to-b z-[555] rounded-tr-[50px]`}/>
+                <div className={`absolute w-full ${!isExpanded && "hidden"} h-[10%] top-0 gradient-blur-to-b z-[555] rounded-tr-3xl`} />
 
                 {/* Expand Button on Minimize */}
                 <div className={`${!isExpanded ? "pt-14" : "pt-14 pb-28 overflow-y-scroll"} max-h-[100vh] mx-2 my-2 no-scrollbar overflow-visible`}>
@@ -130,7 +129,7 @@ export const Sidebar = () => {
 
                                             {/* Submenu on hover (minimize) */}
                                             {item.subs.length > 0 && !isExpanded && (
-                                                <ul tabIndex={idx} className="ml-1 dropdown-content menu bg-baseLight dark:bg-baseDark rounded-box z-[999] w-56 p-2 shadow">
+                                                <ul tabIndex={idx} className="ml-1 dropdown-content menu bg-baseLight dark:bg-baseDark rounded-box !z-[999] w-56 p-2 shadow">
                                                     <p className="block px-6 py-3 bg-mainColor/50 -m-2 rounded-t-box capitalize mb-2 font-bold text-sm">{item.label}</p>
                                                     {item.subs.map((sub, subIdx) => (
                                                         <li key={subIdx}
@@ -154,7 +153,7 @@ export const Sidebar = () => {
                 </div>
 
                 {/* Absolute components */}
-                <div className={`absolute w-full ${!isExpanded && "hidden"} h-[20%] bottom-0 gradient-blur-to-t rounded-br-[50px] z-[555]`}/>
+                <div className={`absolute w-full ${!isExpanded && "hidden"} rounded-b-3xl h-[20%] bottom-0 gradient-blur-to-t z-[555]`} />
                 <div className={`${isExpanded ? "bottom-2 left-2 w-full pr-4" : "bottom-0 left-0 w-fit p-3"}  z-[666] absolute space-y-2`}>
                     <div className={`${isExpanded ? "px-3 py-3 flex items-center gap-2 rounded-2xl hover:bg-mainColor/20 duration-150" : "flex justify-center pb-1"}  cursor-pointer`}>
                         <Image
