@@ -1,24 +1,18 @@
 "use client";
 import { useState } from "react";
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "./ui/table";
-
-import { Input } from "./ui/input";
-import { Button } from "./ui/button";
-import { DropdownMenuCheckboxes } from "../components/dropdown-checkboxes";
-import { DropdownTable } from "../components/dropdown-table";
-import { LuPlus, LuTrash2 } from "react-icons/lu";
-import { Search } from "lucide-react";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
 import { Checkbox } from "./ui/checkbox";
-import { PiExport } from "react-icons/pi";
-import { SelectData } from "./select-data";
-import { PaginationNumber } from "./pagination-number";
+import { Button } from "./ui/button";
+import { LuLink2, LuTrash2 } from "react-icons/lu";
+import { BsThreeDotsVertical } from "react-icons/bs";
+import { Modal } from "@shared/components/Modal";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
+
+interface TableHeader {
+    key: string;
+    label: string;
+}
 
 interface Mitra {
     id: number;
@@ -34,139 +28,19 @@ interface Mitra {
     photo_url?: string;
 }
 
-const DataMitra: Mitra[] = [
-    {
-        "id": 1,
-        "name": "Budi Santoso",
-        "role": "Teknisi Cleaning",
-        "phone": "0812-3456-7890",
-        "email": "budi.santoso@example.com",
-        "status": "Aktif",
-        "rating": 4.8,
-        "completed_orders": 120,
-        "joined_date": "2023-04-12",
-        "location": "Jakarta",
-        "photo_url": "https://randomuser.me/api/portraits/men/1.jpg"
-    },
-    {
-        "id": 2,
-        "name": "Siti Aisyah",
-        "role": "Supervisor Cleaning",
-        "phone": "0813-9876-5432",
-        "email": "siti.aisyah@example.com",
-        "status": "Aktif",
-        "rating": 4.9,
-        "completed_orders": 200,
-        "joined_date": "2022-10-05",
-        "location": "Bandung",
-        "photo_url": "https://randomuser.me/api/portraits/women/2.jpg"
-    },
-    {
-        "id": 3,
-        "name": "Rizky Maulana",
-        "role": "Teknisi Cleaning",
-        "phone": "0812-8765-4321",
-        "email": "rizky.maulana@example.com",
-        "status": "Nonaktif",
-        "rating": 4.5,
-        "completed_orders": 95,
-        "joined_date": "2023-01-20",
-        "location": "Surabaya",
-        "photo_url": "https://randomuser.me/api/portraits/men/3.jpg"
-    },
-    {
-        "id": 4,
-        "name": "Andi Saputra",
-        "role": "Teknisi Cleaning",
-        "phone": "0812-3344-5566",
-        "email": "andi.saputra@example.com",
-        "status": "Aktif",
-        "rating": 4.7,
-        "completed_orders": 110,
-        "joined_date": "2023-06-15",
-        "location": "Yogyakarta",
-        "photo_url": "https://randomuser.me/api/portraits/men/4.jpg"
-    },
-    {
-        "id": 5,
-        "name": "Nurul Hidayah",
-        "role": "Supervisor Cleaning",
-        "phone": "0813-2233-4455",
-        "email": "nurul.hidayah@example.com",
-        "status": "Aktif",
-        "rating": 4.8,
-        "completed_orders": 130,
-        "joined_date": "2021-11-10",
-        "location": "Semarang",
-        "photo_url": "https://randomuser.me/api/portraits/women/5.jpg"
-    },
-    {
-        "id": 6,
-        "name": "Joko Prasetyo",
-        "role": "Teknisi Cleaning",
-        "phone": "0812-7788-9900",
-        "email": "joko.prasetyo@example.com",
-        "status": "Aktif",
-        "rating": 4.6,
-        "completed_orders": 85,
-        "joined_date": "2022-08-20",
-        "location": "Bali",
-        "photo_url": "https://randomuser.me/api/portraits/men/6.jpg"
-    },
-    {
-        "id": 7,
-        "name": "Desi Rahmawati",
-        "role": "Teknisi Cleaning",
-        "phone": "0813-5566-7788",
-        "email": "desi.rahmawati@example.com",
-        "status": "Aktif",
-        "rating": 4.9,
-        "completed_orders": 150,
-        "joined_date": "2021-07-05",
-        "location": "Medan",
-        "photo_url": "https://randomuser.me/api/portraits/women/7.jpg"
-    },
-    {
-        "id": 8,
-        "name": "Eko Setiawan",
-        "role": "Supervisor Cleaning",
-        "phone": "0812-3344-5566",
-        "email": "eko.setiawan@example.com",
-        "status": "Aktif",
-        "rating": 4.7,
-        "completed_orders": 140,
-        "joined_date": "2020-05-18",
-        "location": "Makassar",
-        "photo_url": "https://randomuser.me/api/portraits/men/8.jpg"
-    }
-];
-
-interface TableHeader {
-    key: string;
-    label: string;
+interface DataTableProps {
+    data: Mitra[];
+    columns: TableHeader[];
 }
 
-const DataHeader: TableHeader[] = [
-    { key: "select", label: "" },
-    { key: "id", label: "ID" },
-    { key: "name", label: "Nama" },
-    { key: "role", label: "Posisi" },
-    { key: "phone", label: "No. HP" },
-    { key: "email", label: "Email" },
-    { key: "status", label: "Status" },
-    { key: "rating", label: "Rating" },
-    { key: "completed_orders", label: "Order Selesai" },
-    { key: "joined_date", label: "Tanggal Bergabung" },
-    { key: "location", label: "Lokasi" },
-    { key: "menu", label: "" },
-];
-
-export const DataTable = () => {
+export const DataTable: React.FC<DataTableProps> = ({ data, columns }) => {
     const [selected, setSelected] = useState<number[]>([]);
-    const allSelected = selected.length === DataMitra.length;
+    const [selectedMitra, setSelectedMitra] = useState<Mitra | null>(null);
+    const [editableData, setEditableData] = useState<Mitra | null>(null);
+    const allSelected = selected.length === data.length;
 
     const toggleSelectAll = () => {
-        setSelected(allSelected ? [] : DataMitra.map((mitra) => mitra.id));
+        setSelected(allSelected ? [] : data.map((mitra) => mitra.id));
     };
 
     const toggleSelect = (id: number) => {
@@ -175,44 +49,33 @@ export const DataTable = () => {
         );
     };
 
+    const openModal = (mitra: Mitra) => {
+        setSelectedMitra(mitra);
+        setEditableData({ ...mitra });
+        const modal = document.getElementById("master-data") as HTMLDialogElement | null;
+        modal?.showModal();
+    };
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!editableData) return;
+        setEditableData({ ...editableData, [e.target.name]: e.target.value });
+    };
     return (
         <>
-            <div className="flex items-center justify-between">
-                <h1 className="font-semibold text-xl">
-                    All Mitra {" "}
-                    <span className="text-sm px-1 py-[1px] bg-mainColor/50 rounded-[5px]">
-                        {DataMitra.length}
-                    </span>
-                </h1>
-                <div className="flex items-center gap-2">
-                    <div>
-                        <div className="flex w-full items-center space-x-2">
-                            <Input type="text" placeholder="Cari mitra..." icon={<Search size={16} />} />
-                            <DropdownMenuCheckboxes />
-                            <Button variant={"outline"}>
-                                <PiExport />
-                                Export Data
-                            </Button>
-                            <Button icon={<LuPlus size={16} />} className="pl-2 pr-4" iconPosition="left" variant="default" type="submit">Tambah Mitra</Button>
-                        </div>
+            {selected.length > 0 && (
+                <div className="flex justify-end">
+                    <div className="flex items-center gap-2 w-fit border border-neutral-500 rounded-xl pl-2 overflow-hidden">
+                        <p className="text-sm cursor-pointer px-2" onClick={() => setSelected([])}>
+                            {selected.length} items selected
+                        </p>
+                        <Button className="border-l border-l-neutral-500 rounded-none text-red-400 dark:text-red-500" icon={<LuTrash2 />}>Delete</Button>
                     </div>
-                    {selected.length > 0 && (
-                        <div className="flex items-center gap-2 border border-neutral-500 rounded-xl pl-2 overflow-hidden">
-                            <p className="text-sm cursor-pointer px-2" onClick={() => { setSelected([]) }}>
-                                {selected.length} items selected
-                            </p>
-                            <Button className="border-l border-l-neutral-500 rounded-none text-red-400 dark:text-red-500" icon={<LuTrash2 />}>Delete</Button>
-                        </div>
-                    )}
                 </div>
-            </div>
-            <div>
-
-            </div>
+            )}
             <Table>
                 <TableHeader>
                     <TableRow>
-                        {DataHeader.map((header) => (
+                        {columns.map((header) => (
                             <TableHead key={header.key} className={`${allSelected && "bg-mainColor/50 text-black dark:text-white"}`}>
                                 {header.key === "select" ? (
                                     <Checkbox
@@ -227,9 +90,9 @@ export const DataTable = () => {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {DataMitra.map((mitra) => (
+                    {data.map((mitra) => (
                         <TableRow key={mitra.id}>
-                            {DataHeader.map((header) => (
+                            {columns.map((header) => (
                                 <TableCell className={`${selected.includes(mitra.id) && "bg-mainColor text-black"}`} key={header.key}>
                                     {header.key === "select" ? (
                                         <Checkbox
@@ -237,7 +100,14 @@ export const DataTable = () => {
                                             onCheckedChange={() => toggleSelect(mitra.id)}
                                         />
                                     ) : header.key === "menu" ? (
-                                        <DropdownTable />
+                                        <Button
+                                            size={"icon"}
+                                            variant={"ghost"}
+                                            className="rotate-90"
+                                            onClick={() => openModal(mitra)} // Buka modal dengan data mitra
+                                        >
+                                            <BsThreeDotsVertical />
+                                        </Button>
                                     ) : header.key === "name" ? (
                                         <div className="flex items-center gap-2">
                                             {mitra.photo_url && (
@@ -258,15 +128,71 @@ export const DataTable = () => {
                     ))}
                 </TableBody>
             </Table>
-            <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                    <SelectData />
-                    <p className="text-sm opacity-70">
-                        items per page
-                    </p>
-                </div>
-                <PaginationNumber />
-            </div>
+
+            {/* MODAL */}
+            <Modal id="master-data">
+                {editableData ? (
+                    <div>
+                        <div className="flex items-center gap-3 mb-5 border-b border-neutral-500/50 pb-5 bg-white/50 dark:bg-black/20 -m-6 py-4 px-6">
+                            <div className="flex items-center justify-between w-full">
+                                <div className="flex items-center gap-3">
+                                    {editableData.photo_url && (
+                                        <img
+                                            src={editableData.photo_url}
+                                            alt={editableData.name}
+                                            className="w-14 h-14 rounded-full"
+                                        />
+                                    )}
+                                    <div>
+                                        <h2 className="text-md font-semibold">{editableData.name}</h2>
+                                        <p className="text-sm">{editableData.role}</p>
+                                    </div>
+                                </div>
+                                <div>
+                                    <Button variant="outline" size="sm">
+                                        <LuLink2 size={10} /> Copy Link
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
+                        <form className="space-y-4">
+                            <div>
+                                <Label>Email</Label>
+                                <Input name="email" value={editableData.email} onChange={handleChange} />
+                            </div>
+                            <div>
+                                <Label>Phone</Label>
+                                <Input name="phone" value={editableData.phone} onChange={handleChange} />
+                            </div>
+                            <div>
+                                <Label>Status</Label>
+                                <Input name="status" value={editableData.status} onChange={handleChange} />
+                            </div>
+                            <div>
+                                <Label>Rating</Label>
+                                <Input name="rating" value={editableData.rating.toString()} onChange={handleChange} />
+                            </div>
+                            <div>
+                                <Label>Completed Orders</Label>
+                                <Input name="completed_orders" value={editableData.completed_orders.toString()} onChange={handleChange} />
+                            </div>
+                            <div>
+                                <Label>Joined Date</Label>
+                                <Input name="joined_date" value={editableData.joined_date} onChange={handleChange} />
+                            </div>
+                            <div>
+                                <Label>Location</Label>
+                                <Input name="location" value={editableData.location} onChange={handleChange} />
+                            </div>
+                            <Button className="w-full">
+                                Simpan Perubahan
+                            </Button>
+                        </form>
+                    </div>
+                ) : (
+                    <p>Loading data...</p>
+                )}
+            </Modal>
         </>
     );
 };
