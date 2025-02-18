@@ -2,16 +2,16 @@
 import { DataTable } from "libs/ui-components/src/components/data-table"
 import { Header } from "@shared/components/Header"
 import { Wrapper } from "libs/shared/src/components/Wrapper"
-import { Input } from "../../../../../libs/ui-components/src/components/ui/input";
-import { Button } from "../../../../../libs/ui-components/src/components/ui/button";
-import { DropdownMenuCheckboxes } from "../../../../../libs/ui-components/src/components/dropdown-checkboxes";
+import { Input } from "libs/ui-components/src/components/ui/input";
+import { Button } from "libs/ui-components/src/components/ui/button";
+import { DropdownMenuCheckboxes } from "libs/ui-components/src/components/dropdown-checkboxes";
 import { LuPlus } from "react-icons/lu";
 import { Search } from "lucide-react";
 import { PiExport } from "react-icons/pi";
-import { SelectData } from "../../../../../libs/ui-components/src/components/select-data";
-import { PaginationNumber } from "../../../../../libs/ui-components/src/components/pagination-number";
+import { SelectData } from "libs/ui-components/src/components/select-data";
+import { PaginationNumber } from "libs/ui-components/src/components/pagination-number";
 import { Modal } from "@shared/components/Modal";
-import { Label } from "../../../../../libs/ui-components/src/components/ui/label";
+import { Label } from "libs/ui-components/src/components/ui/label";
 
 export default function UserPage() {
     const DataMitra = [
@@ -138,7 +138,10 @@ export default function UserPage() {
 
     return (
         <Wrapper>
-            <Header />
+            <Header
+                label="Daftar Mitra"
+                desc="Manage your team members and their account permissions here."
+            />
             <div className="flex items-center justify-between">
                 <h1 className="font-semibold text-xl">
                     All Mitra {" "}
@@ -169,7 +172,7 @@ export default function UserPage() {
                 </div>
             </div>
             <DataTable data={DataMitra} columns={DataHeader} />
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between mt-auto">
                 <div className="flex items-center gap-2">
                     <SelectData />
                     <p className="text-sm opacity-70">

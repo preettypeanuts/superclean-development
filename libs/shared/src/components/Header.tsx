@@ -1,11 +1,16 @@
-export const Header = () => {
+type HeaderProps = {
+    label: string,
+    desc: string
+}
+
+export const Header = ({ label, desc }: HeaderProps) => {
     return (
         <section className="">
             <h1 className="text-3xl font-medium">
-                Daftar Mitra
+                {label}
             </h1>
             <p>
-                Manage your team members and their account permissions here.
+                {desc}
             </p>
         </section>
     )

@@ -11,38 +11,26 @@ import { Label } from "./ui/label";
 import { IoMdClose } from "react-icons/io";
 import { AiOutlineUsergroupDelete } from "react-icons/ai";
 
+// Define a generic TableHeader type
 interface TableHeader {
     key: string;
     label: string;
 }
 
-interface Mitra {
-    id: number;
-    name: string;
-    role: string;
-    phone: string;
-    email: string;
-    status: string;
-    rating: number;
-    completed_orders: number;
-    joined_date: string;
-    location: string;
-    photo_url?: string;
-}
-
-interface DataTableProps {
-    data: Mitra[];
+// Define a generic DataTableProps to allow flexibility with different data types
+interface DataTableProps<T> {
+    data: T[];
     columns: TableHeader[];
 }
 
-export const DataTable: React.FC<DataTableProps> = ({ data, columns }) => {
+export const DataTable = <T extends object>({ data, columns }: DataTableProps<T>) => {
     const [selected, setSelected] = useState<number[]>([]);
-    const [selectedMitra, setSelectedMitra] = useState<Mitra | null>(null);
-    const [editableData, setEditableData] = useState<Mitra | null>(null);
+    const [selectedData, setSelectedData] = useState<T | null>(null);
+    const [editableData, setEditableData] = useState<T | null>(null);
     const allSelected = selected.length === data.length;
 
     const toggleSelectAll = () => {
-        setSelected(allSelected ? [] : data.map((mitra) => mitra.id));
+        setSelected(allSelected ? [] : data.map((item) => (item as any).id)); // Casting ke any untuk mendapatkan id
     };
 
     const toggleSelect = (id: number) => {
@@ -51,9 +39,9 @@ export const DataTable: React.FC<DataTableProps> = ({ data, columns }) => {
         );
     };
 
-    const openModal = (mitra: Mitra) => {
-        setSelectedMitra(mitra);
-        setEditableData({ ...mitra });
+    const openModal = (item: T) => {
+        setSelectedData(item);
+        setEditableData({ ...item });
         const modal = document.getElementById("master-data") as HTMLDialogElement | null;
         modal?.showModal();
     };
@@ -62,6 +50,7 @@ export const DataTable: React.FC<DataTableProps> = ({ data, columns }) => {
         if (!editableData) return;
         setEditableData({ ...editableData, [e.target.name]: e.target.value });
     };
+
     return (
         <>
             {selected.length > 0 && (
@@ -72,7 +61,10 @@ export const DataTable: React.FC<DataTableProps> = ({ data, columns }) => {
                         </p>
                         <Button
                             onClick={() => {
-                                const modal = document.getElementById('delete-user') as HTMLDialogElement | null; if (modal) { modal.showModal(); }
+                                const modal = document.getElementById('delete-user') as HTMLDialogElement | null;
+                                if (modal) {
+                                    modal.showModal();
+                                }
                             }}
                             className="border-l border-l-neutral-500 rounded-none text-red-400 dark:text-red-500" icon={<LuTrash2 />}>
                             Delete
@@ -119,37 +111,37 @@ export const DataTable: React.FC<DataTableProps> = ({ data, columns }) => {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {data.map((mitra) => (
-                        <TableRow key={mitra.id}>
+                    {data.map((item, index) => (
+                        <TableRow key={index}>
                             {columns.map((header) => (
-                                <TableCell className={`${selected.includes(mitra.id) && "bg-mainColor text-black"}`} key={header.key}>
+                                <TableCell className={`${selected.includes((item as any).id) && "bg-mainColor text-black"}`} key={header.key}>
                                     {header.key === "select" ? (
                                         <Checkbox
-                                            checked={selected.includes(mitra.id)}
-                                            onCheckedChange={() => toggleSelect(mitra.id)}
+                                            checked={selected.includes((item as any).id)}
+                                            onCheckedChange={() => toggleSelect((item as any).id)}
                                         />
                                     ) : header.key === "menu" ? (
                                         <Button
                                             size={"icon"}
                                             variant={"ghost"}
                                             className="rotate-90"
-                                            onClick={() => openModal(mitra)} // Buka modal dengan data mitra
+                                            onClick={() => openModal(item)} // Buka modal dengan data item
                                         >
                                             <BsThreeDotsVertical />
                                         </Button>
                                     ) : header.key === "name" ? (
                                         <div className="flex items-center gap-2">
-                                            {mitra.photo_url && (
+                                            {(item as any).photo_url && (
                                                 <img
-                                                    src={mitra.photo_url}
-                                                    alt={mitra.name}
+                                                    src={(item as any).photo_url}
+                                                    alt={(item as any).name}
                                                     className="w-8 h-8 rounded-full"
                                                 />
                                             )}
-                                            <p>{mitra.name}</p>
+                                            <p>{(item as any).name}</p>
                                         </div>
                                     ) : (
-                                        mitra[header.key as keyof Mitra]
+                                        (item as any)[header.key]
                                     )}
                                 </TableCell>
                             ))}
@@ -165,16 +157,16 @@ export const DataTable: React.FC<DataTableProps> = ({ data, columns }) => {
                         <div className="flex items-center gap-3 mb-5 border-b border-neutral-500/50 pb-5 bg-white/50 dark:bg-black/20 -m-6 py-4 px-6">
                             <div className="flex items-center justify-between w-full">
                                 <div className="flex items-center gap-3">
-                                    {editableData.photo_url && (
+                                    {(editableData as any).photo_url && (
                                         <img
-                                            src={editableData.photo_url}
-                                            alt={editableData.name}
+                                            src={(editableData as any).photo_url}
+                                            alt={(editableData as any).name}
                                             className="w-14 h-14 rounded-full"
                                         />
                                     )}
                                     <div>
-                                        <h2 className="text-md font-semibold">{editableData.name}</h2>
-                                        <p className="text-sm">{editableData.role}</p>
+                                        <h2 className="text-md font-semibold">{(editableData as any).name}</h2>
+                                        <p className="text-sm">{(editableData as any).role}</p>
                                     </div>
                                 </div>
                                 <div>
@@ -187,36 +179,37 @@ export const DataTable: React.FC<DataTableProps> = ({ data, columns }) => {
                         <form className="space-y-4">
                             <div>
                                 <Label>Email</Label>
-                                <Input name="email" value={editableData.email} onChange={handleChange} />
+                                <Input name="email" value={(editableData as any).email} onChange={handleChange} />
                             </div>
                             <div>
                                 <Label>Phone</Label>
-                                <Input name="phone" value={editableData.phone} onChange={handleChange} />
+                                <Input name="phone" value={(editableData as any).phone} onChange={handleChange} />
                             </div>
                             <div>
                                 <Label>Status</Label>
-                                <Input name="status" value={editableData.status} onChange={handleChange} />
+                                <Input name="status" value={(editableData as any).status} onChange={handleChange} />
                             </div>
                             <div>
                                 <Label>Rating</Label>
-                                <Input name="rating" value={editableData.rating.toString()} onChange={handleChange} />
+                                <Input name="rating" value={(editableData as any).rating.toString()} onChange={handleChange} />
                             </div>
                             <div>
                                 <Label>Completed Orders</Label>
-                                <Input name="completed_orders" value={editableData.completed_orders.toString()} onChange={handleChange} />
+                                <Input name="completed_orders" value={(editableData as any).completed_orders.toString()} onChange={handleChange} />
                             </div>
                             <div>
                                 <Label>Joined Date</Label>
-                                <Input name="joined_date" value={editableData.joined_date} onChange={handleChange} />
+                                <Input name="joined_date" value={(editableData as any).joined_date} onChange={handleChange} />
                             </div>
                             <div>
                                 <Label>Location</Label>
-                                <Input name="location" value={editableData.location} onChange={handleChange} />
+                                <Input name="location" value={(editableData as any).location} onChange={handleChange} />
                             </div>
                             <div className="flex gap-2">
                                 <Button
                                     onClick={() => {
-                                        const modal = document.getElementById('delete-user') as HTMLDialogElement | null; if (modal) { modal.showModal(); }
+                                        const modal = document.getElementById('delete-user') as HTMLDialogElement | null;
+                                        if (modal) { modal.showModal(); }
                                     }}
                                     variant={"destructive"}
                                     className="w-full">
