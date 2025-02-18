@@ -4,11 +4,12 @@ import { ReactNode } from "react";
 interface ModalProps {
     id: string;
     children: ReactNode;
+    className?: string;
 }
-export const Modal = ({ id, children }: ModalProps) => {
+export const Modal = ({ id, children, className }: ModalProps) => {
     return (
-        <dialog id={id} className="modal modal-bottom sm:modal-middle -top-5 relative">
-            <div className="modal-box bg-lightColor dark:bg-darkColor">
+        <dialog id={id} className="modal modal-bottom sm:modal-middle -top-5">
+            <div className={`${className} modal-box bg-lightColor dark:bg-darkColor`}>
                 {children}
             </div>
             <div className="modal-action absolute -top-4 right-2">

@@ -8,6 +8,8 @@ import { BsThreeDotsVertical } from "react-icons/bs";
 import { Modal } from "@shared/components/Modal";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
+import { IoMdClose } from "react-icons/io";
+import { AiOutlineUsergroupDelete } from "react-icons/ai";
 
 interface TableHeader {
     key: string;
@@ -68,10 +70,37 @@ export const DataTable: React.FC<DataTableProps> = ({ data, columns }) => {
                         <p className="text-sm cursor-pointer px-2" onClick={() => setSelected([])}>
                             {selected.length} items selected
                         </p>
-                        <Button className="border-l border-l-neutral-500 rounded-none text-red-400 dark:text-red-500" icon={<LuTrash2 />}>Delete</Button>
+                        <Button
+                            onClick={() => {
+                                const modal = document.getElementById('delete-user') as HTMLDialogElement | null; if (modal) { modal.showModal(); }
+                            }}
+                            className="border-l border-l-neutral-500 rounded-none text-red-400 dark:text-red-500" icon={<LuTrash2 />}>
+                            Delete
+                        </Button>
                     </div>
                 </div>
             )}
+            <Modal id="delete-user" className="!max-w-[25lvw]">
+                <div className="flex flex-col justify-center items-center gap-5">
+                    <div className="text-5xl">
+                        <AiOutlineUsergroupDelete />
+                    </div>
+                    <h1 className="font-bold text-xl">
+                        Are you sure to delete this user?
+                    </h1>
+                    <p>
+                        {selected.length} user selected.
+                    </p>
+                    <div className="flex items-center gap-2 w-full">
+                        <Button variant={"outline"} className="w-full">
+                            Cancel
+                        </Button>
+                        <Button variant={"destructive"} className="w-full">
+                            Hapus User
+                        </Button>
+                    </div>
+                </div>
+            </Modal>
             <Table>
                 <TableHeader>
                     <TableRow>
@@ -184,9 +213,19 @@ export const DataTable: React.FC<DataTableProps> = ({ data, columns }) => {
                                 <Label>Location</Label>
                                 <Input name="location" value={editableData.location} onChange={handleChange} />
                             </div>
-                            <Button className="w-full">
-                                Simpan Perubahan
-                            </Button>
+                            <div className="flex gap-2">
+                                <Button
+                                    onClick={() => {
+                                        const modal = document.getElementById('delete-user') as HTMLDialogElement | null; if (modal) { modal.showModal(); }
+                                    }}
+                                    variant={"destructive"}
+                                    className="w-full">
+                                    Hapus User
+                                </Button>
+                                <Button className="w-full">
+                                    Simpan Perubahan
+                                </Button>
+                            </div>
                         </form>
                     </div>
                 ) : (

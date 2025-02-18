@@ -1,3 +1,4 @@
+"use client"
 import { DataTable } from "libs/ui-components/src/components/data-table"
 import { Header } from "@shared/components/Header"
 import { Wrapper } from "libs/shared/src/components/Wrapper"
@@ -9,8 +10,10 @@ import { Search } from "lucide-react";
 import { PiExport } from "react-icons/pi";
 import { SelectData } from "../../../../../libs/ui-components/src/components/select-data";
 import { PaginationNumber } from "../../../../../libs/ui-components/src/components/pagination-number";
+import { Modal } from "@shared/components/Modal";
+import { Label } from "../../../../../libs/ui-components/src/components/ui/label";
 
-export default async function UserPage() {
+export default function UserPage() {
     const DataMitra = [
         {
             "id": 1,
@@ -151,7 +154,17 @@ export default async function UserPage() {
                             <PiExport />
                             Export Data
                         </Button>
-                        <Button icon={<LuPlus size={16} />} className="pl-2 pr-4" iconPosition="left" variant="default" type="submit">Tambah Mitra</Button>
+                        <Button
+                            onClick={() => {
+                                const modal = document.getElementById('new-mitra') as HTMLDialogElement | null; if (modal) { modal.showModal(); }
+                            }}
+                            icon={<LuPlus size={16} />}
+                            className="pl-2 pr-4"
+                            iconPosition="left"
+                            variant="default"
+                            type="submit">
+                            Tambah Mitra
+                        </Button>
                     </div>
                 </div>
             </div>
@@ -165,6 +178,46 @@ export default async function UserPage() {
                 </div>
                 <PaginationNumber />
             </div>
+            <Modal id="new-mitra">
+                <form className="space-y-4">
+                    <div>
+                        <Label>Email</Label>
+                        <Input name="email" />
+                    </div>
+                    <div>
+                        <Label>Phone</Label>
+                        <Input name="phone" />
+                    </div>
+                    <div>
+                        <Label>Status</Label>
+                        <Input name="status" />
+                    </div>
+                    <div>
+                        <Label>Rating</Label>
+                        <Input name="rating" />
+                    </div>
+                    <div>
+                        <Label>Completed Orders</Label>
+                        <Input name="completed_orders" />
+                    </div>
+                    <div>
+                        <Label>Joined Date</Label>
+                        <Input name="joined_date" />
+                    </div>
+                    <div>
+                        <Label>Location</Label>
+                        <Input name="location" />
+                    </div>
+                    <div className="flex gap-2">
+                        <Button variant={"destructive"} className="w-full">
+                            Cancel
+                        </Button>
+                        <Button className="w-full">
+                            Simpan
+                        </Button>
+                    </div>
+                </form>
+            </Modal>
         </Wrapper>
     );
 }
