@@ -6,6 +6,12 @@ import {
     SelectValue,
 } from "./ui/select"
 
+const options = [
+    { label: "10", value: "10" },
+    { label: "20", value: "20" },
+    { label: "50", value: "50" },
+    { label: "100", value: "100" },
+]
 
 export const SelectData = () => {
     return (
@@ -14,10 +20,9 @@ export const SelectData = () => {
                 <SelectValue placeholder="10" />
             </SelectTrigger>
             <SelectContent>
-                <SelectItem value="10" >10</SelectItem>
-                <SelectItem value="20">20</SelectItem>
-                <SelectItem value="50">50</SelectItem>
-                <SelectItem value="100">100</SelectItem>
+                {options.map((el, idx) => (
+                    <SelectItem key={idx} value={el.value} >{el.label}</SelectItem>
+                ))}
             </SelectContent>
         </Select>
     )

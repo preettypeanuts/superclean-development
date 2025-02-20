@@ -8,7 +8,6 @@ import { BsThreeDotsVertical } from "react-icons/bs";
 import { Modal } from "@shared/components/Modal";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
-import { IoMdClose } from "react-icons/io";
 import { AiOutlineUsergroupDelete } from "react-icons/ai";
 
 // Define a generic TableHeader type
@@ -140,9 +139,21 @@ export const DataTable = <T extends object>({ data, columns }: DataTableProps<T>
                                             )}
                                             <p>{(item as any).name}</p>
                                         </div>
-                                    ) : (
-                                        (item as any)[header.key]
-                                    )}
+                                    ) : header.key === "payment_status" ? (
+                                        <p className={`${(item as any).payment_status === "Lunas" ? "text-green-400 bg-green-400/20" : "text-red-400 bg-red-400/20"}
+                                                       font-medium px-2 py-[1px] rounded-full w-fit`}>
+                                            {(item as any).payment_status}
+                                        </p>
+                                    ) : header.key === "status" ? (
+                                        <p className={`${(item as any).status === "Selesai" ? "text-green-400 bg-green-400/20" : "text-orange-400 bg-orange-400/20"} 
+                                                       ${(item as any).status === "Batal" && "!text-red-400 !bg-red-400/20"}
+                                                        font-medium px-2 py-[1px] rounded-full w-fit`}>
+                                            {(item as any).status}
+                                        </p>
+                                    )
+                                        : (
+                                            (item as any)[header.key]
+                                        )}
                                 </TableCell>
                             ))}
                         </TableRow>

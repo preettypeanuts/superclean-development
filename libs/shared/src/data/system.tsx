@@ -29,9 +29,9 @@ export const navigationItems = {
                 path: "/transaksi",
                 icon: <FaHandsHelping />,
                 subs: [
-                    { name: "pemesanan", path: "/pemesanan" },
-                    { name: "tracking pemesanan", path: "/tracking-pemesanan" },
-                    { name: "inquiry pembayaran", path: "/inquiry-pembayaran" },
+                    { name: "pemesanan", path: "/transaksi/pemesanan" },
+                    { name: "tracking pemesanan", path: "/transaksi/tracking-pemesanan" },
+                    { name: "inquiry pembayaran", path: "/transaksi/inquiry-pembayaran" },
                 ]
             },
             {
