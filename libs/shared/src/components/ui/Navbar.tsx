@@ -8,6 +8,8 @@ import { Searchbar } from "./Searchbar";
 export const Navbar = () => {
     const pathname = usePathname();
 
+    const noNavigation = ["/login", "/forgot-password", "/reset-password"];
+
     // Fungsi untuk mengonversi path menjadi array breadcrumb
     const getBreadcrumbs = () => {
         if (pathname === "/") {
@@ -21,7 +23,7 @@ export const Navbar = () => {
     };
 
     return (
-        <div className="navbar h-[50px] !min-h-[50px] rounded-b-3xl ring-2 dark:ring-black ring-white bg-lightColor dark:bg-darkColor sticky top-0 z-50 px-5">
+        <div className={`${noNavigation.includes(pathname) && "hidden"} navbar h-[50px] !min-h-[50px] rounded-b-3xl ring-2 dark:ring-black ring-white bg-lightColor dark:bg-darkColor sticky top-0 z-50 px-5`}>
             <div className="flex-1">
                 <div className="breadcrumbs text-sm">
                     <ul>

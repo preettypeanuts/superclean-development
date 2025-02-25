@@ -16,7 +16,7 @@ export const navigationItems = {
             },
             {
                 label: "master data",
-                path: "/",
+                path: "/master-data",
                 icon: <FaChartSimple />,
                 subs: [
                     { name: "user", path: "/master-data/user" },

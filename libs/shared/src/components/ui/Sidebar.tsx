@@ -6,10 +6,15 @@ import { navigationItems } from "../../data/system";
 import { IoIosArrowDown } from "react-icons/io";
 import { SiCcleaner } from "react-icons/si";
 import { TbLayoutSidebarLeftExpandFilled, TbLayoutSidebarRightExpandFilled } from "react-icons/tb";
+import { usePathname } from "next/navigation";
 
 export const Sidebar = () => {
-    const [isExpanded, setIsExpanded] = useState(false);
+    const [isExpanded, setIsExpanded] = useState(true);
     const [openSubmenus, setOpenSubmenus] = useState<{ [key: string]: boolean }>({});
+    
+    const path = usePathname();
+
+    const noNavigation = ["/login", "/forgot-password", "/reset-password"];
 
     const toggleSidebar = () => setIsExpanded((prev) => !prev);
 
@@ -22,7 +27,7 @@ export const Sidebar = () => {
 
     return (
         <nav
-            className={`${isExpanded ? "w-60" : "w-16"} sticky top-0 h-screen flex transition-all duration-300 z-[999]`}>
+            className={`${isExpanded ? "w-60" : "w-16"} ${noNavigation.includes(path) && "hidden"}  sticky top-0 h-screen flex transition-all duration-300 z-[999]`}>
             <div className={`w-full grow bg-white dark:bg-black rounded-r-3xl flex flex-col relative`}>
                 {/* Header*/}
                 <div
@@ -87,12 +92,12 @@ export const Sidebar = () => {
                                                         e.preventDefault();
                                                         toggleSubmenu(item.label);
                                                     }}
-                                                    className={`capitalize group py-2 px-3 rounded-xl hover:bg-mainColor/50 duration-150 flex items-center gap-2 w-full 
+                                                    className={`${path.startsWith(item.path) && "bg-mainColor/50"} capitalize group py-2 px-3 rounded-xl hover:bg-mainColor/50 duration-150 flex items-center gap-2 w-full 
                                                               ${!isExpanded ? "justify-center w-9 h-9 p-5 mx-auto" : "justify-between"}`}
                                                 >
-                                                    <div className="flex items-center gap-2 relative">
+                                                    <div className={` flex items-center gap-2 relative`}>
                                                         {item.subs.length > 0 && !isExpanded && (
-                                                            <div className="absolute left-[-8px] w-[3px] h-[3px] group-hover:h-[14px] duration-200 ease-in-out transition-all dark:bg-white bg-black rounded-full"></div>
+                                                            <div className={`${path.startsWith(item.path) && "!h-[14px] !left-[-23px] group-hover:translate-x-[15px]"} absolute left-[-8px] w-[3px] h-[3px] group-hover:h-[14px] duration-200 ease-in-out transition-all dark:bg-white bg-black rounded-full`}></div>
                                                         )}
                                                         {item.icon}
                                                         <span className={`${isExpanded ? "block" : "hidden"} capitalize`}>{item.label}</span>
@@ -118,7 +123,7 @@ export const Sidebar = () => {
                                                                 href={sub.path}
                                                                 className="capitalize group ml-2 flex items-center text-sm text-neutral-600 dark:text-neutral-300 duration-150"
                                                             >
-                                                                <p className="group-hover:bg-mainColor/20 px-2 py-2 w-full rounded-xl duration-150">
+                                                                <p className={`${path === (sub.path) && "bg-mainColor/20"} group-hover:bg-mainColor/20 px-2 py-2 w-full rounded-xl duration-150`}>
                                                                     {sub.name}
                                                                 </p>
                                                             </a>
@@ -154,7 +159,8 @@ export const Sidebar = () => {
 
                 {/* Absolute components */}
                 <div className={`absolute w-full ${!isExpanded && "hidden"} rounded-b-3xl h-[20%] bottom-0 gradient-blur-to-t z-[555]`} />
-                <div className={`${isExpanded ? "bottom-2 left-2 w-full pr-4" : "bottom-0 left-0 w-fit p-3"}  z-[666] absolute space-y-2`}>
+
+                <div className={`${isExpanded ? "bottom-2 left-2 w-full pr-4" : "bottom-0 left-0 w-fit p-3"} z-[666] absolute space-y-2`}>
                     <div className={`${isExpanded ? "px-3 py-3 flex items-center gap-2 rounded-2xl hover:bg-mainColor/20 duration-150" : "flex justify-center pb-1"}  cursor-pointer`}>
                         <Image
                             width={50}

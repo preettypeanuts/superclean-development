@@ -11,6 +11,9 @@ import { PiExport } from "react-icons/pi";
 import { Modal } from "@shared/components/Modal";
 import { NewOrderForm } from "libs/shared/src/components/neworder-form";
 import { DatePickerRange } from "libs/ui-components/src/components/date-picker-range"
+import { ChartOrder } from "libs/shared/src/components/ChartOrder"
+import { SelectData } from "libs/ui-components/src/components/select-data";
+import { PaginationNumber } from "libs/ui-components/src/components/pagination-number";
 
 const DataOrders = [
   {
@@ -197,6 +200,8 @@ const newOrderForm = [
   },
 ];
 
+
+
 export default function PemesananPage() {
   return (
     <Wrapper>
@@ -205,6 +210,7 @@ export default function PemesananPage() {
         desc="Melihat riwayat dan status transaksi pemesanan layanan."
       />
       <DatePickerRange />
+      <ChartOrder />
       <div className="flex items-center gap-2">
         <div className="flex w-full items-center space-x-2">
           <Input type="text" placeholder="Cari pesanan..." icon={<Search size={16} />} />
@@ -230,6 +236,15 @@ export default function PemesananPage() {
       <Modal id="new-order">
         <NewOrderForm data={newOrderForm} />
       </Modal>
+      <div className="flex items-center justify-between mt-auto">
+        <div className="flex items-center gap-2">
+          <SelectData />
+          <p className="text-sm opacity-70">
+            items per page
+          </p>
+        </div>
+        <PaginationNumber />
+      </div>
     </Wrapper>
   );
 }
