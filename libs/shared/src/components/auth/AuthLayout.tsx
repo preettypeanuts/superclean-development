@@ -132,7 +132,7 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({ form, headline, tagline,
 
                         {/* Google Login */}
                         <div className="w-full">
-                            <button className="btn border-0 rounded-xl dark:border-neutral-500 w-full bg-white dark:bg-black dark:text-white text-darkColor dark:text-lightColor">
+                            <button className="btn border-0 rounded-xl dark:border-neutral-500 w-full bg-white dark:bg-black dark:text-white text-darkColor">
                                 <FcGoogle className="text-2xl" />
                                 Lanjutkan dengan Google
                             </button>

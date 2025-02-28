@@ -8,7 +8,7 @@ type WrapperProps = {
 export const Wrapper = ({ children, className = "" }: WrapperProps) => {
     return (
         <div
-            className={`bg-lightColor dark:bg-darkColor rounded-3xl p-5 min-h-[91.5lvh] space-y-5 h-full flex flex-col ${className}`}
+            className={`bg-white dark:bg-black rounded-3xl p-7 space-y-5 h-full flex flex-col shadow-mainShadow ${className}`}
         >
             {children}
         </div>

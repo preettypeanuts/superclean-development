@@ -1,3 +1,4 @@
+import { Label } from "./ui/label"
 import {
     Select,
     SelectContent,
@@ -13,17 +14,22 @@ const options = [
     { label: "100", value: "100" },
 ]
 
-export const SelectData = () => {
+export const SelectData = ({ label }: { label: string }) => {
     return (
-        <Select>
-            <SelectTrigger className="w-fit">
-                <SelectValue placeholder="10" />
-            </SelectTrigger>
-            <SelectContent>
-                {options.map((el, idx) => (
-                    <SelectItem key={idx} value={el.value} >{el.label}</SelectItem>
-                ))}
-            </SelectContent>
-        </Select>
+        <div className="flex gap-2 items-center">
+            <Select>
+                <SelectTrigger className="w-fit">
+                    <SelectValue placeholder="10" />
+                </SelectTrigger>
+                <SelectContent>
+                    {options.map((el, idx) => (
+                        <SelectItem key={idx} value={el.value} >{el.label}</SelectItem>
+                    ))}
+                </SelectContent>
+            </Select>
+            <Label className="text-sm opacity-70">
+                {label}
+            </Label>
+        </div>
     )
 }

@@ -17,11 +17,11 @@ export const ThemeSwitch = () => {
           className="hidden"
         />
         {/* Sun icon for light mode */}
-        <div className="swap-on">
+        <div className="swap-on p-2">
           <TbSunFilled className="text-xl text-neutral-500 dark:text-neutral-300 group-hover:rotate-90 duration-300" />
         </div>
         {/* Moon icon for dark mode */}
-        <div className="swap-off">
+        <div className="swap-off p-2">
           <TbMoonFilled className="text-xl text-neutral-500 dark:text-neutral-300 group-hover:rotate-90 duration-300" />
         </div>
       </label>

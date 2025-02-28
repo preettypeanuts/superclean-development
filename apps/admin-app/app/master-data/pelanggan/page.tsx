@@ -1,7 +1,7 @@
 "use client"
 import { Header } from "@shared/components/Header";
 import { Wrapper } from "@shared/components/Wrapper";
-import { DataTable } from "libs/ui-components/src/components/data-table";
+// import { DataTable } from "libs/ui-components/src/components/data-table";
 import { Input } from "libs/ui-components/src/components/ui/input";
 import { Button } from "libs/ui-components/src/components/ui/button";
 import { DropdownMenuCheckboxes } from "libs/ui-components/src/components/dropdown-checkboxes";
@@ -142,18 +142,13 @@ export default function PelangganPage() {
             </div>
           </div>
         </div>
-        <DataTable data={DataCustomer} columns={DataHeaderCustomer} />
+        {/* <DataTable data={DataCustomer} columns={DataHeaderCustomer} /> */}
       </div>
       {/* Footer with SelectData and PaginationNumber always at the bottom */}
       <div className="mt-auto">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <SelectData />
-            <p className="text-sm opacity-70">
-              items per page
-            </p>
-          </div>
-          <PaginationNumber />
+        <SelectData label={"Data Per halaman"} />
+        <PaginationNumber />
         </div>
       </div>
     </Wrapper>

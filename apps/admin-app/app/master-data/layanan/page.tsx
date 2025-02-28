@@ -1,7 +1,7 @@
 "use client"
 import { Header } from "@shared/components/Header";
 import { Wrapper } from "@shared/components/Wrapper";
-import { DataTable } from "libs/ui-components/src/components/data-table";
+// import { DataTable } from "libs/ui-components/src/components/data-table";
 import { Input } from "libs/ui-components/src/components/ui/input";
 import { Button } from "libs/ui-components/src/components/ui/button";
 import { DropdownMenuCheckboxes } from "libs/ui-components/src/components/dropdown-checkboxes";
@@ -157,18 +157,13 @@ export default function LayananPage() {
             Tambah Pesanan
           </Button>
         </div>
-      <DataTable data={DataLayanan} columns={DataHeaderServices} />
+        {/* <DataTable data={DataLayanan} columns={DataHeaderServices} /> */}
       </div>
       <Modal id="new-order">
         <NewOrderForm data={newOrderForm} />
       </Modal>
       <div className="flex items-center justify-between mt-auto">
-        <div className="flex items-center gap-2">
-          <SelectData />
-          <p className="text-sm opacity-70">
-            items per page
-          </p>
-        </div>
+        <SelectData label={"Data Per halaman"} />
         <PaginationNumber />
       </div>
     </Wrapper>

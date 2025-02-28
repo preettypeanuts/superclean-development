@@ -26,9 +26,9 @@ export default function RootLayout({
       >
         <ThemeProvider enableSystem={true} defaultTheme='system' attribute="class">
           <Sidebar />
-          <section className='flex flex-col w-full h-full gap-2'>
+          <section className='flex flex-col w-full h-full'>
             <Navbar />
-            <main className='w-full min-h-screen overflow-y-scroll'>
+            <main className='w-full min-h-screen overflow-y-scroll px-3 pb-3'>
               {children}
             </main>
           </section>

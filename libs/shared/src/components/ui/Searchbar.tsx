@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { IoIosClose } from "react-icons/io";
 import { RiSearchLine } from "react-icons/ri";
+import { Button } from "../../../../ui-components/src/components/ui/button";
 
 export const Searchbar = () => {
     const [searchTerm, setSearchTerm] = useState("");
@@ -21,9 +22,9 @@ export const Searchbar = () => {
         <section>
             <div>
                 {!isSearching ? (
-                    <button onClick={() => setIsSearching(true)} className="p-2 rounded-full">
+                    <Button variant={"ghost"} size={"icon"} onClick={() => setIsSearching(true)}>
                         <RiSearchLine />
-                    </button>
+                    </Button>
                 ) : (
                     <label className="input input-sm rounded-full bg-opacity-0 focus-within:dark:bg-black focus-within:bg-white flex items-center gap-[6px] p-2 border border-gray-300 dark:border-neutral-500">
                         <RiSearchLine />

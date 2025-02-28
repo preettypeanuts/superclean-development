@@ -7,11 +7,11 @@
 }
 
 .bg-root {
-  @apply bg-white dark:bg-black;
+  @apply bg-lightColor dark:bg-darkColor;
 }
 
 body {
-  @apply bg-white dark:bg-black text-neutral-900 dark:text-neutral-100;
+  @apply bg-lightColor dark:bg-darkColor text-neutral-900 dark:text-neutral-100;
 }
 
 @layer base {
@@ -31,7 +31,7 @@ body {
     --accent: 240 4.8% 95.9%;
     --accent-foreground: 240 5.9% 10%;
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive-foreground: 0 100% 40%;
     --border: 240 5.9% 90%;
     --input: 240 5.9% 90%;
     --ring: 240 10% 3.9%;
@@ -40,6 +40,8 @@ body {
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
+    --warning: 45 100% 45%;
+    --warning-foreground: 45 100% 40%;
   }
   .dark {
     --background: 240 10% 3.9%;
@@ -57,7 +59,7 @@ body {
     --accent: 240 3.7% 15.9%;
     --accent-foreground: 0 0% 98%;
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 100% 90%;
+    --destructive-foreground: 0 100% 50%;
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
     --ring: 240 4.9% 83.9%;
@@ -66,7 +68,9 @@ body {
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-2: 340 75% 55%;
-    }
+    --warning: 45 62.8% 49%;
+    --warning-foreground: 45 100% 50%;
+  }
 }
 
 @layer base {

@@ -63,6 +63,10 @@ module.exports = {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
+        warning: {
+          DEFAULT: 'hsl(var(--warning))',
+          foreground: 'hsl(var(--warning-foreground))',
+        },
       },
       fontFamily: {
         sans: ['var(--font-sans)', ...fontFamily.sans],
@@ -76,6 +80,11 @@ module.exports = {
           from: { height: 'var(--radix-accordion-content-height)' },
           to: { height: 0 },
         },
+      },
+      boxShadow: {
+        custom: 'rgba(17, 17, 26, 0.1) 0px 4px 16px, rgba(17, 17, 26, 0.05) 0px 8px 32px',
+        mainShadow: 'rgba(149, 157, 165, 0.2) 0px 8px 24px',
+        secondaryShadow: 'rgba(99, 99, 99, 0.2) 0px 2px 8px 0px'
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',

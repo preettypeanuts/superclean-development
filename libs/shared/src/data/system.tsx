@@ -19,9 +19,10 @@ export const navigationItems = {
                 path: "/master-data",
                 icon: <FaChartSimple />,
                 subs: [
-                    { name: "user", path: "/master-data/user" },
+                    { name: "karyawan", path: "/master-data/karyawan" },
                     { name: "pelanggan", path: "/master-data/pelanggan" },
                     { name: "layanan", path: "/master-data/layanan" },
+                    { name: "diskon", path: "/master-data/diskon" },
                 ]
             },
             {
@@ -29,21 +30,20 @@ export const navigationItems = {
                 path: "/transaksi",
                 icon: <FaHandsHelping />,
                 subs: [
-                    { name: "pemesanan", path: "/transaksi/pemesanan" },
-                    { name: "tracking pemesanan", path: "/transaksi/tracking-pemesanan" },
-                    { name: "inquiry pembayaran", path: "/transaksi/inquiry-pembayaran" },
+                    { name: "SPK", path: "/transaksi/SPK" },
+                    { name: "settlement", path: "/transaksi/settlement" },
                 ]
             },
-            {
-                label: "public",
-                path: "/public",
-                icon: <FaGlobe />,
-                subs: [
-                    { name: "konfirmasi pembayaran", path: "/konfirmasi-pembayaran" },
-                    { name: "rating", path: "/rating" },
-                    { name: "Partners", path: "/partners" },
-                ]
-            },
+            // {
+            //     label: "public",
+            //     path: "/public",
+            //     icon: <FaGlobe />,
+            //     subs: [
+            //         { name: "konfirmasi pembayaran", path: "/konfirmasi-pembayaran" },
+            //         { name: "rating", path: "/rating" },
+            //         { name: "Partners", path: "/partners" },
+            //     ]
+            // },
             {
                 label: "laporan",
                 path: "/laporan",
@@ -59,8 +59,8 @@ export const navigationItems = {
         label: "Pengaturan",
         contents: [
             {
-                label: "profil",
-                path: "/profil",
+                label: "settings",
+                path: "/settings",
                 icon: <RiUserSettingsFill />,
                 subs: []
             },

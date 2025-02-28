@@ -16,20 +16,19 @@ export const Navbar = () => {
             return [{ label: "Dashboard", href: "/" }];
         }
         const pathArray = pathname.split("/").filter((x) => x);
-        return pathArray.map((crumb, index) => {
-            const href = "/" + pathArray.slice(0, index + 1).join("/");
-            return { label: crumb.replace(/-/g, " "), href };
-        });
+        const firstCrumb = pathArray[0];
+        const href = "/" + firstCrumb;
+        return [{ label: firstCrumb.replace(/-/g, " "), href }];
     };
 
     return (
-        <div className={`${noNavigation.includes(pathname) && "hidden"} navbar h-[50px] !min-h-[50px] rounded-b-3xl ring-2 dark:ring-black ring-white bg-lightColor dark:bg-darkColor sticky top-0 z-50 px-5`}>
+        <div className={`${noNavigation.includes(pathname) && "hidden"} navbar h-[50px] !min-h-[50px] z-50 px-3 mt-2`}>
             <div className="flex-1">
-                <div className="breadcrumbs text-sm">
+                <div className="breadcrumbs text-sm bg-white dark:bg-black shadow-mainShadow rounded-3xl px-4 py-1">
                     <ul>
                         {getBreadcrumbs().map((crumb, index) => (
                             <li key={index}>
-                                <Link href={crumb.href} className={`${index === 0 && "text-mainColor text-lg font-medium"} capitalize`}>
+                                <Link href={crumb.href} className={`${index === 0 && "text-mainColor text-lg font-medium"} font-semibold capitalize`}>
                                     {crumb.label}
                                 </Link>
                             </li>
@@ -38,8 +37,8 @@ export const Navbar = () => {
                 </div>
             </div>
 
-            <div className="flex-none space-x-3">
-                <Searchbar />
+            <div className="flex-none space-x-2 bg-white dark:bg-black px-0 shadow-mainShadow rounded-3xl">
+                {/* <Searchbar /> */}
                 <ThemeSwitch />
             </div>
         </div>

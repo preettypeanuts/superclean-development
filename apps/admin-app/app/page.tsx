@@ -6,7 +6,7 @@ import { RadialChartComponent } from "libs/ui-components/src/components/radial-c
 export default async function Index() {
   return (
     <>
-    <section className="flex flex-col gap-2">
+    <section className="flex flex-col gap-2 mb-3">
       <div className="grid grid-cols-3 gap-2">
         <BarComponent />
         <PieChartComponent />

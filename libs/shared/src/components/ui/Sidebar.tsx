@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { navigationItems } from "../../data/system";
 import { IoIosArrowDown } from "react-icons/io";
 import { SiCcleaner } from "react-icons/si";
@@ -11,24 +11,41 @@ import { usePathname } from "next/navigation";
 export const Sidebar = () => {
     const [isExpanded, setIsExpanded] = useState(true);
     const [openSubmenus, setOpenSubmenus] = useState<{ [key: string]: boolean }>({});
-    
+
     const path = usePathname();
 
     const noNavigation = ["/login", "/forgot-password", "/reset-password"];
 
     const toggleSidebar = () => setIsExpanded((prev) => !prev);
-
     const toggleSubmenu = (label: string) => {
-        setOpenSubmenus((prev) => ({
-            ...prev,
-            [label]: !prev[label],
-        }));
+        setOpenSubmenus((prev) => {
+            const updatedState = { ...prev, [label]: !prev[label] };
+            localStorage.setItem("openSubmenus", JSON.stringify(updatedState));
+            return updatedState;
+        });
     };
+
+    // Load saved submenu states on mount
+    useEffect(() => {
+        const storedSubmenus = localStorage.getItem("openSubmenus");
+        if (storedSubmenus) {
+            setOpenSubmenus(JSON.parse(storedSubmenus));
+        }
+    }, []);
+
+    // Ensure submenu stays open on page refresh or navigation
+    useEffect(() => {
+        const storedSubmenus = localStorage.getItem("openSubmenus");
+        if (storedSubmenus) {
+            setOpenSubmenus(JSON.parse(storedSubmenus));
+        }
+    }, [path]); // Update when path changes
+
 
     return (
         <nav
-            className={`${isExpanded ? "w-60" : "w-16"} ${noNavigation.includes(path) && "hidden"}  sticky top-0 h-screen flex transition-all duration-300 z-[999]`}>
-            <div className={`w-full grow bg-white dark:bg-black rounded-r-3xl flex flex-col relative`}>
+            className={`${isExpanded ? "w-64" : "w-[79px]"} ${noNavigation.includes(path) && "hidden"}  sticky top-0 h-screen flex transition-all duration-300 z-[999]`}>
+            <div className={`w-full grow bg-mainColor/30 dark:bg-mainColor/10 rounded-3xl my-3 ml-3 flex flex-col relative shadow-mainShadow border border-white/50 dark:border-neutral-500/50 ${!isExpanded && "items-center"}`}>
                 {/* Header*/}
                 <div
                     className={`${!isExpanded ? "border rounded-2xl border-neutral-500/10 bg-mainColor/20 mx-[7px] mt-2 w-fit p-3" : "py-3 pl-5 pr-[15px] w-full"} z-[666] absolute flex justify-between items-center gap-2 mb-3 cursor-pointer group`}>
@@ -44,7 +61,7 @@ export const Sidebar = () => {
                         <TbLayoutSidebarRightExpandFilled className="text-xl" />
                     </div>
                 </div>
-                <div className={`absolute w-full ${!isExpanded && "hidden"} h-[10%] top-0 gradient-blur-to-b z-[555] rounded-tr-3xl`} />
+                <div className={`absolute w-full ${!isExpanded && "hidden"} h-[10%] top-0 z-[555] rounded-t-3xl bg-gradient-to-b from-mainColor/30 dark:from-mainColor/10 via-mainColor/30 dark:via-mainColor/10 to-transparent gradient-blur-to-b`} />
 
                 {/* Expand Button on Minimize */}
                 <div className={`${!isExpanded ? "pt-14" : "pt-14 pb-28 overflow-y-scroll"} max-h-[100vh] mx-2 my-2 no-scrollbar overflow-visible`}>
@@ -92,7 +109,7 @@ export const Sidebar = () => {
                                                         e.preventDefault();
                                                         toggleSubmenu(item.label);
                                                     }}
-                                                    className={`${path.startsWith(item.path) && "bg-mainColor/50"} capitalize group py-2 px-3 rounded-xl hover:bg-mainColor/50 duration-150 flex items-center gap-2 w-full 
+                                                    className={`${path.startsWith(item.path) && "bg-lightColor dark:bg-darkColor text-mainColor"} capitalize group py-2 px-3 rounded-xl hover:bg-mainColor/50 duration-150 flex items-center gap-2 w-full 
                                                               ${!isExpanded ? "justify-center w-9 h-9 p-5 mx-auto" : "justify-between"}`}
                                                 >
                                                     <div className={` flex items-center gap-2 relative`}>
@@ -123,7 +140,7 @@ export const Sidebar = () => {
                                                                 href={sub.path}
                                                                 className="capitalize group ml-2 flex items-center text-sm text-neutral-600 dark:text-neutral-300 duration-150"
                                                             >
-                                                                <p className={`${path === (sub.path) && "bg-mainColor/20"} group-hover:bg-mainColor/20 px-2 py-2 w-full rounded-xl duration-150`}>
+                                                                <p className={`${path.startsWith(sub.path) && "bg-lightColor dark:bg-darkColor text-mainColor"} group-hover:bg-mainColor/20 px-2 py-2 w-full rounded-xl duration-150`}>
                                                                     {sub.name}
                                                                 </p>
                                                             </a>
@@ -158,7 +175,7 @@ export const Sidebar = () => {
                 </div>
 
                 {/* Absolute components */}
-                <div className={`absolute w-full ${!isExpanded && "hidden"} rounded-b-3xl h-[20%] bottom-0 gradient-blur-to-t z-[555]`} />
+                <div className={`absolute w-full ${!isExpanded && "hidden"} rounded-b-3xl h-[20%] bottom-0 bg-gradient-to-t from-mainColor/30 dark:from-mainColor/10 to-transparent z-[555] gradient-blur-to-t`} />
 
                 <div className={`${isExpanded ? "bottom-2 left-2 w-full pr-4" : "bottom-0 left-0 w-fit p-3"} z-[666] absolute space-y-2`}>
                     <div className={`${isExpanded ? "px-3 py-3 flex items-center gap-2 rounded-2xl hover:bg-mainColor/20 duration-150" : "flex justify-center pb-1"}  cursor-pointer`}>
