@@ -1,9 +1,9 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
 import { Button } from "./ui/button";
-import { LuTrash2, LuPencilLine } from "react-icons/lu";
-import slugify from "libs/utils/slugify"
+import { HiMiniPencilSquare } from "react-icons/hi2";
+import { IoMdTrash } from "react-icons/io";
+import slugify from "../../../utils/slugify"
 import Link from "next/link";
-
 interface TableHeader {
     key: string;
     label: string;
@@ -28,15 +28,15 @@ export const TableKaryawan: React.FC<DataTableProps> = ({ data, columns }) => {
             <TableHeader>
                 <TableRow>
                     {columns.map((header) => (
-                        <TableHead key={header.key} className={`${header.key === "menu" && "w-[100px]"}`}>
+                        <TableHead key={header.key} className={`${header.key === "menu" && "w-[100px]"} bg-neutral-300/30 dark:bg-neutral-500/30`}>
                             {header.label}
                         </TableHead>
                     ))}
                 </TableRow>
             </TableHeader>
             <TableBody>
-                {data.map((mitra) => (
-                    <TableRow key={mitra.id}>
+                {data.map((mitra, rowIndex) => (
+                    <TableRow key={mitra.id} className={rowIndex % 2 === 0 ? "" : "bg-neutral-300/20 dark:bg-neutral-500/20"}>
                         {columns.map((header) => (
                             <TableCell key={header.key} className={`${header.key === "menu" && "!w-fit"}`}>
                                 {header.key === "menu" ? (
@@ -44,18 +44,18 @@ export const TableKaryawan: React.FC<DataTableProps> = ({ data, columns }) => {
                                         <Link href={`/master-data/karyawan/edit/${slugify(mitra.name)}`}>
                                             <Button
                                                 size={"icon"}
-                                                variant={"outline"}
-                                                className="text-warning border-warning"
+                                                variant={"default"}
+                                                className="bg-warning/25 text-warning border-warning"
                                             >
-                                                <LuPencilLine />
+                                                <HiMiniPencilSquare />
                                             </Button>
                                         </Link>
                                         <Button
                                             size={"icon"}
-                                            variant={"outline"}
-                                            className="text-destructive border-destructive"
+                                            variant={"default"}
+                                            className="bg-destructive/25 text-destructive border-destructive"
                                         >
-                                            <LuTrash2 />
+                                            <IoMdTrash />
                                         </Button>
                                     </div>
                                 ) : header.key === "status" ? (

@@ -118,7 +118,7 @@ export default function KaryawanPage() {
                     </div>
 
                     <Link
-                        href="karyawan/new"
+                        href="karyawan/baru"
                     >
                         <Button
                             icon={<LuPlus size={16} />}

@@ -3,6 +3,7 @@ import { ThemeProvider } from 'next-themes';
 import { Figtree } from "next/font/google";
 import { Sidebar } from "@shared/components/ui/Sidebar"
 import { Navbar } from "@shared/components/ui/Navbar"
+import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs"
 
 const fightree = Figtree({
   subsets: ["latin"],
@@ -28,6 +29,7 @@ export default function RootLayout({
           <Sidebar />
           <section className='flex flex-col w-full h-full'>
             <Navbar />
+            <Breadcrumbs />
             <main className='w-full min-h-screen overflow-y-scroll px-3 pb-3'>
               {children}
             </main>

@@ -1,0 +1,52 @@
+"use client"
+import React from 'react';
+import {
+    Breadcrumb,
+    BreadcrumbEllipsis,
+    BreadcrumbItem,
+    BreadcrumbLink,
+    BreadcrumbList,
+    BreadcrumbPage,
+    BreadcrumbSeparator,
+} from "../../../../ui-components/src/components/ui/breadcrumb"
+import { usePathname } from 'next/navigation'
+import { TbLayoutDashboardFilled } from 'react-icons/tb';
+
+export function Breadcrumbs() {
+    const pathname = usePathname()
+    const pathSegments = pathname.split('/').filter(segment => segment)
+
+    // Hide the component on the home screen
+    if (pathname === '/') {
+        return null;
+    }
+
+    return (
+        <Breadcrumb className="px-4 py-2 dark:bg-black rounded-3xl bg-white shadow-mainShadow w-fit mx-3 mb-2 capitalize">
+            <BreadcrumbList>
+                <BreadcrumbItem>
+                    <BreadcrumbLink href="/">
+                    <TbLayoutDashboardFilled />
+                    </BreadcrumbLink>
+                </BreadcrumbItem>
+                {pathSegments.map((segment, index) => {
+                    const href = '/' + pathSegments.slice(0, index + 1).join('/')
+                    const isLast = index === pathSegments.length - 1
+                    const formattedSegment = segment.replace(/-/g, " ")
+                    return (
+                        <React.Fragment key={href}>
+                            <BreadcrumbSeparator />
+                            <BreadcrumbItem>
+                                {isLast ? (
+                                    <BreadcrumbPage>{formattedSegment}</BreadcrumbPage>
+                                ) : (
+                                    <BreadcrumbLink href={href}>{formattedSegment}</BreadcrumbLink>
+                                )}
+                            </BreadcrumbItem>
+                        </React.Fragment>
+                    )
+                })}
+            </BreadcrumbList>
+        </Breadcrumb>
+    )
+}

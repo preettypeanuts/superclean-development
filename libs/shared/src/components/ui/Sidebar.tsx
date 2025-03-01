@@ -45,7 +45,7 @@ export const Sidebar = () => {
     return (
         <nav
             className={`${isExpanded ? "w-64" : "w-[79px]"} ${noNavigation.includes(path) && "hidden"}  sticky top-0 h-screen flex transition-all duration-300 z-[999]`}>
-            <div className={`w-full grow bg-mainColor/30 dark:bg-mainColor/10 rounded-3xl my-3 ml-3 flex flex-col relative shadow-mainShadow border border-white/50 dark:border-neutral-500/50 ${!isExpanded && "items-center"}`}>
+            <div className={`w-full grow bg-mainColor/30 dark:bg-mainColor/20 rounded-3xl my-3 ml-3 flex flex-col relative shadow-mainShadow border border-white/50 dark:border-neutral-500/50 ${!isExpanded && "items-center"}`}>
                 {/* Header*/}
                 <div
                     className={`${!isExpanded ? "border rounded-2xl border-neutral-500/10 bg-mainColor/20 mx-[7px] mt-2 w-fit p-3" : "py-3 pl-5 pr-[15px] w-full"} z-[666] absolute flex justify-between items-center gap-2 mb-3 cursor-pointer group`}>
@@ -109,7 +109,7 @@ export const Sidebar = () => {
                                                         e.preventDefault();
                                                         toggleSubmenu(item.label);
                                                     }}
-                                                    className={`${path.startsWith(item.path) && "bg-lightColor dark:bg-darkColor text-mainColor"} capitalize group py-2 px-3 rounded-xl hover:bg-mainColor/50 duration-150 flex items-center gap-2 w-full 
+                                                    className={`${path.startsWith(item.path) && "bg-mainColor/50 dark:bg-mainColor/30"} capitalize group py-2 px-3 rounded-xl hover:bg-mainColor/50 duration-150 flex items-center gap-2 w-full 
                                                               ${!isExpanded ? "justify-center w-9 h-9 p-5 mx-auto" : "justify-between"}`}
                                                 >
                                                     <div className={` flex items-center gap-2 relative`}>
@@ -140,7 +140,7 @@ export const Sidebar = () => {
                                                                 href={sub.path}
                                                                 className="capitalize group ml-2 flex items-center text-sm text-neutral-600 dark:text-neutral-300 duration-150"
                                                             >
-                                                                <p className={`${path.startsWith(sub.path) && "bg-lightColor dark:bg-darkColor text-mainColor"} group-hover:bg-mainColor/20 px-2 py-2 w-full rounded-xl duration-150`}>
+                                                                <p className={`${path.startsWith(sub.path) && "bg-mainColor/50 dark:bg-mainColor/30"} group-hover:bg-mainColor/20 px-2 py-2 w-full rounded-xl duration-150`}>
                                                                     {sub.name}
                                                                 </p>
                                                             </a>
