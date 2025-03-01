@@ -26,11 +26,12 @@ export function Breadcrumbs() {
             <BreadcrumbList>
                 <BreadcrumbItem>
                     <BreadcrumbLink href="/">
-                    <TbLayoutDashboardFilled />
+                        <TbLayoutDashboardFilled />
                     </BreadcrumbLink>
                 </BreadcrumbItem>
                 {pathSegments.map((segment, index) => {
                     const href = '/' + pathSegments.slice(0, index + 1).join('/')
+                    const firstPage = '/' + pathSegments.slice(0, 2).join('/')
                     const isLast = index === pathSegments.length - 1
                     const formattedSegment = segment.replace(/-/g, " ")
                     return (
@@ -40,7 +41,7 @@ export function Breadcrumbs() {
                                 {isLast ? (
                                     <BreadcrumbPage>{formattedSegment}</BreadcrumbPage>
                                 ) : (
-                                    <BreadcrumbLink href={href}>{formattedSegment}</BreadcrumbLink>
+                                    <BreadcrumbLink href={`${index === 0 ? firstPage : href}`}>{formattedSegment}</BreadcrumbLink>
                                 )}
                             </BreadcrumbItem>
                         </React.Fragment>

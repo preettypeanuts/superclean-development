@@ -3,7 +3,7 @@
 import * as React from "react"
 import { DropdownMenuCheckboxItemProps } from "@radix-ui/react-dropdown-menu"
 import { Button } from "./ui/button"
-import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu"
+import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu"
 import { LuListFilter } from "react-icons/lu"
 
 type Checked = DropdownMenuCheckboxItemProps["checked"]
@@ -19,7 +19,6 @@ export function DropdownMenuCheckboxes() {
                 <Button icon={<LuListFilter size={16} />} iconPosition="left" variant="outline">Filter</Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56 border-none">
-                <DropdownMenuLabel>Filter</DropdownMenuLabel>
                 <DropdownMenuSeparator className="bg-transparent" />
                 <DropdownMenuCheckboxItem
                     checked={showStatusBar}

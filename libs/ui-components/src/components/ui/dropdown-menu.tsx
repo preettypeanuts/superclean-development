@@ -111,12 +111,12 @@ const DropdownMenuCheckboxItem = React.forwardRef<
     checked={checked}
     {...props}
   >
+    {children}
     <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
       <DropdownMenuPrimitive.ItemIndicator>
         <CheckIcon className="h-4 w-4" />
       </DropdownMenuPrimitive.ItemIndicator>
     </span>
-    {children}
   </DropdownMenuPrimitive.CheckboxItem>
 ));
 DropdownMenuCheckboxItem.displayName =
@@ -153,7 +153,7 @@ const DropdownMenuLabel = React.forwardRef<
   <DropdownMenuPrimitive.Label
     ref={ref}
     className={cn(
-      'px-3 py-3 text-sm font-semibold bg-mainColor/50 -m-1',
+      'block px-3 py-1 bg-mainColor/20 border border-white/50 dark:border-neutral-500/50 rounded-xl capitalize font-bold text-sm',
       inset && 'pl-8',
       className
     )}

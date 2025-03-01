@@ -20,7 +20,7 @@ export default function DetailKaryawan() {
     const detailKaryawan = dataKaryawan.find(karyawan => slugify(karyawan.name) === id);
 
     return (
-        <Wrapper className='h-fit !min-h-fit shadow-mainShadow'>
+        <Wrapper>
             <Header label={`Edit Profil ${detailKaryawan ? detailKaryawan.name : ""}`} />
             {detailKaryawan && (
                 <form className='space-y-4'>

@@ -7,16 +7,23 @@ import { IoIosArrowDown } from "react-icons/io";
 import { SiCcleaner } from "react-icons/si";
 import { TbLayoutSidebarLeftExpandFilled, TbLayoutSidebarRightExpandFilled } from "react-icons/tb";
 import { usePathname } from "next/navigation";
+import Link from "next/link";
 
 export const Sidebar = () => {
     const [isExpanded, setIsExpanded] = useState(true);
     const [openSubmenus, setOpenSubmenus] = useState<{ [key: string]: boolean }>({});
 
     const path = usePathname();
-
     const noNavigation = ["/login", "/forgot-password", "/reset-password"];
 
-    const toggleSidebar = () => setIsExpanded((prev) => !prev);
+    const toggleSidebar = () => {
+        setIsExpanded((prev) => {
+            const newState = !prev;
+            localStorage.setItem("isExpanded", JSON.stringify(newState));
+            return newState;
+        });
+    };
+
     const toggleSubmenu = (label: string) => {
         setOpenSubmenus((prev) => {
             const updatedState = { ...prev, [label]: !prev[label] };
@@ -25,22 +32,23 @@ export const Sidebar = () => {
         });
     };
 
-    // Load saved submenu states on mount
     useEffect(() => {
+        const storedExpanded = localStorage.getItem("isExpanded");
+        if (storedExpanded !== null) {
+            setIsExpanded(JSON.parse(storedExpanded));
+        }
         const storedSubmenus = localStorage.getItem("openSubmenus");
         if (storedSubmenus) {
             setOpenSubmenus(JSON.parse(storedSubmenus));
         }
     }, []);
 
-    // Ensure submenu stays open on page refresh or navigation
     useEffect(() => {
         const storedSubmenus = localStorage.getItem("openSubmenus");
         if (storedSubmenus) {
             setOpenSubmenus(JSON.parse(storedSubmenus));
         }
-    }, [path]); // Update when path changes
-
+    }, [path]);
 
     return (
         <nav
@@ -81,7 +89,7 @@ export const Sidebar = () => {
                     {Object.entries(navigationItems).map(([key, section]) => (
                         <div key={key}>
                             {/* Section Title */}
-                            <p className={`${!isExpanded && "w-full h-[1px] bg-neutral-500/30 rounded-full mb-3"} text-neutral-400 text-[10px] uppercase tracking-wide font-semibold px-3`}>
+                            <p className={`${!isExpanded && "w-full h-[1px] bg-neutral-500/30 rounded-full mb-3"} text-neutral-400 text-[10px] uppercase tracking-wide font-semibold px-3 pb-1`}>
                                 <span className={`${!isExpanded && "hidden"}`}>
                                     {section.label}
                                 </span>
@@ -94,14 +102,18 @@ export const Sidebar = () => {
                                         <div tabIndex={idx} className="flex flex-col">
                                             {/* Main Menu Item */}
                                             {!item.subs?.length ? (
-                                                <a
+                                                <Link
                                                     href={item.path}
                                                     className={`capitalize py-2 px-3 rounded-xl hover:bg-mainColor/50 duration-150 flex items-center gap-2 w-full 
+                                                                ${path === item.path ? "bg-mainColor/50 dark:bg-mainColor/30" : ""} 
                                                                 ${!isExpanded ? "justify-center w-9 h-9 p-5 mx-auto" : "justify-start"}`}
                                                 >
                                                     {item.icon}
-                                                    <span className={`${isExpanded ? "block" : "hidden"} capitalize`}>{item.label}</span>
-                                                </a>
+                                                    <span className={`${isExpanded ? "block" : "hidden"} capitalize`}>
+                                                        {item.label}
+                                                    </span>
+                                                </Link>
+
                                             ) : (
                                                 /* Jika ada submenu → Gunakan <button> */
                                                 <button
@@ -152,13 +164,13 @@ export const Sidebar = () => {
                                             {/* Submenu on hover (minimize) */}
                                             {item.subs.length > 0 && !isExpanded && (
                                                 <ul tabIndex={idx} className="ml-1 dropdown-content menu bg-baseLight dark:bg-baseDark rounded-box !z-[999] w-56 p-2 shadow">
-                                                    <p className="block px-6 py-3 bg-mainColor/50 -m-2 rounded-t-box capitalize mb-2 font-bold text-sm">{item.label}</p>
+                                                    <p className="block px-3 py-2 -m-1 bg-mainColor/20 border border-white/50 dark:border-neutral-500/50 rounded-xl capitalize mb-2 font-bold text-sm">{item.label}</p>
                                                     {item.subs.map((sub, subIdx) => (
                                                         <li key={subIdx}
                                                         >
                                                             <a
                                                                 href={sub.path}
-                                                                className="capitalize group text-neutral-600 dark:text-neutral-300"
+                                                                className={`${path.startsWith(sub.path) && "bg-mainColor/50 dark:bg-mainColor/30"} capitalize group text-neutral-600 dark:text-neutral-300`}
                                                             >
                                                                 {sub.name}
                                                             </a>
