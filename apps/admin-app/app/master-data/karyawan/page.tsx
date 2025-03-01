@@ -16,80 +16,90 @@ export const dataKaryawan = [
         id: 1,
         userName: "johndoe",
         name: "John Doe",
-        cabang: "Jabodetabek",
         phone: "081234567890",
+        aksesPengguna: "Admin",
+        cabang: "Kantor Pusat",
         status: "Aktif"
     },
     {
         id: 2,
         userName: "janesmith",
         name: "Jane Smith",
-        cabang: "Bandung",
         phone: "081298765432",
+        aksesPengguna: "Teknisi",
+        cabang: "Bandung",
         status: "Aktif"
     },
     {
         id: 3,
         userName: "michael87",
         name: "Michael Johnson",
-        cabang: "Jogja",
         phone: "081356789012",
+        aksesPengguna: "Teknisi",
+        cabang: "Jogja",
         status: "Nonaktif"
     },
     {
         id: 4,
         userName: "sarahw",
         name: "Sarah Williams",
-        cabang: "Surabaya",
         phone: "081267890345",
+        aksesPengguna: "Teknisi",
+        cabang: "Surabaya",
         status: "Aktif"
     },
     {
         id: 5,
         userName: "davidb",
         name: "David Brown",
-        cabang: "Semarang",
         phone: "081278901234",
+        aksesPengguna: "Teknisi",
+        cabang: "Semarang",
         status: "Nonaktif"
     },
     {
         id: 6,
         userName: "emilyj",
         name: "Emily Johnson",
-        cabang: "Jabodetabek",
         phone: "081289012345",
+        aksesPengguna: "Teknisi",
+        cabang: "Jabodetabek",
         status: "Aktif"
     },
     {
         id: 7,
         userName: "robertm",
         name: "Robert Martinez",
-        cabang: "Jabodetabek",
         phone: "081290123456",
+        aksesPengguna: "Admin",
+        cabang: "Kantor Pusat",
         status: "Nonaktif"
     },
     {
         id: 8,
         userName: "lisaw",
         name: "Lisa White",
-        cabang: "Jogja",
         phone: "081301234567",
+        aksesPengguna: "Teknisi",
+        cabang: "Jogja",
         status: "Aktif"
     },
     {
         id: 9,
         userName: "kevinh",
         name: "Kevin Harris",
-        cabang: "Jabodetabek",
         phone: "081312345678",
+        aksesPengguna: "Teknisi",
+        cabang: "Jabodetabek",
         status: "Aktif"
     },
     {
         id: 10,
         userName: "amandat",
         name: "Amanda Taylor",
-        cabang: "Bandung",
         phone: "081323456789",
+        aksesPengguna: "Teknisi",
+        cabang: "Bandung",
         status: "Nonaktif"
     }
 ];
@@ -98,8 +108,9 @@ export const DataHeader = [
     { key: "id", label: "#" },
     { key: "userName", label: "Nama Pengguna" },
     { key: "name", label: "Nama" },
-    { key: "cabang", label: "Cabang" },
     { key: "phone", label: "No. WhatsApp" },
+    { key: "aksesPengguna", label: "Akses Pengguna" },
+    { key: "cabang", label: "Cabang" },
     { key: "status", label: "Status" },
     { key: "menu", label: "Aksi" },
 ];

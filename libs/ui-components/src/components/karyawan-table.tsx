@@ -13,6 +13,7 @@ interface Karyawan {
     id: number;
     userName: string;
     name: string;
+    aksesPengguna: string;
     phone: string;
     status: string;
 }
@@ -60,6 +61,10 @@ export const TableKaryawan: React.FC<DataTableProps> = ({ data, columns }) => {
                                     </div>
                                 ) : header.key === "status" ? (
                                     <p className={`badge dark:bg-opacity-70 rounded-md !font-medium border-0 ${mitra[header.key as keyof Karyawan] === "Aktif" ? "bg-green-500 text-green-100" : "bg-red-500 text-red-100"}`}>
+                                        {mitra[header.key as keyof Karyawan]}
+                                    </p>
+                                ) : header.key === "aksesPengguna" ? (
+                                    <p className={`badge dark:bg-opacity-70 rounded-md !font-medium border-0 ${mitra[header.key as keyof Karyawan] === "Admin" ? "bg-blue-500/20 text-blue-500" : "bg-mainColor/20 text-mainColor"}`}>
                                         {mitra[header.key as keyof Karyawan]}
                                     </p>
                                 ) : header.key === "userName" ? (
