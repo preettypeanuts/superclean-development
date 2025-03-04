@@ -1,19 +1,9 @@
-import { BarComponent } from "libs/ui-components/src/components/bar-chart";
-import { PieChartComponent } from "libs/ui-components/src/components/pie-chart";
-import { LineChartComponent } from "libs/ui-components/src/components/line-chart";
-import { RadialChartComponent } from "libs/ui-components/src/components/radial-chart";
+import { WidgetMetrix } from "@shared/components/WidgetMetrix";
 
-export default async function Index() {
+export default async function Dashboard() {
   return (
-    <>
-    <section className="flex flex-col gap-2 mb-3">
-      <div className="grid grid-cols-3 gap-2">
-        <BarComponent />
-        <PieChartComponent />
-        <RadialChartComponent/>
-      </div>
-      <LineChartComponent />
+    <section>
+      <WidgetMetrix />
     </section>
-    </>
   );
 }

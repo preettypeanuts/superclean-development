@@ -2,17 +2,6 @@
 import { BiSolidUpArrow } from "react-icons/bi";
 import { Card } from "../../../ui-components/src/components/ui/card";
 
-interface ChartProps {
-    label: string,
-    order: number,
-    percentage: number,
-    status: boolean
-}
-
-interface ChartOrderProps {
-    data: ChartProps[]
-}
-
 const DataOrders = [
     { id: 1, status: "Selesai" },
     { id: 2, status: "Sedang Proses" },
@@ -31,29 +20,35 @@ const getChartData = (orders: typeof DataOrders) => {
 
     const chartData = [
         {
-            label: "Total Order",
+            label: "Total SPK",
             order: totalOrders,
             percentage: 100,
             status: true
         },
         {
-            label: "Canceled Order",
-            order: countByStatus("Batal"),
-            percentage: (countByStatus("Batal") / totalOrders) * 100,
-            status: false
+            label: "Order Diselesaikan",
+            order: countByStatus("Selesai"),
+            percentage: (countByStatus("Selesai") / totalOrders) * 100,
+            status: true
         },
         {
-            label: "Ongoing Order",
+            label: "Orderan Berjalan",
             order: countByStatus("Sedang Proses"),
             percentage: (countByStatus("Sedang Proses") / totalOrders) * 100,
             status: true
         },
         {
-            label: "Fulfilled Order",
-            order: countByStatus("Selesai"),
-            percentage: (countByStatus("Selesai") / totalOrders) * 100,
+            label: "Menunggu Pembayaran",
+            order: countByStatus("Sedang Proses"),
+            percentage: (countByStatus("Sedang Proses") / totalOrders) * 100,
             status: true
-        }
+        },
+        {
+            label: "Orderan Dibatalkan",
+            order: countByStatus("Batal"),
+            percentage: (countByStatus("Batal") / totalOrders) * 100,
+            status: false
+        },
     ];
 
     return chartData;
@@ -63,9 +58,12 @@ export const ChartOrder = () => {
     const data = getChartData(DataOrders);
 
     return (
-        <section className="flex gap-5">
+        <section className="flex gap-2">
             {data.map((el, idx) => (
-                <Card key={idx} className="bg-white/70 dark:bg-black/30 p-5 w-fit space-y-3 rounded-2xl">
+                <Card 
+                    key={idx} 
+                    className={`p-5 w-fit space-y-3 rounded-3xl border border-white/50 dark:border-neutral-500/50 ${el.status ? 'bg-green-100' : 'bg-red-100'}`}
+                >
                     <span className="text-sm text-mainColor font-semibold">
                         {el.label}
                     </span>
