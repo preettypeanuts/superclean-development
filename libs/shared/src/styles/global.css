@@ -113,7 +113,7 @@ body {
 .gradient-blur-to-t {
   position: absolute;
   bottom: 0;
-  left: 0;
+left: 0;
   width: 100%;
   pointer-events: none;
   border-bottom-right-radius: -1.5rem;

@@ -188,10 +188,9 @@ export const Sidebar = () => {
                 </div>
 
                 {/* Absolute components */}
-                <div className={`absolute w-full ${!isExpanded && "hidden"} rounded-b-3xl h-[20%] bottom-0 bg-gradient-to-t from-mainColor/30 dark:from-mainColor/10 to-transparent z-[555] gradient-blur-to-t`} />
+                <div className={`absolute w-full ${!isExpanded && "hidden"} rounded-b-3xl h-[25%] bottom-0 bg-gradient-to-t from-mainColor/30 dark:from-mainColor/10 to-transparent z-[555] gradient-blur-to-t`} />
 
                 <div className={`${isExpanded ? "bottom-2 left-2 w-full pr-4" : "bottom-0 left-0 w-fit p-3"} z-[666] absolute space-y-2`}>
-                    <ThemeSwitch />
                     <div className={`${isExpanded ? "px-3 py-3 flex items-center gap-2 rounded-2xl hover:bg-mainColor/20 duration-150" : "flex justify-center pb-1"}  cursor-pointer`}>
                         <Image
                             width={50}
@@ -209,6 +208,7 @@ export const Sidebar = () => {
                             </p>
                         </div>
                     </div>
+                    <ThemeSwitch isExpanded={isExpanded} />
                 </div>
 
             </div>
