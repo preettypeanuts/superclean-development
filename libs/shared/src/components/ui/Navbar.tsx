@@ -21,7 +21,7 @@ export const Navbar = () => {
     };
 
     return (
-        <div className={`${noNavigation.includes(pathname) && "hidden"} navbar h-[50px] !min-h-[50px] z-50 px-3 mt-2`}>
+        <div className={`${noNavigation.includes(pathname) && "hidden"} navbar h-[50px] !min-h-[50px] z-50 pl-3 pr-2 mt-[2px]`}>
             <div className="flex-1">
                 <div className="breadcrumbs text-sm bg-white dark:bg-black shadow-mainShadow rounded-3xl px-4 py-1">
                     <ul>

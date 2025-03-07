@@ -22,7 +22,8 @@
       "@shared/*": ["libs/shared/src/*"],
       "@shared/data": ["libs/shared/src/data/index.ts"],
       "@ui-components/*": ["libs/ui-components/src/*"],
-      "@superclean-workspace/ui-components/*": ["libs/ui-components/src/*"]
+      "@superclean-workspace/ui-components/*": ["libs/ui-components/src/*"],
+      "@components/*": ["libs/components/src/*"]
     }
   },
   "exclude": ["node_modules", "tmp"]

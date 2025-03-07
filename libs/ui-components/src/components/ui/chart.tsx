@@ -146,7 +146,7 @@ const ChartTooltipContent = React.forwardRef<
 
       if (labelFormatter) {
         return (
-          <div className={cn("font-medium", labelClassName)}>
+          <div className={cn("font-medium space-x-2", labelClassName)}>
             {labelFormatter(value, payload)}
           </div>
         )
