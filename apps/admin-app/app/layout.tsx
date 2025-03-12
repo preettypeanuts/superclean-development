@@ -2,7 +2,6 @@ import '@superclean-workspace/shared/styles';
 import { ThemeProvider } from 'next-themes';
 import { Figtree } from "next/font/google";
 import { Sidebar } from "@shared/components/ui/Sidebar"
-import { Navbar } from "@shared/components/ui/Navbar"
 import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs"
 
 const fightree = Figtree({

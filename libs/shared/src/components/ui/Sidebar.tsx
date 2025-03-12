@@ -53,7 +53,7 @@ export const Sidebar = () => {
 
     return (
         <nav
-            className={`${isExpanded ? "w-64" : "w-[79px]"} ${noNavigation.includes(path) && "hidden"} sticky top-0 h-screen flex transition-all duration-300 z-[999]`}>
+            className={`${isExpanded ? "w-64" : "w-[79px]"} ${noNavigation.includes(path) && "hidden"} sticky top-0 h-screen flex transition-all duration-300 z-[100]`}>
             <div className={`w-full grow bg-mainColor/30 dark:bg-mainColor/20 rounded-3xl my-2 ml-2 flex flex-col relative shadow-mainShadow border border-white/50 dark:border-neutral-500/50 ${!isExpanded && "items-center"}`}>
                 {/* Header*/}
                 <div
@@ -190,7 +190,7 @@ export const Sidebar = () => {
                 {/* Absolute components */}
                 <div className={`absolute w-full ${!isExpanded && "hidden"} rounded-b-3xl h-[25%] bottom-0 bg-gradient-to-t from-mainColor/30 dark:from-mainColor/10 to-transparent z-[555] gradient-blur-to-t`} />
 
-                <div className={`${isExpanded ? "bottom-2 left-2 w-full pr-4" : "bottom-0 left-0 w-fit p-3"} z-[666] absolute space-y-2`}>
+                <div className={`${isExpanded ? "bottom-2 left-2 w-full pr-4" : "bottom-0 p-3"} z-[666] absolute space-y-2`}>
                     <div className={`${isExpanded ? "px-3 py-3 flex items-center gap-2 rounded-2xl hover:bg-mainColor/20 duration-150" : "flex justify-center pb-1"}  cursor-pointer`}>
                         <Image
                             width={50}

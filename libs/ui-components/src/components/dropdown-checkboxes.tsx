@@ -16,7 +16,7 @@ export function DropdownMenuCheckboxes() {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button icon={<LuListFilter size={16} />} iconPosition="left" variant="outline">Filter</Button>
+                <Button icon={<LuListFilter size={16} />} iconPosition="left" variant="outline">Status</Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56 border-none">
                 <DropdownMenuSeparator className="bg-transparent" />

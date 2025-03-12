@@ -126,6 +126,7 @@ export default function KaryawanPage() {
                     <div className="flex items-center gap-2">
                         <Input type="text" placeholder="Cari mitra..." className="w-[30lvw]" icon={<Search size={16} />} />
                         <DropdownMenuCheckboxes />
+                        <Button className="bg-mainColor/50" variant={"secondary"}>Cari</Button>
                     </div>
 
                     <Link

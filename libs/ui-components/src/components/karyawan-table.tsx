@@ -4,6 +4,15 @@ import { HiMiniPencilSquare } from "react-icons/hi2";
 import { IoMdTrash } from "react-icons/io";
 import slugify from "../../../utils/slugify"
 import Link from "next/link";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "./ui/dialog";
+
 interface TableHeader {
     key: string;
     label: string;
@@ -51,13 +60,42 @@ export const TableKaryawan: React.FC<DataTableProps> = ({ data, columns }) => {
                                                 <HiMiniPencilSquare />
                                             </Button>
                                         </Link>
-                                        <Button
-                                            size={"icon"}
-                                            variant={"default"}
-                                            className="bg-destructive/25 text-destructive border-destructive"
-                                        >
-                                            <IoMdTrash />
-                                        </Button>
+                                        <Dialog>
+                                            <DialogTrigger>
+                                                <Button
+                                                    size={"icon"}
+                                                    variant={"default"}
+                                                    className="bg-destructive/25 text-destructive border-destructive"
+                                                >
+                                                    <IoMdTrash />
+                                                </Button>
+                                            </DialogTrigger>
+                                            <DialogContent>
+                                                <DialogHeader className="flex items-center justify-center">
+                                                    <div className="text-5xl text-destructive bg-destructive-foreground/10 rounded-full p-2 w-fit mb-4" >
+                                                        <IoMdTrash />
+                                                    </div>
+                                                    <DialogTitle>Kamu yakin menghapus akun {mitra.name}?</DialogTitle>
+                                                    <DialogDescription className="text-center">
+                                                        Data akan terhapus permanent dan tidak dapat dikembalikan.
+                                                    </DialogDescription>
+                                                </DialogHeader>
+                                                <div className="flex gap-2">
+                                                    <Button
+                                                        variant="secondary"
+                                                        className="w-full"
+                                                    >
+                                                        Batal
+                                                    </Button>
+                                                    <Button
+                                                        variant="destructive"
+                                                        className="w-full"
+                                                    >
+                                                        Hapus
+                                                    </Button>
+                                                </div>
+                                            </DialogContent>
+                                        </Dialog>
                                     </div>
                                 ) : header.key === "status" ? (
                                     <p className={`badge dark:bg-opacity-70 rounded-md !font-medium border-0 ${mitra[header.key as keyof Karyawan] === "Aktif" ? "bg-green-500 text-green-100" : "bg-red-500 text-red-100"}`}>

@@ -13,24 +13,22 @@ export const ThemeSwitch = ({ isExpanded }: ThemeSwitchProps) => {
     <div
       data-tip={'Theme'}
       className="flex flex-col gap-2 w-full tooltip tooltip-right">
-        
-      <div className={`${isExpanded && "hidden"} flex items-center gap-1 p-1 bg-neutral-100/40 dark:bg-neutral-500/20 rounded-xl relative overflow-hidden`}>
-        <button
-          className={`${!isExpanded && theme === "light" ? "-translate-x-[200%]" : "translate-x-[9.5px]"} ease-in-out duration-300 w-full z-20 flex items-center justify-center py-1 rounded-lg ${theme === 'light' ? 'bg-mainColor/0' : ''}`}
-          onClick={() => setTheme('light')}
+
+      {/* Minimize mode */}
+      <button onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')} className={`${isExpanded && "hidden"} flex flex-col items-center h-[35px] p-1 rounded-xl bg-neutral-100/40 dark:bg-neutral-500/20 relative overflow-hidden`}>
+        <div
+          className={`${theme === "light" ? "-translate-y-[200%]" : "translate-y-[1.5px]"} ease-in-out duration-700 w-fit h-fit z-20 flex items-center justify-center py-1 rounded-lg ${theme === 'light' ? 'bg-mainColor/0' : ''}`}
         >
           <TbSunFilled className="text-md" />
-        </button>
-        <button
-          className={`${!isExpanded && theme === "dark" ? "translate-x-[200%]" : "-translate-x-[9.5px]"} ease-in-out duration-300 w-full z-20 flex items-center justify-center py-1 rounded-lg ${theme === 'dark' ? 'bg-mainColor/0' : ''}`}
-          onClick={() => setTheme('dark')}
+        </div>
+        <div
+          className={`${theme === "dark" ? "translate-y-[200%]" : "-translate-y-[23px]"} ease-in-out duration-700 w-fit h-fit z-20 flex items-center justify-center py-1 rounded-lg ${theme === 'dark' ? 'bg-mainColor/0' : ''}`}
         >
           <TbMoonFilled className="text-md" />
-        </button>
-        <div
-        />
-      </div>
+        </div>
+      </button>
 
+      {/* Expand Mode */}
       <div className={`${!isExpanded && "hidden"} flex items-center gap-1 p-1 bg-neutral-100/40 dark:bg-neutral-500/20 rounded-xl relative overflow-hidden`}>
         <button
           className={`duration-300 w-full z-20 flex items-center justify-center py-1 rounded-lg ${theme === 'light' ? 'bg-mainColor/0' : ''}`}
