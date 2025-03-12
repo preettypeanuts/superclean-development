@@ -20,10 +20,11 @@ interface TableHeader {
 
 interface Karyawan {
     id: number;
-    userName: string;
-    name: string;
-    aksesPengguna: string;
-    phone: string;
+    kodeLayanan: string;
+    namaLayanan: string;
+    kategori: string;
+    hargaVacuum: number;
+    hargaCuci: number;
     status: string;
 }
 
@@ -32,7 +33,7 @@ interface DataTableProps {
     columns: TableHeader[];
 }
 
-export const TableKaryawan: React.FC<DataTableProps> = ({ data, columns }) => {
+export const TableLayanan: React.FC<DataTableProps> = ({ data, columns }) => {
     return (
         <Table>
             <TableHeader>
@@ -46,12 +47,12 @@ export const TableKaryawan: React.FC<DataTableProps> = ({ data, columns }) => {
             </TableHeader>
             <TableBody>
                 {data.map((mitra, rowIndex) => (
-                    <TableRow key={mitra.id} className={rowIndex % 2 === 0 ? "" : "bg-neutral-300/20 dark:bg-neutral-500/20"}>
+                    <TableRow key={rowIndex} className={rowIndex % 2 === 0 ? "" : "bg-neutral-300/20 dark:bg-neutral-500/20"}>
                         {columns.map((header) => (
                             <TableCell key={header.key} className={`${header.key === "menu" && "!w-fit"}`}>
                                 {header.key === "menu" ? (
                                     <div className="w-fit flex gap-2">
-                                        <Link href={`/master-data/karyawan/edit/${slugify(mitra.name)}`}>
+                                        <Link href={`/master-data/karyawan/edit/${slugify(mitra.namaLayanan)}`}>
                                             <Button
                                                 size={"icon"}
                                                 variant={"default"}
@@ -61,15 +62,15 @@ export const TableKaryawan: React.FC<DataTableProps> = ({ data, columns }) => {
                                             </Button>
                                         </Link>
                                         <Dialog>
-                                                <DialogTrigger asChild>
-                                                    <Button
-                                                        size={"icon"}
-                                                        variant={"default"}
-                                                        className="bg-destructive/25 text-destructive border-destructive"
-                                                    >
-                                                        <IoMdTrash />
-                                                    </Button>
-                                                </DialogTrigger>
+                                            <DialogTrigger asChild>
+                                                <Button
+                                                    size={"icon"}
+                                                    variant={"default"}
+                                                    className="bg-destructive/25 text-destructive border-destructive"
+                                                >
+                                                    <IoMdTrash />
+                                                </Button>
+                                            </DialogTrigger>
                                             <DialogContent>
                                                 <DialogHeader className="flex items-center justify-center">
                                                     <div className="text-5xl text-destructive bg-destructive-foreground/10 rounded-full p-2 w-fit mb-4" >

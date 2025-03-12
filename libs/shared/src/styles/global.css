@@ -126,3 +126,42 @@ left: 0;
     rgba(255, 255, 255, 1) 100%
   );
 }
+
+
+.input-field{
+  height: calc(1.5em + 1rem + 2px);
+  padding: 0.5rem 1rem;
+  font-size: 1.25rem;
+  line-height: 1.5;
+  border-radius: 0.3rem;
+  display: block;
+  width: 40%;
+  font-weight: 400;
+  color: #495057;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 2px solid black;
+
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  color: rgba(0, 0, 0, 0);
+  opacity: 1;
+  display: block;
+  background-repeat:  no-repeat;
+  width: 15px;
+  height: 15px;
+  border-width: thin
+}
+input[type="date"]::-webkit-calendar-picker-indicator {
+  position: absolute;
+  left: 1%;
+}
+input::-webkit-datetime-edit-fields-wrapper {
+  position: relative;
+  left: 10%;
+}
+input::-webkit-datetime-edit {
+  position: relative;
+  left: 10%;
+}

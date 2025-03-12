@@ -127,7 +127,7 @@ export const Sidebar = () => {
                                                 >
                                                     <div className={` flex items-center gap-2 relative`}>
                                                         {item.subs.length > 0 && !isExpanded && (
-                                                            <div className={`${path.startsWith(item.path) && "!h-[14px] !left-[-23px] group-hover:translate-x-[15px]"} absolute left-[-8px] w-[3px] h-[3px] group-hover:h-[14px] duration-200 ease-in-out transition-all dark:bg-white bg-black rounded-full`}></div>
+                                                            <div className={`${path.startsWith(item.path) && "!h-[14px]"} absolute left-[-8px] w-[3px] h-[3px] group-hover:h-[14px] duration-200 ease-in-out transition-all dark:bg-white bg-black rounded-full`}></div>
                                                         )}
                                                         {item.icon}
                                                         <span className={`${isExpanded ? "block" : "hidden"} capitalize`}>{item.label}</span>

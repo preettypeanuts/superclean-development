@@ -19,12 +19,12 @@ export const ThemeSwitch = ({ isExpanded }: ThemeSwitchProps) => {
         <div
           className={`${theme === "light" ? "-translate-y-[200%]" : "translate-y-[1.5px]"} ease-in-out duration-700 w-fit h-fit z-20 flex items-center justify-center py-1 rounded-lg ${theme === 'light' ? 'bg-mainColor/0' : ''}`}
         >
-          <TbSunFilled className="text-md" />
+        <TbMoonFilled className="text-md" />
         </div>
         <div
           className={`${theme === "dark" ? "translate-y-[200%]" : "-translate-y-[23px]"} ease-in-out duration-700 w-fit h-fit z-20 flex items-center justify-center py-1 rounded-lg ${theme === 'dark' ? 'bg-mainColor/0' : ''}`}
         >
-          <TbMoonFilled className="text-md" />
+          <TbSunFilled className="text-md" />
         </div>
       </button>
 

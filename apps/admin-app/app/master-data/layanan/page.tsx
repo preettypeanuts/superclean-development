@@ -7,163 +7,141 @@ import { Button } from "libs/ui-components/src/components/ui/button";
 import { DropdownMenuCheckboxes } from "libs/ui-components/src/components/dropdown-checkboxes";
 import { LuPlus } from "react-icons/lu";
 import { Search } from "lucide-react";
-import { PiExport } from "react-icons/pi";
-import { Modal } from "@shared/components/Modal";
-import { NewOrderForm } from "libs/shared/src/components/neworder-form";
-import { DatePickerRange } from "libs/ui-components/src/components/date-picker-range"
-import { ChartOrder } from "libs/shared/src/components/ChartOrder"
 import { SelectData } from "libs/ui-components/src/components/select-data";
 import { PaginationNumber } from "libs/ui-components/src/components/pagination-number";
+import { TableLayanan } from "libs/ui-components/src/components/layanan-table"
+import Link from "next/link";
 
-const DataLayanan = [
+export const dataLayanan = [
   {
-    "id": 1,
-    "service_name": "Cleaning Sofa",
-    "description": "Layanan pembersihan sofa dengan metode deep cleaning untuk hasil maksimal.",
-    "price_start": 150000,
-    "duration": "60-90 menit",
-    "total_partners": 5,
-    "rating": 4.8,
-    "photo_url": "https://source.unsplash.com/400x300/?sofa,cleaning",
-    "partners": 5
+    id: 1,
+    kodeLayanan: "L001",
+    namaLayanan: "Vacuum Interior",
+    kategori: "Interior",
+    hargaVacuum: 50000,
+    hargaCuci: 20000,
+    status: "Aktif"
   },
   {
-    "id": 2,
-    "service_name": "Cuci Karpet",
-    "description": "Layanan pencucian karpet dengan teknologi modern agar bersih dan bebas kuman.",
-    "price_start": 100000,
-    "duration": "90-120 menit",
-    "total_partners": 4,
-    "rating": 4.7,
-    "photo_url": "https://source.unsplash.com/400x300/?carpet,cleaning",
-    "partners": 6
+    id: 2,
+    kodeLayanan: "L002",
+    namaLayanan: "Cuci Eksterior",
+    kategori: "Eksterior",
+    hargaVacuum: 25000,
+    hargaCuci: 30000,
+    status: "Aktif"
   },
   {
-    "id": 3,
-    "service_name": "Poles Lantai",
-    "description": "Layanan poles lantai untuk kilap maksimal dan tahan lama.",
-    "price_start": 200000,
-    "duration": "120-180 menit",
-    "total_partners": 3,
-    "rating": 4.9,
-    "photo_url": "https://source.unsplash.com/400x300/?floor,cleaning",
-    "partners": 7
+    id: 3,
+    kodeLayanan: "L003",
+    namaLayanan: "Cuci Komplit",
+    kategori: "Komplit",
+    hargaVacuum: 50000,
+    hargaCuci: 30000,
+    status: "Aktif"
+  },
+  {
+    id: 4,
+    kodeLayanan: "L004",
+    namaLayanan: "Poles Body",
+    kategori: "Eksterior",
+    hargaVacuum: 30000,
+    hargaCuci: 100000,
+    status: "Nonaktif"
+  },
+  {
+    id: 5,
+    kodeLayanan: "L005",
+    namaLayanan: "Salon Interior",
+    kategori: "Interior",
+    hargaVacuum: 150000,
+    hargaCuci: 50000,
+    status: "Aktif"
+  },
+  {
+    id: 6,
+    kodeLayanan: "L006",
+    namaLayanan: "Coating Body",
+    kategori: "Eksterior",
+    hargaVacuum: 0,
+    hargaCuci: 200000,
+    status: "Aktif"
+  },
+  {
+    id: 7,
+    kodeLayanan: "L007",
+    namaLayanan: "Cuci Mesin",
+    kategori: "Mesin",
+    hargaVacuum: 0,
+    hargaCuci: 75000,
+    status: "Aktif"
+  },
+  {
+    id: 8,
+    kodeLayanan: "L008",
+    namaLayanan: "Nano Ceramic",
+    kategori: "Eksterior",
+    hargaVacuum: 150000,
+    hargaCuci: 250000,
+    status: "Nonaktif"
+  },
+  {
+    id: 9,
+    kodeLayanan: "L009",
+    namaLayanan: "Fogging Interior",
+    kategori: "Interior",
+    hargaVacuum: 50000,
+    hargaCuci: 120000,
+    status: "Aktif"
+  },
+  {
+    id: 10,
+    kodeLayanan: "L010",
+    namaLayanan: "Detailing Komplit",
+    kategori: "Komplit",
+    hargaVacuum: 200000,
+    hargaCuci: 150000,
+    status: "Aktif"
   }
 ];
 
-
-const DataHeaderServices = [
-  { key: "select", label: "" },
-  { key: "id", label: "ID Layanan" },
-  { key: "service_name", label: "Nama Layanan" },
-  { key: "description", label: "Deskripsi" },
-  { key: "price_start", label: "Harga Mulai" },
-  { key: "duration", label: "Durasi" },
-  { key: "total_partners", label: "Jumlah Mitra" },
-  { key: "rating", label: "Rating" },
-  { key: "menu", label: "" }
+export const DataHeaderLayanan = [
+  { key: "id", label: "#" },
+  { key: "kodeLayanan", label: "Kode Layanan" },
+  { key: "namaLayanan", label: "Nama Layanan" },
+  { key: "kategori", label: "Kategori" },
+  { key: "hargaVacuum", label: "Harga Vacuum" },
+  { key: "hargaCuci", label: "Harga Cuci" },
+  { key: "status", label: "Status" },
+  { key: "menu", label: "Aksi" },
 ];
-
-
-const newOrderForm = [
-  {
-    label: "Nama Pelanggan",
-    name: "name",
-    type: "text",
-    placeholder: "Masukkan nama pelanggan",
-    required: true,
-  },
-  {
-    label: "Email",
-    name: "email",
-    type: "email",
-    placeholder: "Masukkan email pelanggan",
-    required: true,
-  },
-  {
-    label: "Phone",
-    name: "phone",
-    type: "text",
-    placeholder: "Masukkan nomor telepon",
-    required: true,
-  },
-  {
-    label: "Status",
-    name: "status",
-    type: "select",
-    placeholder: "Pilih status",
-    required: true,
-    options: [
-      { label: "Aktif", value: "aktif" },
-      { label: "Nonaktif", value: "nonaktif" },
-    ],
-  },
-  {
-    label: "Rating",
-    name: "rating",
-    type: "number",
-    placeholder: "Masukkan rating",
-    required: false,
-  },
-  {
-    label: "Completed Orders",
-    name: "completedOrder",
-    type: "number",
-    placeholder: "Jumlah pesanan selesai",
-    required: false,
-  },
-  {
-    label: "Joined Date",
-    name: "joinDate",
-    type: "text",
-    placeholder: "Tanggal bergabung",
-    required: true,
-  },
-  {
-    label: "Location",
-    name: "location",
-    type: "text",
-    placeholder: "Masukkan lokasi",
-    required: true,
-  },
-];
-
-
 
 export default function LayananPage() {
   return (
     <Wrapper>
-      <Header
-        label="Daftar Layanan"
-        desc="Jelajahi berbagai layanan yang tersedia untuk memenuhi kebutuhan Anda."
-      />
-      <div className="flex flex-col grow items-start gap-2">
-        <div className="flex w-full items-center space-x-2">
-          <Input type="text" placeholder="Cari pesanan..." icon={<Search size={16} />} />
+      <Header label={"Daftar Layanan"} count={dataLayanan.length} />
+      <div className="flex-grow"></div>
+      <div className="flex items-center justify-between mb-4 gap-2">
+        <div className="flex items-center gap-2">
+          <Input type="text" placeholder="Cari layanan..." className="w-[30lvw]" icon={<Search size={16} />} />
           <DropdownMenuCheckboxes />
-          <Button variant="outline">
-            <PiExport />
-            Export Data
-          </Button>
+          <Button className="bg-mainColor/50" variant={"secondary"}>Cari</Button>
+        </div>
+        <Link href="layanan/baru">
           <Button
-            onClick={() => {
-              const modal = document.getElementById('new-order') as HTMLDialogElement | null; if (modal) { modal.showModal(); }
-            }}
             icon={<LuPlus size={16} />}
             className="pl-2 pr-4"
             iconPosition="left"
             variant="default"
-            type="submit">
-            Tambah Pesanan
+            type="submit"
+          >
+            Tambah Layanan
           </Button>
-        </div>
-        {/* <DataTable data={DataLayanan} columns={DataHeaderServices} /> */}
+        </Link>
       </div>
-      <Modal id="new-order">
-        <NewOrderForm data={newOrderForm} />
-      </Modal>
-      <div className="flex items-center justify-between mt-auto">
-        <SelectData label={"Data Per halaman"} />
+      <TableLayanan data={dataLayanan} columns={DataHeaderLayanan} />
+      <div className="flex items-center justify-between mt-4">
+        <SelectData label="Data Per halaman" />
         <PaginationNumber />
       </div>
     </Wrapper>
