@@ -1,7 +1,6 @@
 "use client"
 import { Header } from "@shared/components/Header";
 import { Wrapper } from "@shared/components/Wrapper";
-// import { DataTable } from "libs/ui-components/src/components/data-table";
 import { Input } from "libs/ui-components/src/components/ui/input";
 import { Button } from "libs/ui-components/src/components/ui/button";
 import { DropdownMenuCheckboxes } from "libs/ui-components/src/components/dropdown-checkboxes";
@@ -120,26 +119,27 @@ export default function LayananPage() {
   return (
     <Wrapper>
       <Header label={"Daftar Layanan"} count={dataLayanan.length} />
-      <div className="flex-grow"></div>
-      <div className="flex items-center justify-between mb-4 gap-2">
-        <div className="flex items-center gap-2">
-          <Input type="text" placeholder="Cari layanan..." className="w-[30lvw]" icon={<Search size={16} />} />
-          <DropdownMenuCheckboxes />
-          <Button className="bg-mainColor/50" variant={"secondary"}>Cari</Button>
+      <div className="flex-grow">
+        <div className="flex items-center justify-between mb-4 gap-2">
+          <div className="flex items-center gap-2">
+            <Input type="text" placeholder="Cari layanan..." className="w-[30lvw]" icon={<Search size={16} />} />
+            <DropdownMenuCheckboxes />
+            <Button className="bg-mainColor/50" variant={"secondary"}>Cari</Button>
+          </div>
+          <Link href="layanan/baru">
+            <Button
+              icon={<LuPlus size={16} />}
+              className="pl-2 pr-4"
+              iconPosition="left"
+              variant="default"
+              type="submit"
+            >
+              Tambah Layanan
+            </Button>
+          </Link>
         </div>
-        <Link href="layanan/baru">
-          <Button
-            icon={<LuPlus size={16} />}
-            className="pl-2 pr-4"
-            iconPosition="left"
-            variant="default"
-            type="submit"
-          >
-            Tambah Layanan
-          </Button>
-        </Link>
-      </div>
       <TableLayanan data={dataLayanan} columns={DataHeaderLayanan} />
+      </div>
       <div className="flex items-center justify-between mt-4">
         <SelectData label="Data Per halaman" />
         <PaginationNumber />

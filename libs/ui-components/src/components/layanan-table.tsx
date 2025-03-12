@@ -6,12 +6,14 @@ import slugify from "../../../utils/slugify"
 import Link from "next/link";
 import {
     Dialog,
+    DialogClose,
     DialogContent,
     DialogDescription,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
 } from "./ui/dialog";
+import { formatRupiah } from "../../../utils/formatRupiah";
 
 interface TableHeader {
     key: string;
@@ -46,13 +48,13 @@ export const TableLayanan: React.FC<DataTableProps> = ({ data, columns }) => {
                 </TableRow>
             </TableHeader>
             <TableBody>
-                {data.map((mitra, rowIndex) => (
+                {data.map((el, rowIndex) => (
                     <TableRow key={rowIndex} className={rowIndex % 2 === 0 ? "" : "bg-neutral-300/20 dark:bg-neutral-500/20"}>
                         {columns.map((header) => (
                             <TableCell key={header.key} className={`${header.key === "menu" && "!w-fit"}`}>
                                 {header.key === "menu" ? (
                                     <div className="w-fit flex gap-2">
-                                        <Link href={`/master-data/karyawan/edit/${slugify(mitra.namaLayanan)}`}>
+                                        <Link href={`/master-data/layanan/edit/${slugify(el.namaLayanan)}`}>
                                             <Button
                                                 size={"icon"}
                                                 variant={"default"}
@@ -76,18 +78,20 @@ export const TableLayanan: React.FC<DataTableProps> = ({ data, columns }) => {
                                                     <div className="text-5xl text-destructive bg-destructive-foreground/10 rounded-full p-2 w-fit mb-4" >
                                                         <IoMdTrash />
                                                     </div>
-                                                    <DialogTitle>Kamu yakin menghapus akun {mitra.name}?</DialogTitle>
+                                                    <DialogTitle>Kamu yakin menghapus Layanan  {el.namaLayanan} {el.kodeLayanan}?</DialogTitle>
                                                     <DialogDescription className="text-center">
                                                         Data akan terhapus permanent dan tidak dapat dikembalikan.
                                                     </DialogDescription>
                                                 </DialogHeader>
                                                 <div className="flex gap-2">
-                                                    <Button
-                                                        variant="secondary"
-                                                        className="w-full"
-                                                    >
-                                                        Batal
-                                                    </Button>
+                                                    <DialogClose className="w-full">
+                                                        <Button
+                                                            variant="secondary"
+                                                            className="w-full"
+                                                        >
+                                                            Batal
+                                                        </Button>
+                                                    </DialogClose>
                                                     <Button
                                                         variant="destructive"
                                                         className="w-full"
@@ -99,20 +103,20 @@ export const TableLayanan: React.FC<DataTableProps> = ({ data, columns }) => {
                                         </Dialog>
                                     </div>
                                 ) : header.key === "status" ? (
-                                    <p className={`badge dark:bg-opacity-70 rounded-md !font-medium border-0 ${mitra[header.key as keyof Karyawan] === "Aktif" ? "bg-green-500 text-green-100" : "bg-red-500 text-red-100"}`}>
-                                        {mitra[header.key as keyof Karyawan]}
+                                    <p className={`badge dark:bg-opacity-70 rounded-md !font-medium border-0 ${el[header.key as keyof Karyawan] === "Aktif" ? "bg-green-500 text-green-100" : "bg-red-500 text-red-100"}`}>
+                                        {el[header.key as keyof Karyawan]}
                                     </p>
-                                ) : header.key === "aksesPengguna" ? (
-                                    <p className={`badge dark:bg-opacity-70 rounded-md !font-medium border-0 ${mitra[header.key as keyof Karyawan] === "Admin" ? "bg-blue-500/20 text-blue-500" : "bg-mainColor/20 text-mainColor"}`}>
-                                        {mitra[header.key as keyof Karyawan]}
+                                ) : header.key === "hargaVacuum" || header.key === "hargaCuci" ? (
+                                    <p>
+                                        {typeof el[header.key as keyof Karyawan] === 'number' ? formatRupiah(el[header.key as keyof Karyawan] as number) : el[header.key as keyof Karyawan]}
                                     </p>
-                                ) : header.key === "userName" ? (
+                                ) : header.key === "namaLayanan" ? (
                                     <div className="flex items-center">
-                                        <span className={`mr-2 ${mitra["status"] === "Aktif" ? "bg-green-500" : "bg-red-500"} rounded-full w-[6px] h-[6px]`}></span>
-                                        <p>{mitra[header.key as keyof Karyawan]}</p>
+                                        <span className={`mr-2 ${el["status"] === "Aktif" ? "bg-green-500" : "bg-red-500"} rounded-full w-[6px] h-[6px]`}></span>
+                                        <p>{el[header.key as keyof Karyawan]}</p>
                                     </div>
                                 ) : (
-                                    mitra[header.key as keyof Karyawan]
+                                    el[header.key as keyof Karyawan]
                                 )}
                             </TableCell>
                         ))}
