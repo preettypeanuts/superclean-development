@@ -26,9 +26,9 @@ export default function RootLayout({
       >
         <ThemeProvider enableSystem={true} defaultTheme='system' attribute="class">
           <Sidebar />
-          <section className='flex flex-col w-full h-full pt-[8px]'>
+          <section className='flex flex-col max-h-[98lvh] h-[98lvh] w-full min-h-0 pt-[8px]'>
             <Breadcrumbs />
-            <main className='px-2 pb-2'>
+            <main className='px-2 pb-2 flex-grow min-h-0'>
               {children}
             </main>
           </section>

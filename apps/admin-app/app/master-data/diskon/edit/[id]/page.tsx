@@ -2,7 +2,7 @@
 import { usePathname } from 'next/navigation';
 import { Header } from "@shared/components/Header";
 import { Wrapper } from "@shared/components/Wrapper";
-import { dataPelanggan } from "../../page";
+import { discountData } from "../../page";
 import slugify from "libs/utils/slugify"
 import { Input } from "libs/ui-components/src/components/ui/input";
 import { Label } from "libs/ui-components/src/components/ui/label";
@@ -12,73 +12,64 @@ import { useRouter } from 'next/navigation';
 import { LuSave } from "react-icons/lu";
 import { TbCancel } from "react-icons/tb";
 
-export default function EditPelanggan() {
+export default function EditDiskon() {
     const pathname = usePathname();
     const id = pathname.split('/').pop();
     const router = useRouter();
 
-    const detailPelanggan = dataPelanggan.find(pelanggan => slugify(pelanggan.name) === id);
+    const detailDiskon = discountData.find(diskon => slugify(diskon.namaDiskon) === id);
 
     return (
         <Wrapper>
-            <Header label={`Edit Profil ${detailPelanggan ? detailPelanggan.name : ""}`} />
-            {detailPelanggan && (
+            <Header label={`Edit Diskon ${detailDiskon ? detailDiskon.namaDiskon : ""}`} />
+            {detailDiskon && (
                 <form className='space-y-4'>
                     <div className="flex items-center space-x-4">
-                        <Label htmlFor="name" className="w-1/4 font-semibold">Name</Label>
-                        <Input id="name" defaultValue={detailPelanggan.name} />
+                        <Label htmlFor="kodeDiskon" className="w-1/4 font-semibold">Kode Diskon</Label>
+                        <Input id="kodeDiskon" defaultValue={detailDiskon.kodeDiskon} />
                     </div>
                     <div className="flex items-center space-x-4">
-                        <Label htmlFor="phone" className="w-1/4 font-semibold">Phone</Label>
-                        <Input type='text' id="phone" defaultValue={detailPelanggan.phone} />
+                        <Label htmlFor="namaDiskon" className="w-1/4 font-semibold">Nama Diskon</Label>
+                        <Input type='text' id="namaDiskon" defaultValue={detailDiskon.namaDiskon} />
                     </div>
                     <div className="flex items-center space-x-4">
-                        <Label htmlFor="alamat" className="w-1/4 font-semibold">Alamat</Label>
-                        <Input type='text' id="alamat" defaultValue={detailPelanggan.alamat} />
+                        <Label htmlFor="potonganHarga" className="w-1/4 font-semibold">Potongan Harga</Label>
+                        <Input type='text' id="potonganHarga" defaultValue={detailDiskon.potonganHarga} />
                     </div>
                     <div className="flex items-center space-x-4">
-                        <Label htmlFor="provinsi" className="w-1/4 font-semibold">Provinsi</Label>
-                        <Input type='text' id="provinsi" defaultValue={detailPelanggan.provinsi} />
+                        <Label htmlFor="layanan" className="w-1/4 font-semibold">Layanan</Label>
+                        <Input type='text' id="layanan" defaultValue={detailDiskon.layanan} />
                     </div>
                     <div className="flex items-center space-x-4">
-                        <Label htmlFor="kota" className="w-1/4 font-semibold">Kota</Label>
-                        <Input type='text' id="kota" defaultValue={detailPelanggan.kota} />
+                        <Label htmlFor="minimal" className="w-1/4 font-semibold">Minimal Item</Label>
+                        <Input type='number' id="minimal" defaultValue={detailDiskon.minimal} />
                     </div>
                     <div className="flex items-center space-x-4">
-                        <Label htmlFor="kecamatan" className="w-1/4 font-semibold">Kecamatan</Label>
-                        <Input type='text' id="kecamatan" defaultValue={detailPelanggan.kecamatan} />
+                        <Label htmlFor="masaBerlaku" className="w-1/4 font-semibold">Masa Berlaku</Label>
+                        <Input type='text' id="masaBerlaku" defaultValue={detailDiskon.masaBerlaku} />
                     </div>
                     <div className="flex items-center space-x-4">
-                        <Label htmlFor="kodePos" className="w-1/4 font-semibold">Kode Pos</Label>
-                        <Input type='text' id="kodePos" defaultValue={detailPelanggan.kodePos} />
+                        <Label htmlFor="category" className="w-1/4 font-semibold">Category</Label>
+                        <Input type='text' id="category" defaultValue={detailDiskon.category} />
                     </div>
                     <div className="flex items-center space-x-4">
-                        <Label htmlFor="tanggalDaftar" className="w-1/4 font-semibold">Tanggal Daftar</Label>
-                        <Input type='text' id="tanggalDaftar" defaultValue={detailPelanggan.tanggalDaftar} disabled />
-                    </div>
-                    <div className="flex items-center space-x-4">
-                        <Label htmlFor="didaftarkanOleh" className="w-1/4 font-semibold">Didaftarkan Oleh</Label>
-                        <Input type='text' id="didaftarkanOleh" defaultValue={detailPelanggan.didaftarkanOleh} disabled />
-                    </div>
-                    <div className="flex items-center space-x-4">
-                        <Label htmlFor="status" className="w-1/4 font-semibold">Status</Label>
-                        <Select >
+                        <Label htmlFor="status" className="w-1/4 font-semibold">Satuan</Label>
+                        <Select>
                             <SelectTrigger className="w-full">
-                                <SelectValue placeholder={detailPelanggan.status} />
+                                <SelectValue placeholder={detailDiskon.category} />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectGroup>
-                                    <SelectLabel>Ubah status pelanggan</SelectLabel>
-                                    <SelectItem value="aktif">Aktif</SelectItem>
-                                    <SelectItem value="non-aktif">Non-Aktif</SelectItem>
-                                </SelectGroup>
+                                {discountData.map((disc, index) => (
+                                    <SelectItem key={index} value="aktif">{disc.category}</SelectItem>
+                                ))}
                             </SelectContent>
                         </Select>
                     </div>
                     <div className="flex items-center space-x-4">
                         <div className="w-1/4"></div>
                         <div className=" space-x-2 flex w-full">
-                            <Button type="button" variant={"destructive"} className="text-foreground w-[10lvw]" onClick={() => router.push('/master-data/pelanggan')}>
+
+                            <Button type="button" variant={"destructive"} className="text-foreground w-[10lvw]" onClick={() => router.push('/master-data/diskon')}>
                                 <TbCancel />
                                 Batal
                             </Button>

@@ -1,17 +1,13 @@
 "use client"
 import { Header } from "@shared/components/Header";
 import { Wrapper } from "@shared/components/Wrapper";
-// import { DataTable } from "libs/ui-components/src/components/data-table";
 import { Input } from "libs/ui-components/src/components/ui/input";
 import { Button } from "libs/ui-components/src/components/ui/button";
 import { DropdownMenuCheckboxes } from "libs/ui-components/src/components/dropdown-checkboxes";
 import { LuPlus } from "react-icons/lu";
 import { Search } from "lucide-react";
-import { PiExport } from "react-icons/pi";
 import { SelectData } from "libs/ui-components/src/components/select-data";
 import { PaginationNumber } from "libs/ui-components/src/components/pagination-number";
-import { Modal } from "@shared/components/Modal";
-import { Label } from "libs/ui-components/src/components/ui/label";
 import { TablePelanggan } from "libs/ui-components/src/components/table-pelanggan"
 import Link from "next/link";
 
@@ -27,7 +23,7 @@ export const dataPelanggan = [
     kodePos: "40171",
     tanggalDaftar: "2024-01-15",
     didaftarkanOleh: "Admin",
-    status: "Aktif"
+    status: true
   },
   {
     id: 2,
@@ -40,7 +36,7 @@ export const dataPelanggan = [
     kodePos: "50257",
     tanggalDaftar: "2024-01-20",
     didaftarkanOleh: "Admin",
-    status: "Aktif"
+    status: true
   },
   {
     id: 3,
@@ -53,7 +49,7 @@ export const dataPelanggan = [
     kodePos: "10310",
     tanggalDaftar: "2024-02-05",
     didaftarkanOleh: "Sales",
-    status: "Aktif"
+    status: true
   },
   {
     id: 4,
@@ -66,7 +62,7 @@ export const dataPelanggan = [
     kodePos: "60281",
     tanggalDaftar: "2024-02-10",
     didaftarkanOleh: "Marketing",
-    status: "Nonaktif"
+    status: false
   },
   {
     id: 5,
@@ -79,7 +75,7 @@ export const dataPelanggan = [
     kodePos: "80119",
     tanggalDaftar: "2024-02-15",
     didaftarkanOleh: "Admin",
-    status: "Aktif"
+    status: true
   },
   {
     id: 6,
@@ -92,7 +88,7 @@ export const dataPelanggan = [
     kodePos: "40132",
     tanggalDaftar: "2024-02-18",
     didaftarkanOleh: "Sales",
-    status: "Nonaktif"
+    status: false
   },
   {
     id: 7,
@@ -105,7 +101,7 @@ export const dataPelanggan = [
     kodePos: "20112",
     tanggalDaftar: "2024-02-20",
     didaftarkanOleh: "Marketing",
-    status: "Aktif"
+    status: true
   },
   {
     id: 8,
@@ -118,7 +114,7 @@ export const dataPelanggan = [
     kodePos: "55212",
     tanggalDaftar: "2024-02-25",
     didaftarkanOleh: "Admin",
-    status: "Aktif"
+    status: true
   },
   {
     id: 9,
@@ -131,7 +127,7 @@ export const dataPelanggan = [
     kodePos: "65119",
     tanggalDaftar: "2024-03-01",
     didaftarkanOleh: "Sales",
-    status: "Nonaktif"
+    status: false
   },
   {
     id: 10,
@@ -144,7 +140,7 @@ export const dataPelanggan = [
     kodePos: "40111",
     tanggalDaftar: "2024-03-05",
     didaftarkanOleh: "Marketing",
-    status: "Aktif"
+    status: true
   }
 ];
 
@@ -168,7 +164,7 @@ export default function PelangganPage() {
           <div className="flex items-center gap-2">
             <Input type="text" placeholder="Cari pelanggan..." className="w-[30lvw]" icon={<Search size={16} />} />
             <DropdownMenuCheckboxes />
-            <Button className="bg-mainColor/50" variant={"secondary"}>Cari</Button>
+            <Button variant={"secondary"}>Cari</Button>
           </div>
 
           <Link

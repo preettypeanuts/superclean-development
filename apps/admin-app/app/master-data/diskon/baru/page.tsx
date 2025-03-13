@@ -2,73 +2,47 @@
 
 import { Wrapper } from "@shared/components/Wrapper";
 import { Header } from "@shared/components/Header";
-import slugify from "libs/utils/slugify"
 import { Input } from "libs/ui-components/src/components/ui/input";
 import { Label } from "libs/ui-components/src/components/ui/label";
 import { Button } from "libs/ui-components/src/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectGroup, SelectLabel } from "libs/ui-components/src/components/ui/select"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectGroup } from "libs/ui-components/src/components/ui/select";
 import { LuSave } from "react-icons/lu";
 import { TbCancel } from "react-icons/tb";
 import { Textarea } from "@ui-components/components/ui/textarea";
-export default function NewPelanggan() {
+
+export default function NewDiscount() {
     return (
         <Wrapper>
-            <Header label={`Tambah Pelanggan Baru`} />
+            <Header label={`Tambah Diskon Baru`} />
             <form className='space-y-4'>
                 <div className="flex items-center space-x-4">
-                    <Label htmlFor="userName" className="w-1/4 font-semibold">Nama Lengkap</Label>
-                    <Input placeholder="Masukkan Nama Lengkap" id="namaLengkap" />
+                    <Label htmlFor="kodeDiskon" className="w-1/4 font-semibold">Kode Diskon</Label>
+                    <Input placeholder="Masukkan Kode Diskon" id="kodeDiskon" />
                 </div>
                 <div className="flex items-center space-x-4">
-                    <Label htmlFor="phone" className="w-1/4 font-semibold">No. Whatsapp</Label>
-                    <Input placeholder="Masukkan nomor Whatsapp" type='text' id="wa" />
+                    <Label htmlFor="namaDiskon" className="w-1/4 font-semibold">Nama Diskon</Label>
+                    <Input placeholder="Masukkan Nama Diskon" id="namaDiskon" />
                 </div>
                 <div className="flex items-center space-x-4">
-                    <Label htmlFor="phone" className="w-1/4 font-semibold">Alamat</Label>
-                    <Textarea placeholder="Masukkan alamat" id="wa" />
+                    <Label htmlFor="potonganHarga" className="w-1/4 font-semibold">Potongan Harga</Label>
+                    <Input placeholder="Masukkan Potongan Harga" type='number' id="potonganHarga" />
                 </div>
                 <div className="flex items-center space-x-4">
-                    <Label htmlFor="phone" className="w-1/4 font-semibold">Provinsi</Label>
-                    <Input placeholder="Masukkan Provinsi" type='text' id="wa" />
+                    <Label htmlFor="category" className="w-1/4 font-semibold">Kategori</Label>
+                    <Input placeholder="Masukkan Kategori" id="category" />
                 </div>
                 <div className="flex items-center space-x-4">
-                    <Label htmlFor="phone" className="w-1/4 font-semibold">Kota</Label>
-                    <Input placeholder="Masukkan Kota" type='text' id="wa" />
+                    <Label htmlFor="layanan" className="w-1/4 font-semibold">Layanan</Label>
+                    <Input placeholder="Masukkan Layanan" id="layanan" />
                 </div>
                 <div className="flex items-center space-x-4">
-                    <Label htmlFor="phone" className="w-1/4 font-semibold">Kecamatan</Label>
-                    <Input placeholder="Masukkan Kecamatan" type='text' id="wa" />
+                    <Label htmlFor="minimalItem" className="w-1/4 font-semibold">Minimal Item</Label>
+                    <Input placeholder="Masukkan Minimal Item" type='number' id="minimalItem" />
                 </div>
                 <div className="flex items-center space-x-4">
-                    <Label htmlFor="phone" className="w-1/4 font-semibold">Kelurahan</Label>
-                    <Input placeholder="Masukkan Kelurahan" type='text' id="wa" />
+                    <Label htmlFor="masaBerlaku" className="w-1/4 font-semibold">Masa Berlaku</Label>
+                    <Input className="flex w-full" placeholder="Masukkan Masa Berlaku" type="date" id="masaBerlaku" />
                 </div>
-                <div className="flex items-center space-x-4">
-                    <Label htmlFor="phone" className="w-1/4 font-semibold">Kode Pos</Label>
-                    <Input placeholder="Masukkan Kode Pos" type='text' id="wa" />
-                </div>
-                <div className="flex items-center space-x-4">
-                    <Label htmlFor="name" className="w-1/4 font-semibold">Tanggal Daftar</Label>
-                    <Input className="flex w-full" placeholder="Masukkan Tanggal Daftar" type="date" id="date" />
-                </div>
-                <div className="flex items-center space-x-4">
-                    <Label htmlFor="cabang" className="w-1/4">Didaftarkan Oleh</Label>
-                    <Select>
-                        <SelectTrigger className="w-full">
-                            <SelectValue placeholder={"Pilih PIC Pendaftaran"} />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectGroup>
-                                <SelectItem value="jabodetabek">Jabodetabek</SelectItem>
-                                <SelectItem value="bandung">Bandung</SelectItem>
-                                <SelectItem value="jogja">Jogja</SelectItem>
-                                <SelectItem value="surabaya">Surabaya</SelectItem>
-                                <SelectItem value="semarang">Semarang</SelectItem>
-                            </SelectGroup>
-                        </SelectContent>
-                    </Select>
-                </div>
-
                 <div className="flex items-center space-x-4">
                     <div className="w-1/4"></div>
                     <div className=" space-x-2 flex w-full">

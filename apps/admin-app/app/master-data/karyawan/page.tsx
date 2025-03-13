@@ -19,7 +19,7 @@ export const dataKaryawan = [
         phone: "081234567890",
         aksesPengguna: "Admin",
         cabang: "Kantor Pusat",
-        status: "Aktif"
+        status: true
     },
     {
         id: 2,
@@ -28,7 +28,7 @@ export const dataKaryawan = [
         phone: "081298765432",
         aksesPengguna: "Teknisi",
         cabang: "Bandung",
-        status: "Aktif"
+        status: true
     },
     {
         id: 3,
@@ -37,7 +37,7 @@ export const dataKaryawan = [
         phone: "081356789012",
         aksesPengguna: "Teknisi",
         cabang: "Jogja",
-        status: "Nonaktif"
+        status: false
     },
     {
         id: 4,
@@ -46,7 +46,7 @@ export const dataKaryawan = [
         phone: "081267890345",
         aksesPengguna: "Teknisi",
         cabang: "Surabaya",
-        status: "Aktif"
+        status: true
     },
     {
         id: 5,
@@ -55,7 +55,7 @@ export const dataKaryawan = [
         phone: "081278901234",
         aksesPengguna: "Teknisi",
         cabang: "Semarang",
-        status: "Nonaktif"
+        status: false
     },
     {
         id: 6,
@@ -64,7 +64,7 @@ export const dataKaryawan = [
         phone: "081289012345",
         aksesPengguna: "Teknisi",
         cabang: "Jabodetabek",
-        status: "Aktif"
+        status: true
     },
     {
         id: 7,
@@ -73,7 +73,7 @@ export const dataKaryawan = [
         phone: "081290123456",
         aksesPengguna: "Admin",
         cabang: "Kantor Pusat",
-        status: "Nonaktif"
+        status: false
     },
     {
         id: 8,
@@ -82,7 +82,7 @@ export const dataKaryawan = [
         phone: "081301234567",
         aksesPengguna: "Teknisi",
         cabang: "Jogja",
-        status: "Aktif"
+        status: true
     },
     {
         id: 9,
@@ -91,7 +91,7 @@ export const dataKaryawan = [
         phone: "081312345678",
         aksesPengguna: "Teknisi",
         cabang: "Jabodetabek",
-        status: "Aktif"
+        status: true
     },
     {
         id: 10,
@@ -100,7 +100,7 @@ export const dataKaryawan = [
         phone: "081323456789",
         aksesPengguna: "Teknisi",
         cabang: "Bandung",
-        status: "Nonaktif"
+        status: false
     }
 ];
 
@@ -126,7 +126,7 @@ export default function KaryawanPage() {
                     <div className="flex items-center gap-2">
                         <Input type="text" placeholder="Cari mitra..." className="w-[30lvw]" icon={<Search size={16} />} />
                         <DropdownMenuCheckboxes />
-                        <Button className="bg-mainColor/50" variant={"secondary"}>Cari</Button>
+                        <Button variant={"secondary"}>Cari</Button>
                     </div>
 
                     <Link

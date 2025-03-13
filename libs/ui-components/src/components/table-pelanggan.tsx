@@ -24,7 +24,7 @@ interface Pelanggan {
     phone: string;
     tanggalDaftar: string;
     didaftarkanOleh: string;
-    status: string;
+    status: boolean;
 }
 
 interface DataTableProps {
@@ -97,9 +97,9 @@ export const TablePelanggan: React.FC<DataTableProps> = ({ data, columns }) => {
                                             </DialogContent>
                                         </Dialog>
                                     </div>
-                                ) : header.key === "status" ? (
-                                    <p className={`badge dark:bg-opacity-70 rounded-md !font-medium border-0 ${mitra[header.key as keyof Pelanggan] === "Aktif" ? "bg-green-500 text-green-100" : "bg-red-500 text-red-100"}`}>
-                                        {mitra[header.key as keyof Pelanggan]}
+                                )  : header.key === "status" ? (
+                                    <p className={`badge dark:bg-opacity-70 rounded-md !font-medium border-0 ${mitra[header.key as keyof Pelanggan] === true ? "bg-green-500 text-green-100" : "bg-red-500 text-red-100"}`}>
+                                        {mitra[header.key as keyof Pelanggan] === true ? "Aktif" : "Non-Aktif"}
                                     </p>
                                 ) : header.key === "aksesPengguna" ? (
                                     <p className={`badge dark:bg-opacity-70 rounded-md !font-medium border-0 ${mitra[header.key as keyof Pelanggan] === "Admin" ? "bg-blue-500/20 text-blue-500" : "bg-mainColor/20 text-mainColor"}`}>
@@ -107,7 +107,7 @@ export const TablePelanggan: React.FC<DataTableProps> = ({ data, columns }) => {
                                     </p>
                                 ) : header.key === "name" ? (
                                     <div className="flex items-center">
-                                        <span className={`mr-2 ${mitra["status"] === "Aktif" ? "bg-green-500" : "bg-red-500"} rounded-full w-[6px] h-[6px]`}></span>
+                                        <span className={`mr-2 ${mitra["status"] === true ? "bg-green-500" : "bg-red-500"} rounded-full w-[6px] h-[6px]`}></span>
                                         <p>{mitra[header.key as keyof Pelanggan]}</p>
                                     </div>
                                 ) : (

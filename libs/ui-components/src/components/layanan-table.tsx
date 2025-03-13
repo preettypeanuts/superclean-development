@@ -27,7 +27,9 @@ interface Karyawan {
     kategori: string;
     hargaVacuum: number;
     hargaCuci: number;
-    status: string;
+    hargaGeneral: number;
+    satuan: string;
+    status: boolean;
 }
 
 interface DataTableProps {
@@ -103,16 +105,16 @@ export const TableLayanan: React.FC<DataTableProps> = ({ data, columns }) => {
                                         </Dialog>
                                     </div>
                                 ) : header.key === "status" ? (
-                                    <p className={`badge dark:bg-opacity-70 rounded-md !font-medium border-0 ${el[header.key as keyof Karyawan] === "Aktif" ? "bg-green-500 text-green-100" : "bg-red-500 text-red-100"}`}>
-                                        {el[header.key as keyof Karyawan]}
+                                    <p className={`badge dark:bg-opacity-70 rounded-md !font-medium border-0 ${el[header.key as keyof Karyawan] === true ? "bg-green-500 text-green-100" : "bg-red-500 text-red-100"}`}>
+                                        {el[header.key as keyof Karyawan] === true ? "Aktif" : "Non-Aktif"}
                                     </p>
-                                ) : header.key === "hargaVacuum" || header.key === "hargaCuci" ? (
+                                ) : header.key === "hargaVacuum" || header.key === "hargaCuci" || header.key === "hargaGeneral" ? (
                                     <p>
                                         {typeof el[header.key as keyof Karyawan] === 'number' ? formatRupiah(el[header.key as keyof Karyawan] as number) : el[header.key as keyof Karyawan]}
                                     </p>
                                 ) : header.key === "namaLayanan" ? (
                                     <div className="flex items-center">
-                                        <span className={`mr-2 ${el["status"] === "Aktif" ? "bg-green-500" : "bg-red-500"} rounded-full w-[6px] h-[6px]`}></span>
+                                        <span className={`mr-2 ${el["status"] === true ? "bg-green-500" : "bg-red-500"} rounded-full w-[6px] h-[6px]`}></span>
                                         <p>{el[header.key as keyof Karyawan]}</p>
                                     </div>
                                 ) : (

@@ -24,7 +24,7 @@ interface Karyawan {
     name: string;
     aksesPengguna: string;
     phone: string;
-    status: string;
+    status: boolean;
 }
 
 interface DataTableProps {
@@ -98,8 +98,8 @@ export const TableKaryawan: React.FC<DataTableProps> = ({ data, columns }) => {
                                         </Dialog>
                                     </div>
                                 ) : header.key === "status" ? (
-                                    <p className={`badge dark:bg-opacity-70 rounded-md !font-medium border-0 ${mitra[header.key as keyof Karyawan] === "Aktif" ? "bg-green-500 text-green-100" : "bg-red-500 text-red-100"}`}>
-                                        {mitra[header.key as keyof Karyawan]}
+                                    <p className={`badge dark:bg-opacity-70 rounded-md !font-medium border-0 ${mitra[header.key as keyof Karyawan] === true ? "bg-green-500 text-green-100" : "bg-red-500 text-red-100"}`}>
+                                        {mitra[header.key as keyof Karyawan] === true ? "Aktif" : "Non-Aktif"}
                                     </p>
                                 ) : header.key === "aksesPengguna" ? (
                                     <p className={`badge dark:bg-opacity-70 rounded-md !font-medium border-0 ${mitra[header.key as keyof Karyawan] === "Admin" ? "bg-blue-500/20 text-blue-500" : "bg-mainColor/20 text-mainColor"}`}>
@@ -107,7 +107,7 @@ export const TableKaryawan: React.FC<DataTableProps> = ({ data, columns }) => {
                                     </p>
                                 ) : header.key === "userName" ? (
                                     <div className="flex items-center">
-                                        <span className={`mr-2 ${mitra["status"] === "Aktif" ? "bg-green-500" : "bg-red-500"} rounded-full w-[6px] h-[6px]`}></span>
+                                        <span className={`mr-2 ${mitra["status"] === true ? "bg-green-500" : "bg-red-500"} rounded-full w-[6px] h-[6px]`}></span>
                                         <p>{mitra[header.key as keyof Karyawan]}</p>
                                     </div>
                                 ) : (

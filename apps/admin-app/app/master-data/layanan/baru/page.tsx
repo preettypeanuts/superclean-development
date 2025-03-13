@@ -28,14 +28,11 @@ export default function NewLayanan() {
                             <SelectValue placeholder={"Pilih kategori layanan"} />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectGroup>
-                                <SelectLabel>Kategori</SelectLabel>
-                                <SelectItem value="jabodetabek">Jabodetabek</SelectItem>
-                                <SelectItem value="bandung">Bandung</SelectItem>
-                                <SelectItem value="jogja">Jogja</SelectItem>
-                                <SelectItem value="surabaya">Surabaya</SelectItem>
-                                <SelectItem value="semarang">Semarang</SelectItem>
-                            </SelectGroup>
+                            <SelectItem value="jabodetabek">Jabodetabek</SelectItem>
+                            <SelectItem value="bandung">Bandung</SelectItem>
+                            <SelectItem value="jogja">Jogja</SelectItem>
+                            <SelectItem value="surabaya">Surabaya</SelectItem>
+                            <SelectItem value="semarang">Semarang</SelectItem>
                         </SelectContent>
                     </Select>
                 </div>
@@ -54,15 +51,12 @@ export default function NewLayanan() {
                             <SelectValue className="placeholder:text-opacity-0" placeholder="Pilih status karyawan" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectGroup>
-                                <SelectLabel>Status</SelectLabel>
-                                <SelectItem value="aktif">Aktif</SelectItem>
-                                <SelectItem value="non-aktif">Non-Aktif</SelectItem>
-                            </SelectGroup>
+                            <SelectItem value="aktif">Aktif</SelectItem>
+                            <SelectItem value="non-aktif">Non-Aktif</SelectItem>
                         </SelectContent>
                     </Select>
                 </div>
-               
+
                 <div className="flex items-center space-x-4">
                     <div className="w-1/4"></div>
                     <div className=" space-x-2 flex w-full">

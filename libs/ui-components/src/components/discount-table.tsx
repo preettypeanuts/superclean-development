@@ -18,17 +18,19 @@ interface TableHeader {
     label: string;
 }
 
-interface Karyawan {
+interface Column {
     id: number;
-    userName: string;
-    name: string;
-    aksesPengguna: string;
-    phone: string;
-    status: string;
+    kodeDiskon: string;
+    namaDiskon: string;
+    potonganHarga: string;
+    layanan: string;
+    minimal: number;
+    masaBerlaku: string;
+    category: string;
 }
 
 interface DataTableProps {
-    data: Karyawan[];
+    data: Column[];
     columns: TableHeader[];
 }
 
@@ -51,7 +53,7 @@ export const DiscountTable: React.FC<DataTableProps> = ({ data, columns }) => {
                             <TableCell key={header.key} className={`${header.key === "menu" && "!w-fit"}`}>
                                 {header.key === "menu" ? (
                                     <div className="w-fit flex gap-2">
-                                        <Link href={`/master-data/karyawan/edit/${slugify(mitra.name)}`}>
+                                        <Link href={`/master-data/diskon/edit/${slugify(mitra.namaDiskon)}`}>
                                             <Button
                                                 size={"icon"}
                                                 variant={"default"}
@@ -98,20 +100,20 @@ export const DiscountTable: React.FC<DataTableProps> = ({ data, columns }) => {
                                         </Dialog>
                                     </div>
                                 ) : header.key === "status" ? (
-                                    <p className={`badge dark:bg-opacity-70 rounded-md !font-medium border-0 ${mitra[header.key as keyof Karyawan] === "Aktif" ? "bg-green-500 text-green-100" : "bg-red-500 text-red-100"}`}>
-                                        {mitra[header.key as keyof Karyawan]}
+                                    <p className={`badge dark:bg-opacity-70 rounded-md !font-medium border-0 ${mitra[header.key as keyof Column] === "Aktif" ? "bg-green-500 text-green-100" : "bg-red-500 text-red-100"}`}>
+                                        {mitra[header.key as keyof Column]}
                                     </p>
                                 ) : header.key === "aksesPengguna" ? (
-                                    <p className={`badge dark:bg-opacity-70 rounded-md !font-medium border-0 ${mitra[header.key as keyof Karyawan] === "Admin" ? "bg-blue-500/20 text-blue-500" : "bg-mainColor/20 text-mainColor"}`}>
-                                        {mitra[header.key as keyof Karyawan]}
+                                    <p className={`badge dark:bg-opacity-70 rounded-md !font-medium border-0 ${mitra[header.key as keyof Column] === "Admin" ? "bg-blue-500/20 text-blue-500" : "bg-mainColor/20 text-mainColor"}`}>
+                                        {mitra[header.key as keyof Column]}
                                     </p>
                                 ) : header.key === "userName" ? (
                                     <div className="flex items-center">
                                         <span className={`mr-2 ${mitra["status"] === "Aktif" ? "bg-green-500" : "bg-red-500"} rounded-full w-[6px] h-[6px]`}></span>
-                                        <p>{mitra[header.key as keyof Karyawan]}</p>
+                                        <p>{mitra[header.key as keyof Column]}</p>
                                     </div>
                                 ) : (
-                                    mitra[header.key as keyof Karyawan]
+                                    mitra[header.key as keyof Column]
                                 )}
                             </TableCell>
                         ))}

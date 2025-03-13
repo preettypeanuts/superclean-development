@@ -1,4 +1,5 @@
 "use client"
+import { useState } from "react";
 import { usePathname } from 'next/navigation';
 import { Header } from "@shared/components/Header";
 import { Wrapper } from "@shared/components/Wrapper";
@@ -11,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectGr
 import { useRouter } from 'next/navigation';
 import { LuSave } from "react-icons/lu";
 import { TbCancel } from "react-icons/tb";
+import { Checkbox } from "libs/ui-components/src/components/ui/checkbox";
 
 export default function DetailLayanan() {
     const pathname = usePathname();
@@ -18,6 +20,7 @@ export default function DetailLayanan() {
     const router = useRouter();
 
     const detailLayanan = dataLayanan.find(layanan => slugify(layanan.namaLayanan) === id);
+    const [status, setStatus] = useState(detailLayanan?.status || false);
 
     return (
         <Wrapper>
@@ -33,31 +36,55 @@ export default function DetailLayanan() {
                         <Input id="namaLayanan" defaultValue={detailLayanan.namaLayanan} />
                     </div>
                     <div className="flex items-center space-x-4">
-                        <Label htmlFor="kategori" className="w-1/4 font-semibold">Kategori</Label>
-                        <Input id="kategori" defaultValue={detailLayanan.kategori} />
-                    </div>
-                    <div className="flex items-center space-x-4">
-                        <Label htmlFor="hargaVacuum" className="w-1/4 font-semibold">Harga Vacuum</Label>
-                        <Input type='number' id="hargaVacuum" defaultValue={detailLayanan.hargaVacuum} />
-                    </div>
-                    <div className="flex items-center space-x-4">
-                        <Label htmlFor="hargaCuci" className="w-1/4 font-semibold">Harga Cuci</Label>
-                        <Input type='number' id="hargaCuci" defaultValue={detailLayanan.hargaCuci} />
-                    </div>
-                    <div className="flex items-center space-x-4">
-                        <Label htmlFor="status" className="w-1/4 font-semibold">Status</Label>
-                        <Select >
+                        <Label htmlFor="status" className="w-1/4 font-semibold">Kategori</Label>
+                        <Select>
                             <SelectTrigger className="w-full">
-                                <SelectValue placeholder={detailLayanan.status} />
+                                <SelectValue placeholder={detailLayanan.kategori} />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectGroup>
-                                    <SelectLabel>Ubah status layanan</SelectLabel>
-                                    <SelectItem value="aktif">Aktif</SelectItem>
-                                    <SelectItem value="non-aktif">Non-Aktif</SelectItem>
-                                </SelectGroup>
+                                {dataLayanan.map((layanan, index) => (
+                                    <SelectItem key={index} value="aktif">{layanan.kategori}</SelectItem>
+                                ))}
                             </SelectContent>
                         </Select>
+                    </div>
+                    <div className="flex items-center space-x-4">
+                        <Label htmlFor="status" className="w-1/4 font-semibold">Satuan</Label>
+                        <Select>
+                            <SelectTrigger className="w-full">
+                                <SelectValue placeholder={detailLayanan.satuan} />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {dataLayanan.map((layanan, index) => (
+                                    <SelectItem key={index} value="aktif">{layanan.satuan}</SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    {detailLayanan.kategori === "General" ? (
+                        <div className="flex items-center space-x-4">
+                            <Label htmlFor="hargaGeneral" className="w-1/4 font-semibold">Harga General</Label>
+                            <Input type='number' id="hargaGeneral" defaultValue={detailLayanan.hargaGeneral} />
+                        </div>
+                    ) : (
+                        <>
+                            <div className="flex items-center space-x-4">
+                                <Label htmlFor="hargaCuci" className="w-1/4 font-semibold">Harga Cuci</Label>
+                                <Input type='number' id="hargaCuci" defaultValue={detailLayanan.hargaCuci} />
+                            </div>
+                            <div className="flex items-center space-x-4">
+                                <Label htmlFor="hargaVacuum" className="w-1/4 font-semibold">Harga Vacuum</Label>
+                                <Input type='number' id="hargaVacuum" defaultValue={detailLayanan.hargaVacuum} />
+                            </div>
+                        </>
+                    )}
+
+                    <div className="flex items-center space-x-4">
+                        <Label htmlFor="status" className="w-[20%] font-semibold">Status</Label>
+                        <div className="flex items-center space-x-2">
+                            <Checkbox id="status" checked={status} onCheckedChange={(checked) => setStatus(checked === true)} />
+                            <Label htmlFor="status" className="font-semibold">{status ? "Aktif" : "Non-Aktif"}</Label>
+                        </div>
                     </div>
                     <div className="flex items-center space-x-4">
                         <div className="w-1/4"></div>
@@ -74,7 +101,6 @@ export default function DetailLayanan() {
                     </div>
                 </form>
             )}
-
         </Wrapper>
     );
 }

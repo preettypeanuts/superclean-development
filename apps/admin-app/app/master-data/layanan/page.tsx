@@ -15,94 +15,115 @@ export const dataLayanan = [
   {
     id: 1,
     kodeLayanan: "L001",
-    namaLayanan: "Vacuum Interior",
-    kategori: "Interior",
-    hargaVacuum: 50000,
-    hargaCuci: 20000,
-    status: "Aktif"
+    namaLayanan: "General Cleaming",
+    kategori: "General",
+    hargaGeneral: 50000,
+    hargaVacuum: 0,
+    hargaCuci: 0,
+    satuan: "pcs",
+    status: true
   },
   {
     id: 2,
     kodeLayanan: "L002",
-    namaLayanan: "Cuci Eksterior",
-    kategori: "Eksterior",
-    hargaVacuum: 25000,
-    hargaCuci: 30000,
-    status: "Aktif"
+    namaLayanan: "Karpet",
+    kategori: "Karpet",
+    hargaGeneral: 0,
+    hargaVacuum: 60000,
+    hargaCuci: 100000,
+    satuan: "pcs",
+    status: true
   },
   {
     id: 3,
     kodeLayanan: "L003",
-    namaLayanan: "Cuci Komplit",
-    kategori: "Komplit",
-    hargaVacuum: 50000,
-    hargaCuci: 30000,
-    status: "Aktif"
+    namaLayanan: "Kasur 200 x 200",
+    kategori: "Bed",
+    hargaGeneral: 0,
+    hargaVacuum: 75000,
+    hargaCuci: 125000,
+    satuan: "unit",
+    status: false
   },
   {
     id: 4,
     kodeLayanan: "L004",
-    namaLayanan: "Poles Body",
-    kategori: "Eksterior",
-    hargaVacuum: 30000,
-    hargaCuci: 100000,
-    status: "Nonaktif"
+    namaLayanan: "Kasur 180 x 200",
+    kategori: "Bed",
+    hargaGeneral: 0,
+    hargaVacuum: 70000,
+    hargaCuci: 120000,
+    satuan: "unit",
+    status: true
   },
   {
     id: 5,
     kodeLayanan: "L005",
-    namaLayanan: "Salon Interior",
-    kategori: "Interior",
-    hargaVacuum: 150000,
-    hargaCuci: 50000,
-    status: "Aktif"
+    namaLayanan: "Kasur 160 x 200",
+    kategori: "Bed",
+    hargaGeneral: 0,
+    hargaVacuum: 65000,
+    hargaCuci: 110000,
+    satuan: "unit",
+    status: true
   },
   {
     id: 6,
     kodeLayanan: "L006",
-    namaLayanan: "Coating Body",
-    kategori: "Eksterior",
-    hargaVacuum: 0,
-    hargaCuci: 200000,
-    status: "Aktif"
+    namaLayanan: "Sofa 3 Seater",
+    kategori: "Furniture",
+    hargaGeneral: 0,
+    hargaVacuum: 85000,
+    hargaCuci: 150000,
+    satuan: "unit",
+    status: true
   },
   {
     id: 7,
     kodeLayanan: "L007",
-    namaLayanan: "Cuci Mesin",
-    kategori: "Mesin",
-    hargaVacuum: 0,
-    hargaCuci: 75000,
-    status: "Aktif"
+    namaLayanan: "Sofa 2 Seater",
+    kategori: "Furniture",
+    hargaGeneral: 0,
+    hargaVacuum: 70000,
+    hargaCuci: 120000,
+    satuan: "unit",
+    status: true
   },
   {
     id: 8,
     kodeLayanan: "L008",
-    namaLayanan: "Nano Ceramic",
-    kategori: "Eksterior",
-    hargaVacuum: 150000,
-    hargaCuci: 250000,
-    status: "Nonaktif"
+    namaLayanan: "Kursi Kantor",
+    kategori: "Furniture",
+    hargaGeneral: 0,
+    hargaVacuum: 50000,
+    hargaCuci: 90000,
+    satuan: "pcs",
+    status: true
   },
   {
     id: 9,
     kodeLayanan: "L009",
-    namaLayanan: "Fogging Interior",
-    kategori: "Interior",
-    hargaVacuum: 50000,
-    hargaCuci: 120000,
-    status: "Aktif"
+    namaLayanan: "Spring Bed Single",
+    kategori: "Bed",
+    hargaGeneral: 0,
+    hargaVacuum: 60000,
+    hargaCuci: 100000,
+    satuan: "unit",
+    status: false
   },
   {
     id: 10,
     kodeLayanan: "L010",
-    namaLayanan: "Detailing Komplit",
-    kategori: "Komplit",
-    hargaVacuum: 200000,
-    hargaCuci: 150000,
-    status: "Aktif"
+    namaLayanan: "Spring Bed Queen",
+    kategori: "Bed",
+    hargaGeneral: 0,
+    hargaVacuum: 70000,
+    hargaCuci: 120000,
+    satuan: "unit",
+    status: true
   }
 ];
+
 
 export const DataHeaderLayanan = [
   { key: "id", label: "#" },
@@ -111,6 +132,8 @@ export const DataHeaderLayanan = [
   { key: "kategori", label: "Kategori" },
   { key: "hargaVacuum", label: "Harga Vacuum" },
   { key: "hargaCuci", label: "Harga Cuci" },
+  { key: "hargaGeneral", label: "Harga General" },
+  { key: "satuan", label: "Satuan" },
   { key: "status", label: "Status" },
   { key: "menu", label: "Aksi" },
 ];
@@ -124,7 +147,7 @@ export default function LayananPage() {
           <div className="flex items-center gap-2">
             <Input type="text" placeholder="Cari layanan..." className="w-[30lvw]" icon={<Search size={16} />} />
             <DropdownMenuCheckboxes />
-            <Button className="bg-mainColor/50" variant={"secondary"}>Cari</Button>
+            <Button variant={"secondary"}>Cari</Button>
           </div>
           <Link href="layanan/baru">
             <Button

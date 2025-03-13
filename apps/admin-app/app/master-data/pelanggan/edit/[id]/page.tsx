@@ -7,10 +7,11 @@ import slugify from "libs/utils/slugify"
 import { Input } from "libs/ui-components/src/components/ui/input";
 import { Label } from "libs/ui-components/src/components/ui/label";
 import { Button } from "libs/ui-components/src/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectGroup, SelectLabel } from "libs/ui-components/src/components/ui/select"
 import { useRouter } from 'next/navigation';
 import { LuSave } from "react-icons/lu";
 import { TbCancel } from "react-icons/tb";
+import { Checkbox } from "libs/ui-components/src/components/ui/checkbox";
+import { useState } from 'react';
 
 export default function EditPelanggan() {
     const pathname = usePathname();
@@ -18,6 +19,7 @@ export default function EditPelanggan() {
     const router = useRouter();
 
     const detailPelanggan = dataPelanggan.find(pelanggan => slugify(pelanggan.name) === id);
+const [status, setStatus] = useState(detailPelanggan?.status || false);
 
     return (
         <Wrapper>
@@ -61,19 +63,11 @@ export default function EditPelanggan() {
                         <Input type='text' id="didaftarkanOleh" defaultValue={detailPelanggan.didaftarkanOleh} disabled />
                     </div>
                     <div className="flex items-center space-x-4">
-                        <Label htmlFor="status" className="w-1/4 font-semibold">Status</Label>
-                        <Select >
-                            <SelectTrigger className="w-full">
-                                <SelectValue placeholder={detailPelanggan.status} />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectGroup>
-                                    <SelectLabel>Ubah status pelanggan</SelectLabel>
-                                    <SelectItem value="aktif">Aktif</SelectItem>
-                                    <SelectItem value="non-aktif">Non-Aktif</SelectItem>
-                                </SelectGroup>
-                            </SelectContent>
-                        </Select>
+                        <Label htmlFor="status" className="w-[20%] font-semibold">Status</Label>
+                        <div className="flex items-center space-x-2">
+                            <Checkbox id="status" checked={status} onCheckedChange={(checked) => setStatus(checked === true)} />
+                            <Label htmlFor="status" className="font-semibold">{status ? "Aktif" : "Non-Aktif"}</Label>
+                        </div>
                     </div>
                     <div className="flex items-center space-x-4">
                         <div className="w-1/4"></div>

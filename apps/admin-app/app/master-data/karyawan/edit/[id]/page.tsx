@@ -11,6 +11,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectGr
 import { useRouter } from 'next/navigation';
 import { LuSave } from "react-icons/lu";
 import { TbCancel } from "react-icons/tb";
+import { Checkbox } from "libs/ui-components/src/components/ui/checkbox";
+import { useState } from 'react';
 
 export default function DetailKaryawan() {
     const pathname = usePathname();
@@ -18,6 +20,7 @@ export default function DetailKaryawan() {
     const router = useRouter();
 
     const detailKaryawan = dataKaryawan.find(karyawan => slugify(karyawan.name) === id);
+    const [status, setStatus] = useState(detailKaryawan?.status || false);
 
     return (
         <Wrapper>
@@ -37,19 +40,11 @@ export default function DetailKaryawan() {
                         <Input type='text' id="phone" defaultValue={detailKaryawan.phone} />
                     </div>
                     <div className="flex items-center space-x-4">
-                        <Label htmlFor="status" className="w-1/4 font-semibold">Status</Label>
-                        <Select >
-                            <SelectTrigger className="w-full">
-                                <SelectValue placeholder={detailKaryawan.status} />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectGroup>
-                                    <SelectLabel>Ubah status karyawan</SelectLabel>
-                                    <SelectItem value="aktif">Aktif</SelectItem>
-                                    <SelectItem value="non-aktif">Non-Aktif</SelectItem>
-                                </SelectGroup>
-                            </SelectContent>
-                        </Select>
+                        <Label htmlFor="status" className="w-[20%] font-semibold">Status</Label>
+                        <div className="flex items-center space-x-2">
+                            <Checkbox id="status" checked={status} onCheckedChange={(checked) => setStatus(checked === true)} />
+                            <Label htmlFor="status" className="font-semibold">{status ? "Aktif" : "Non-Aktif"}</Label>
+                        </div>
                     </div>
                     <div className="flex items-center space-x-4">
                         <Label htmlFor="cabang" className="w-1/4">Cabang</Label>
