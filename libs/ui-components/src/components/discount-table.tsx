@@ -99,19 +99,6 @@ export const DiscountTable: React.FC<DataTableProps> = ({ data, columns }) => {
                                             </DialogContent>
                                         </Dialog>
                                     </div>
-                                ) : header.key === "status" ? (
-                                    <p className={`badge dark:bg-opacity-70 rounded-md !font-medium border-0 ${mitra[header.key as keyof Column] === "Aktif" ? "bg-green-500 text-green-100" : "bg-red-500 text-red-100"}`}>
-                                        {mitra[header.key as keyof Column]}
-                                    </p>
-                                ) : header.key === "aksesPengguna" ? (
-                                    <p className={`badge dark:bg-opacity-70 rounded-md !font-medium border-0 ${mitra[header.key as keyof Column] === "Admin" ? "bg-blue-500/20 text-blue-500" : "bg-mainColor/20 text-mainColor"}`}>
-                                        {mitra[header.key as keyof Column]}
-                                    </p>
-                                ) : header.key === "userName" ? (
-                                    <div className="flex items-center">
-                                        <span className={`mr-2 ${mitra["status"] === "Aktif" ? "bg-green-500" : "bg-red-500"} rounded-full w-[6px] h-[6px]`}></span>
-                                        <p>{mitra[header.key as keyof Column]}</p>
-                                    </div>
                                 ) : (
                                     mitra[header.key as keyof Column]
                                 )}
