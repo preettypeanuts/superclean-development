@@ -57,7 +57,7 @@ const waitPayment = [
 
 export default function Dashboard() {
   return (
-    <section className="flex flex-col gap-2 max-h-[98lvh] h-[98lvh] min-h-0 overflow-hidden">
+    <section className="flex flex-col gap-2 max-h-[99lvh] h-[99lvh] min-h-0 overflow-hidden pt-[8px] px-2">
       {/* Bagian Atas: Widget (Tinggi Sesuai Konten) */}
       <div className="grid grid-cols-5 gap-2 h-fit">
         <WidgetMatrix data={totalSPK} />

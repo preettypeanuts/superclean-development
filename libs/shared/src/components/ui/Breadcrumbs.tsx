@@ -12,17 +12,19 @@ import {
 import { usePathname } from 'next/navigation'
 import { TbLayoutDashboardFilled } from 'react-icons/tb';
 
+
 export function Breadcrumbs() {
     const pathname = usePathname()
     const pathSegments = pathname.split('/').filter(segment => segment)
-
+    const path = usePathname();
+    const noNavigation = ["/", "/login", "/forgot-password", "/reset-password"];
     // Hide the component on the home screen
-    if (pathname === '/') {
+    if (noNavigation.includes(pathname)) {
         return null;
     }
 
     return (
-        <Breadcrumb className="px-4 py-2 dark:bg-black rounded-3xl bg-white shadow-mainShadow w-fit mx-2 mb-2 capitalize">
+        <Breadcrumb className="mt-2 px-4 py-2 dark:bg-black rounded-3xl bg-white shadow-mainShadow w-fit mx-2 mb-2 capitalize">
             <BreadcrumbList>
                 <BreadcrumbItem>
                     <BreadcrumbLink href="/">
