@@ -1,7 +1,10 @@
 "use client"
-import { TableKaryawan } from "libs/ui-components/src/components/karyawan-table"
-import { Header } from "@shared/components/Header"
-import { Wrapper } from "libs/shared/src/components/Wrapper"
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { apiClient } from "libs/utils/apiClient";
+import { TableKaryawan } from "libs/ui-components/src/components/karyawan-table";
+import { Header } from "@shared/components/Header";
+import { Wrapper } from "libs/shared/src/components/Wrapper";
 import { Input } from "libs/ui-components/src/components/ui/input";
 import { Button } from "libs/ui-components/src/components/ui/button";
 import { DropdownMenuCheckboxes } from "libs/ui-components/src/components/dropdown-checkboxes";
@@ -10,148 +13,88 @@ import { Search } from "lucide-react";
 import { SelectData } from "libs/ui-components/src/components/select-data";
 import { PaginationNumber } from "libs/ui-components/src/components/pagination-number";
 import Link from "next/link";
-
-export const dataKaryawan = [
-    {
-        id: 1,
-        userName: "johndoe",
-        name: "John Doe",
-        phone: "081234567890",
-        aksesPengguna: "Admin",
-        cabang: "Kantor Pusat",
-        status: true
-    },
-    {
-        id: 2,
-        userName: "janesmith",
-        name: "Jane Smith",
-        phone: "081298765432",
-        aksesPengguna: "Teknisi",
-        cabang: "Bandung",
-        status: true
-    },
-    {
-        id: 3,
-        userName: "michael87",
-        name: "Michael Johnson",
-        phone: "081356789012",
-        aksesPengguna: "Teknisi",
-        cabang: "Jogja",
-        status: false
-    },
-    {
-        id: 4,
-        userName: "sarahw",
-        name: "Sarah Williams",
-        phone: "081267890345",
-        aksesPengguna: "Teknisi",
-        cabang: "Surabaya",
-        status: true
-    },
-    {
-        id: 5,
-        userName: "davidb",
-        name: "David Brown",
-        phone: "081278901234",
-        aksesPengguna: "Teknisi",
-        cabang: "Semarang",
-        status: false
-    },
-    {
-        id: 6,
-        userName: "emilyj",
-        name: "Emily Johnson",
-        phone: "081289012345",
-        aksesPengguna: "Teknisi",
-        cabang: "Jabodetabek",
-        status: true
-    },
-    {
-        id: 7,
-        userName: "robertm",
-        name: "Robert Martinez",
-        phone: "081290123456",
-        aksesPengguna: "Admin",
-        cabang: "Kantor Pusat",
-        status: false
-    },
-    {
-        id: 8,
-        userName: "lisaw",
-        name: "Lisa White",
-        phone: "081301234567",
-        aksesPengguna: "Teknisi",
-        cabang: "Jogja",
-        status: true
-    },
-    {
-        id: 9,
-        userName: "kevinh",
-        name: "Kevin Harris",
-        phone: "081312345678",
-        aksesPengguna: "Teknisi",
-        cabang: "Jabodetabek",
-        status: true
-    },
-    {
-        id: 10,
-        userName: "amandat",
-        name: "Amanda Taylor",
-        phone: "081323456789",
-        aksesPengguna: "Teknisi",
-        cabang: "Bandung",
-        status: false
-    }
-];
+import { useParameterStore } from "libs/utils/useParameterStore";
 
 export const DataHeader = [
-    { key: "id", label: "#" },
-    { key: "userName", label: "Nama Pengguna" },
-    { key: "name", label: "Nama" },
-    { key: "phone", label: "No. WhatsApp" },
-    { key: "aksesPengguna", label: "Akses Pengguna" },
-    { key: "cabang", label: "Cabang" },
-    { key: "status", label: "Status" },
-    { key: "menu", label: "Aksi" },
+  { key: "id", label: "#" },
+  { key: "username", label: "Nama Pengguna" },
+  { key: "fullname", label: "Nama" },
+  { key: "noWhatsapp", label: "No. WhatsApp" },
+  { key: "roleId", label: "Akses Pengguna" },
+  { key: "cabang", label: "Cabang" },
+  { key: "status", label: "Status" },
+  { key: "menu", label: "Aksi" },
 ];
 
+interface Karyawan {
+  id: string;
+  createdAt: string;
+  createdBy: string;
+  username: string;
+  fullname: string;
+  noWhatsapp: string;
+  branchId: number;
+  roleId: string;
+  status: boolean;
+}
+
 export default function KaryawanPage() {
+  const [dataKaryawan, setDataKaryawan] = useState<Karyawan[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const router = useRouter();
+  const { roleMapping, branchMapping, loading: loadingParams } = useParameterStore();
 
+  useEffect(() => {
+    const fetchKaryawan = async () => {
+      try {
+        const result = await apiClient("/user/page?page=1&limit=10");
+        setDataKaryawan(result.data[0] || []);
+      } catch (error) {
+        console.error(error);
 
-    return (
-        <Wrapper>
-            <Header label={"Daftar Karyawan"} count={dataKaryawan.length} />
-            <div className="flex-grow">
-                <div className="flex items-center justify-between mb-4 gap-2">
-                    <div className="flex items-center gap-2">
-                        <Input type="text" placeholder="Cari mitra..." className="w-[30lvw]" icon={<Search size={16} />} />
-                        <DropdownMenuCheckboxes />
-                        <Button variant={"secondary"}>Cari</Button>
-                    </div>
+      } finally {
+        setLoading(false);
+      }
+    };
 
-                    <Link
-                        href="karyawan/baru"
-                    >
-                        <Button
-                            icon={<LuPlus size={16} />}
-                            className="pl-2 pr-4"
-                            iconPosition="left"
-                            variant="default"
-                            type="submit"
-                        >
-                            Tambah Mitra
-                        </Button>
-                    </Link>
+    fetchKaryawan();
+  }, [router]);
 
-                </div>
+  // Proses Data Karyawan (Mapping roleId dan branchId)
+  const processedKaryawan = dataKaryawan.map((item) => ({
+    ...item,
+    roleId: roleMapping[item.roleId] || "Tidak Diketahui",
+    cabang: branchMapping[item.branchId] || "Tidak Diketahui",
+  }));
 
-                <TableKaryawan data={dataKaryawan} columns={DataHeader} />
-            </div>
+  return (
+    <Wrapper>
+      <Header label={"Daftar Karyawan"} count={dataKaryawan.length} />
+      <div className="flex-grow">
+        <div className="flex items-center justify-between mb-4 gap-2">
+          <div className="flex items-center gap-2">
+            <Input type="text" placeholder="Cari mitra..." className="w-[30lvw]" icon={<Search size={16} />} />
+            <DropdownMenuCheckboxes />
+            <Button variant={"secondary"}>Cari</Button>
+          </div>
+          <Link href="karyawan/baru">
+            <Button icon={<LuPlus size={16} />} className="pl-2 pr-4" iconPosition="left" variant="default" type="submit">
+              Tambah Mitra
+            </Button>
+          </Link>
+        </div>
 
-            <div className="flex items-center justify-between mt-4">
-                <SelectData label="Data Per halaman" />
-                <PaginationNumber />
-            </div>
-        </Wrapper>
-    );
+        {loading || loadingParams ? (
+          <p className="text-center py-4">Memuat data...</p>
+        ) : (
+          <TableKaryawan data={processedKaryawan} columns={DataHeader} />
+        )}
+      </div>
+
+      <div className="flex items-center justify-between mt-4">
+        <SelectData label="Data Per halaman" />
+        <PaginationNumber />
+      </div>
+    </Wrapper>
+  );
 }

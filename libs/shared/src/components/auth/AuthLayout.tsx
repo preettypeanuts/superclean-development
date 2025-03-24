@@ -32,14 +32,13 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({ headline, tagline, bgIma
         try {
             console.log("API URL:", process.env.NEXT_PUBLIC_APIURL);
 
-            const response = await fetch(`${process.env.NEXT_PUBLIC_APIURL}auth/login`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_APIURL}/auth/login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ username, password }),
             });
 
             const result = await response.json();
-            console.log("Response Data:", result); // Debugging untuk cek isi response
     
             if (!response.ok) {
                 throw new Error(result.message || "Login gagal!");
@@ -53,8 +52,7 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({ headline, tagline, bgIma
             }
     
             // Simpan token ke localStorage
-            localStorage.setItem("accessToken", accessToken);
-            console.log("Token berhasil disimpan:", accessToken);
+            localStorage.setItem("access_token", accessToken);
 
             // Redirect ke dashboard
             router.push("/");

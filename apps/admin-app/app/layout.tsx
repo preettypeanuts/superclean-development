@@ -3,6 +3,7 @@ import { ThemeProvider } from 'next-themes';
 import { Figtree } from "next/font/google";
 import { Sidebar } from "@shared/components/ui/Sidebar"
 import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs"
+import ProtectedLayout from "@shared/components/ProtectedLayout"
 
 const fightree = Figtree({
   subsets: ["latin"],
@@ -25,13 +26,15 @@ export default function RootLayout({
         className={`${fightree.className} antialiased md:flex`}
       >
         <ThemeProvider enableSystem={true} defaultTheme='system' attribute="class">
-          <Sidebar />
-          <section className='flex flex-col max-h-[98lvh] h-[98lvh] w-full min-h-0'>
-            <Breadcrumbs />
-            <main className='flex-grow min-h-0'>
-              {children}
-            </main>
-          </section>
+          <ProtectedLayout>
+            <Sidebar />
+            <section className='flex flex-col max-h-[98lvh] h-[98lvh] w-full min-h-0'>
+              <Breadcrumbs />
+              <main className='flex-grow min-h-0'>
+                {children}
+              </main>
+            </section>
+          </ProtectedLayout>
         </ThemeProvider>
       </body>
     </html>
