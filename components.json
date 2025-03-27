@@ -14,8 +14,8 @@
       "components": "@superclean-workspace/ui-components/components/ui",
       "utils": "@superclean-workspace/ui-components/utils",
       "ui": "@superclean-workspace/ui-components/components/ui",
-      "lib": "@/lib",
-      "hooks": "@/hooks"
+      "lib": "@superclean-workspace/ui-components/libs",
+      "hooks": "@superclean-workspace/ui-components/hooks"
     },
     "iconLibrary": "lucide"
   }

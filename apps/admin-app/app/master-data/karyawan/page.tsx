@@ -1,6 +1,6 @@
 "use client"
+import Link from "next/link";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { apiClient } from "libs/utils/apiClient";
 import { TableKaryawan } from "libs/ui-components/src/components/karyawan-table";
 import { Header } from "@shared/components/Header";
@@ -12,7 +12,6 @@ import { LuPlus } from "react-icons/lu";
 import { Search } from "lucide-react";
 import { SelectData } from "libs/ui-components/src/components/select-data";
 import { PaginationNumber } from "libs/ui-components/src/components/pagination-number";
-import Link from "next/link";
 import { useParameterStore } from "libs/utils/useParameterStore";
 
 export const DataHeader = [
@@ -35,30 +34,39 @@ interface Karyawan {
   noWhatsapp: string;
   branchId: number;
   roleId: string;
-  status: boolean;
+  status: number;
 }
 
 export default function KaryawanPage() {
   const [dataKaryawan, setDataKaryawan] = useState<Karyawan[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const router = useRouter();
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalData, setTotalData] = useState<number>(0);
+  const [limit, setLimit] = useState<number>(10); // Default 10 data per halaman
+  const totalPages = Math.max(1, Math.ceil(totalData / limit));
+
   const { roleMapping, branchMapping, loading: loadingParams } = useParameterStore();
 
   useEffect(() => {
     const fetchKaryawan = async () => {
       try {
-        const result = await apiClient("/user/page?page=1&limit=10");
+        const result = await apiClient(`/user/page?page=${currentPage}&limit=${limit}`);
+        
         setDataKaryawan(result.data[0] || []);
+        setTotalData(result.data[1] || 0); // Pastikan API mengembalikan total data yang benar
+        console.log('====================================');
+        console.log(result);
+        console.log('====================================');
       } catch (error) {
         console.error(error);
-
       } finally {
         setLoading(false);
       }
     };
+    
 
     fetchKaryawan();
-  }, [router]);
+  }, [currentPage, limit]);
 
   // Proses Data Karyawan (Mapping roleId dan branchId)
   const processedKaryawan = dataKaryawan.map((item) => ({
@@ -67,6 +75,9 @@ export default function KaryawanPage() {
     cabang: branchMapping[item.branchId] || "Tidak Diketahui",
   }));
 
+  console.log('====================================');
+  console.log(totalPages);
+  console.log('====================================');
   return (
     <Wrapper>
       <Header label={"Daftar Karyawan"} count={dataKaryawan.length} />
@@ -92,8 +103,20 @@ export default function KaryawanPage() {
       </div>
 
       <div className="flex items-center justify-between mt-4">
-        <SelectData label="Data Per halaman" />
-        <PaginationNumber />
+        <SelectData
+          label="Data Per halaman"
+          value={limit}
+          onChange={(value) => {
+            setLimit(value);
+            setCurrentPage(1); // Reset ke halaman pertama setiap kali limit berubah
+          }}
+        />
+
+        <PaginationNumber
+          totalPages={totalPages}
+          currentPage={currentPage}
+          onPageChange={(page) => setCurrentPage(page)}
+        />
       </div>
     </Wrapper>
   );

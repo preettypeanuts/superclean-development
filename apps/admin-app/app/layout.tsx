@@ -3,6 +3,7 @@ import { ThemeProvider } from 'next-themes';
 import { Figtree } from "next/font/google";
 import { Sidebar } from "@shared/components/ui/Sidebar"
 import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs"
+import { Toaster } from "libs/ui-components/src/components/ui/toaster"
 import ProtectedLayout from "@shared/components/ProtectedLayout"
 
 const fightree = Figtree({
@@ -30,6 +31,7 @@ export default function RootLayout({
             <Sidebar />
             <section className='flex flex-col max-h-[98lvh] h-[98lvh] w-full min-h-0'>
               <Breadcrumbs />
+              <Toaster />
               <main className='flex-grow min-h-0'>
                 {children}
               </main>

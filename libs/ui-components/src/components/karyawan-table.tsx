@@ -3,8 +3,11 @@ import { Button } from "./ui/button";
 import { HiMiniPencilSquare } from "react-icons/hi2";
 import { IoMdTrash } from "react-icons/io";
 import Link from "next/link";
+import { api } from "libs/utils/apiClient";
+import { useToast } from "libs/ui-components/src/hooks/use-toast"
 import {
     Dialog,
+    DialogClose,
     DialogContent,
     DialogDescription,
     DialogHeader,
@@ -18,13 +21,16 @@ interface TableHeader {
 }
 
 interface Karyawan {
-    branchId: number;
+    id: string;
+    createdAt: string;
+    createdBy: string;
     username: string;
     fullname: string;
-    roleId: string;
     noWhatsapp: string;
+    branchId: number;
+    roleId: string;
     status: number;
-}
+  }
 
 interface DataTableProps {
     data: Karyawan[];
@@ -32,6 +38,8 @@ interface DataTableProps {
 }
 
 export const TableKaryawan: React.FC<DataTableProps> = ({ data, columns }) => {
+    const { toast } = useToast(); // Inisialisasi toast
+
     return (
         <Table>
             <TableHeader>
@@ -86,10 +94,46 @@ export const TableKaryawan: React.FC<DataTableProps> = ({ data, columns }) => {
                                                     </DialogDescription>
                                                 </DialogHeader>
                                                 <div className="flex gap-2">
-                                                    <Button variant="secondary" className="w-full">
-                                                        Batal
-                                                    </Button>
-                                                    <Button variant="destructive" className="w-full">
+                                                    <DialogClose asChild>
+                                                        <Button variant="secondary" className="w-full">
+                                                            Batal
+                                                        </Button>
+                                                    </DialogClose>
+                                                    <Button
+                                                        variant="destructive"
+                                                        className="w-full"
+                                                        onClick={async () => {
+                                                            console.log(`Menghapus karyawan dengan ID: ${mitra.id}`);
+                                                            try {
+                                                                const response = await api.delete(`/user/${mitra.id}`);
+
+                                                                console.log("Response dari server:", response);
+
+                                                                if (response.status === 'success') {
+                                                                    toast({
+                                                                        title: "Sukses!",
+                                                                        description: `Karyawan ${mitra.fullname} berhasil dihapus.`,
+                                                                        variant: "default", // Bisa diganti ke "success" jika tersedia
+                                                                    });
+                                                                    window.location.reload(); // Refresh halaman agar data terbaru muncul
+                                                                } else {
+                                                                    console.error("Gagal menghapus karyawan:", response);
+                                                                    toast({
+                                                                        title: "Gagal!",
+                                                                        description: "Terjadi kesalahan saat menghapus karyawan.",
+                                                                        variant: "destructive",
+                                                                    });
+                                                                }
+                                                            } catch (error) {
+                                                                console.error("Error saat menghapus karyawan:", error);
+                                                                toast({
+                                                                    title: "Error!",
+                                                                    description: "Terjadi kesalahan. Coba lagi nanti.",
+                                                                    variant: "destructive",
+                                                                });
+                                                            }
+                                                        }}
+                                                    >
                                                         Hapus
                                                     </Button>
                                                 </div>
@@ -98,29 +142,30 @@ export const TableKaryawan: React.FC<DataTableProps> = ({ data, columns }) => {
                                     </div>
                                 ) : header.key === "status" ? (
                                     <p
-                                        className={`badge dark:bg-opacity-70 rounded-md !font-medium border-0 ${mitra.status === 1 ? "bg-green-500 text-green-100" : "bg-red-500 text-red-100"
-                                            }`}
+                                        className={`badge dark:bg-opacity-70 rounded-md !font-medium border-0 ${
+                                            mitra.status === 1 ? "bg-green-500 text-green-100" : "bg-red-500 text-red-100"
+                                        }`}
                                     >
                                         {mitra.status === 1 ? "Aktif" : "Non-Aktif"}
                                     </p>
                                 ) : header.key === "roleId" ? (
                                     <p
-                                        className={`badge dark:bg-opacity-70 rounded-md !font-medium border-0 ${mitra.roleId === "Super Admin"
+                                        className={`badge dark:bg-opacity-70 rounded-md !font-medium border-0 ${
+                                            mitra.roleId === "Super Admin"
                                                 ? "bg-blue-500/20 text-blue-500"
                                                 : "bg-mainColor/20 text-mainColor"
-                                            }`}
+                                        }`}
                                     >
                                         {mitra.roleId}
                                     </p>
                                 ) : header.key === "id" ? (
-                                    <p>
-                                        {rowIndex + 1}
-                                    </p>
+                                    <p>{rowIndex + 1}</p>
                                 ) : header.key === "username" ? (
                                     <div className="flex items-center">
                                         <span
-                                            className={`mr-2 ${mitra.status ? "bg-green-500" : "bg-red-500"
-                                                } rounded-full w-[6px] h-[6px]`}
+                                            className={`mr-2 ${
+                                                mitra.status ? "bg-green-500" : "bg-red-500"
+                                            } rounded-full w-[6px] h-[6px]`}
                                         ></span>
                                         <p>{mitra.username}</p>
                                     </div>

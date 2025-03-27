@@ -1,89 +1,299 @@
-"use client"
-import { usePathname } from 'next/navigation';
+"use client";
+import { usePathname, useRouter } from 'next/navigation';
 import { Header } from "@shared/components/Header";
 import { Wrapper } from "@shared/components/Wrapper";
-import { dataPelanggan } from "../../page";
-import slugify from "libs/utils/slugify"
 import { Input } from "libs/ui-components/src/components/ui/input";
 import { Label } from "libs/ui-components/src/components/ui/label";
 import { Button } from "libs/ui-components/src/components/ui/button";
-import { useRouter } from 'next/navigation';
+import { Checkbox } from "libs/ui-components/src/components/ui/checkbox";
 import { LuSave } from "react-icons/lu";
 import { TbCancel } from "react-icons/tb";
-import { Checkbox } from "libs/ui-components/src/components/ui/checkbox";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { api } from "libs/utils/apiClient";
+import { useLocationData } from "libs/utils/useLocationData";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+    SelectGroup,
+} from "libs/ui-components/src/components/ui/select";
+import {
+    AlertDialog,
+    AlertDialogContent,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogAction,
+} from "libs/ui-components/src/components/ui/alert-dialog";
+import { useToast } from "libs/ui-components/src/hooks/use-toast"
+
+
+interface Pelanggan {
+    id: string;
+    fullname: string;
+    noWhatsapp: string;
+    address: string;
+    province: string;
+    city: string;
+    district: string;
+    subDistrict: string;
+    status: number;
+}
 
 export default function EditPelanggan() {
+    const { toast } = useToast();
     const pathname = usePathname();
-    const id = pathname.split('/').pop();
+    const noWhatsapp = pathname.split('/').pop();
     const router = useRouter();
+    const [showConfirmDialog, setShowConfirmDialog] = useState<boolean>(false); // Dialog Konfirmasi
+    const [showSuccessDialog, setShowSuccessDialog] = useState<boolean>(false); // Alert muncul setelah sukses
+    const [pelanggan, setPelanggan] = useState<Pelanggan | null>(null);
+    const [status, setStatus] = useState<boolean>(true);
+    const [updating, setUpdating] = useState<boolean>(false);
+    const { provinces, cities, districts, subDistricts, loading } = useLocationData(
+        pelanggan?.province,
+        pelanggan?.city,
+        pelanggan?.district
+    );
 
-    const detailPelanggan = dataPelanggan.find(pelanggan => slugify(pelanggan.name) === id);
-const [status, setStatus] = useState(detailPelanggan?.status || false);
+    useEffect(() => {
+        const fetchPelanggan = async () => {
+            try {
+                const result = await api.get(`/customer/${noWhatsapp}`);
+                setPelanggan(result.data);
+                setStatus(result.data.status === 1);
+            } catch (error) {
+                console.error("Gagal mengambil data pelanggan:", error);
+            }
+        };
+        fetchPelanggan();
+    }, [noWhatsapp]);
+
+    // Handle Change Generic untuk Input Teks
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setPelanggan(prev => prev ? { ...prev, [name]: value } : null);
+    };
+
+    // Handle Change untuk Select (Dropdown)
+    const handleSelectChange = (name: keyof Pelanggan, value: string) => {
+        setPelanggan(prev => prev ? { ...prev, [name]: value } : null);
+    };
+
+    // Handle Change untuk Status Checkbox
+    const handleStatusChange = (checked: number) => {
+        if (pelanggan) {
+            setPelanggan({ ...pelanggan, status: checked ? 1 : 0 });
+        }
+    };
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        if (!pelanggan) return;
+
+        // Pastikan id pelanggan ada
+        const pelangganId = pelanggan.id;
+        if (!pelangganId) {
+            alert("ID pelanggan tidak ditemukan!");
+            return;
+        }
+        setUpdating(true);
+        // Buat data yang sesuai dengan format API
+        const updatedData = {
+            fullname: pelanggan.fullname,
+            address: pelanggan.address,
+            province: pelanggan.province,
+            city: pelanggan.city,
+            district: pelanggan.district,
+            subDistrict: pelanggan.subDistrict,
+            status: pelanggan.status, // Pastikan status sesuai aturan API
+        };
+
+        setUpdating(true);
+        try {
+            const response = await api.put(`/customer/${pelangganId}`, updatedData);
+            console.log("Response:", response);
+            toast({
+                title: "Berhasil",
+                description: "Profil pelanggan berhasil diperbarui!",
+                variant: "default",
+            });
+            router.push('/master-data/pelanggan');
+        } catch (error) {
+            console.error("Gagal memperbarui data:", error);
+            toast({
+                title: "Gagal",
+                description: "Terjadi kesalahan saat mengubah profil pelanggan.",
+                variant: "destructive",
+            });
+        } finally {
+            setUpdating(false);
+        }
+    };
+
+
 
     return (
         <Wrapper>
-            <Header label={`Edit Profil ${detailPelanggan ? detailPelanggan.name : ""}`} />
-            {detailPelanggan && (
-                <form className='space-y-4'>
+            <Header label="Edit Profil Pelanggan" />
+            {loading ? (
+                <p className="text-center py-4">Memuat data...</p>
+            ) : pelanggan ? (
+                <form className='space-y-4' onSubmit={handleSubmit}>
+                    {/* Nama Lengkap */}
                     <div className="flex items-center space-x-4">
-                        <Label htmlFor="name" className="w-1/4 font-semibold">Name</Label>
-                        <Input id="name" defaultValue={detailPelanggan.name} />
+                        <div className="w-1/4 font-semibold">
+                            <Label>Nama Lengkap</Label>
+                        </div>
+                        <Input name="fullname" value={pelanggan.fullname} onChange={handleChange} />
                     </div>
+
+                    {/* Nomor WhatsApp */}
                     <div className="flex items-center space-x-4">
-                        <Label htmlFor="phone" className="w-1/4 font-semibold">Phone</Label>
-                        <Input type='text' id="phone" defaultValue={detailPelanggan.phone} />
+                        <div className="w-1/4 font-semibold">
+                            <Label>Nomor WhatsApp</Label>
+                        </div>
+                        <Input value={pelanggan.noWhatsapp} disabled />
                     </div>
+
+                    {/* Alamat */}
                     <div className="flex items-center space-x-4">
-                        <Label htmlFor="alamat" className="w-1/4 font-semibold">Alamat</Label>
-                        <Input type='text' id="alamat" defaultValue={detailPelanggan.alamat} />
+                        <div className="w-1/4 font-semibold">
+                            <Label>Alamat</Label>
+                        </div>
+                        <Input name="address" value={pelanggan.address} onChange={handleChange} />
                     </div>
+
+                    {/* Provinsi */}
                     <div className="flex items-center space-x-4">
-                        <Label htmlFor="provinsi" className="w-1/4 font-semibold">Provinsi</Label>
-                        <Input type='text' id="provinsi" defaultValue={detailPelanggan.provinsi} />
+                        <div className="w-1/4 font-semibold">
+                            <Label>Provinsi</Label>
+                        </div>
+                        <Select value={pelanggan.province} onValueChange={(value) => handleSelectChange("province", value)}>
+                            <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Pilih Provinsi" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                    {provinces.map(prov => (
+                                        <SelectItem key={prov.id} value={prov.paramKey}>{prov.paramValue}</SelectItem>
+                                    ))}
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
                     </div>
+
+                    {/* Kota */}
                     <div className="flex items-center space-x-4">
-                        <Label htmlFor="kota" className="w-1/4 font-semibold">Kota</Label>
-                        <Input type='text' id="kota" defaultValue={detailPelanggan.kota} />
+                        <div className="w-1/4 font-semibold">
+                            <Label>Kota</Label>
+                        </div>
+                        <Select value={pelanggan.city} onValueChange={(value) => handleSelectChange("city", value)}>
+                            <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Pilih Kota" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                    {cities.map(city => (
+                                        <SelectItem key={city.id} value={city.paramKey}>{city.paramValue}</SelectItem>
+                                    ))}
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
                     </div>
+
+                    {/* Kecamatan */}
                     <div className="flex items-center space-x-4">
-                        <Label htmlFor="kecamatan" className="w-1/4 font-semibold">Kecamatan</Label>
-                        <Input type='text' id="kecamatan" defaultValue={detailPelanggan.kecamatan} />
+                        <div className="w-1/4 font-semibold">
+                            <Label>Kecamatan</Label>
+                        </div>
+                        <Select value={pelanggan.district} onValueChange={(value) => handleSelectChange("district", value)}>
+                            <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Pilih Kecamatan" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                    {districts.map(district => (
+                                        <SelectItem key={district.id} value={district.paramKey}>{district.paramValue}</SelectItem>
+                                    ))}
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
                     </div>
+
+                    {/* Kelurahan */}
                     <div className="flex items-center space-x-4">
-                        <Label htmlFor="kodePos" className="w-1/4 font-semibold">Kode Pos</Label>
-                        <Input type='text' id="kodePos" defaultValue={detailPelanggan.kodePos} />
+                        <div className="w-1/4 font-semibold">
+                            <Label>Kelurahan</Label>
+                        </div>
+                        <Select value={pelanggan.subDistrict} onValueChange={(value) => handleSelectChange("subDistrict", value)}>
+                            <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Pilih Kelurahan" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                    {subDistricts.map(sub => (
+                                        <SelectItem key={sub.id} value={sub.paramKey}>{sub.paramValue}</SelectItem>
+                                    ))}
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
                     </div>
-                    <div className="flex items-center space-x-4">
-                        <Label htmlFor="tanggalDaftar" className="w-1/4 font-semibold">Tanggal Daftar</Label>
-                        <Input type='text' id="tanggalDaftar" defaultValue={detailPelanggan.tanggalDaftar} disabled />
-                    </div>
-                    <div className="flex items-center space-x-4">
-                        <Label htmlFor="didaftarkanOleh" className="w-1/4 font-semibold">Didaftarkan Oleh</Label>
-                        <Input type='text' id="didaftarkanOleh" defaultValue={detailPelanggan.didaftarkanOleh} disabled />
-                    </div>
+
+                    {/* Status */}
                     <div className="flex items-center space-x-4">
                         <Label htmlFor="status" className="w-[20%] font-semibold">Status</Label>
                         <div className="flex items-center space-x-2">
-                            <Checkbox id="status" checked={status} onCheckedChange={(checked) => setStatus(checked === true)} />
-                            <Label htmlFor="status" className="font-semibold">{status ? "Aktif" : "Non-Aktif"}</Label>
+                            <Checkbox
+                                id="status"
+                                checked={pelanggan?.status === 1}
+                                onCheckedChange={(checked) => handleStatusChange(checked ? 1 : 0)}
+                            />
+                            <Label htmlFor="status">
+                                {pelanggan?.status === 1 ? "Aktif" : "Non-Aktif"}
+                            </Label>
                         </div>
                     </div>
+
                     <div className="flex items-center space-x-4">
                         <div className="w-1/4"></div>
-                        <div className=" space-x-2 flex w-full">
-                            <Button type="button" variant={"destructive"} className="text-foreground w-[10lvw]" onClick={() => router.push('/master-data/pelanggan')}>
+                        <div className="space-x-2 flex w-full">
+                            <Button type="button" variant="destructive" onClick={() => setShowSuccessDialog(true)}>
                                 <TbCancel />
                                 Batal
                             </Button>
-                            <Button type="submit" variant={"default"} className="bg-success text-foreground hover:bg-green-600 w-[10lvw]">
+                            {/* Tombol Simpan */}
+                            <Button type="button" className="bg-green-600" onClick={() => setShowConfirmDialog(true)} disabled={updating}>
                                 <LuSave />
-                                Simpan
+                                {updating ? "Menyimpan..." : "Simpan"}
                             </Button>
                         </div>
                     </div>
                 </form>
+            ) : (
+                <p className="text-center py-4 text-red-500">Pelanggan tidak ditemukan!</p>
             )}
+
+            {/* Dialog Konfirmasi Simpan */}
+            <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Apakah Anda yakin menyimpan data ini?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Jika "Ya", data akan diperbarui. Jika "Tidak", proses dibatalkan.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <Button variant="outline" onClick={() => setShowConfirmDialog(false)}>Tidak</Button>
+                        <AlertDialogAction onClick={(e) => { setShowConfirmDialog(false); handleSubmit(e as unknown as React.FormEvent<HTMLFormElement>); }}>
+                            Ya
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </Wrapper>
     );
 }

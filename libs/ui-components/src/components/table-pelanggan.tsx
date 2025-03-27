@@ -2,8 +2,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from ".
 import { Button } from "./ui/button";
 import { HiMiniPencilSquare } from "react-icons/hi2";
 import { IoMdTrash } from "react-icons/io";
-import slugify from "../../../utils/slugify"
+import { formatDate } from "../../../utils/formatDate"
 import Link from "next/link";
+import { api } from "libs/utils/apiClient";
+import { useToast } from "libs/ui-components/src/hooks/use-toast"
 import {
     Dialog,
     DialogContent,
@@ -20,11 +22,11 @@ interface TableHeader {
 
 interface Pelanggan {
     id: number;
-    name: string;
-    phone: string;
-    tanggalDaftar: string;
-    didaftarkanOleh: string;
-    status: boolean;
+    fullname: string;
+    noWhatsapp: string;
+    createdAt: string;
+    createdBy: string;
+    status: number;
 }
 
 interface DataTableProps {
@@ -33,6 +35,7 @@ interface DataTableProps {
 }
 
 export const TablePelanggan: React.FC<DataTableProps> = ({ data, columns }) => {
+    const { toast } = useToast(); // Inisialisasi toast
     return (
         <Table>
             <TableHeader>
@@ -45,13 +48,13 @@ export const TablePelanggan: React.FC<DataTableProps> = ({ data, columns }) => {
                 </TableRow>
             </TableHeader>
             <TableBody>
-                {data.map((mitra, rowIndex) => (
-                    <TableRow key={mitra.id} className={rowIndex % 2 === 0 ? "" : "bg-neutral-300/20 dark:bg-neutral-500/20"}>
+                {data.map((customer, rowIndex) => (
+                    <TableRow key={customer.id} className={rowIndex % 2 === 0 ? "" : "bg-neutral-300/20 dark:bg-neutral-500/20"}>
                         {columns.map((header) => (
                             <TableCell key={header.key} className={`${header.key === "menu" && "!w-fit"}`}>
                                 {header.key === "menu" ? (
                                     <div className="w-fit flex gap-2">
-                                        <Link href={`/master-data/pelanggan/edit/${slugify(mitra.name)}`}>
+                                        <Link href={`/master-data/pelanggan/edit/${customer.noWhatsapp}`}>
                                             <Button
                                                 size={"icon"}
                                                 variant={"default"}
@@ -75,7 +78,7 @@ export const TablePelanggan: React.FC<DataTableProps> = ({ data, columns }) => {
                                                     <div className="text-5xl text-destructive bg-destructive-foreground/10 rounded-full p-2 w-fit mb-4" >
                                                         <IoMdTrash />
                                                     </div>
-                                                    <DialogTitle>Kamu yakin menghapus akun {mitra.name}?</DialogTitle>
+                                                    <DialogTitle>Kamu yakin menghapus akun {customer.fullname}?</DialogTitle>
                                                     <DialogDescription className="text-center">
                                                         Data akan terhapus permanent dan tidak dapat dikembalikan.
                                                     </DialogDescription>
@@ -90,6 +93,38 @@ export const TablePelanggan: React.FC<DataTableProps> = ({ data, columns }) => {
                                                     <Button
                                                         variant="destructive"
                                                         className="w-full"
+                                                        onClick={async () => {
+                                                            console.log(`Menghapus karyawan dengan ID: ${customer.id}`);
+                                                            try {
+                                                                const response = await api.delete(`/customer/${customer.id}`);
+
+                                                                console.log("Response dari server:", response);
+
+                                                                if (response.status === 'success') {
+                                                                    toast({
+                                                                        title: "Sukses!",
+                                                                        description: `Karyawan ${customer.fullname} berhasil dihapus.`,
+                                                                        variant: "default",
+                                                                    });
+                                                                    window.location.reload();
+                                                                } else {
+                                                                    console.error("Gagal menghapus karyawan:", response);
+                                                                    toast({
+                                                                        title: "Gagal!",
+                                                                        description: "Terjadi kesalahan saat menghapus karyawan.",
+                                                                        variant: "destructive",
+                                                                    });
+                                                                }
+                                                            } catch (error) {
+                                                                console.error("Error saat menghapus karyawan:", error);
+                                                                toast({
+                                                                    title: "Error!",
+                                                                    description: "Terjadi kesalahan. Coba lagi nanti.",
+                                                                    variant: "destructive",
+                                                                });
+                                                            }
+                                                        }}
+
                                                     >
                                                         Hapus
                                                     </Button>
@@ -97,21 +132,21 @@ export const TablePelanggan: React.FC<DataTableProps> = ({ data, columns }) => {
                                             </DialogContent>
                                         </Dialog>
                                     </div>
-                                )  : header.key === "status" ? (
-                                    <p className={`badge dark:bg-opacity-70 rounded-md !font-medium border-0 ${mitra[header.key as keyof Pelanggan] === true ? "bg-green-500 text-green-100" : "bg-red-500 text-red-100"}`}>
-                                        {mitra[header.key as keyof Pelanggan] === true ? "Aktif" : "Non-Aktif"}
+                                ) : header.key === "createdAt" ? (
+                                    <p>{formatDate(String(customer[header.key as keyof Pelanggan]))}</p>
+                                ) : header.key === "id" ? (
+                                    <p>{rowIndex + 1}</p>
+                                ) : header.key === "status" ? (
+                                    <p className={`badge dark:bg-opacity-70 rounded-md !font-medium border-0 ${customer[header.key as keyof Pelanggan] === 1 ? "bg-green-500 text-green-100" : "bg-red-500 text-red-100"}`}>
+                                        {customer[header.key as keyof Pelanggan] === 1 ? "Aktif" : "Non-Aktif"}
                                     </p>
-                                ) : header.key === "aksesPengguna" ? (
-                                    <p className={`badge dark:bg-opacity-70 rounded-md !font-medium border-0 ${mitra[header.key as keyof Pelanggan] === "Admin" ? "bg-blue-500/20 text-blue-500" : "bg-mainColor/20 text-mainColor"}`}>
-                                        {mitra[header.key as keyof Pelanggan]}
-                                    </p>
-                                ) : header.key === "name" ? (
+                                ) : header.key === "fullname" ? (
                                     <div className="flex items-center">
-                                        <span className={`mr-2 ${mitra["status"] === true ? "bg-green-500" : "bg-red-500"} rounded-full w-[6px] h-[6px]`}></span>
-                                        <p>{mitra[header.key as keyof Pelanggan]}</p>
+                                        <span className={`mr-2 ${customer["status"] === 1 ? "bg-green-500" : "bg-red-500"} rounded-full w-[6px] h-[6px]`}></span>
+                                        <p>{customer[header.key as keyof Pelanggan]}</p>
                                     </div>
                                 ) : (
-                                    mitra[header.key as keyof Pelanggan]
+                                    customer[header.key as keyof Pelanggan]
                                 )}
                             </TableCell>
                         ))}
