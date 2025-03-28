@@ -30,15 +30,25 @@ interface Karyawan {
     branchId: number;
     roleId: string;
     status: number;
-  }
+}
 
 interface DataTableProps {
     data: Karyawan[];
     columns: TableHeader[];
+    currentPage: number; // Tambahkan currentPage sebagai prop
+    limit: number; // Tambahkan limit sebagai prop
 }
 
-export const TableKaryawan: React.FC<DataTableProps> = ({ data, columns }) => {
+export const TableKaryawan: React.FC<DataTableProps> = ({ data, columns, currentPage, limit }) => {
     const { toast } = useToast(); // Inisialisasi toast
+    const roleColors: Record<string, string> = {
+        "Super Admin": "bg-blue-500/20 text-blue-500",
+        "Administrasi": "bg-yellow-500/20 text-yellow-500",
+        "Staff Blower": "bg-green-500/20 text-green-500",
+        "Staff Cleaning": "bg-purple-500/20 text-purple-500",
+        "Supervisor": "bg-red-500/20 text-red-500",
+    };
+
 
     return (
         <Table>
@@ -141,31 +151,22 @@ export const TableKaryawan: React.FC<DataTableProps> = ({ data, columns }) => {
                                         </Dialog>
                                     </div>
                                 ) : header.key === "status" ? (
-                                    <p
-                                        className={`badge dark:bg-opacity-70 rounded-md !font-medium border-0 ${
-                                            mitra.status === 1 ? "bg-green-500 text-green-100" : "bg-red-500 text-red-100"
-                                        }`}
-                                    >
+                                    <p className={`badge dark:bg-opacity-70 rounded-md !font-medium border-0 ${mitra.status === 1 ? "bg-green-500 text-green-100" : "bg-red-500 text-red-100"}`}>
                                         {mitra.status === 1 ? "Aktif" : "Non-Aktif"}
                                     </p>
                                 ) : header.key === "roleId" ? (
-                                    <p
-                                        className={`badge dark:bg-opacity-70 rounded-md !font-medium border-0 ${
-                                            mitra.roleId === "Super Admin"
-                                                ? "bg-blue-500/20 text-blue-500"
-                                                : "bg-mainColor/20 text-mainColor"
-                                        }`}
-                                    >
+                                    <p className={`badge rounded-md !font-medium border-0 ${roleColors[mitra.roleId] || "bg-gray-500 text-gray-100"}`}>
                                         {mitra.roleId}
                                     </p>
                                 ) : header.key === "id" ? (
-                                    <p>{rowIndex + 1}</p>
+                                    <p>{(currentPage - 1) * limit + rowIndex + 1}</p>
+                                ) : header.key === "noWhatsapp" ? (
+                                    <p> {mitra.noWhatsapp}</p>
                                 ) : header.key === "username" ? (
                                     <div className="flex items-center">
                                         <span
-                                            className={`mr-2 ${
-                                                mitra.status ? "bg-green-500" : "bg-red-500"
-                                            } rounded-full w-[6px] h-[6px]`}
+                                            className={`mr-2 ${mitra.status ? "bg-green-500" : "bg-red-500"
+                                                } rounded-full w-[6px] h-[6px]`}
                                         ></span>
                                         <p>{mitra.username}</p>
                                     </div>

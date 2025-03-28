@@ -4,7 +4,7 @@ import { Header } from "@shared/components/Header";
 import { Wrapper } from "@shared/components/Wrapper";
 import { Input } from "libs/ui-components/src/components/ui/input";
 import { Button } from "libs/ui-components/src/components/ui/button";
-import { DropdownMenuCheckboxes } from "libs/ui-components/src/components/dropdown-checkboxes";
+import { DropdownMenuCheckboxes } from "@superclean-workspace/ui-components/components/filter-status";
 import { LuPlus } from "react-icons/lu";
 import { Search } from "lucide-react";
 import { SelectData } from "libs/ui-components/src/components/select-data";

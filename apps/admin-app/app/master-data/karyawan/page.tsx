@@ -7,12 +7,13 @@ import { Header } from "@shared/components/Header";
 import { Wrapper } from "libs/shared/src/components/Wrapper";
 import { Input } from "libs/ui-components/src/components/ui/input";
 import { Button } from "libs/ui-components/src/components/ui/button";
-import { DropdownMenuCheckboxes } from "libs/ui-components/src/components/dropdown-checkboxes";
+import { FilterStatus } from "@superclean-workspace/ui-components/components/filter-status";
 import { LuPlus } from "react-icons/lu";
 import { Search } from "lucide-react";
 import { SelectData } from "libs/ui-components/src/components/select-data";
 import { PaginationNumber } from "libs/ui-components/src/components/pagination-number";
 import { useParameterStore } from "libs/utils/useParameterStore";
+import { IoClose } from "react-icons/io5";
 
 export const DataHeader = [
   { key: "id", label: "#" },
@@ -43,30 +44,51 @@ export default function KaryawanPage() {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalData, setTotalData] = useState<number>(0);
   const [limit, setLimit] = useState<number>(10); // Default 10 data per halaman
-  const totalPages = Math.max(1, Math.ceil(totalData / limit));
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchInput, setSearchInput] = useState(""); // Input Sementara
+  const [statusFilter, setStatusFilter] = useState<string>("");
 
+  const totalPages = Math.max(1, Math.ceil(totalData / limit));
   const { roleMapping, branchMapping, loading: loadingParams } = useParameterStore();
 
-  useEffect(() => {
-    const fetchKaryawan = async () => {
-      try {
-        const result = await apiClient(`/user/page?page=${currentPage}&limit=${limit}`);
-        
-        setDataKaryawan(result.data[0] || []);
-        setTotalData(result.data[1] || 0); // Pastikan API mengembalikan total data yang benar
-        console.log('====================================');
-        console.log(result);
-        console.log('====================================');
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
+  const fetchKaryawan = async () => {
+    setLoading(true);
+    try {
+      let url = `/user/page?search=${searchQuery}&page=${currentPage}&limit=${limit}`;
+  
+      // Tambahkan status hanya jika filter status dipilih
+      if (statusFilter !== "") {
+        url += `&status=${statusFilter}`;
       }
-    };
-    
+  
+      const result = await apiClient(url);
+  
+      setDataKaryawan(result.data[0] || []);
+      setTotalData(result.data[1] || 0);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
 
+  // Fetch data hanya saat query/filters berubah
+  useEffect(() => {
     fetchKaryawan();
-  }, [currentPage, limit]);
+  }, [searchQuery, statusFilter, currentPage, limit]);
+
+  const handleSearch = () => {
+    setSearchQuery(searchInput); // Set query baru untuk API
+    setCurrentPage(1); // Reset ke halaman pertama
+  };
+
+  const resetSearch = () => {
+    setSearchInput("");  // Hapus input di UI
+    setSearchQuery("");  // Hapus query di API
+    setCurrentPage(1);   // Reset ke halaman pertama
+  };
+
 
   // Proses Data Karyawan (Mapping roleId dan branchId)
   const processedKaryawan = dataKaryawan.map((item) => ({
@@ -75,18 +97,41 @@ export default function KaryawanPage() {
     cabang: branchMapping[item.branchId] || "Tidak Diketahui",
   }));
 
-  console.log('====================================');
-  console.log(totalPages);
-  console.log('====================================');
   return (
     <Wrapper>
-      <Header label={"Daftar Karyawan"} count={dataKaryawan.length} />
+      <Header label={"Daftar Karyawan"} count={totalData} />
       <div className="flex-grow">
         <div className="flex items-center justify-between mb-4 gap-2">
           <div className="flex items-center gap-2">
-            <Input type="text" placeholder="Cari mitra..." className="w-[30lvw]" icon={<Search size={16} />} />
-            <DropdownMenuCheckboxes />
-            <Button variant={"secondary"}>Cari</Button>
+            <div className="relative">
+              <Input
+                type="text"
+                placeholder="Cari nama karyawan..."
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                onKeyDown={(i) => {
+                  if (i.key === "Enter") {
+                    handleSearch();
+                  }
+                }}
+                className="w-[30lvw]"
+                icon={<Search size={16} />}
+              />
+              {searchInput && (
+                <button
+                  type="button"
+                  onClick={resetSearch}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-700"
+                >
+                  <IoClose size={16} />
+                </button>
+              )}
+            </div>
+            <FilterStatus
+              statusFilter={statusFilter}
+              setStatusFilter={setStatusFilter}
+            />
+            <Button variant="secondary" onClick={handleSearch}>Cari</Button>
           </div>
           <Link href="karyawan/baru">
             <Button icon={<LuPlus size={16} />} className="pl-2 pr-4" iconPosition="left" variant="default" type="submit">
@@ -97,20 +142,31 @@ export default function KaryawanPage() {
 
         {loading || loadingParams ? (
           <p className="text-center py-4">Memuat data...</p>
+        ) : processedKaryawan.length === 0 ? (
+          <p className="text-center py-4">Karyawan dengan nama <span className="font-bold">{searchInput}</span>  tidak ditemukan.</p>
         ) : (
-          <TableKaryawan data={processedKaryawan} columns={DataHeader} />
+          <TableKaryawan
+            key={`${currentPage}-${limit}`}
+            data={processedKaryawan}
+            columns={DataHeader}
+            currentPage={currentPage} // Kirim currentPage
+            limit={limit} // Kirim limit
+          />
         )}
       </div>
 
       <div className="flex items-center justify-between mt-4">
-        <SelectData
-          label="Data Per halaman"
-          value={limit}
-          onChange={(value) => {
-            setLimit(value);
-            setCurrentPage(1); // Reset ke halaman pertama setiap kali limit berubah
-          }}
-        />
+        {totalData > 10 ? (
+          <SelectData
+            label="Data Per Halaman"
+            totalData={totalData}
+            currentLimit={limit}
+            onLimitChange={(limit: string) => setLimit(Number(limit))}
+          />
+        ) : (
+          <p>Semua data telah ditampilkan ({totalData})</p>
+
+        )}
 
         <PaginationNumber
           totalPages={totalPages}

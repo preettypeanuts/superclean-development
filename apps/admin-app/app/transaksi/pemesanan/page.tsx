@@ -4,7 +4,7 @@ import { Wrapper } from "@shared/components/Wrapper";
 // import { DataTable } from "libs/ui-components/src/components/data-table";
 import { Input } from "libs/ui-components/src/components/ui/input";
 import { Button } from "libs/ui-components/src/components/ui/button";
-import { DropdownMenuCheckboxes } from "libs/ui-components/src/components/dropdown-checkboxes";
+import { DropdownMenuCheckboxes } from "@superclean-workspace/ui-components/components/filter-status";
 import { LuPlus } from "react-icons/lu";
 import { Search } from "lucide-react";
 import { PiExport } from "react-icons/pi";
