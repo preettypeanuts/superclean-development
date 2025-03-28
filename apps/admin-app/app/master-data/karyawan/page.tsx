@@ -15,7 +15,7 @@ import { PaginationNumber } from "libs/ui-components/src/components/pagination-n
 import { useParameterStore } from "libs/utils/useParameterStore";
 import { IoClose } from "react-icons/io5";
 
-export const DataHeader = [
+export const DataHeaderPelanggan = [
   { key: "id", label: "#" },
   { key: "username", label: "Nama Pengguna" },
   { key: "fullname", label: "Nama" },
@@ -56,7 +56,6 @@ export default function KaryawanPage() {
     try {
       let url = `/user/page?search=${searchQuery}&page=${currentPage}&limit=${limit}`;
   
-      // Tambahkan status hanya jika filter status dipilih
       if (statusFilter !== "") {
         url += `&status=${statusFilter}`;
       }
@@ -148,7 +147,7 @@ export default function KaryawanPage() {
           <TableKaryawan
             key={`${currentPage}-${limit}`}
             data={processedKaryawan}
-            columns={DataHeader}
+            columns={DataHeaderPelanggan}
             currentPage={currentPage} // Kirim currentPage
             limit={limit} // Kirim limit
           />

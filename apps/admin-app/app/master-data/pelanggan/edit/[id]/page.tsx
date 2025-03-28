@@ -119,7 +119,7 @@ export default function EditPelanggan() {
             toast({
                 title: "Berhasil",
                 description: "Profil pelanggan berhasil diperbarui!",
-                variant: "default",
+                variant: "success",
             });
             router.push('/master-data/pelanggan');
         } catch (error) {
@@ -253,7 +253,7 @@ export default function EditPelanggan() {
                                 onCheckedChange={(checked) => handleStatusChange(checked ? 1 : 0)}
                             />
                             <Label htmlFor="status">
-                                {pelanggan?.status === 1 ? "Aktif" : "Non-Aktif"}
+                                {pelanggan?.status === 1 ? "Aktif" : "Tidak Aktif"}
                             </Label>
                         </div>
                     </div>

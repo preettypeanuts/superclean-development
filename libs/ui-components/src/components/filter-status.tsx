@@ -15,14 +15,14 @@ export function FilterStatus({ statusFilter, setStatusFilter }: FilterStatusProp
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button icon={<LuListFilter size={16} />} iconPosition="left" variant="outline">
-          {statusFilter === "1" ? "Aktif" : statusFilter === "0" ? "Non-Aktif" : "Semua"}
+          {statusFilter === "1" ? "Aktif" : statusFilter === "0" ? "Tidak Aktif" : "Semua"}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-40 border-none">
         <DropdownMenuRadioGroup value={statusFilter} onValueChange={setStatusFilter}>
           <DropdownMenuRadioItem value="">Semua</DropdownMenuRadioItem>
           <DropdownMenuRadioItem value="1">Aktif</DropdownMenuRadioItem>
-          <DropdownMenuRadioItem value="0">Non-Aktif</DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="0">Tidak Aktif</DropdownMenuRadioItem>
         </DropdownMenuRadioGroup>
       </DropdownMenuContent>
     </DropdownMenu>

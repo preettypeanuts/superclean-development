@@ -83,7 +83,7 @@ export default function DetailLayanan() {
                         <Label htmlFor="status" className="w-[20%] font-semibold">Status</Label>
                         <div className="flex items-center space-x-2">
                             <Checkbox id="status" checked={status} onCheckedChange={(checked) => setStatus(checked === true)} />
-                            <Label htmlFor="status" className="font-semibold">{status ? "Aktif" : "Non-Aktif"}</Label>
+                            <Label htmlFor="status" className="font-semibold">{status ? "Aktif" : "Tidak Aktif"}</Label>
                         </div>
                     </div>
                     <div className="flex items-center space-x-4">

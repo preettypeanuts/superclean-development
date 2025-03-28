@@ -20,6 +20,7 @@ import { LuSave } from "react-icons/lu";
 import { TbCancel } from "react-icons/tb";
 import { api } from "libs/utils/apiClient";
 import { useParameterStore } from "libs/utils/useParameterStore";
+import { useToast } from "libs/ui-components/src/hooks/use-toast";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -40,14 +41,15 @@ interface Karyawan {
   status: number;
 }
 
-export default function Edit() {
+export default function EditKaryawan() {
+  const { toast } = useToast();
   const pathname = usePathname();
   const id = pathname.split("/").pop();
   const router = useRouter();
 
+  const [showConfirmDialog, setShowConfirmDialog] = useState<boolean>(false);
   const [karyawan, setKaryawan] = useState<Karyawan | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [showSuccessDialog, setShowSuccessDialog] = useState<boolean>(false); // Alert muncul setelah sukses
   const [updating, setUpdating] = useState<boolean>(false);
 
   const { roleMapping, branchMapping, loading: loadingParams } = useParameterStore();
@@ -57,8 +59,8 @@ export default function Edit() {
       try {
         const result = await api.get(`/user/${id}`);
         setKaryawan(result.data);
-      } catch (error: any) {
-        console.error("Gagal mengambil data karyawan:", error.response?.data || error.message);
+      } catch (error) {
+        console.error("Gagal mengambil data karyawan:", error);
       } finally {
         setLoading(false);
       }
@@ -68,30 +70,20 @@ export default function Edit() {
   }, [id]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (karyawan) {
-      setKaryawan({ ...karyawan, [e.target.id]: e.target.value });
-    }
+    setKaryawan(prev => prev ? { ...prev, [e.target.name]: e.target.value } : null);
+  };
+
+  const handleSelectChange = (name: keyof Karyawan, value: string) => {
+    setKaryawan(prev => prev ? { ...prev, [name]: value } : null);
   };
 
   const handleStatusChange = (checked: boolean) => {
-    if (karyawan) {
-      setKaryawan({ ...karyawan, status: checked ? 1 : 0 });
-    }
+    setKaryawan(prev => prev ? { ...prev, status: checked ? 1 : 0 } : null);
   };
 
-  const handleCabangChange = (value: string) => {
-    if (karyawan) {
-      setKaryawan({ ...karyawan, branchId: value });
-    }
-  };
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault(); // Mencegah reload halaman
 
-  const handleRoleChange = (value: string) => {
-    if (karyawan) {
-      setKaryawan({ ...karyawan, roleId: value });
-    }
-  };
-
-  const handleSave = async () => {
     if (!karyawan) return;
 
     const payload = {
@@ -102,25 +94,25 @@ export default function Edit() {
       status: karyawan.status,
     };
 
+    setShowConfirmDialog(false);
     setUpdating(true);
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_APIURL}/user/${karyawan.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
-        body: JSON.stringify(payload),
+      await api.put(`/user/${karyawan.id}`, payload);
+
+      toast({
+        title: "Berhasil",
+        description: "Profil karyawan berhasil diperbarui!",
+        variant: "success",
       });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      setShowSuccessDialog(true); // Tampilkan alert sukses setelah berhasil simpan
-    } catch (error: any) {
-      console.error("Gagal menyimpan data:", error.message);
-      alert("Gagal menyimpan perubahan.");
+      router.push("/master-data/karyawan");
+    } catch (error) {
+      console.error("Gagal menyimpan data:", error);
+      toast({
+        title: "Gagal",
+        description: "Terjadi kesalahan saat mengubah profil karyawan.",
+        variant: "destructive",
+      });
     } finally {
       setUpdating(false);
     }
@@ -132,23 +124,23 @@ export default function Edit() {
       {loading || loadingParams ? (
         <p className="text-center py-4">Memuat data...</p>
       ) : karyawan ? (
-        <form className="space-y-4">
+        <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); setShowConfirmDialog(true); }}>
           <div className="flex items-center space-x-4">
-            <Label htmlFor="username" className="w-1/4 font-semibold">Nama Pengguna</Label>
-            <Input id="username" value={karyawan.username} disabled />
+            <Label className="w-1/4 font-semibold">Nama Pengguna</Label>
+            <Input name="username" value={karyawan.username} disabled />
           </div>
           <div className="flex items-center space-x-4">
-            <Label htmlFor="fullname" className="w-1/4 font-semibold">Nama</Label>
-            <Input id="fullname" value={karyawan.fullname} onChange={handleChange} />
+            <Label className="w-1/4 font-semibold">Nama</Label>
+            <Input name="fullname" value={karyawan.fullname} onChange={handleChange} />
           </div>
           <div className="flex items-center space-x-4">
-            <Label htmlFor="noWhatsapp" className="w-1/4 font-semibold">No. WhatsApp</Label>
-            <Input type="text" id="noWhatsapp" value={karyawan.noWhatsapp} onChange={handleChange} />
+            <Label className="w-1/4 font-semibold">No. WhatsApp</Label>
+            <Input name="noWhatsapp" value={karyawan.noWhatsapp} onChange={handleChange} />
           </div>
 
           <div className="flex items-center space-x-4">
-            <Label htmlFor="branchId" className="w-1/4">Akses Pengguna</Label>
-            <Select onValueChange={handleRoleChange} value={karyawan.roleId}>
+            <Label className="w-1/4">Akses Pengguna</Label>
+            <Select value={karyawan.roleId} onValueChange={(value) => handleSelectChange("roleId", value)}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Pilih Akses Pengguna" />
               </SelectTrigger>
@@ -156,9 +148,7 @@ export default function Edit() {
                 <SelectGroup>
                   <SelectLabel>Pilih Akses</SelectLabel>
                   {Object.entries(roleMapping).map(([key, value]) => (
-                    <SelectItem key={key} value={key}>
-                      {value}
-                    </SelectItem>
+                    <SelectItem key={key} value={key}>{value}</SelectItem>
                   ))}
                 </SelectGroup>
               </SelectContent>
@@ -166,8 +156,8 @@ export default function Edit() {
           </div>
 
           <div className="flex items-center space-x-4">
-            <Label htmlFor="branchId" className="w-1/4">Cabang</Label>
-            <Select onValueChange={handleCabangChange} value={karyawan.branchId}>
+            <Label className="w-1/4">Cabang</Label>
+            <Select value={karyawan.branchId} onValueChange={(value) => handleSelectChange("branchId", value)}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Pilih Cabang" />
               </SelectTrigger>
@@ -175,9 +165,7 @@ export default function Edit() {
                 <SelectGroup>
                   <SelectLabel>Pilih Cabang</SelectLabel>
                   {Object.entries(branchMapping).map(([key, value]) => (
-                    <SelectItem key={key} value={key}>
-                      {value}
-                    </SelectItem>
+                    <SelectItem key={key} value={key}>{value}</SelectItem>
                   ))}
                 </SelectGroup>
               </SelectContent>
@@ -185,10 +173,10 @@ export default function Edit() {
           </div>
 
           <div className="flex items-center space-x-4">
-            <Label htmlFor="status" className="w-[20%] font-semibold">Status</Label>
+            <Label className="w-[20%] font-semibold">Status</Label>
             <div className="flex items-center space-x-2">
-              <Checkbox id="status" checked={karyawan.status === 1} onCheckedChange={handleStatusChange} />
-              <Label htmlFor="status">{karyawan.status === 1 ? "Aktif" : "Non-Aktif"}</Label>
+              <Checkbox checked={karyawan.status === 1} onCheckedChange={handleStatusChange} />
+              <Label>{karyawan.status === 1 ? "Aktif" : "Tidak Aktif"}</Label>
             </div>
           </div>
 
@@ -199,7 +187,7 @@ export default function Edit() {
                 <TbCancel />
                 Batal
               </Button>
-              <Button type="button" className="bg-green-600" disabled={updating} onClick={handleSave}>
+              <Button type="submit" className="bg-green-600" disabled={updating}>
                 <LuSave />
                 {updating ? "Menyimpan..." : "Simpan"}
               </Button>
@@ -210,16 +198,16 @@ export default function Edit() {
         <p className="text-center py-4 text-red-500">Karyawan tidak ditemukan!</p>
       )}
 
-      {/* Alert Dialog untuk Notifikasi Berhasil */}
-      <AlertDialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
+      {/* Dialog Konfirmasi Simpan */}
+      <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Perubahan Berhasil!</AlertDialogTitle>
-            <AlertDialogDescription>Data karyawan telah diperbarui.</AlertDialogDescription>
+            <AlertDialogTitle>Konfirmasi Simpan</AlertDialogTitle>
+            <AlertDialogDescription>Apakah Anda yakin ingin menyimpan perubahan?</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <Button variant="outline" onClick={() => setShowSuccessDialog(false)}>Tetap di Halaman</Button>
-            <AlertDialogAction onClick={() => router.push("/master-data/karyawan")}>Kembali ke Halaman Utama</AlertDialogAction>
+            <Button variant="outline" onClick={() => setShowConfirmDialog(false)}>Batal</Button>
+            <AlertDialogAction onClick={handleSubmit}>Simpan</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

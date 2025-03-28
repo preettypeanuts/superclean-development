@@ -106,7 +106,7 @@ export const TableLayanan: React.FC<DataTableProps> = ({ data, columns }) => {
                                     </div>
                                 ) : header.key === "status" ? (
                                     <p className={`badge dark:bg-opacity-70 rounded-md !font-medium border-0 ${el[header.key as keyof Karyawan] === true ? "bg-green-500 text-green-100" : "bg-red-500 text-red-100"}`}>
-                                        {el[header.key as keyof Karyawan] === true ? "Aktif" : "Non-Aktif"}
+                                        {el[header.key as keyof Karyawan] === true ? "Aktif" : "Tidak Aktif"}
                                     </p>
                                 ) : header.key === "hargaVacuum" || header.key === "hargaCuci" || header.key === "hargaGeneral" ? (
                                     <p>

@@ -148,7 +148,7 @@ export default function NewKaryawan() {
                             <SelectGroup>
                                 <SelectLabel>Status</SelectLabel>
                                 <SelectItem value="1">Aktif</SelectItem>
-                                <SelectItem value="2">Non-Aktif</SelectItem>
+                                <SelectItem value="2">Tidak Aktif</SelectItem>
                             </SelectGroup>
                         </SelectContent>
                     </Select>

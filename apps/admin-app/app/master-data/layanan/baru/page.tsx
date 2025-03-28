@@ -52,7 +52,7 @@ export default function NewLayanan() {
                         </SelectTrigger>
                         <SelectContent>
                             <SelectItem value="aktif">Aktif</SelectItem>
-                            <SelectItem value="non-aktif">Non-Aktif</SelectItem>
+                            <SelectItem value="0">Tidak Aktif</SelectItem>
                         </SelectContent>
                     </Select>
                 </div>
