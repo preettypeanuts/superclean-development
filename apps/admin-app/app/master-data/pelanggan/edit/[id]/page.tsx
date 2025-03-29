@@ -62,7 +62,7 @@ export default function EditPelanggan() {
     useEffect(() => {
         const fetchPelanggan = async () => {
             try {
-                const result = await api.get(`/customer/${noWhatsapp}`);
+                const result = await api.get(`/customer/id/${noWhatsapp}`);
                 setPelanggan(result.data);
                 setStatus(result.data.status === 1);
             } catch (error) {

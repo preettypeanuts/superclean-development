@@ -74,7 +74,7 @@ export const TableKaryawan: React.FC<DataTableProps> = ({ data, columns, current
                             <TableCell key={header.key} className={header.key === "menu" ? "!w-fit" : ""}>
                                 {header.key === "menu" ? (
                                     <div className="w-fit flex gap-2">
-                                        <Link href={`/master-data/karyawan/edit/${mitra.username}`}>
+                                        <Link href={`/master-data/karyawan/edit/${mitra.id}`}>
                                             <Button
                                                 size="icon"
                                                 variant="default"

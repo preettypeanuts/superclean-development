@@ -57,7 +57,7 @@ export default function EditKaryawan() {
   useEffect(() => {
     const fetchKaryawan = async () => {
       try {
-        const result = await api.get(`/user/${id}`);
+        const result = await api.get(`/user/id/${id}`);
         setKaryawan(result.data);
       } catch (error) {
         console.error("Gagal mengambil data karyawan:", error);

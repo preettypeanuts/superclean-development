@@ -43,7 +43,7 @@ export default function KaryawanPage() {
   const [loading, setLoading] = useState<boolean>(true);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalData, setTotalData] = useState<number>(0);
-  const [limit, setLimit] = useState<number>(10); // Default 10 data per halaman
+  const [limit, setLimit] = useState<number>(10); 
   const [searchQuery, setSearchQuery] = useState("");
   const [searchInput, setSearchInput] = useState(""); // Input Sementara
   const [statusFilter, setStatusFilter] = useState<string>("");
@@ -70,7 +70,6 @@ export default function KaryawanPage() {
       setLoading(false);
     }
   };
-  
 
   // Fetch data hanya saat query/filters berubah
   useEffect(() => {
@@ -78,16 +77,15 @@ export default function KaryawanPage() {
   }, [searchQuery, statusFilter, currentPage, limit]);
 
   const handleSearch = () => {
-    setSearchQuery(searchInput); // Set query baru untuk API
-    setCurrentPage(1); // Reset ke halaman pertama
+    setSearchQuery(searchInput); 
+    setCurrentPage(1);
   };
 
   const resetSearch = () => {
-    setSearchInput("");  // Hapus input di UI
-    setSearchQuery("");  // Hapus query di API
-    setCurrentPage(1);   // Reset ke halaman pertama
+    setSearchInput(""); 
+    setSearchQuery("");  
+    setCurrentPage(1);  
   };
-
 
   // Proses Data Karyawan (Mapping roleId dan branchId)
   const processedKaryawan = dataKaryawan.map((item) => ({
@@ -98,7 +96,7 @@ export default function KaryawanPage() {
 
   return (
     <Wrapper>
-      <Header label={"Daftar Karyawan"} count={totalData} />
+      <Header label="Daftar Karyawan" count={totalData} />
       <div className="flex-grow">
         <div className="flex items-center justify-between mb-4 gap-2">
           <div className="flex items-center gap-2">
@@ -134,7 +132,7 @@ export default function KaryawanPage() {
           </div>
           <Link href="karyawan/baru">
             <Button icon={<LuPlus size={16} />} className="pl-2 pr-4" iconPosition="left" variant="default" type="submit">
-              Tambah Mitra
+              Tambah Karyawan
             </Button>
           </Link>
         </div>
@@ -148,8 +146,8 @@ export default function KaryawanPage() {
             key={`${currentPage}-${limit}`}
             data={processedKaryawan}
             columns={DataHeaderPelanggan}
-            currentPage={currentPage} // Kirim currentPage
-            limit={limit} // Kirim limit
+            currentPage={currentPage} 
+            limit={limit} 
           />
         )}
       </div>
@@ -164,7 +162,6 @@ export default function KaryawanPage() {
           />
         ) : (
           <p>Semua data telah ditampilkan ({totalData})</p>
-
         )}
 
         <PaginationNumber

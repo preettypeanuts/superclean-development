@@ -21,13 +21,18 @@ interface TableHeader {
 }
 
 interface Pelanggan {
-    id: number;
-    fullname: string;
-    noWhatsapp: string;
+    id: string;
     createdAt: string;
     createdBy: string;
+    noWhatsapp: string;
+    fullname: string;
+    address: string;
+    province: string;
+    city: string;
+    district: string;
+    subDistrict: string;
     status: number;
-}
+  }
 
 interface DataTableProps {
     data: Pelanggan[];
@@ -56,7 +61,7 @@ export const TablePelanggan: React.FC<DataTableProps> = ({ data, columns, curren
                             <TableCell key={header.key} className={`${header.key === "menu" && "!w-fit"}`}>
                                 {header.key === "menu" ? (
                                     <div className="w-fit flex gap-2">
-                                        <Link href={`/master-data/pelanggan/edit/${customer.noWhatsapp}`}>
+                                        <Link href={`/master-data/pelanggan/edit/${customer.id}`}>
                                             <Button
                                                 size={"icon"}
                                                 variant={"default"}
