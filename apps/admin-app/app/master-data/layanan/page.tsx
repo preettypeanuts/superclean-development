@@ -1,171 +1,172 @@
-"use client"
+"use client";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { apiClient } from "libs/utils/apiClient";
+import { TableLayanan } from "libs/ui-components/src/components/layanan-table";
 import { Header } from "@shared/components/Header";
-import { Wrapper } from "@shared/components/Wrapper";
+import { Wrapper } from "libs/shared/src/components/Wrapper";
 import { Input } from "libs/ui-components/src/components/ui/input";
 import { Button } from "libs/ui-components/src/components/ui/button";
-import { DropdownMenuCheckboxes } from "@superclean-workspace/ui-components/components/filter-status";
+import { FilterStatus } from "@superclean-workspace/ui-components/components/filter-status";
 import { LuPlus } from "react-icons/lu";
 import { Search } from "lucide-react";
 import { SelectData } from "libs/ui-components/src/components/select-data";
 import { PaginationNumber } from "libs/ui-components/src/components/pagination-number";
-import { TableLayanan } from "libs/ui-components/src/components/layanan-table"
-import Link from "next/link";
-
-export const dataLayanan = [
-  {
-    id: 1,
-    kodeLayanan: "L001",
-    namaLayanan: "General Cleaming",
-    kategori: "General",
-    hargaGeneral: 50000,
-    hargaVacuum: 0,
-    hargaCuci: 0,
-    satuan: "pcs",
-    status: true
-  },
-  {
-    id: 2,
-    kodeLayanan: "L002",
-    namaLayanan: "Karpet",
-    kategori: "Karpet",
-    hargaGeneral: 0,
-    hargaVacuum: 60000,
-    hargaCuci: 100000,
-    satuan: "pcs",
-    status: true
-  },
-  {
-    id: 3,
-    kodeLayanan: "L003",
-    namaLayanan: "Kasur 200 x 200",
-    kategori: "Bed",
-    hargaGeneral: 0,
-    hargaVacuum: 75000,
-    hargaCuci: 125000,
-    satuan: "unit",
-    status: false
-  },
-  {
-    id: 4,
-    kodeLayanan: "L004",
-    namaLayanan: "Kasur 180 x 200",
-    kategori: "Bed",
-    hargaGeneral: 0,
-    hargaVacuum: 70000,
-    hargaCuci: 120000,
-    satuan: "unit",
-    status: true
-  },
-  {
-    id: 5,
-    kodeLayanan: "L005",
-    namaLayanan: "Kasur 160 x 200",
-    kategori: "Bed",
-    hargaGeneral: 0,
-    hargaVacuum: 65000,
-    hargaCuci: 110000,
-    satuan: "unit",
-    status: true
-  },
-  {
-    id: 6,
-    kodeLayanan: "L006",
-    namaLayanan: "Sofa 3 Seater",
-    kategori: "Furniture",
-    hargaGeneral: 0,
-    hargaVacuum: 85000,
-    hargaCuci: 150000,
-    satuan: "unit",
-    status: true
-  },
-  {
-    id: 7,
-    kodeLayanan: "L007",
-    namaLayanan: "Sofa 2 Seater",
-    kategori: "Furniture",
-    hargaGeneral: 0,
-    hargaVacuum: 70000,
-    hargaCuci: 120000,
-    satuan: "unit",
-    status: true
-  },
-  {
-    id: 8,
-    kodeLayanan: "L008",
-    namaLayanan: "Kursi Kantor",
-    kategori: "Furniture",
-    hargaGeneral: 0,
-    hargaVacuum: 50000,
-    hargaCuci: 90000,
-    satuan: "pcs",
-    status: true
-  },
-  {
-    id: 9,
-    kodeLayanan: "L009",
-    namaLayanan: "Spring Bed Single",
-    kategori: "Bed",
-    hargaGeneral: 0,
-    hargaVacuum: 60000,
-    hargaCuci: 100000,
-    satuan: "unit",
-    status: false
-  },
-  {
-    id: 10,
-    kodeLayanan: "L010",
-    namaLayanan: "Spring Bed Queen",
-    kategori: "Bed",
-    hargaGeneral: 0,
-    hargaVacuum: 70000,
-    hargaCuci: 120000,
-    satuan: "unit",
-    status: true
-  }
-];
-
+import { useParameterStore } from "libs/utils/useParameterStore";
+import { Label } from "@ui-components/components/ui/label";
+import { IoClose } from "react-icons/io5";
 
 export const DataHeaderLayanan = [
   { key: "id", label: "#" },
-  { key: "kodeLayanan", label: "Kode Layanan" },
-  { key: "namaLayanan", label: "Nama Layanan" },
-  { key: "kategori", label: "Kategori" },
-  { key: "hargaVacuum", label: "Harga Vacuum" },
-  { key: "hargaCuci", label: "Harga Cuci" },
-  { key: "hargaGeneral", label: "Harga General" },
-  { key: "satuan", label: "Satuan" },
+  { key: "code", label: "Kode Layanan" },
+  { key: "name", label: "Nama Layanan" },
+  { key: "category", label: "Kategori" },
+  { key: "vacuumPrice", label: "Harga Vacuum" },
+  { key: "cleanPrice", label: "Harga Cuci" },
+  { key: "generalPrice", label: "Harga General" },
+  { key: "unit", label: "Satuan" },
   { key: "status", label: "Status" },
   { key: "menu", label: "Aksi" },
 ];
 
+interface Service {
+  id: string;
+  code: string;
+  name: string;
+  category: string;
+  unit: string;
+  vacuumPrice: number;
+  cleanPrice: number;
+  generalPrice: number;
+  status: number;
+}
+
 export default function LayananPage() {
+  const [dataLayanan, setDataLayanan] = useState<Service[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalData, setTotalData] = useState<number>(0);
+  const [limit, setLimit] = useState<number>(10);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchInput, setSearchInput] = useState(""); // Input Sementara
+  const [statusFilter, setStatusFilter] = useState<string>("");
+
+  const totalPages = Math.max(1, Math.ceil(totalData / limit));
+
+  const fetchLayanan = async () => {
+    setLoading(true);
+    try {
+      let url = `/service/page?search=${searchQuery}&page=${currentPage}&limit=${limit}`;
+
+      if (statusFilter !== "") {
+        url += `&status=${statusFilter}`;
+      }
+
+      const result = await apiClient(url);
+
+      setDataLayanan(result.data[0] || []);
+      setTotalData(result.data[1] || 0);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchLayanan();
+  }, [searchQuery, statusFilter, currentPage, limit]);
+
+  const handleSearch = () => {
+    setSearchQuery(searchInput);
+    setCurrentPage(1);
+  };
+
+  const resetSearch = () => {
+    setSearchInput("");
+    setSearchQuery("");
+    setCurrentPage(1);
+  };
+
   return (
     <Wrapper>
-      <Header label={"Daftar Layanan"} count={dataLayanan.length} />
+      <Header label="Daftar Layanan" count={totalData} />
       <div className="flex-grow">
         <div className="flex items-center justify-between mb-4 gap-2">
           <div className="flex items-center gap-2">
-            <Input type="text" placeholder="Cari layanan..." className="w-[30lvw]" icon={<Search size={16} />} />
-            <DropdownMenuCheckboxes />
-            <Button variant={"secondary"}>Cari</Button>
+            <div className="relative">
+              <Input
+                type="text"
+                placeholder="Cari layanan..."
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    handleSearch();
+                  }
+                }}
+                className="w-[30lvw]"
+                icon={<Search size={16} />}
+              />
+              {searchInput && (
+                <button
+                  type="button"
+                  onClick={resetSearch}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-700"
+                >
+                  <IoClose size={16} />
+                </button>
+              )}
+            </div>
+            <FilterStatus statusFilter={statusFilter} setStatusFilter={setStatusFilter} />
+            <Button variant="secondary" onClick={handleSearch}>Cari</Button>
           </div>
           <Link href="layanan/baru">
-            <Button
-              icon={<LuPlus size={16} />}
-              className="pl-2 pr-4"
-              iconPosition="left"
-              variant="default"
-              type="submit"
-            >
+            <Button icon={<LuPlus size={16} />} className="pl-2 pr-4" iconPosition="left" variant="default" type="submit">
               Tambah Layanan
             </Button>
           </Link>
         </div>
-      <TableLayanan data={dataLayanan} columns={DataHeaderLayanan} />
+
+        {loading ? (
+          <p className="text-center py-4">Memuat data...</p>
+        ) : dataLayanan.length === 0 ? (
+          searchQuery ? (
+            <p className="text-center py-4">
+              Layanan dengan nama <span className="font-bold">{searchQuery}</span> tidak ditemukan.
+            </p>
+          ) : (
+            <p className="text-center py-4">Tidak ada data layanan yang tersedia.</p>
+          )
+        ) : (
+          <TableLayanan
+            data={dataLayanan}
+            columns={DataHeaderLayanan}
+            key={`${currentPage}-${limit}`}
+            currentPage={currentPage}
+            limit={limit}
+            fetchData={fetchLayanan}
+          />
+        )}
       </div>
+
       <div className="flex items-center justify-between mt-4">
-        <SelectData label="Data Per halaman" />
-        <PaginationNumber />
+        {totalData > 10 ? (
+          <SelectData
+            label="Data Per Halaman"
+            totalData={totalData}
+            currentLimit={limit}
+            onLimitChange={(limit: string) => setLimit(Number(limit))}
+          />
+        ) : (
+          <Label className="text-xs">Semua data telah ditampilkan ({totalData})</Label>
+        )}
+
+        <PaginationNumber
+          totalPages={totalPages}
+          currentPage={currentPage}
+          onPageChange={(page) => setCurrentPage(page)}
+        />
       </div>
     </Wrapper>
   );

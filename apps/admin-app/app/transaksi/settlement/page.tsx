@@ -1,4 +1,4 @@
-export default async function TrackingPemesanan() {
+export default async function SettlementPage() {
     return (
       <div className='container'>
       </div>

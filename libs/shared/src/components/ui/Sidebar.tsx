@@ -1,20 +1,79 @@
 "use client";
-
-import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { navigationItems } from "../../data/system";
 import { IoIosArrowDown } from "react-icons/io";
 import { SiCcleaner } from "react-icons/si";
 import { TbLayoutSidebarLeftExpandFilled, TbLayoutSidebarRightExpandFilled } from "react-icons/tb";
 import { usePathname } from "next/navigation";
-import Link from "next/link";
 import { ThemeSwitch } from "./ThemeSwitch";
+import { apiClient } from "../../../../utils/apiClient";
+import { ModalProfile } from "../ModalProfile";
+import { useParameterStore } from "../../../../utils/useParameterStore";
+import { IoReloadOutline } from "react-icons/io5";
+
+interface UserData {
+    username: string;
+    fullname: string;
+    role: string;
+    branch: string;
+}
 
 export const Sidebar = () => {
     const [isExpanded, setIsExpanded] = useState(true);
     const [openSubmenus, setOpenSubmenus] = useState<{ [key: string]: boolean }>({});
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [userData, setUserData] = useState<UserData | null>(null);
+    const [loadingUser, setLoadingUser] = useState(true);
 
+    const { roleMapping, branchMapping, loading: loadingParams } = useParameterStore();
     const path = usePathname();
+  
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                setLoadingUser(true);
+                const result = await apiClient("/auth/whoAmI");
+    
+                if (result.status === "success") {
+                    setUserData(result.data);
+                }
+            } catch (error) {
+                console.error("Error fetching user data:", error);
+            } finally {
+                setLoadingUser(false);
+            }
+        };
+    
+        fetchUserData();
+    }, [path]); 
+
+    const processedUserProfile = userData
+        ? {
+            ...userData,
+            role: roleMapping[userData.role] || "Tidak Diketahui",
+            branch: branchMapping[userData.branch] || "Tidak Diketahui",
+        }
+        : null;
+
+    const getRoleAbbreviation = (roleValue: string) => {
+        const roleMap: Record<string, string> = {
+            "Administrasi": "ADM",
+            "Staff Blower": "SB",
+            "Staff Cleaning": "SC",
+            "Super Admin": "SA",
+            "Supervisor": "SPV",
+        };
+
+        return roleMap[roleValue] || "Tidak Diketahui";
+    };
+
+
+    const processedRole = roleMapping[userData?.role ?? ""]
+        ? getRoleAbbreviation(roleMapping[userData?.role ?? ""])
+        : "UN";
+
+
     const noNavigation = ["/login", "/forgot-password", "/reset-password"];
 
     const toggleSidebar = () => {
@@ -191,26 +250,29 @@ export const Sidebar = () => {
                 <div className={`absolute w-full ${!isExpanded && "hidden"} rounded-b-3xl h-[25%] bottom-0 bg-gradient-to-t from-mainColor/30 dark:from-mainColor/10 to-transparent z-[555] gradient-blur-to-t`} />
 
                 <div className={`${isExpanded ? "bottom-2 left-2 w-full pr-4" : "bottom-0 p-3"} z-[666] absolute space-y-2`}>
-                    <div className={`${isExpanded ? "px-3 py-3 flex items-center gap-2 rounded-2xl hover:bg-mainColor/20 duration-150" : "flex justify-center pb-1"}  cursor-pointer`}>
-                        <Image
-                            width={50}
-                            height={50}
-                            className="w-9 h-9 min-w-9 min-h-9 rounded-full object-cover"
-                            src="https://images.unsplash.com/photo-1481214110143-ed630356e1bb?q=80&w=3087&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                            alt="Profile Photos"
-                        />
+                    <div onClick={() => setIsModalOpen(true)} className={`${isExpanded ? "px-3 py-3 flex items-center gap-2 rounded-2xl hover:bg-mainColor/20 duration-150" : "flex justify-center pb-1"} cursor-pointer`}>
+                        {loadingUser ? (
+                            <div className="animate-spin flex items-center justify-center text-xs font-medium w-11 h-11 rounded-full bg-neutral-500/20 dark:bg-neutral-500/30">
+                                <IoReloadOutline />
+                            </div>
+                        ) : (
+                            <div className="flex items-center justify-center text-xs font-medium w-11 h-11 rounded-full bg-neutral-500/20 dark:bg-neutral-500/30">
+                                {processedRole}
+                            </div>
+                        )}
+
                         <div className={`${!isExpanded && "hidden"} flex flex-col text-sm`}>
                             <p className="font-medium">
-                                Admin
+                                {loadingUser ? "Loading..." : processedUserProfile?.fullname || "Tidak Diketahui"}
                             </p>
                             <p className="text-xs text-neutral-500">
-                                admin@gmail.com
+                                {loadingUser ? "Loading..." : processedUserProfile?.username || "Tidak Diketahui"}
                             </p>
                         </div>
                     </div>
                     <ThemeSwitch isExpanded={isExpanded} />
                 </div>
-
+                <ModalProfile isOpen={isModalOpen} onOpenChange={setIsModalOpen} user={processedUserProfile} />
             </div>
         </nav>
     );

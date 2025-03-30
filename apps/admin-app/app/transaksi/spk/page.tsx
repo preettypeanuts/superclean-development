@@ -1,4 +1,4 @@
-export default async function InquiryPembayaran() {
+export default async function SPKPage() {
     return (
       <div className='container'>
       </div>

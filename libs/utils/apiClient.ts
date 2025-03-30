@@ -27,14 +27,6 @@ export const apiClient = async (
         const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
         const result = await response.json();
 
-        // Jika token kadaluarsa, handle logout
-        if (response.status === 401) {
-            localStorage.removeItem("access_token");
-            window.location.href = "/login"; // Redirect ke login
-            throw new Error("Session expired, please login again.");
-        }
-
-        // Jika error dari server, lempar error
         if (!response.ok) {
             throw new Error(result.message || "Something went wrong");
         }

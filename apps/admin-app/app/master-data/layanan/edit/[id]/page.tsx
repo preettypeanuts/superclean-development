@@ -1,106 +1,238 @@
-"use client"
-import { useState } from "react";
-import { usePathname } from 'next/navigation';
+"use client";
+import { useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { Header } from "@shared/components/Header";
 import { Wrapper } from "@shared/components/Wrapper";
-import { dataLayanan } from "../../page";
-import slugify from "libs/utils/slugify"
 import { Input } from "libs/ui-components/src/components/ui/input";
 import { Label } from "libs/ui-components/src/components/ui/label";
 import { Button } from "libs/ui-components/src/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectGroup, SelectLabel } from "libs/ui-components/src/components/ui/select"
-import { useRouter } from 'next/navigation';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  SelectGroup,
+  SelectLabel,
+} from "libs/ui-components/src/components/ui/select";
+import { Checkbox } from "libs/ui-components/src/components/ui/checkbox";
 import { LuSave } from "react-icons/lu";
 import { TbCancel } from "react-icons/tb";
-import { Checkbox } from "libs/ui-components/src/components/ui/checkbox";
+import { api } from "libs/utils/apiClient";
+import { useCategoryStore } from "libs/utils/useCategoryStore";
+import { useToast } from "libs/ui-components/src/hooks/use-toast";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogAction,
+} from "libs/ui-components/src/components/ui/alert-dialog";
 
-export default function DetailLayanan() {
-    const pathname = usePathname();
-    const id = pathname.split('/').pop();
-    const router = useRouter();
+interface Layanan {
+  id: string;
+  code: string;
+  name: string;
+  category: string;
+  unit: string;
+  isGeneral: boolean;
+  vacuumPrice: number;
+  cleanPrice: number;
+  generalPrice: number;
+  status: number;
+}
 
-    const detailLayanan = dataLayanan.find(layanan => slugify(layanan.namaLayanan) === id);
-    const [status, setStatus] = useState(detailLayanan?.status || false);
+export default function EditLayanan() {
+  const { toast } = useToast();
+  const pathname = usePathname();
+  const id = pathname.split("/").pop();
+  const router = useRouter();
 
-    return (
-        <Wrapper>
-            <Header label={`Edit Profil ${detailLayanan ? detailLayanan.namaLayanan : ""}`} />
-            {detailLayanan && (
-                <form className='space-y-4'>
-                    <div className="flex items-center space-x-4">
-                        <Label htmlFor="kodeLayanan" className="w-1/4 font-semibold">Kode Layanan</Label>
-                        <Input id="kodeLayanan" defaultValue={detailLayanan.kodeLayanan} />
-                    </div>
-                    <div className="flex items-center space-x-4">
-                        <Label htmlFor="namaLayanan" className="w-1/4 font-semibold">Nama Layanan</Label>
-                        <Input id="namaLayanan" defaultValue={detailLayanan.namaLayanan} />
-                    </div>
-                    <div className="flex items-center space-x-4">
-                        <Label htmlFor="status" className="w-1/4 font-semibold">Kategori</Label>
-                        <Select>
-                            <SelectTrigger className="w-full">
-                                <SelectValue placeholder={detailLayanan.kategori} />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {dataLayanan.map((layanan, index) => (
-                                    <SelectItem key={index} value="aktif">{layanan.kategori}</SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    </div>
-                    <div className="flex items-center space-x-4">
-                        <Label htmlFor="status" className="w-1/4 font-semibold">Satuan</Label>
-                        <Select>
-                            <SelectTrigger className="w-full">
-                                <SelectValue placeholder={detailLayanan.satuan} />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {dataLayanan.map((layanan, index) => (
-                                    <SelectItem key={index} value="aktif">{layanan.satuan}</SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    </div>
-                    {detailLayanan.kategori === "General" ? (
-                        <div className="flex items-center space-x-4">
-                            <Label htmlFor="hargaGeneral" className="w-1/4 font-semibold">Harga General</Label>
-                            <Input type='number' id="hargaGeneral" defaultValue={detailLayanan.hargaGeneral} />
-                        </div>
-                    ) : (
-                        <>
-                            <div className="flex items-center space-x-4">
-                                <Label htmlFor="hargaCuci" className="w-1/4 font-semibold">Harga Cuci</Label>
-                                <Input type='number' id="hargaCuci" defaultValue={detailLayanan.hargaCuci} />
-                            </div>
-                            <div className="flex items-center space-x-4">
-                                <Label htmlFor="hargaVacuum" className="w-1/4 font-semibold">Harga Vacuum</Label>
-                                <Input type='number' id="hargaVacuum" defaultValue={detailLayanan.hargaVacuum} />
-                            </div>
-                        </>
-                    )}
+  const [showConfirmDialog, setShowConfirmDialog] = useState<boolean>(false);
+  const [layanan, setLayanan] = useState<Layanan | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [updating, setUpdating] = useState<boolean>(false);
 
-                    <div className="flex items-center space-x-4">
-                        <Label htmlFor="status" className="w-[20%] font-semibold">Status</Label>
-                        <div className="flex items-center space-x-2">
-                            <Checkbox id="status" checked={status} onCheckedChange={(checked) => setStatus(checked === true)} />
-                            <Label htmlFor="status" className="font-semibold">{status ? "Aktif" : "Tidak Aktif"}</Label>
-                        </div>
-                    </div>
-                    <div className="flex items-center space-x-4">
-                        <div className="w-1/4"></div>
-                        <div className=" space-x-2 flex w-full">
-                            <Button type="button" variant={"destructive"} className="text-foreground w-[10lvw]" onClick={() => router.push('/master-data/layanan')}>
-                                <TbCancel />
-                                Batal
-                            </Button>
-                            <Button type="submit" variant={"default"} className="bg-success text-foreground hover:bg-green-600 w-[10lvw]">
-                                <LuSave />
-                                Simpan
-                            </Button>
-                        </div>
-                    </div>
-                </form>
-            )}
-        </Wrapper>
-    );
+  const { unitLayananMapping, catLayananMapping, loading: loadingParams } = useCategoryStore();
+
+  useEffect(() => {
+    const fetchLayanan = async () => {
+      try {
+        const result = await api.get(`/service/id/${id}`);
+        setLayanan(result.data);
+      } catch (error) {
+        console.error("Gagal mengambil data layanan:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchLayanan();
+  }, [id]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setLayanan((prev) => (prev ? { ...prev, [e.target.name]: e.target.value } : null));
+  };
+
+  const handleSelectChange = (name: keyof Layanan, value: string) => {
+    setLayanan((prev) => (prev ? { ...prev, [name]: value } : null));
+  };
+
+  const handleStatusChange = (checked: boolean) => {
+    setLayanan((prev) => (prev ? { ...prev, status: checked ? 1 : 0 } : null));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault(); // Mencegah reload halaman
+
+    if (!layanan) return;
+
+    const payload = {
+      name: layanan.name,
+      category: layanan.category,
+      unit: layanan.unit,
+      isGeneral: layanan.isGeneral,
+      vacuumPrice: layanan.vacuumPrice,
+      cleanPrice: layanan.cleanPrice,
+      generalPrice: layanan.generalPrice,
+      status: layanan.status,
+    };
+
+    setShowConfirmDialog(false);
+    setUpdating(true);
+    try {
+      await api.put(`/service/${layanan.id}`, payload);
+
+      toast({
+        title: "Berhasil",
+        description: "Data layanan berhasil diperbarui!",
+        variant: "success",
+      });
+
+      router.push("/master-data/layanan");
+    } catch (error) {
+      console.error("Gagal menyimpan data:", error);
+      toast({
+        title: "Gagal",
+        description: "Terjadi kesalahan saat mengubah data layanan.",
+        variant: "destructive",
+      });
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  return (
+    <Wrapper>
+      <Header label="Ubah Layanan" />
+      {loading || loadingParams ? (
+        <p className="text-center py-4">Memuat data...</p>
+      ) : layanan ? (
+        <form
+          className="space-y-4"
+          onSubmit={(e) => {
+            e.preventDefault();
+            setShowConfirmDialog(true);
+          }}
+        >
+          <div className="flex items-center space-x-4">
+            <Label className="w-1/4 font-semibold">Kode Layanan</Label>
+            <Input name="code" value={layanan.code} disabled />
+          </div>
+          <div className="flex items-center space-x-4">
+            <Label className="w-1/4 font-semibold">Nama Layanan</Label>
+            <Input name="name" value={layanan.name} onChange={handleChange} />
+          </div>
+
+          <div className="flex items-center space-x-4">
+            <Label className="w-1/4">Kategori</Label>
+            <Select value={layanan.category} onValueChange={(value) => handleSelectChange("category", value)}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Pilih Kategori" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Pilih Kategori</SelectLabel>
+                  {Object.entries(catLayananMapping).map(([key, value]) => (
+                    <SelectItem key={key} value={key}>{value}</SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex items-center space-x-4">
+            <Label className="w-1/4">Satuan</Label>
+            <Select value={layanan.unit} onValueChange={(value) => handleSelectChange("unit", value)}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Pilih Satuan" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Pilih Satuan</SelectLabel>
+                  {Object.entries(unitLayananMapping).map(([key, value]) => (
+                    <SelectItem key={key} value={key}>{value}</SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {layanan.isGeneral ? (
+            <div className="flex items-center space-x-4">
+              <Label className="w-1/4 font-semibold">Harga General</Label>
+              <Input type="number" name="generalPrice" value={layanan.generalPrice} onChange={handleChange} />
+            </div>
+          ) : (
+            <>
+              <div className="flex items-center space-x-4">
+                <Label className="w-1/4 font-semibold">Harga Cuci</Label>
+                <Input type="number" name="cleanPrice" value={layanan.cleanPrice} onChange={handleChange} />
+              </div>
+              <div className="flex items-center space-x-4">
+                <Label className="w-1/4 font-semibold">Harga Vacuum</Label>
+                <Input type="number" name="vacuumPrice" value={layanan.vacuumPrice} onChange={handleChange} />
+              </div>
+            </>
+          )}
+     <div className="flex items-center space-x-4">
+            <Label className="w-[20%] font-semibold">Status</Label>
+            <div className="flex items-center space-x-2">
+              <Checkbox checked={layanan.status === 1} onCheckedChange={handleStatusChange} />
+              <Label>{layanan.status === 1 ? "Aktif" : "Tidak Aktif"}</Label>
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-4">
+            <Button type="button" variant="destructive" onClick={() => router.push("/master-data/layanan")}>
+              <TbCancel />
+              Batal
+            </Button>
+            <Button type="submit" className="bg-green-600" disabled={updating}>
+              <LuSave />
+              {updating ? "Menyimpan..." : "Simpan"}
+            </Button>
+          </div>
+        </form>
+      ) : (
+        <p className="text-center py-4 text-red-500">Layanan tidak ditemukan!</p>
+      )}
+
+            {/* Dialog Konfirmasi Simpan */}
+            <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Konfirmasi Simpan</AlertDialogTitle>
+            <AlertDialogDescription>Apakah Anda yakin ingin menyimpan perubahan?</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <Button variant="outline" onClick={() => setShowConfirmDialog(false)}>Batal</Button>
+            <AlertDialogAction onClick={handleSubmit}>Simpan</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </Wrapper>
+  );
 }

@@ -22,7 +22,7 @@ export const navigationItems = {
                     { name: "karyawan", path: "/master-data/karyawan" },
                     { name: "pelanggan", path: "/master-data/pelanggan" },
                     { name: "layanan", path: "/master-data/layanan" },
-                    { name: "diskon", path: "/master-data/diskon" },
+                    { name: "Promo", path: "/master-data/diskon" },
                 ]
             },
             {
@@ -30,20 +30,10 @@ export const navigationItems = {
                 path: "/transaksi",
                 icon: <FaHandsHelping />,
                 subs: [
-                    { name: "SPK", path: "/transaksi/SPK" },
+                    { name: "SPK", path: "/transaksi/spk" },
                     { name: "settlement", path: "/transaksi/settlement" },
                 ]
             },
-            // {
-            //     label: "public",
-            //     path: "/public",
-            //     icon: <FaGlobe />,
-            //     subs: [
-            //         { name: "konfirmasi pembayaran", path: "/konfirmasi-pembayaran" },
-            //         { name: "rating", path: "/rating" },
-            //         { name: "Partners", path: "/partners" },
-            //     ]
-            // },
             {
                 label: "laporan",
                 path: "/laporan",

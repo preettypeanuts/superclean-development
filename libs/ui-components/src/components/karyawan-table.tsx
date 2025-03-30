@@ -152,7 +152,7 @@ export const TableKaryawan: React.FC<DataTableProps> = ({ data, columns, current
                                         </Dialog>
                                     </div>
                                 ) : header.key === "status" ? (
-                                    <p className={`badge dark:bg-opacity-70 rounded-md !font-medium border-0 ${mitra.status === 1 ? "bg-green-500 text-green-100" : "bg-red-500 text-red-100"}`}>
+                                    <p className={`badge dark:bg-opacity-70 rounded-md !font-medium border-0 ${mitra.status === 1 ? "bg-green-200 text-green-900 dark:bg-green-500 dark:text-green-100" : "bg-red-200 text-red-900 dark:bg-red-500 dark:text-red-100"}`}>
                                         {mitra.status === 1 ? "Aktif" : "Tidak Aktif"}
                                     </p>
                                 ) : header.key === "roleId" ? (

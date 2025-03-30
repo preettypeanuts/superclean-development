@@ -44,7 +44,7 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({ headline, tagline, bgIma
                 throw new Error(result.message || "Login gagal!");
             }
     
-            // Ambil access_token dari result.data.access_token
+
             const accessToken = result?.data?.access_token;
     
             if (!accessToken) {
