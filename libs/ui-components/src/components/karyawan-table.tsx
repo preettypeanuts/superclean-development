@@ -35,8 +35,8 @@ interface Karyawan {
 interface DataTableProps {
     data: Karyawan[];
     columns: TableHeader[];
-    currentPage: number; // Tambahkan currentPage sebagai prop
-    limit: number; // Tambahkan limit sebagai prop
+    currentPage: number; 
+    limit: number;
 }
 
 export const TableKaryawan: React.FC<DataTableProps> = ({ data, columns, currentPage, limit }) => {

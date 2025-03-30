@@ -13,6 +13,7 @@ import { PaginationNumber } from "libs/ui-components/src/components/pagination-n
 import { TablePelanggan } from "libs/ui-components/src/components/table-pelanggan";
 import { apiClient } from "libs/utils/apiClient";
 import { IoClose } from "react-icons/io5";
+import { Label } from "@ui-components/components/ui/label";
 
 export const DataHeaderPelanggan = [
   { key: "id", label: "#" },
@@ -150,8 +151,7 @@ export default function PelangganPage() {
             onLimitChange={(limit: string) => setLimit(Number(limit))}
           />
         ) : (
-          <p>Semua data telah ditampilkan ({totalData})</p>
-
+          <Label className="text-xs">Semua data telah ditampilkan ({totalData})</Label>
         )}
         <PaginationNumber
           totalPages={totalPages}

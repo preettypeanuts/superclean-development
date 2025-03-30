@@ -1,168 +1,165 @@
 "use client"
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { apiClient } from "libs/utils/apiClient";
 import { Header } from "@shared/components/Header";
 import { Wrapper } from "@shared/components/Wrapper";
-// import { DataTable } from "libs/ui-components/src/components/data-table";
 import { Input } from "libs/ui-components/src/components/ui/input";
 import { Button } from "libs/ui-components/src/components/ui/button";
-import { DropdownMenuCheckboxes } from "@superclean-workspace/ui-components/components/filter-status";
+import { FilterStatus } from "@superclean-workspace/ui-components/components/filter-status";
 import { LuPlus } from "react-icons/lu";
 import { Search } from "lucide-react";
-import { PiExport } from "react-icons/pi";
+import { IoClose } from "react-icons/io5";
 import { SelectData } from "libs/ui-components/src/components/select-data";
 import { PaginationNumber } from "libs/ui-components/src/components/pagination-number";
-import { Modal } from "@shared/components/Modal";
-import { Label } from "libs/ui-components/src/components/ui/label";
-import { DiscountTable } from "libs/ui-components/src/components/discount-table"
-import Link from "next/link";
+import { DiscountTable } from "libs/ui-components/src/components/discount-table";
+import { Label } from "@ui-components/components/ui/label";
+import { DropdownMenu, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuContent, DropdownMenuTrigger } from "libs/ui-components/src/components/ui/dropdown-menu";
+import { LuListFilter } from "react-icons/lu";
 
-export const discountData = [
-  {
-    id: 1,
-    kodeDiskon: "D-001",
-    namaDiskon: "Diskon Ramadhan",
-    potonganHarga: "Rp 25.000",
-    layanan: "Kasur 200 x 200",
-    minimal: 2,
-    masaBerlaku: "31-03-2025",
-    category: "Musiman",
-  },
-  {
-    id: 2,
-    kodeDiskon: "D-002",
-    namaDiskon: "Diskon Corporate",
-    potonganHarga: "Rp 50.000",
-    layanan: "Sofa Bed",
-    minimal: 2,
-    masaBerlaku: "30-04-2025",
-    category: "Korporat",
-  },
-  {
-    id: 3,
-    kodeDiskon: "D-003",
-    namaDiskon: "Diskon Akhir Tahun",
-    potonganHarga: "Rp 30.000",
-    layanan: "Spring Bed",
-    minimal: 1,
-    masaBerlaku: "31-12-2025",
-    category: "Musiman",
-  },
-  {
-    id: 4,
-    kodeDiskon: "D-004",
-    namaDiskon: "Diskon Member",
-    potonganHarga: "Rp 20.000",
-    layanan: "Karpet",
-    minimal: 3,
-    masaBerlaku: "31-07-2025",
-    category: "Loyalitas",
-  },
-  {
-    id: 5,
-    kodeDiskon: "D-005",
-    namaDiskon: "Diskon Spesial Minggu",
-    potonganHarga: "Rp 15.000",
-    layanan: "Sofa",
-    minimal: 1,
-    masaBerlaku: "30-06-2025",
-    category: "Musiman",
-  },
-  {
-    id: 6,
-    kodeDiskon: "D-006",
-    namaDiskon: "Diskon Mitra",
-    potonganHarga: "Rp 40.000",
-    layanan: "Kasur Lipat",
-    minimal: 2,
-    masaBerlaku: "30-09-2025",
-    category: "Korporat",
-  },
-  {
-    id: 7,
-    kodeDiskon: "D-007",
-    namaDiskon: "Promo Cashback",
-    potonganHarga: "Rp 35.000",
-    layanan: "Karpet Wol",
-    minimal: 3,
-    masaBerlaku: "15-08-2025",
-    category: "Loyalitas",
-  },
-  {
-    id: 8,
-    kodeDiskon: "D-008",
-    namaDiskon: "Diskon Pelajar",
-    potonganHarga: "Rp 10.000",
-    layanan: "Bean Bag",
-    minimal: 1,
-    masaBerlaku: "31-05-2025",
-    category: "Edukasi",
-  },
-  {
-    id: 9,
-    kodeDiskon: "D-009",
-    namaDiskon: "Diskon Hari Ibu",
-    potonganHarga: "Rp 50.000",
-    layanan: "Kasur Busa",
-    minimal: 2,
-    masaBerlaku: "22-12-2025",
-    category: "Musiman",
-  },
-  {
-    id: 10,
-    kodeDiskon: "D-010",
-    namaDiskon: "Diskon VIP",
-    potonganHarga: "Rp 75.000",
-    layanan: "Sofa Kulit",
-    minimal: 2,
-    masaBerlaku: "31-10-2025",
-    category: "Eksklusif",
-  },
-];
 
-export const DataHeaderDiskon = [
+export const DataHeaderPromo = [
   { key: "id", label: "#" },
-  { key: "kodeDiskon", label: "Kode Diskon" },
-  { key: "namaDiskon", label: "Nama Diskon" },
-  { key: "potonganHarga", label: "Potongan Harga" },
-  { key: "layanan", label: "Layanan" },
-  { key: "minimal", label: "Minimal" },
-  { key: "masaBerlaku", label: "Masa Berlaku" },
+  { key: "code", label: "Kode Promo" },
+  { key: "name", label: "Nama Promo" },
+  { key: "amount", label: "Potongan Harga" },
+  { key: "serviceCode", label: "Layanan" },
+  { key: "minItem", label: "Minimal" },
+  { key: "endDate", label: "Masa Berlaku" },
   { key: "category", label: "Kategori" },
   { key: "menu", label: "Aksi" },
 ];
 
-export default function DiscountPage() {
+export default function PromoPage() {
+  const [dataPromo, setDataPromo] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalData, setTotalData] = useState(0);
+  const [limit, setLimit] = useState(10);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchInput, setSearchInput] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
 
+  const totalPages = Math.max(1, Math.ceil(totalData / limit));
+
+  const fetchPromo = async () => {
+    setLoading(true);
+    try {
+      let url = `/promo/page?search=${searchQuery}&page=${currentPage}&limit=${limit}`;
+      if (statusFilter !== "") {
+        url += `&status=${statusFilter}`;
+      }
+      const result = await apiClient(url);
+      setDataPromo(result.data[0] || []);
+      setTotalData(result.data[1] || 0);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchPromo();
+  }, [searchQuery, statusFilter, currentPage, limit]);
+
+  const handleSearch = () => {
+    setSearchQuery(searchInput);
+    setCurrentPage(1);
+  };
+
+  const resetSearch = () => {
+    setSearchInput("");
+    setSearchQuery("");
+    setCurrentPage(1);
+  };
 
   return (
     <Wrapper>
-      <Header label={"Daftar Diskon"} count={discountData.length} />
+      <Header label="Daftar Promo" count={totalData} />
       <div className="flex-grow">
         <div className="flex items-center justify-between mb-4 gap-2">
           <div className="flex items-center gap-2">
-            <Input type="text" placeholder="Cari diskon..." className="w-[30lvw]" icon={<Search size={16} />} />
-            <DropdownMenuCheckboxes />
-            <Button variant={"secondary"}>Cari</Button>
-          </div>
+            <div className="relative">
+              <Input
+                type="text"
+                placeholder="Cari promo..."
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                onKeyDown={(i) => {
+                  if (i.key === "Enter") {
+                    handleSearch();
+                  }
+                }}
+                className="w-[30lvw]"
+                icon={<Search size={16} />}
+              />
+              {searchInput && (
+                <button
+                  type="button"
+                  onClick={resetSearch}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-700"
+                >
+                  <IoClose size={16} />
+                </button>
+              )}
+            </div>
 
-          <Link
-            href="diskon/baru"
-          >
-            <Button
-              icon={<LuPlus size={16} />}
-              className="pl-2 pr-4"
-              iconPosition="left"
-              variant="default"
-              type="submit"
-            >
+            {/* Filter Status */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button icon={<LuListFilter size={16} />} iconPosition="left" variant="outline">
+                  {statusFilter === "1" ? "Aktif" : statusFilter === "0" ? "Tidak Aktif" : "Semua"}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-40 border-none">
+                <DropdownMenuRadioGroup value={statusFilter} className="space-y-1" onValueChange={setStatusFilter}>
+                  <DropdownMenuRadioItem value="" className={statusFilter === "" ? "bg-mainColor/50 dark:bg-mainColor/30" : ""}>
+                    Semua
+                  </DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="1" className={statusFilter === "1" ? "bg-mainColor/50 dark:bg-mainColor/30" : ""}>
+                    Aktif
+                  </DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="0" className={statusFilter === "0" ? "bg-mainColor/50 dark:bg-mainColor/30" : ""}>
+                    Tidak Aktif
+                  </DropdownMenuRadioItem>
+                </DropdownMenuRadioGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <Button variant="secondary" onClick={handleSearch}>Cari</Button>
+          </div>
+          <Link href="diskon/baru">
+            <Button icon={<LuPlus size={16} />} className="pl-2 pr-4" iconPosition="left" variant="default">
               Tambah Diskon
             </Button>
           </Link>
         </div>
-        <DiscountTable data={discountData} columns={DataHeaderDiskon} />
+
+        {loading ? (
+          <p className="text-center py-4">Memuat data...</p>
+        ) : dataPromo.length === 0 && searchInput !== "" ? (
+          <p className="text-center py-4">Promo dengan nama <span className="font-bold">{searchInput}</span> tidak ditemukan.</p>
+        ) : dataPromo.length === 0 ? (
+          <p className="text-center py-4">Gagal memuat data.</p>
+        ) : (
+          <DiscountTable
+            data={dataPromo}
+            columns={DataHeaderPromo}
+            key={`${currentPage}-${limit}`}
+            currentPage={currentPage}
+            limit={limit}
+          />
+        )}
       </div>
+
       <div className="flex items-center justify-between mt-4">
-        <SelectData label="Data Per halaman" />
-        <PaginationNumber />
+        {totalData > 10 ? (
+          <SelectData label="Data Per Halaman" totalData={totalData} currentLimit={limit} onLimitChange={(val) => setLimit(Number(val))} />
+        ) : (
+          <Label className="text-xs">Semua data telah ditampilkan ({totalData})</Label>
+        )}
+        <PaginationNumber totalPages={totalPages} currentPage={currentPage} onPageChange={(page) => setCurrentPage(page)} />
       </div>
     </Wrapper>
   );

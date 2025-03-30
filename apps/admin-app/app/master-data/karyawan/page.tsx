@@ -13,6 +13,7 @@ import { Search } from "lucide-react";
 import { SelectData } from "libs/ui-components/src/components/select-data";
 import { PaginationNumber } from "libs/ui-components/src/components/pagination-number";
 import { useParameterStore } from "libs/utils/useParameterStore";
+import { Label } from "@ui-components/components/ui/label";
 import { IoClose } from "react-icons/io5";
 
 export const DataHeaderPelanggan = [
@@ -43,7 +44,7 @@ export default function KaryawanPage() {
   const [loading, setLoading] = useState<boolean>(true);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalData, setTotalData] = useState<number>(0);
-  const [limit, setLimit] = useState<number>(10); 
+  const [limit, setLimit] = useState<number>(10);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchInput, setSearchInput] = useState(""); // Input Sementara
   const [statusFilter, setStatusFilter] = useState<string>("");
@@ -55,13 +56,13 @@ export default function KaryawanPage() {
     setLoading(true);
     try {
       let url = `/user/page?search=${searchQuery}&page=${currentPage}&limit=${limit}`;
-  
+
       if (statusFilter !== "") {
         url += `&status=${statusFilter}`;
       }
-  
+
       const result = await apiClient(url);
-  
+
       setDataKaryawan(result.data[0] || []);
       setTotalData(result.data[1] || 0);
     } catch (error) {
@@ -77,14 +78,14 @@ export default function KaryawanPage() {
   }, [searchQuery, statusFilter, currentPage, limit]);
 
   const handleSearch = () => {
-    setSearchQuery(searchInput); 
+    setSearchQuery(searchInput);
     setCurrentPage(1);
   };
 
   const resetSearch = () => {
-    setSearchInput(""); 
-    setSearchQuery("");  
-    setCurrentPage(1);  
+    setSearchInput("");
+    setSearchQuery("");
+    setCurrentPage(1);
   };
 
   // Proses Data Karyawan (Mapping roleId dan branchId)
@@ -143,11 +144,11 @@ export default function KaryawanPage() {
           <p className="text-center py-4">Karyawan dengan nama <span className="font-bold">{searchInput}</span>  tidak ditemukan.</p>
         ) : (
           <TableKaryawan
-            key={`${currentPage}-${limit}`}
             data={processedKaryawan}
             columns={DataHeaderPelanggan}
-            currentPage={currentPage} 
-            limit={limit} 
+            key={`${currentPage}-${limit}`}
+            currentPage={currentPage}
+            limit={limit}
           />
         )}
       </div>
@@ -161,7 +162,7 @@ export default function KaryawanPage() {
             onLimitChange={(limit: string) => setLimit(Number(limit))}
           />
         ) : (
-          <p>Semua data telah ditampilkan ({totalData})</p>
+          <Label className="text-xs">Semua data telah ditampilkan ({totalData})</Label>
         )}
 
         <PaginationNumber
