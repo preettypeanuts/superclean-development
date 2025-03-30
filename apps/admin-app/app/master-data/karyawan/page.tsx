@@ -149,6 +149,7 @@ export default function KaryawanPage() {
             key={`${currentPage}-${limit}`}
             currentPage={currentPage}
             limit={limit}
+            fetchData={fetchKaryawan}
           />
         )}
       </div>

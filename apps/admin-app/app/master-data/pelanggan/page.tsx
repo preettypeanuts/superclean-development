@@ -139,6 +139,7 @@ export default function PelangganPage() {
             columns={DataHeaderPelanggan}
             currentPage={currentPage}
             limit={limit} 
+            fetchData={fetchPelanggan}
           />
         )}
       </div>

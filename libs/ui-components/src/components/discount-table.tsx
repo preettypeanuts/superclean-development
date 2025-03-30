@@ -38,9 +38,10 @@ interface DataTableProps {
     columns: TableHeader[];
     currentPage: number;
     limit: number;
+    fetchData: () => void;
 }
 
-export const DiscountTable: React.FC<DataTableProps> = ({ data, columns, currentPage, limit }) => {
+export const DiscountTable: React.FC<DataTableProps> = ({ data, columns, currentPage, limit, fetchData }) => {
     const { toast } = useToast();
 
     return (
@@ -102,14 +103,14 @@ export const DiscountTable: React.FC<DataTableProps> = ({ data, columns, current
                                                         className="w-full"
                                                         onClick={async () => {
                                                             try {
-                                                                const response = await api.delete(`/discount/${discount.id}`);
+                                                                const response = await api.delete(`/promo/${discount.id}`);
                                                                 if (response.status === 'success') {
                                                                     toast({
                                                                         title: "Sukses!",
                                                                         description: `Diskon ${discount.namaDiskon} berhasil dihapus.`,
                                                                         variant: "default",
                                                                     });
-                                                                    window.location.reload();
+                                                                    fetchData();
                                                                 } else {
                                                                     toast({
                                                                         title: "Gagal!",

@@ -149,6 +149,7 @@ export default function PromoPage() {
             key={`${currentPage}-${limit}`}
             currentPage={currentPage}
             limit={limit}
+            fetchData={fetchPromo} // Pass the fetchPromo function to the table
           />
         )}
       </div>

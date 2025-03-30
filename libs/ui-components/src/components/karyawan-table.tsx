@@ -37,9 +37,10 @@ interface DataTableProps {
     columns: TableHeader[];
     currentPage: number; 
     limit: number;
+    fetchData: () => void; // Add fetchData property
 }
 
-export const TableKaryawan: React.FC<DataTableProps> = ({ data, columns, currentPage, limit }) => {
+export const TableKaryawan: React.FC<DataTableProps> = ({ data, columns, currentPage, limit, fetchData }) => {
     const { toast } = useToast(); // Inisialisasi toast
     const roleColors: Record<string, string> = {
         "Super Admin": "bg-blue-500/20 text-blue-500",
@@ -125,7 +126,7 @@ export const TableKaryawan: React.FC<DataTableProps> = ({ data, columns, current
                                                                         description: `Karyawan ${mitra.fullname} berhasil dihapus.`,
                                                                         variant: "default", // Bisa diganti ke "success" jika tersedia
                                                                     });
-                                                                    window.location.reload(); // Refresh halaman agar data terbaru muncul
+                                                                    fetchData();
                                                                 } else {
                                                                     console.error("Gagal menghapus karyawan:", response);
                                                                     toast({

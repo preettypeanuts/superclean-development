@@ -32,16 +32,18 @@ interface Pelanggan {
     district: string;
     subDistrict: string;
     status: number;
-  }
+}
 
 interface DataTableProps {
     data: Pelanggan[];
     columns: TableHeader[];
-    currentPage: number; // Tambahkan currentPage sebagai prop
-    limit: number; // Tambahkan limit sebagai prop
+    currentPage: number;
+    limit: number;
+    fetchData: () => void;
+
 }
 
-export const TablePelanggan: React.FC<DataTableProps> = ({ data, columns, currentPage, limit }) => {
+export const TablePelanggan: React.FC<DataTableProps> = ({ data, columns, currentPage, limit, fetchData }) => {
     const { toast } = useToast(); // Inisialisasi toast
     return (
         <Table>
@@ -113,7 +115,7 @@ export const TablePelanggan: React.FC<DataTableProps> = ({ data, columns, curren
                                                                         description: `Karyawan ${customer.fullname} berhasil dihapus.`,
                                                                         variant: "default",
                                                                     });
-                                                                    window.location.reload();
+                                                                    fetchData();
                                                                 } else {
                                                                     console.error("Gagal menghapus karyawan:", response);
                                                                     toast({

@@ -101,7 +101,7 @@ export default function EditPelanggan() {
             return;
         }
         setUpdating(true);
-        // Buat data yang sesuai dengan format API
+
         const updatedData = {
             fullname: pelanggan.fullname,
             address: pelanggan.address,
