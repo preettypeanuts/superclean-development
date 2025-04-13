@@ -42,3 +42,4 @@ Thumbs.db
 /apps/mitra-app/.next
 /apps/admin-app/.next
 .next
+.vercel
