@@ -46,11 +46,11 @@ export const navigationItems = {
         ]
     },
     settings: {
-        label: "Pengaturan",
+        label: "Umum",
         contents: [
             {
-                label: "settings",
-                path: "/settings",
+                label: "Pengaturan",
+                path: "/pengaturan",
                 icon: <RiUserSettingsFill />,
                 subs: []
             },

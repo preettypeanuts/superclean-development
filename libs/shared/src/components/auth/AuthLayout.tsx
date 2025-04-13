@@ -99,7 +99,7 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({ headline, tagline, bgIma
                         {/* Form */}
                         <form onSubmit={handleLogin} className="w-full">
                             {error && (
-                                <p className="text-red-500 text-sm mb-2">{error}</p>
+                                <p className="text-red-500 text-sm mb-2">{"Username atau password salah"}</p>
                             )}
 
                             <label className="form-control w-full my-2">
