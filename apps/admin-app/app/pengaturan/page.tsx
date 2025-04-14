@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@ui-components/compone
 
 export default async function PengaturanPage() {
   return (
-    <Wrapper className="min-h-full">
+    <Wrapper >
       <Header label="Pengaturan" />
       <Tabs defaultValue="umum" className="">
         <TabsList className=" bg-mainColor/20 dark:bg-mainColor/30">

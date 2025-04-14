@@ -24,7 +24,7 @@ export const GeneralSetting = () => {
     };
 
     return (
-        <div className="flex flex-col gap-6 py-5">
+        <div className="flex flex-col gap-6">
 
             {/* Input Brand Name */}
             <div className="flex items-center space-x-4">
@@ -71,7 +71,7 @@ export const GeneralSetting = () => {
 
             {/* Tombol Simpan */}
             <div className="flex items-center space-x-4">
-                <div className="w-[19.5%]"></div>
+                <div className="w-[19.7%]"></div>
                 <Button>Simpan Perubahan</Button>
             </div>
         </div>

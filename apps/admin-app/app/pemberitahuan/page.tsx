@@ -1,6 +1,10 @@
+import { Header } from "@shared/components/Header";
+import { Wrapper } from "@shared/components/Wrapper";
+
 export default async function PemberitahuanPage() {
-    return (
-      <div className='container'>
-      </div>
-    );
-  }
+  return (
+    <Wrapper>
+      <Header label="Pemberitahuan"/>
+    </Wrapper>
+  );
+}
