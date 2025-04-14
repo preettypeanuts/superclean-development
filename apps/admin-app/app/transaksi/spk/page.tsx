@@ -260,7 +260,7 @@ export default function SPKPage() {
             <div className="relative">
               <Input
                 type="text"
-                placeholder="Cari nama karyawan..."
+                placeholder="Cari nama pelanggan..."
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 onKeyDown={(i) => {
@@ -287,7 +287,7 @@ export default function SPKPage() {
               Cari
             </Button>
           </div>
-          <Link href="karyawan/baru">
+          <Link href="spk/baru">
             <Button
               icon={<LuPlus size={16} />}
               className="pl-2 pr-4"
@@ -295,7 +295,7 @@ export default function SPKPage() {
               variant="default"
               type="submit"
             >
-              Tambah Karyawan
+              Tambah SPK
             </Button>
           </Link>
         </div>

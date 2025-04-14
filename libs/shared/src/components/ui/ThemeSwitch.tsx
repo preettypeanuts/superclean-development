@@ -8,7 +8,7 @@ interface ThemeSwitchProps {
 }
 
 export const ThemeSwitch = ({ isExpanded }: ThemeSwitchProps) => {
-  const { theme, setTheme, resolvedTheme } = useTheme();
+  const { setTheme, resolvedTheme } = useTheme();
   const [currentTheme, setCurrentTheme] = useState(resolvedTheme);
 
   // Update state saat tema berubah
