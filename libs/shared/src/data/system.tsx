@@ -39,8 +39,8 @@ export const navigationItems = {
                 path: "/laporan",
                 icon: <HiDocumentReport />,
                 subs: [
-                    { name: "pemesanan", path: "/pemesanan" },
-                    { name: "teknisi", path: "/teknisi" },
+                    { name: "pemesanan", path: "/laporan/pemesanan" },
+                    { name: "teknisi", path: "/laporan/teknisi" },
                 ]
             }
         ]
