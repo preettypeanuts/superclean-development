@@ -104,7 +104,7 @@ export default function EditDiskon() {
                     </div>
 
                     {/* Nama Diskon */}
-                    <div className="flex items-center space-x-4">
+                    <div className="c">
                         <Label className="w-1/4 font-semibold">Nama Diskon</Label>
                         <Input name="name" value={diskon.name} onChange={handleChange} />
                     </div>
