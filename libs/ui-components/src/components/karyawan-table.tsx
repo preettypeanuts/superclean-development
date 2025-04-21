@@ -14,6 +14,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "./ui/dialog";
+import { formatDate } from "libs/utils/formatDate";
 
 interface TableHeader {
     key: string;
@@ -35,7 +36,7 @@ interface Karyawan {
 interface DataTableProps {
     data: Karyawan[];
     columns: TableHeader[];
-    currentPage: number; 
+    currentPage: number;
     limit: number;
     fetchData: () => void; // Add fetchData property
 }
@@ -161,6 +162,8 @@ export const TableKaryawan: React.FC<DataTableProps> = ({ data, columns, current
                                     </p>
                                 ) : header.key === "id" ? (
                                     <p>{(currentPage - 1) * limit + rowIndex + 1}</p>
+                                ) : header.key === "createdAt" ? (
+                                    <p>{formatDate(mitra.createdAt)}</p>
                                 ) : header.key === "noWhatsapp" ? (
                                     <p> {mitra.noWhatsapp}</p>
                                 ) : header.key === "username" ? (

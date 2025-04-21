@@ -21,8 +21,9 @@ export const DataHeaderPelanggan = [
   { key: "username", label: "Nama Pengguna" },
   { key: "fullname", label: "Nama" },
   { key: "noWhatsapp", label: "No. WhatsApp" },
-  { key: "roleId", label: "Akses Pengguna" },
   { key: "cabang", label: "Cabang" },
+  { key: "roleId", label: "Akses Pengguna" },
+  { key: "createdAt", label: "Tanggal Daftar" },
   { key: "status", label: "Status" },
   { key: "menu", label: "Aksi" },
 ];
