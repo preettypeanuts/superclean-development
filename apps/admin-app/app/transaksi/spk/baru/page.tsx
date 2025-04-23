@@ -75,8 +75,8 @@ export default function NewSPK() {
                         Kategori
                     </Label>
                     <Select
-                        onValueChange={(value) => handleChange("category", value)}
-                        value={formData.category}
+                        // onValueChange={(value) => handleChange("category", value)}
+                        // value={formData.category}
                         disabled={loadingParams}
                     >
                         <SelectTrigger className="w-full">
@@ -106,8 +106,8 @@ export default function NewSPK() {
                         Layanan
                     </Label>
                     <Select
-                        onValueChange={(value) => handleChange("unit", value)}
-                        value={formData.unit}
+                        // onValueChange={(value) => handleChange("unit", value)}
+                        // value={formData.unit}
                         disabled={loadingParams}
                     >
                         <SelectTrigger className="w-full">

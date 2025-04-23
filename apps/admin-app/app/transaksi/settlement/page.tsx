@@ -311,7 +311,7 @@ export default function SettlementPage() {
             key={`${currentPage}-${limit}`}
             currentPage={currentPage}
             limit={limit}
-            fetchData={() => { }}
+            fetchData={() => {}}
           />
         )}
       </div>

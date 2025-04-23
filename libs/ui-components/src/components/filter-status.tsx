@@ -52,8 +52,8 @@ interface FilterOption {
 }
 
 interface FilterDropdownProps {
-  value: string;
-  onChange: (val: string) => void;
+  value?: string;
+  onChange?: (val: string) => void;
   options?: FilterOption[];
   placeholder?: string;
   widthClass?: string;
