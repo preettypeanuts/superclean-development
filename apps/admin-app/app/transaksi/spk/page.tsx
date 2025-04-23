@@ -201,7 +201,9 @@ export default function SPKPage() {
           />
         </div>
 
-        {dataSPK.length === 0 ? (
+        {loading || loadingParams ? (
+          <p className="text-center py-4">Memuat data...</p>
+        ) : dataSPK.length === 0 ? (
           <p className="text-center py-4">
             SPK dengan nama <span className="font-bold">{searchInput}</span> tidak ditemukan.
           </p>
