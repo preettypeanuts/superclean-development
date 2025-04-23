@@ -1,16 +1,20 @@
 "use client"
 
 import * as React from "react"
-import { format } from "date-fns"
 import { CalendarIcon } from "lucide-react"
 import { cn } from "../utils"
 import { Button } from "libs/ui-components/src/components/ui/button"
 import { Calendar } from "libs/ui-components/src/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "libs/ui-components/src/components/ui/popover"
+import { formatDateAPI, formatDateCalendar } from "libs/utils/formatDate"
 
-export function DatePicker() {
-  const [date, setDate] = React.useState<Date>()
+interface DatePickerProps {
+  label?: string;
+  value?: Date | null;
+  onChange?: (date: Date | undefined) => void;
+}
 
+export function DatePicker({ label, value, onChange }: DatePickerProps) {
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -18,18 +22,18 @@ export function DatePicker() {
           variant={"outline"}
           className={cn(
             "w-[200px] justify-start text-left font-normal",
-            !date && "text-muted-foreground"
+            !value && "text-muted-foreground"
           )}
         >
-          {date ? format(date, "PPP") : <span>Pick a date</span>}
+          {value ? formatDateCalendar(value) : <span>{label ? label : "Pilih Tanggal"}</span>}
           <CalendarIcon className="ml-auto" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
         <Calendar
           mode="single"
-          selected={date}
-          onSelect={setDate}
+          selected={value || undefined}
+          onSelect={onChange}
           initialFocus
         />
       </PopoverContent>

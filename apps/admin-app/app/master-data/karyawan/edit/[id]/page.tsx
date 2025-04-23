@@ -30,6 +30,7 @@ import {
   AlertDialogFooter,
   AlertDialogAction,
 } from "libs/ui-components/src/components/ui/alert-dialog";
+import { formatDate, formatDateInput } from "libs/utils/formatDate";
 
 interface Karyawan {
   id: string;
@@ -37,6 +38,7 @@ interface Karyawan {
   fullname: string;
   noWhatsapp: string;
   branchId: string;
+  joinDate: string;
   roleId: string;
   status: number;
 }
@@ -91,12 +93,16 @@ export default function EditKaryawan() {
       noWhatsapp: karyawan.noWhatsapp,
       branchId: karyawan.branchId,
       roleId: karyawan.roleId,
+      joinDate: karyawan.joinDate,
       status: karyawan.status,
     };
 
     setShowConfirmDialog(false);
     setUpdating(true);
     try {
+      console.log('====================================');
+      console.log(payload);
+      console.log('====================================');
       await api.put(`/user/${karyawan.id}`, payload);
 
       toast({
@@ -139,20 +145,13 @@ export default function EditKaryawan() {
           </div>
 
           <div className="flex items-center space-x-4">
-            <Label className="w-1/4">Akses Pengguna</Label>
-            <Select value={karyawan.roleId} onValueChange={(value) => handleSelectChange("roleId", value)}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Pilih Akses Pengguna" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>Pilih Akses</SelectLabel>
-                  {Object.entries(roleMapping).map(([key, value]) => (
-                    <SelectItem key={key} value={key}>{value}</SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
+            <Label className="w-1/4 font-semibold">Kata Sandi</Label>
+            <Input name="noWhatsapp" disabled placeholder="********" onChange={handleChange} />
+          </div>
+
+          <div className="flex items-center space-x-4">
+            <Label className="w-1/4 font-semibold">Tanggal Daftar</Label>
+            <Input type="text" name="noWhatsapp" value={formatDateInput(karyawan.joinDate)} onChange={handleChange} />
           </div>
 
           <div className="flex items-center space-x-4">
@@ -165,6 +164,23 @@ export default function EditKaryawan() {
                 <SelectGroup>
                   <SelectLabel>Pilih Cabang</SelectLabel>
                   {Object.entries(branchMapping).map(([key, value]) => (
+                    <SelectItem key={key} value={key}>{value}</SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex items-center space-x-4">
+            <Label className="w-1/4">Akses Pengguna</Label>
+            <Select value={karyawan.roleId} onValueChange={(value) => handleSelectChange("roleId", value)}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Pilih Akses Pengguna" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Pilih Akses</SelectLabel>
+                  {Object.entries(roleMapping).map(([key, value]) => (
                     <SelectItem key={key} value={key}>{value}</SelectItem>
                   ))}
                 </SelectGroup>

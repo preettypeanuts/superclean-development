@@ -1,8 +1,8 @@
+import Link from "next/link";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
 import { Button } from "./ui/button";
 import { HiMiniPencilSquare } from "react-icons/hi2";
 import { IoMdTrash } from "react-icons/io";
-import Link from "next/link";
 import { api } from "libs/utils/apiClient";
 import { useToast } from "libs/ui-components/src/hooks/use-toast"
 import {
@@ -16,25 +16,28 @@ import {
 } from "./ui/dialog";
 import { formatRupiah } from "libs/utils/formatRupiah";
 import { formatDate } from "libs/utils/formatDate";
+import { TrxStatus } from "../../../shared/src/data/system"
 
 interface TableHeader {
     key: string;
     label: string;
 }
 
-interface Karyawan {
+interface SPK {
     id: string;
-    noTrx: string;
-    fullname: string;
+    trxNumber: string;
     noWhatsapp: string;
-    branch: string;
-    nominal: number;
-    dateTrx: string;
-    status: string;
+    customerName: string;
+    branchId: string;
+    finalPrice: number;
+    trxDate: string;
+    status: number;
+    createdBy: string;
+    createdAt: string;
 }
 
 interface DataTableProps {
-    data: Karyawan[];
+    data: SPK[];
     columns: TableHeader[];
     currentPage: number;
     limit: number;
@@ -44,10 +47,12 @@ interface DataTableProps {
 export const SPKTable: React.FC<DataTableProps> = ({ data, columns, currentPage, limit, fetchData }) => {
     const { toast } = useToast(); // Inisialisasi toast
     const statusColors: Record<string, string> = {
-        "Baru": "bg-blue-400/20 text-blue-400",
-        "Diproses": "bg-yellow-500/20 text-yellow-500",
-        "Selesai": "bg-green-500/20 text-green-500",
-        "Dibatalkan": "bg-red-500/20 text-red-500",
+        "Baru": "bg-neutral-400 text-neutral-400",
+        "Proses": "bg-yellow-500 text-yellow-500",
+        "Batal": "bg-red-500 text-red-500",
+        "Menunggu Bayar": "bg-orange-500 text-orange-500",
+        "Sudah Bayar": "bg-blue-500 text-blue-500",
+        "Selesai": "bg-green-500 text-green-500",
     };
 
 
@@ -99,7 +104,7 @@ export const SPKTable: React.FC<DataTableProps> = ({ data, columns, currentPage,
                                                     <div className="text-5xl text-destructive bg-destructive-foreground/10 rounded-full p-2 w-fit mb-4">
                                                         <IoMdTrash />
                                                     </div>
-                                                    <DialogTitle>Kamu yakin menghapus akun {spk.fullname}?</DialogTitle>
+                                                    <DialogTitle>Kamu yakin menghapus akun {spk.customerName}?</DialogTitle>
                                                     <DialogDescription className="text-center">
                                                         Data akan terhapus permanen dan tidak dapat dikembalikan.
                                                     </DialogDescription>
@@ -114,7 +119,7 @@ export const SPKTable: React.FC<DataTableProps> = ({ data, columns, currentPage,
                                                         variant="destructive"
                                                         className="w-full"
                                                         onClick={async () => {
-                                                            console.log(`Menghapus karyawan dengan ID: ${spk.id}`);
+                                                            console.log(`Menghapus SPK dengan ID: ${spk.id}`);
                                                             try {
                                                                 const response = await api.delete(`/user/${spk.id}`);
 
@@ -123,20 +128,20 @@ export const SPKTable: React.FC<DataTableProps> = ({ data, columns, currentPage,
                                                                 if (response.status === 'success') {
                                                                     toast({
                                                                         title: "Sukses!",
-                                                                        description: `Karyawan ${spk.fullname} berhasil dihapus.`,
+                                                                        description: `SPK ${spk.customerName} berhasil dihapus.`,
                                                                         variant: "default", // Bisa diganti ke "success" jika tersedia
                                                                     });
                                                                     fetchData();
                                                                 } else {
-                                                                    console.error("Gagal menghapus karyawan:", response);
+                                                                    console.error("Gagal menghapus SPK:", response);
                                                                     toast({
                                                                         title: "Gagal!",
-                                                                        description: "Terjadi kesalahan saat menghapus karyawan.",
+                                                                        description: "Terjadi kesalahan saat menghapus SPK.",
                                                                         variant: "destructive",
                                                                     });
                                                                 }
                                                             } catch (error) {
-                                                                console.error("Error saat menghapus karyawan:", error);
+                                                                console.error("Error saat menghapus SPK:", error);
                                                                 toast({
                                                                     title: "Error!",
                                                                     description: "Terjadi kesalahan. Coba lagi nanti.",
@@ -152,38 +157,81 @@ export const SPKTable: React.FC<DataTableProps> = ({ data, columns, currentPage,
                                         </Dialog>
                                     </div>
                                 ) : header.key === "status" ? (
-                                    <p className={`badge dark:bg-opacity-70 rounded-md !font-medium border-0 ${statusColors[spk.status]}`}>
-                                        {/* {spk.status === 1 ? "Aktif" : "Tidak Aktif"} */}
-                                        {spk.status}
+                                    <p className={`badge bg-opacity-20 rounded-md !font-medium border-0 ${statusColors[
+                                        (() => {
+                                            switch (spk.status) {
+                                                case TrxStatus.TODO:
+                                                    return "Baru";
+                                                case TrxStatus.ACCEPT:
+                                                    return "Proses";
+                                                case TrxStatus.CANCEL:
+                                                    return "Batal";
+                                                case TrxStatus.PAYMENT:
+                                                    return "Menunggu Bayar";
+                                                case TrxStatus.PAID:
+                                                    return "Sudah Bayar";
+                                                case TrxStatus.SETTLED:
+                                                    return "Selesai";
+                                                default:
+                                                    return (spk.status);
+                                            }
+                                        })()
+                                    ]}`}>
+                                        {(() => {
+                                            switch (spk.status) {
+                                                case TrxStatus.TODO:
+                                                    return "Baru";
+                                                case TrxStatus.ACCEPT:
+                                                    return "Proses";
+                                                case TrxStatus.CANCEL:
+                                                    return "Batal";
+                                                case TrxStatus.PAYMENT:
+                                                    return "Menunggu Bayar";
+                                                case TrxStatus.PAID:
+                                                    return "Sudah Bayar";
+                                                case TrxStatus.SETTLED:
+                                                    return "Selesai";
+                                                default:
+                                                    return (spk.status);
+                                            }
+                                        })()}
                                     </p>
                                 ) : header.key === "id" ? (
-                                    // <p>{(currentPage - 1) * limit + rowIndex + 1}</p>
-                                    <p>
-                                        {spk.id}
-                                    </p>
+                                    <p>{(currentPage - 1) * limit + rowIndex + 1}</p>
                                 ) : header.key === "noWhatsapp" ? (
                                     <p> {spk.noWhatsapp}</p>
-                                ) : header.key === "nominal" ? (
-                                    <p> {formatRupiah(spk.nominal)}</p>
-                                ) : header.key === "dateTrx" ? (
-                                    <p> {formatDate(spk.dateTrx)}</p>
-                                ) : header.key === "fullname" ? (
+                                ) : header.key === "finalPrice" ? (
+                                    <p> {formatRupiah(Number(spk.finalPrice))}</p>
+                                ) : header.key === "trxDate" ? (
+                                    <p> {formatDate(spk.trxDate)}</p>
+                                ) : header.key === "customerName" ? (
                                     <div className="flex items-center">
-                                        <span
-                                            className={`mr-2 rounded-full w-[6px] h-[6px] ${
-                                                spk.status === "Baru"
-                                                    ? "bg-blue-400"
-                                                    : spk.status === "Diproses"
-                                                    ? "bg-yellow-500"
-                                                    : spk.status === "Selesai"
-                                                    ? "bg-green-500"
-                                                    : "bg-red-500"
-                                            }`}
-                                        ></span>
-                                        <p>{spk.fullname}</p>
+                                        <div
+                                            className={`mr-2 rounded-full w-[6px] h-[6px] ${statusColors[
+                                                (() => {
+                                                    switch (spk.status) {
+                                                        case TrxStatus.TODO:
+                                                            return "Baru";
+                                                        case TrxStatus.ACCEPT:
+                                                            return "Proses";
+                                                        case TrxStatus.CANCEL:
+                                                            return "Batal";
+                                                        case TrxStatus.PAYMENT:
+                                                            return "Menunggu Bayar";
+                                                        case TrxStatus.PAID:
+                                                            return "Sudah Bayar";
+                                                        case TrxStatus.SETTLED:
+                                                            return "Selesai";
+                                                        default:
+                                                            return spk.status;
+                                                    }
+                                                })()
+                                            ]}`}
+                                        ></div>
+                                        <p>{spk.customerName}</p>
                                     </div>
                                 ) : (
-                                    spk[header.key as keyof Karyawan]
+                                    spk[header.key as keyof SPK]
                                 )}
                             </TableCell>
                         ))}

@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { SPKTable } from "libs/ui-components/src/components/spk-table";
+import { DatePicker } from "libs/ui-components/src/components/date-picker";
 import { Header } from "@shared/components/Header";
 import { Wrapper } from "libs/shared/src/components/Wrapper";
 import { Input } from "libs/ui-components/src/components/ui/input";
@@ -13,249 +14,99 @@ import { SelectData } from "libs/ui-components/src/components/select-data";
 import { PaginationNumber } from "libs/ui-components/src/components/pagination-number";
 import { Label } from "@ui-components/components/ui/label";
 import { IoClose } from "react-icons/io5";
+import { apiClient } from "libs/utils/apiClient";
+import { formatDateAPI } from "libs/utils/formatDate";
 
 const DataHeaderSPK = [
   { key: "id", label: "#" },
-  { key: "noTrx", label: "No Transaksi" },
-  { key: "fullname", label: "Nama Pelanggan" },
+  { key: "trxNumber", label: "No Transaksi" },
+  { key: "customerName", label: "Nama Pelanggan" },
   { key: "noWhatsapp", label: "No. Whatsapp" },
-  { key: "branch", label: "Cabang" },
-  { key: "nominal", label: "Nominal" },
-  { key: "dateTrx", label: "Tanggal Transaksi" },
+  { key: "branchId", label: "Cabang" },
+  { key: "finalPrice", label: "Nominal" },
+  { key: "trxDate", label: "Tanggal Transaksi" },
   { key: "status", label: "Status" },
   { key: "menu", label: "Aksi" }
 ];
-
-const dataSPK = [
-  {
-    id: "1",
-    noTrx: "TRX-001",
-    fullname: "Ratna Sari",
-    noWhatsapp: "081294436553",
-    branch: "Kantor Pusat",
-    nominal: 200000,
-    dateTrx: new Date().toISOString(),
-    status: "Baru"
-  },
-  {
-    id: "2",
-    noTrx: "TRX-002",
-    fullname: "Agus Pramono",
-    noWhatsapp: "082345678912",
-    branch: "Cabang Bekasi",
-    nominal: 150000,
-    dateTrx: new Date().toISOString(),
-    status: "Diproses"
-  },
-  {
-    id: "3",
-    noTrx: "TRX-003",
-    fullname: "Siti Aisyah",
-    noWhatsapp: "081345671234",
-    branch: "Cabang Bandung",
-    nominal: 180000,
-    dateTrx: new Date().toISOString(),
-    status: "Selesai"
-  },
-  {
-    id: "4",
-    noTrx: "TRX-004",
-    fullname: "Budi Santoso",
-    noWhatsapp: "081234567899",
-    branch: "Kantor Pusat",
-    nominal: 250000,
-    dateTrx: new Date().toISOString(),
-    status: "Baru"
-  },
-  {
-    id: "5",
-    noTrx: "TRX-005",
-    fullname: "Dewi Lestari",
-    noWhatsapp: "082134567891",
-    branch: "Cabang Depok",
-    nominal: 175000,
-    dateTrx: new Date().toISOString(),
-    status: "Dibatalkan"
-  },
-  {
-    id: "6",
-    noTrx: "TRX-006",
-    fullname: "Andi Wijaya",
-    noWhatsapp: "083212345678",
-    branch: "Cabang Bekasi",
-    nominal: 210000,
-    dateTrx: new Date().toISOString(),
-    status: "Diproses"
-  },
-  {
-    id: "7",
-    noTrx: "TRX-007",
-    fullname: "Lina Marlina",
-    noWhatsapp: "085612345678",
-    branch: "Kantor Pusat",
-    nominal: 230000,
-    dateTrx: new Date().toISOString(),
-    status: "Selesai"
-  },
-  {
-    id: "8",
-    noTrx: "TRX-008",
-    fullname: "Toni Haryanto",
-    noWhatsapp: "082212345678",
-    branch: "Cabang Tangerang",
-    nominal: 120000,
-    dateTrx: new Date().toISOString(),
-    status: "Baru"
-  },
-  {
-    id: "9",
-    noTrx: "TRX-009",
-    fullname: "Indah Pratiwi",
-    noWhatsapp: "081312345678",
-    branch: "Cabang Depok",
-    nominal: 190000,
-    dateTrx: new Date().toISOString(),
-    status: "Diproses"
-  },
-  {
-    id: "10",
-    noTrx: "TRX-010",
-    fullname: "Eka Saputra",
-    noWhatsapp: "087812345678",
-    branch: "Cabang Bandung",
-    nominal: 160000,
-    dateTrx: new Date().toISOString(),
-    status: "Selesai"
-  },
-  {
-    id: "11",
-    noTrx: "TRX-011",
-    fullname: "Fajar Nugroho",
-    noWhatsapp: "083812345678",
-    branch: "Cabang Bekasi",
-    nominal: 240000,
-    dateTrx: new Date().toISOString(),
-    status: "Baru"
-  },
-  {
-    id: "12",
-    noTrx: "TRX-012",
-    fullname: "Nina Zulaikha",
-    noWhatsapp: "081512345678",
-    branch: "Cabang Tangerang",
-    nominal: 110000,
-    dateTrx: new Date().toISOString(),
-    status: "Dibatalkan"
-  },
-  {
-    id: "13",
-    noTrx: "TRX-013",
-    fullname: "Reza Pahlevi",
-    noWhatsapp: "081922345678",
-    branch: "Cabang Depok",
-    nominal: 170000,
-    dateTrx: new Date().toISOString(),
-    status: "Selesai"
-  },
-  {
-    id: "14",
-    noTrx: "TRX-014",
-    fullname: "Yuni Astuti",
-    noWhatsapp: "081332145678",
-    branch: "Kantor Pusat",
-    nominal: 220000,
-    dateTrx: new Date().toISOString(),
-    status: "Baru"
-  },
-  {
-    id: "15",
-    noTrx: "TRX-015",
-    fullname: "Hendra Gunawan",
-    noWhatsapp: "082312345698",
-    branch: "Cabang Bandung",
-    nominal: 145000,
-    dateTrx: new Date().toISOString(),
-    status: "Diproses"
-  },
-  {
-    id: "16",
-    noTrx: "TRX-016",
-    fullname: "Maya Sari",
-    noWhatsapp: "081276543210",
-    branch: "Cabang Bekasi",
-    nominal: 195000,
-    dateTrx: new Date().toISOString(),
-    status: "Selesai"
-  },
-  {
-    id: "17",
-    noTrx: "TRX-017",
-    fullname: "Dimas Aditya",
-    noWhatsapp: "081364789123",
-    branch: "Cabang Tangerang",
-    nominal: 155000,
-    dateTrx: new Date().toISOString(),
-    status: "Baru"
-  },
-  {
-    id: "18",
-    noTrx: "TRX-018",
-    fullname: "Nurhalimah",
-    noWhatsapp: "082134698721",
-    branch: "Cabang Depok",
-    nominal: 185000,
-    dateTrx: new Date().toISOString(),
-    status: "Diproses"
-  },
-  {
-    id: "19",
-    noTrx: "TRX-019",
-    fullname: "Kevin Wijaya",
-    noWhatsapp: "081934567821",
-    branch: "Kantor Pusat",
-    nominal: 175000,
-    dateTrx: new Date().toISOString(),
-    status: "Selesai"
-  },
-  {
-    id: "20",
-    noTrx: "TRX-020",
-    fullname: "Dewi Anggraini",
-    noWhatsapp: "083156789432",
-    branch: "Cabang Bandung",
-    nominal: 160000,
-    dateTrx: new Date().toISOString(),
-    status: "Baru"
-  }
-];
-
+interface SPK {
+  id: string;
+  trxNumber: string;
+  noWhatsapp: string;
+  customerName: string;
+  branchId: string;
+  finalPrice: number;
+  trxDate: string;
+  status: number;
+  createdBy: string;
+  createdAt: string;
+}
 
 export default function SPKPage() {
+  const [dataSPK, setDataSPK] = useState<SPK[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalData, setTotalData] = useState<number>(0);
+  const [limit, setLimit] = useState<number>(10);
+  const [searchQuery, setSearchQuery] = useState("");
   const [searchInput, setSearchInput] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [limit, setLimit] = useState(10);
+  const [statusFilter, setStatusFilter] = useState<string>("");
+  const [startDate, setStartDate] = useState<Date | undefined>();
+  const [endDate, setEndDate] = useState<Date | undefined>();
+
+
+  const totalPages = Math.max(1, Math.ceil(totalData / limit));
+
+  const fetchSPK = async () => {
+    setLoading(true);
+    try {
+      let url = `/transaction/page?search=${searchQuery}&page=${currentPage}&limit=${limit}`;
+
+      if (statusFilter !== "") {
+        url += `&status=${statusFilter}`;
+      }
+
+      if (startDate) {
+        url += `&startDate=${formatDateAPI(startDate)}`;
+      }
+
+      if (endDate) {
+        url += `&endDate=${formatDateAPI(endDate)}`;
+      }
+
+      const result = await apiClient(url);
+
+      setDataSPK(result.data[0] || []);
+      setTotalData(result.data[1] || 0);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+  // Fetch data hanya saat query/filters berubah
+  useEffect(() => {
+    fetchSPK();
+  }, [searchQuery, statusFilter, currentPage, limit, startDate, endDate]);
+
 
   const handleSearch = () => {
-    // Placeholder for filtering logic
+    setSearchQuery(searchInput);
+    setCurrentPage(1);
   };
 
   const resetSearch = () => {
     setSearchInput("");
+    setSearchQuery("");
+    setCurrentPage(1);
   };
-
-  const processedKaryawan = dataSPK.filter((item) =>
-    item.fullname.toLowerCase().includes(searchInput.toLowerCase())
-  );
-
-  const totalData = dataSPK.length;
-  const totalPages = Math.ceil(totalData / limit);
 
   return (
     <Wrapper>
       <Header label="Daftar SPK" count={totalData} />
-      <div className="flex-grow">
-        <div className="flex items-center justify-between mb-4 gap-2">
+      <div className="flex-grow space-y-4">
+        <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <div className="relative">
               <Input
@@ -279,6 +130,7 @@ export default function SPKPage() {
                 </button>
               )}
             </div>
+
             <FilterStatus
               statusFilter={statusFilter}
               setStatusFilter={setStatusFilter}
@@ -300,18 +152,39 @@ export default function SPKPage() {
           </Link>
         </div>
 
-        {processedKaryawan.length === 0 ? (
+        <div className="space-x-2 flex">
+          <DatePicker
+            label="Tanggal awal"
+            value={startDate}
+            onChange={(date) => {
+              setStartDate(date);
+              setCurrentPage(1);
+            }}
+          />
+          <DatePicker
+            label="Tanggal akhir"
+            value={endDate}
+            onChange={(date) => {
+              setEndDate(date);
+
+              setCurrentPage(1);
+            }}
+          />
+        </div>
+
+
+        {dataSPK.length === 0 ? (
           <p className="text-center py-4">
-            Karyawan dengan nama <span className="font-bold">{searchInput}</span> tidak ditemukan.
+            SPK dengan nama <span className="font-bold">{searchInput}</span> tidak ditemukan.
           </p>
         ) : (
           <SPKTable
-            data={processedKaryawan}
+            data={dataSPK}
             columns={DataHeaderSPK}
             key={`${currentPage}-${limit}`}
             currentPage={currentPage}
             limit={limit}
-            fetchData={() => {}}
+            fetchData={() => { }}
           />
         )}
       </div>

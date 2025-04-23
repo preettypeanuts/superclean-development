@@ -121,3 +121,15 @@ export const loginPageData = {
         }
     ]
 };
+
+export const TrxStatus = {
+    // MENU DAFTAR SPK
+    TODO: 0, //BARU
+    ACCEPT: 1, //PROSES
+    CANCEL: 2, //BATAL
+
+    // MENU DAFTAR PEMBAYARAN
+    PAYMENT: 3,//MENUNGGU BAYAR
+    PAID: 4, //SUDAH BAYAR
+    SETTLED: 5 //SELESAI
+}
