@@ -118,7 +118,10 @@ export default function LayananPage() {
                 </button>
               )}
             </div>
-            <FilterStatus statusFilter={statusFilter} setStatusFilter={setStatusFilter} />
+            <FilterStatus
+              value={statusFilter}
+              onChange={setStatusFilter}
+            />
             <Button variant="secondary" onClick={handleSearch}>Cari</Button>
           </div>
           <Link href="layanan/baru">

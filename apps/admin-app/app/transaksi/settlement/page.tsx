@@ -280,8 +280,8 @@ export default function SettlementPage() {
               )}
             </div>
             <FilterStatus
-              statusFilter={statusFilter}
-              setStatusFilter={setStatusFilter}
+              value={statusFilter}
+              onChange={setStatusFilter}
             />
             <Button variant="secondary" onClick={handleSearch}>
               Cari
@@ -311,7 +311,7 @@ export default function SettlementPage() {
             key={`${currentPage}-${limit}`}
             currentPage={currentPage}
             limit={limit}
-            fetchData={() => {}}
+            fetchData={() => { }}
           />
         )}
       </div>

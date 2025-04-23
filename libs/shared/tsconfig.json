@@ -15,6 +15,6 @@
       "@/*": ["./src/*"],
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "../ui-components/src/components/pie-chart.tsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "../ui-components/src/components/pie-chart.tsx", "../ui-components/src/components/rupiah-input.tsx"],
   "exclude": ["node_modules"]
 }

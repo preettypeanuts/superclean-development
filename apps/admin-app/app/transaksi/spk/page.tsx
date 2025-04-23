@@ -8,6 +8,7 @@ import { Wrapper } from "libs/shared/src/components/Wrapper";
 import { Input } from "libs/ui-components/src/components/ui/input";
 import { Button } from "libs/ui-components/src/components/ui/button";
 import { FilterStatus } from "@superclean-workspace/ui-components/components/filter-status";
+import { FilterBranch } from "@superclean-workspace/ui-components/components/filter-branch";
 import { LuPlus } from "react-icons/lu";
 import { Search } from "lucide-react";
 import { SelectData } from "libs/ui-components/src/components/select-data";
@@ -16,6 +17,9 @@ import { Label } from "@ui-components/components/ui/label";
 import { IoClose } from "react-icons/io5";
 import { apiClient } from "libs/utils/apiClient";
 import { formatDateAPI } from "libs/utils/formatDate";
+import { useParameterStore } from "libs/utils/useParameterStore";
+import { TrxStatus, TrxStatusLabel } from "@shared/data/system";
+
 
 const DataHeaderSPK = [
   { key: "id", label: "#" },
@@ -41,6 +45,14 @@ interface SPK {
   createdAt: string;
 }
 
+const trxStatusOptions = [
+  { value: "", label: "Semua" },
+  ...Object.entries(TrxStatusLabel).map(([key, label]) => ({
+    value: key,
+    label
+  }))
+];
+
 export default function SPKPage() {
   const [dataSPK, setDataSPK] = useState<SPK[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -50,9 +62,11 @@ export default function SPKPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchInput, setSearchInput] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("");
+  const [branchFilter, setBranchFilter] = useState<string>("");
   const [startDate, setStartDate] = useState<Date | undefined>();
   const [endDate, setEndDate] = useState<Date | undefined>();
 
+  const { branchMapping, loading: loadingParams } = useParameterStore();
 
   const totalPages = Math.max(1, Math.ceil(totalData / limit));
 
@@ -63,6 +77,10 @@ export default function SPKPage() {
 
       if (statusFilter !== "") {
         url += `&status=${statusFilter}`;
+      }
+
+      if (branchFilter !== "") {
+        url += `&branchId=${branchFilter}`;
       }
 
       if (startDate) {
@@ -84,11 +102,10 @@ export default function SPKPage() {
     }
   };
 
-
   // Fetch data hanya saat query/filters berubah
   useEffect(() => {
     fetchSPK();
-  }, [searchQuery, statusFilter, currentPage, limit, startDate, endDate]);
+  }, [searchQuery, statusFilter, branchFilter, currentPage, limit, startDate, endDate]);
 
 
   const handleSearch = () => {
@@ -101,6 +118,11 @@ export default function SPKPage() {
     setSearchQuery("");
     setCurrentPage(1);
   };
+
+  const processedSPK = dataSPK.map((item) => ({
+    ...item,
+    branchId: branchMapping[item.branchId] || "Tidak Diketahui",
+  }));
 
   return (
     <Wrapper>
@@ -131,10 +153,18 @@ export default function SPKPage() {
               )}
             </div>
 
-            <FilterStatus
-              statusFilter={statusFilter}
-              setStatusFilter={setStatusFilter}
+            <FilterBranch
+              branchFilter={branchFilter}
+              setBranchFilter={setBranchFilter}
             />
+            <FilterStatus
+              value={statusFilter}
+              onChange={setStatusFilter}
+              placeholder="Status Transaksi"
+              options={trxStatusOptions}
+
+            />
+
             <Button variant="secondary" onClick={handleSearch}>
               Cari
             </Button>
@@ -166,12 +196,10 @@ export default function SPKPage() {
             value={endDate}
             onChange={(date) => {
               setEndDate(date);
-
               setCurrentPage(1);
             }}
           />
         </div>
-
 
         {dataSPK.length === 0 ? (
           <p className="text-center py-4">
@@ -179,7 +207,7 @@ export default function SPKPage() {
           </p>
         ) : (
           <SPKTable
-            data={dataSPK}
+            data={processedSPK}
             columns={DataHeaderSPK}
             key={`${currentPage}-${limit}`}
             currentPage={currentPage}

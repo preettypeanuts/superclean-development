@@ -43,7 +43,7 @@ export default function PelangganPage() {
   const [loading, setLoading] = useState<boolean>(true);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalData, setTotalData] = useState<number>(0);
-  const [limit, setLimit] = useState<number>(10); 
+  const [limit, setLimit] = useState<number>(10);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchInput, setSearchInput] = useState(""); // Input Sementara
   const [statusFilter, setStatusFilter] = useState<string>("");
@@ -76,14 +76,14 @@ export default function PelangganPage() {
   }, [searchQuery, statusFilter, currentPage, limit]);
 
   const handleSearch = () => {
-    setSearchQuery(searchInput); 
+    setSearchQuery(searchInput);
     setCurrentPage(1);
   };
 
   const resetSearch = () => {
-    setSearchInput("");  
-    setSearchQuery("");  
-    setCurrentPage(1);   
+    setSearchInput("");
+    setSearchQuery("");
+    setCurrentPage(1);
   };
 
   return (
@@ -117,8 +117,8 @@ export default function PelangganPage() {
               )}
             </div>
             <FilterStatus
-              statusFilter={statusFilter}
-              setStatusFilter={setStatusFilter}
+              value={statusFilter}
+              onChange={setStatusFilter}
             />
             <Button variant="secondary" onClick={handleSearch}>Cari</Button>
           </div>
@@ -138,7 +138,7 @@ export default function PelangganPage() {
             data={dataPelanggan}
             columns={DataHeaderPelanggan}
             currentPage={currentPage}
-            limit={limit} 
+            limit={limit}
             fetchData={fetchPelanggan}
           />
         )}

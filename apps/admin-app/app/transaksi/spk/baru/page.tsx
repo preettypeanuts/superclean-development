@@ -11,10 +11,15 @@ import { LuSave } from "react-icons/lu";
 import { TbCancel } from "react-icons/tb";
 import { useToast } from "libs/ui-components/src/hooks/use-toast";
 import { api } from "libs/utils/apiClient";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectGroup, SelectLabel } from "libs/ui-components/src/components/ui/select";
+import { useCategoryStore } from "libs/utils/useCategoryStore";
+import { RupiahInput } from "libs/ui-components/src/components/rupiah-input"
+import { RadioGroup, RadioGroupItem } from "libs/ui-components/src/components/ui/radio-group"
 
 export default function NewSPK() {
     const { toast } = useToast();
     const router = useRouter();
+    const { catLayananMapping, unitLayananMapping, loading: loadingParams } = useCategoryStore();
 
     const [formData, setFormData] = useState({
         code: "",
@@ -63,35 +68,104 @@ export default function NewSPK() {
 
     return (
         <Wrapper>
-            <Header label="Tambah Diskon Baru" />
+            <Header label="Tambah SPK Baru" />
             <form className="space-y-4" onSubmit={handleSubmit}>
                 <div className="flex items-center space-x-4">
-                    <Label htmlFor="code" className="w-1/4 font-semibold">Kode Diskon</Label>
-                    <Input placeholder="Masukkan Kode Diskon" id="code" value={formData.code} onChange={handleChange} />
+                    <Label htmlFor="category" className="w-1/4">
+                        Kategori
+                    </Label>
+                    <Select
+                        onValueChange={(value) => handleChange("category", value)}
+                        value={formData.category}
+                        disabled={loadingParams}
+                    >
+                        <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Pilih kategori layanan" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectLabel>Kategori</SelectLabel>
+                                {loadingParams ? (
+                                    <SelectItem value="loading" disabled>
+                                        Loading...
+                                    </SelectItem>
+                                ) : (
+                                    Object.keys(catLayananMapping).map((key) => (
+                                        <SelectItem key={key} value={key}>
+                                            {catLayananMapping[key]}
+                                        </SelectItem>
+                                    ))
+                                )}
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
+                </div>
+
+                <div className="flex items-center space-x-4">
+                    <Label htmlFor="unit" className="w-1/4">
+                        Layanan
+                    </Label>
+                    <Select
+                        onValueChange={(value) => handleChange("unit", value)}
+                        value={formData.unit}
+                        disabled={loadingParams}
+                    >
+                        <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Pilih layanan" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectLabel>Satuan</SelectLabel>
+                                {loadingParams ? (
+                                    <SelectItem value="loading" disabled>
+                                        Loading...
+                                    </SelectItem>
+                                ) : (
+                                    Object.keys(unitLayananMapping).map((key) => (
+                                        <SelectItem key={key} value={key}>
+                                            {unitLayananMapping[key]}
+                                        </SelectItem>
+                                    ))
+                                )}
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
+                </div>
+
+                <div className="flex items-center space-x-4">
+                    <Label htmlFor="code" className="w-1/4 font-semibold">Jumlah</Label>
+                    <Input placeholder="Masukkan Kode Diskon" type="number" id="code" value={formData.code} onChange={handleChange} />
+                </div>
+
+                <div className="flex items-center space-x-4">
+                    <Label htmlFor="code" className="w-[20%] font-semibold">Tipe</Label>
+
+                    <RadioGroup defaultValue="option-one" className="flex items-center gap-5">
+                        <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="option-one" id="option-one" />
+                            <Label htmlFor="option-two">Vakum</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="option-two" id="option-two" />
+                            <Label htmlFor="option-one">Cuci</Label>
+                        </div>
+                    </RadioGroup>
+                </div>
+
+                <div className="flex items-center space-x-4">
+                    <Label htmlFor="amount" className="w-1/4 font-semibold">Harga</Label>
+                    <RupiahInput
+                        placeholder="Rp. 0"
+                        onValueChange={(value) => console.log("Nilai angka:", value)}
+                    />
                 </div>
                 <div className="flex items-center space-x-4">
-                    <Label htmlFor="name" className="w-1/4 font-semibold">Nama Diskon</Label>
-                    <Input placeholder="Masukkan Nama Diskon" id="name" value={formData.name} onChange={handleChange} />
-                </div>
-                <div className="flex items-center space-x-4">
-                    <Label htmlFor="amount" className="w-1/4 font-semibold">Potongan Harga</Label>
-                    <Input placeholder="Masukkan Potongan Harga" type="number" id="amount" value={formData.amount} onChange={handleChange} />
-                </div>
-                <div className="flex items-center space-x-4">
-                    <Label htmlFor="category" className="w-1/4 font-semibold">Kategori</Label>
-                    <Input placeholder="Masukkan Kategori" id="category" value={formData.category} onChange={handleChange} />
-                </div>
-                <div className="flex items-center space-x-4">
-                    <Label htmlFor="serviceCode" className="w-1/4 font-semibold">Layanan</Label>
-                    <Input placeholder="Masukkan Kode Layanan" id="serviceCode" value={formData.serviceCode} onChange={handleChange} />
-                </div>
-                <div className="flex items-center space-x-4">
-                    <Label htmlFor="minItem" className="w-1/4 font-semibold">Minimal Item</Label>
-                    <Input placeholder="Masukkan Minimal Item" type="number" id="minItem" value={formData.minItem} onChange={handleChange} />
-                </div>
-                <div className="flex items-center space-x-4">
-                    <Label htmlFor="endDate" className="w-1/4 font-semibold">Masa Berlaku</Label>
-                    <Input type="date" className="flex w-full" id="endDate" value={formData.endDate} onChange={handleChange} />
+                    <Label htmlFor="category" className="w-1/4 font-semibold">Promo</Label>
+                    <RupiahInput
+                        placeholder="Rp. 0"
+                        onValueChange={(value) => console.log("Nilai angka:", value)}
+                    />
+
                 </div>
                 <div className="flex items-center space-x-4">
                     <div className="w-1/4"></div>

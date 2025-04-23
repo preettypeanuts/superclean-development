@@ -86,11 +86,11 @@ export default function NewDiscount() {
                     <Input placeholder="Masukkan Kode Layanan" id="serviceCode" value={formData.serviceCode} onChange={handleChange} />
                 </div>
                 <div className="flex items-center space-x-4">
-                    <Label htmlFor="minItem" className="w-1/4 font-semibold">Minimal Item</Label>
+                    <Label htmlFor="minItem" className="w-1/4 font-semibold">Harga</Label>
                     <Input placeholder="Masukkan Minimal Item" type="number" id="minItem" value={formData.minItem} onChange={handleChange} />
                 </div>
                 <div className="flex items-center space-x-4">
-                    <Label htmlFor="endDate" className="w-1/4 font-semibold">Masa Berlaku</Label>
+                    <Label htmlFor="endDate" className="w-1/4 font-semibold">Promo</Label>
                     <Input type="date" className="flex w-full" id="endDate" value={formData.endDate} onChange={handleChange} />
                 </div>
                 <div className="flex items-center space-x-4">

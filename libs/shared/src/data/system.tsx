@@ -133,3 +133,13 @@ export const TrxStatus = {
     PAID: 4, //SUDAH BAYAR
     SETTLED: 5 //SELESAI
 }
+
+export const TrxStatusLabel: Record<number, string> = {
+    0: "Baru",
+    1: "Proses",
+    2: "Batal",
+    3: "Menunggu Bayar",
+    4: "Sudah Bayar",
+    5: "Selesai"
+  };
+  

@@ -127,8 +127,8 @@ export default function KaryawanPage() {
               )}
             </div>
             <FilterStatus
-              statusFilter={statusFilter}
-              setStatusFilter={setStatusFilter}
+              value={statusFilter}
+              onChange={setStatusFilter}
             />
             <Button variant="secondary" onClick={handleSearch}>Cari</Button>
           </div>

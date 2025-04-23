@@ -24,8 +24,7 @@ import { useToast } from "libs/ui-components/src/hooks/use-toast";
 export default function NewLayanan() {
   const { toast } = useToast();
   const router = useRouter();
-  const { unitLayananMapping, catLayananMapping, loading: loadingParams } =
-    useCategoryStore();
+  const { unitLayananMapping, catLayananMapping, loading: loadingParams } = useCategoryStore();
 
   const [formData, setFormData] = useState({
     code: "",
@@ -60,38 +59,38 @@ export default function NewLayanan() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const payload = {
-        code: formData.code,
-        name: formData.name,
-        category: formData.category,
-        unit: formData.unit,
-        isGeneral: formData.isGeneral,
-        vacuumPrice: Number(formData.vacuumPrice),
-        cleanPrice: Number(formData.cleanPrice),
-        generalPrice: Number(formData.generalPrice),
-        status: Number(formData.status),
+      code: formData.code,
+      name: formData.name,
+      category: formData.category,
+      unit: formData.unit,
+      isGeneral: formData.isGeneral,
+      vacuumPrice: Number(formData.vacuumPrice),
+      cleanPrice: Number(formData.cleanPrice),
+      generalPrice: Number(formData.generalPrice),
+      status: Number(formData.status),
     };
 
     console.log("Payload yang dikirim:", JSON.stringify(payload, null, 2)); // Cek di console
 
     try {
-        await api.post("/service", payload);
-        toast({
-            title: "Berhasil",
-            description: "Layanan berhasil ditambahkan!",
-            variant: "default",
-        });
-        router.push("/master-data/layanan");
+      await api.post("/service", payload);
+      toast({
+        title: "Berhasil",
+        description: "Layanan berhasil ditambahkan!",
+        variant: "default",
+      });
+      router.push("/master-data/layanan");
     } catch (error: any) {
-        console.error("Error response:", error.response?.data || error.message);
-        toast({
-            title: "Gagal",
-            description: "Terjadi kesalahan saat menambahkan layanan.",
-            variant: "destructive",
-        });
+      console.error("Error response:", error.response?.data || error.message);
+      toast({
+        title: "Gagal",
+        description: "Terjadi kesalahan saat menambahkan layanan.",
+        variant: "destructive",
+      });
     }
-};
+  };
 
 
   return (
