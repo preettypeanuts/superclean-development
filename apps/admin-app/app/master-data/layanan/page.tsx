@@ -8,11 +8,11 @@ import { Wrapper } from "libs/shared/src/components/Wrapper";
 import { Input } from "libs/ui-components/src/components/ui/input";
 import { Button } from "libs/ui-components/src/components/ui/button";
 import { FilterStatus } from "@superclean-workspace/ui-components/components/filter-status";
+import { FilterCategoryLayanan } from "@superclean-workspace/ui-components/components/filter-category-layanan";
 import { LuPlus } from "react-icons/lu";
 import { Search } from "lucide-react";
 import { SelectData } from "libs/ui-components/src/components/select-data";
 import { PaginationNumber } from "libs/ui-components/src/components/pagination-number";
-import { useParameterStore } from "libs/utils/useParameterStore";
 import { Label } from "@ui-components/components/ui/label";
 import { IoClose } from "react-icons/io5";
 
@@ -50,6 +50,7 @@ export default function LayananPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchInput, setSearchInput] = useState(""); // Input Sementara
   const [statusFilter, setStatusFilter] = useState<string>("");
+  const [catFilter, setCatFilter] = useState<string>("");
 
   const totalPages = Math.max(1, Math.ceil(totalData / limit));
 
@@ -60,6 +61,10 @@ export default function LayananPage() {
 
       if (statusFilter !== "") {
         url += `&status=${statusFilter}`;
+      }
+
+      if (catFilter !== "") {
+        url += `&category=${catFilter}`;
       }
 
       const result = await apiClient(url);
@@ -75,7 +80,7 @@ export default function LayananPage() {
 
   useEffect(() => {
     fetchLayanan();
-  }, [searchQuery, statusFilter, currentPage, limit]);
+  }, [searchQuery, statusFilter, catFilter, currentPage, limit]);
 
   const handleSearch = () => {
     setSearchQuery(searchInput);
@@ -118,6 +123,11 @@ export default function LayananPage() {
                 </button>
               )}
             </div>
+
+            <FilterCategoryLayanan
+            catFilter={catFilter}
+            setcatFilter={setCatFilter}
+            />
             <FilterStatus
               placeholder="Status"
               value={statusFilter}
@@ -127,7 +137,7 @@ export default function LayananPage() {
           </div>
           <Link href="layanan/baru">
             <Button icon={<LuPlus size={16} />} className="pl-2 pr-4" iconPosition="left" variant="default" type="submit">
-              Tambah Layanan
+              Tambah
             </Button>
           </Link>
         </div>

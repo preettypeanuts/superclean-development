@@ -17,7 +17,7 @@ import {
 } from "libs/ui-components/src/components/ui/select";
 import { Checkbox } from "libs/ui-components/src/components/ui/checkbox";
 import { LuSave } from "react-icons/lu";
-import { TbCancel } from "react-icons/tb";
+import { TbArrowLeft } from "react-icons/tb";
 import { api } from "libs/utils/apiClient";
 import { useCategoryStore } from "libs/utils/useCategoryStore";
 import { useToast } from "libs/ui-components/src/hooks/use-toast";
@@ -77,26 +77,35 @@ export default function EditLayanan() {
   };
 
   const handleSelectChange = (name: keyof Layanan, value: string) => {
-    setLayanan((prev) => (prev ? { ...prev, [name]: value } : null));
+    setLayanan((prev) => {
+      if (!prev) return null;
+
+      if (name === "category") {
+        const isGeneral = value === "GENERAL" || value === "BLOWER";
+        return { ...prev, category: value, isGeneral };
+      }
+
+      return { ...prev, [name]: value };
+    });
   };
 
   const handleStatusChange = (checked: boolean) => {
     setLayanan((prev) => (prev ? { ...prev, status: checked ? 1 : 0 } : null));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault(); // Mencegah reload halaman
-
+  const handleSubmit = async () => {
     if (!layanan) return;
+
+    const isGeneralCategory = layanan.category === "GENERAL" || layanan.category === "BLOWER";
 
     const payload = {
       name: layanan.name,
       category: layanan.category,
       unit: layanan.unit,
-      isGeneral: layanan.isGeneral,
-      vacuumPrice: layanan.vacuumPrice,
-      cleanPrice: layanan.cleanPrice,
-      generalPrice: layanan.generalPrice,
+      isGeneral: isGeneralCategory ? 1 : 0,
+      vacuumPrice: isGeneralCategory ? 0 : Number(layanan.vacuumPrice),
+      cleanPrice: isGeneralCategory ? 0 : Number(layanan.cleanPrice),
+      generalPrice: isGeneralCategory ? Number(layanan.generalPrice) : 0,
       status: layanan.status,
     };
 
@@ -182,7 +191,7 @@ export default function EditLayanan() {
 
           {layanan.isGeneral ? (
             <div className="flex items-center space-x-4">
-              <Label className="w-1/4 font-semibold">Harga General</Label>
+              <Label className="w-1/4 font-semibold">Harga</Label>
               <Input type="number" name="generalPrice" value={layanan.generalPrice} onChange={handleChange} />
             </div>
           ) : (
@@ -197,7 +206,8 @@ export default function EditLayanan() {
               </div>
             </>
           )}
-     <div className="flex items-center space-x-4">
+
+          <div className="flex items-center space-x-4">
             <Label className="w-[20%] font-semibold">Status</Label>
             <div className="flex items-center space-x-2">
               <Checkbox checked={layanan.status === 1} onCheckedChange={handleStatusChange} />
@@ -206,11 +216,12 @@ export default function EditLayanan() {
           </div>
 
           <div className="flex items-center space-x-4">
-            <Button type="button" variant="destructive" onClick={() => router.push("/master-data/layanan")}>
-              <TbCancel />
-              Batal
+            <Label className="w-[20%] font-semibold"></Label>
+            <Button type="button" variant="secondary" onClick={() => router.back()}>
+              <TbArrowLeft />
+              Kembali
             </Button>
-            <Button type="submit" className="bg-green-600" disabled={updating}>
+            <Button type="submit" variant="submit" disabled={updating}>
               <LuSave />
               {updating ? "Menyimpan..." : "Simpan"}
             </Button>
@@ -220,8 +231,7 @@ export default function EditLayanan() {
         <p className="text-center py-4 text-red-500">Layanan tidak ditemukan!</p>
       )}
 
-            {/* Dialog Konfirmasi Simpan */}
-            <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
+      <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Konfirmasi Simpan</AlertDialogTitle>

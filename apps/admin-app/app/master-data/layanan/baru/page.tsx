@@ -15,11 +15,12 @@ import {
   SelectLabel,
 } from "libs/ui-components/src/components/ui/select";
 import { LuSave } from "react-icons/lu";
-import { TbCancel } from "react-icons/tb";
+import { TbArrowLeft, TbCancel } from "react-icons/tb";
 import { useCategoryStore } from "libs/utils/useCategoryStore";
 import { api } from "libs/utils/apiClient";
 import { useRouter } from "next/navigation";
 import { useToast } from "libs/ui-components/src/hooks/use-toast";
+import { Checkbox } from "libs/ui-components/src/components/ui/checkbox";
 
 export default function NewLayanan() {
   const { toast } = useToast();
@@ -180,8 +181,8 @@ export default function NewLayanan() {
           </Select>
         </div>
 
-        {/* Hanya tampilkan harga Vacuum dan Clean jika kategori bukan "GENERAL" */}
-        {formData.category !== "GENERAL" && (
+        {/* Hanya tampilkan harga Vacuum dan Clean jika kategori bukan "GENERAL" & "BLOWER" */}
+        {(formData.category !== "GENERAL" && formData.category !== "BLOWER") ? (
           <>
             <div className="flex items-center space-x-4">
               <Label htmlFor="vacuumPrice" className="w-1/4 font-semibold">
@@ -206,48 +207,41 @@ export default function NewLayanan() {
               />
             </div>
           </>
+        ) : (
+          <div className="flex items-center space-x-4">
+            <Label htmlFor="generalPrice" className="w-1/4 font-semibold">
+              Harga
+            </Label>
+            <Input
+              type="number"
+              id="generalPrice"
+              value={formData.generalPrice}
+              onChange={handleChange}
+            />
+          </div>
         )}
 
         <div className="flex items-center space-x-4">
-          <Label htmlFor="generalPrice" className="w-1/4 font-semibold">
-            Harga Umum
-          </Label>
-          <Input
-            type="number"
-            id="generalPrice"
-            value={formData.generalPrice}
-            onChange={handleChange}
-          />
-        </div>
-        <div className="flex items-center space-x-4">
-          <Label htmlFor="status" className="w-1/4 font-semibold">
-            Status
-          </Label>
-          <Select
-            onValueChange={(value) =>
-              setFormData({ ...formData, status: Number(value) })
-            }
-            value={String(formData.status)}
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Pilih status layanan" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectItem value="1">Aktif</SelectItem>
-                <SelectItem value="0">Tidak Aktif</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
+          <Label className="w-[20%] font-semibold">Status</Label>
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              disabled
+              checked={formData.status === 1}
+              onCheckedChange={(checked) =>
+                handleSelectChange("status", checked ? "1" : "0")
+              }
+            />
+            <Label>{formData.status === 1 ? "Aktif" : "Tidak Aktif"}</Label>
+          </div>
         </div>
         <div className="flex items-center space-x-4">
           <div className="w-1/4"></div>
           <div className="space-x-2 flex w-full">
-            <Button type="button" variant="destructive" onClick={() => router.back()}>
-              <TbCancel />
-              Batal
+            <Button type="button" variant="secondary" onClick={() => router.back()}>
+              <TbArrowLeft />
+              Kembali
             </Button>
-            <Button type="submit" variant="default" className="bg-success hover:bg-green-600">
+            <Button type="submit" variant="submit">
               <LuSave />
               Simpan
             </Button>
