@@ -5,7 +5,7 @@ import { Input } from "libs/ui-components/src/components/ui/input";
 import { Label } from "libs/ui-components/src/components/ui/label";
 import { Button } from "libs/ui-components/src/components/ui/button";
 import { LuSave } from "react-icons/lu";
-import { TbCancel } from "react-icons/tb";
+import { TbArrowLeft, TbCancel } from "react-icons/tb";
 import { Textarea } from "@ui-components/components/ui/textarea";
 import { useState } from "react";
 import { useLocationData } from "libs/utils/useLocationData";
@@ -20,6 +20,7 @@ import {
     SelectValue,
     SelectGroup,
 } from "libs/ui-components/src/components/ui/select";
+import { Checkbox } from "@ui-components/components/ui/checkbox";
 
 export default function NewPelanggan() {
     const { toast } = useToast();
@@ -53,7 +54,7 @@ export default function NewPelanggan() {
     };
 
     // Fungsi untuk menangani perubahan Select dan reset data terkait
-    const handleSelectChange = (field: string, value: string) => {
+    const handleSelectChange = (field: string, value: string | boolean) => {
         setFormData((prev) => {
             let updatedData = { ...prev, [field]: value };
 
@@ -99,6 +100,10 @@ export default function NewPelanggan() {
         }
     };
 
+    const handleCheckboxChange = (id: string, value: string | number) => {
+        setFormData({ ...formData, [id]: value });
+    };
+
     return (
         <Wrapper>
             <Header label="Tambah Pelanggan Baru" />
@@ -106,34 +111,35 @@ export default function NewPelanggan() {
                 {/* Nama Lengkap */}
                 <div className="flex items-center space-x-4">
                     <Label htmlFor="fullname" className="w-1/4 font-semibold">Nama Lengkap</Label>
-                    <Input 
-                        id="fullname" 
-                        placeholder="Masukkan Nama Lengkap" 
-                        value={formData.fullname} 
-                        onChange={handleChange} 
+                    <Input
+                        id="fullname"
+                        placeholder="Masukkan Nama Lengkap"
+                        value={formData.fullname}
+                        onChange={handleChange}
                     />
                 </div>
 
                 {/* No Whatsapp */}
                 <div className="flex items-center space-x-4">
                     <Label htmlFor="noWhatsapp" className="w-1/4 font-semibold">No. Whatsapp</Label>
-                    <Input 
-                        id="noWhatsapp" 
-                        placeholder="Masukkan nomor Whatsapp" 
-                        type="text" 
-                        value={formData.noWhatsapp} 
-                        onChange={handleChange} 
+                    <Input
+                        id="noWhatsapp"
+                        placeholder="Masukkan nomor Whatsapp"
+                        type="text"
+                        value={formData.noWhatsapp}
+                        onChange={handleChange}
                     />
                 </div>
 
                 {/* Alamat */}
                 <div className="flex items-center space-x-4">
                     <Label htmlFor="address" className="w-1/4 font-semibold">Alamat</Label>
-                    <Textarea 
-                        id="address" 
-                        placeholder="Masukkan alamat" 
-                        value={formData.address} 
-                        onChange={handleChange} 
+                    <Textarea
+                        id="address"
+                        className="resize-none"
+                        placeholder="Masukkan alamat"
+                        value={formData.address}
+                        onChange={handleChange}
                     />
                 </div>
 
@@ -229,12 +235,27 @@ export default function NewPelanggan() {
                     </Select>
                 </div>
 
-                <div className="flex justify-end space-x-2">
-                    <Button type="button" variant="destructive" onClick={() => router.back()}>
-                        <TbCancel /> Batal
+                <div className="flex items-center space-x-4">
+                    <Label className="w-[20%] font-semibold">Status</Label>
+                    <div className="flex items-center space-x-2">
+                        <Checkbox
+                            disabled
+                            checked={formData.status}
+                            onCheckedChange={(checked) => handleCheckboxChange("status", checked ? 1 : 2)}
+                        />
+                        <Label>{formData.status ? "Aktif" : "Tidak Aktif"}</Label>
+                    </div>
+                </div>
+
+                <div className="flex items-center space-x-4">
+                    <Label className="w-[20%] font-semibold"></Label>
+                    <Button type="button" variant="secondary" onClick={() => router.back()}>
+                        <TbArrowLeft />
+                        Kembali
                     </Button>
-                    <Button type="submit">
-                        <LuSave /> Simpan
+                    <Button type="submit" variant="submit">
+                        <LuSave />
+                        Simpan
                     </Button>
                 </div>
             </form>

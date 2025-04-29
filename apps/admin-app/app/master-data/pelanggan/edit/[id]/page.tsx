@@ -7,7 +7,7 @@ import { Label } from "libs/ui-components/src/components/ui/label";
 import { Button } from "libs/ui-components/src/components/ui/button";
 import { Checkbox } from "libs/ui-components/src/components/ui/checkbox";
 import { LuSave } from "react-icons/lu";
-import { TbCancel } from "react-icons/tb";
+import { TbArrowLeft, TbCancel } from "react-icons/tb";
 import { useEffect, useState } from 'react';
 import { api } from "libs/utils/apiClient";
 import { useLocationData } from "libs/utils/useLocationData";
@@ -29,6 +29,7 @@ import {
     AlertDialogAction,
 } from "libs/ui-components/src/components/ui/alert-dialog";
 import { useToast } from "libs/ui-components/src/hooks/use-toast"
+import { Textarea } from '@ui-components/components/ui/textarea';
 
 
 interface Pelanggan {
@@ -73,7 +74,7 @@ export default function EditPelanggan() {
     }, [noWhatsapp]);
 
     // Handle Change Generic untuk Input Teks
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setPelanggan(prev => prev ? { ...prev, [name]: value } : null);
     };
@@ -154,7 +155,7 @@ export default function EditPelanggan() {
                     {/* Nomor WhatsApp */}
                     <div className="flex items-center space-x-4">
                         <div className="w-1/4 font-semibold">
-                            <Label>Nomor WhatsApp</Label>
+                            <Label>No Whatsapp</Label>
                         </div>
                         <Input value={pelanggan.noWhatsapp} disabled />
                     </div>
@@ -164,7 +165,7 @@ export default function EditPelanggan() {
                         <div className="w-1/4 font-semibold">
                             <Label>Alamat</Label>
                         </div>
-                        <Input name="address" value={pelanggan.address} onChange={handleChange} />
+                        <Textarea className='resize-none' name="address" value={pelanggan.address} onChange={handleChange} />
                     </div>
 
                     {/* Provinsi */}
@@ -261,12 +262,12 @@ export default function EditPelanggan() {
                     <div className="flex items-center space-x-4">
                         <div className="w-1/4"></div>
                         <div className="space-x-2 flex w-full">
-                            <Button type="button" variant="destructive" onClick={() => setShowSuccessDialog(true)}>
-                                <TbCancel />
-                                Batal
+                            <Button type="button" variant="secondary" onClick={() => router.push("/master-data/pelanggan")}>
+                                <TbArrowLeft />
+                                Kembali
                             </Button>
                             {/* Tombol Simpan */}
-                            <Button type="button" className="bg-green-600" onClick={() => setShowConfirmDialog(true)} disabled={updating}>
+                            <Button type="button" variant="submit" onClick={() => setShowConfirmDialog(true)} disabled={updating}>
                                 <LuSave />
                                 {updating ? "Menyimpan..." : "Simpan"}
                             </Button>

@@ -135,7 +135,7 @@ export default function KaryawanPage() {
           </div>
           <Link href="karyawan/baru">
             <Button icon={<LuPlus size={16} />} className="pl-2 pr-4" iconPosition="left" variant="default" type="submit">
-              Tambah Karyawan
+              Tambah
             </Button>
           </Link>
         </div>
