@@ -6,6 +6,12 @@ import { Wrapper } from "@shared/components/Wrapper";
 import { Input } from "libs/ui-components/src/components/ui/input";
 import { Label } from "libs/ui-components/src/components/ui/label";
 import { Button } from "libs/ui-components/src/components/ui/button";
+import { Checkbox } from "libs/ui-components/src/components/ui/checkbox";
+import { LuSave } from "react-icons/lu";
+import { TbArrowLeft } from "react-icons/tb";
+import { api } from "libs/utils/apiClient";
+import { useParameterStore } from "libs/utils/useParameterStore";
+import { useToast } from "libs/ui-components/src/hooks/use-toast";
 import {
   Select,
   SelectContent,
@@ -15,12 +21,6 @@ import {
   SelectGroup,
   SelectLabel,
 } from "libs/ui-components/src/components/ui/select";
-import { Checkbox } from "libs/ui-components/src/components/ui/checkbox";
-import { LuSave } from "react-icons/lu";
-import { TbCancel } from "react-icons/tb";
-import { api } from "libs/utils/apiClient";
-import { useParameterStore } from "libs/utils/useParameterStore";
-import { useToast } from "libs/ui-components/src/hooks/use-toast";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -136,7 +136,7 @@ export default function EditKaryawan() {
             <Input name="username" value={karyawan.username} disabled />
           </div>
           <div className="flex items-center space-x-4">
-            <Label className="w-1/4 font-semibold">Nama</Label>
+            <Label className="w-1/4 font-semibold">Nama Lengkap</Label>
             <Input name="fullname" value={karyawan.fullname} onChange={handleChange} />
           </div>
           <div className="flex items-center space-x-4">
@@ -199,11 +199,11 @@ export default function EditKaryawan() {
           <div className="flex items-center space-x-4">
             <div className="w-1/4"></div>
             <div className="space-x-2 flex w-full">
-              <Button type="button" variant="destructive" onClick={() => router.push("/master-data/karyawan")}>
-                <TbCancel />
-                Batal
+              <Button type="button" variant="secondary" onClick={() => router.push("/master-data/karyawan")}>
+                <TbArrowLeft />
+                Kembali
               </Button>
-              <Button type="submit" className="bg-green-600" disabled={updating}>
+              <Button type="submit" variant="submit" disabled={updating}>
                 <LuSave />
                 {updating ? "Menyimpan..." : "Simpan"}
               </Button>
@@ -219,7 +219,7 @@ export default function EditKaryawan() {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Konfirmasi Simpan</AlertDialogTitle>
-            <AlertDialogDescription>Apakah Anda yakin ingin menyimpan perubahan?</AlertDialogDescription>
+            <AlertDialogDescription>Apakah Anda yakin ingin menyimpan data ini?</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <Button variant="outline" onClick={() => setShowConfirmDialog(false)}>Batal</Button>

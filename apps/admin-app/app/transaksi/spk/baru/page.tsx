@@ -35,16 +35,19 @@ export default function NewSPK() {
         setFormData({ ...formData, [e.target.id]: e.target.value });
     };
 
+    const handleSelectChange = (key: keyof typeof formData, value: string) => {
+        setFormData({ ...formData, [key]: value });
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         console.log("Data sebelum dikirim:", formData);
 
-        // Konversi data sebelum dikirim ke API
         const formattedData = {
             ...formData,
-            amount: Number(formData.amount) || 0, // Pastikan amount berupa number
-            minItem: Number(formData.minItem) || 0, // Pastikan minItem berupa number
-            endDate: formData.endDate ? `${formData.endDate}T12:00:00.000Z` : null, // Format tanggal ke ISO 8601
+            amount: Number(formData.amount) || 0,
+            minItem: Number(formData.minItem) || 0,
+            endDate: formData.endDate ? `${formData.endDate}T12:00:00.000Z` : null,
         };
 
         console.log("Data yang dikirim:", formattedData);
@@ -75,8 +78,8 @@ export default function NewSPK() {
                         Kategori
                     </Label>
                     <Select
-                        // onValueChange={(value) => handleChange("category", value)}
-                        // value={formData.category}
+                        onValueChange={(value) => handleSelectChange("category", value)}
+                        value={formData.category}
                         disabled={loadingParams}
                     >
                         <SelectTrigger className="w-full">
@@ -106,8 +109,7 @@ export default function NewSPK() {
                         Layanan
                     </Label>
                     <Select
-                        // onValueChange={(value) => handleChange("unit", value)}
-                        // value={formData.unit}
+                        // onValueChange={(value) => handleSelectChange("serviceCode", value)}
                         disabled={loadingParams}
                     >
                         <SelectTrigger className="w-full">
@@ -137,20 +139,22 @@ export default function NewSPK() {
                     <Input placeholder="Masukkan Kode Diskon" type="number" id="code" value={formData.code} onChange={handleChange} />
                 </div>
 
-                <div className="flex items-center space-x-4">
-                    <Label htmlFor="code" className="w-[20%] font-semibold">Tipe</Label>
-
-                    <RadioGroup defaultValue="option-one" className="flex items-center gap-5">
-                        <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="option-one" id="option-one" />
-                            <Label htmlFor="option-two">Vakum</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="option-two" id="option-two" />
-                            <Label htmlFor="option-one">Cuci</Label>
-                        </div>
-                    </RadioGroup>
-                </div>
+                {/* Tampilkan RadioGroup hanya jika kategori GENERAL atau BLOWER */}
+                {(formData.category === "GENERAL" || formData.category === "BLOWER") && (
+                    <div className="flex items-center space-x-4">
+                        <Label htmlFor="tipe" className="w-[20%] font-semibold">Tipe</Label>
+                        <RadioGroup defaultValue="option-one" className="flex items-center gap-5">
+                            <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="vakum" id="vakum" />
+                                <Label htmlFor="vakum">Vakum</Label>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="cuci" id="cuci" />
+                                <Label htmlFor="cuci">Cuci</Label>
+                            </div>
+                        </RadioGroup>
+                    </div>
+                )}
 
                 <div className="flex items-center space-x-4">
                     <Label htmlFor="amount" className="w-1/4 font-semibold">Harga</Label>
@@ -159,14 +163,15 @@ export default function NewSPK() {
                         onValueChange={(value) => console.log("Nilai angka:", value)}
                     />
                 </div>
+
                 <div className="flex items-center space-x-4">
-                    <Label htmlFor="category" className="w-1/4 font-semibold">Promo</Label>
+                    <Label htmlFor="promo" className="w-1/4 font-semibold">Promo</Label>
                     <RupiahInput
                         placeholder="Rp. 0"
                         onValueChange={(value) => console.log("Nilai angka:", value)}
                     />
-
                 </div>
+
                 <div className="flex items-center space-x-4">
                     <div className="w-1/4"></div>
                     <div className="space-x-2 flex w-full">

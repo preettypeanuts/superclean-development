@@ -280,6 +280,7 @@ export default function SettlementPage() {
               )}
             </div>
             <FilterStatus
+              placeholder="Status"
               value={statusFilter}
               onChange={setStatusFilter}
             />
@@ -311,7 +312,7 @@ export default function SettlementPage() {
             key={`${currentPage}-${limit}`}
             currentPage={currentPage}
             limit={limit}
-            fetchData={() => {}}
+            fetchData={() => { }}
           />
         )}
       </div>

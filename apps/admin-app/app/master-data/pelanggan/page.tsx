@@ -117,6 +117,7 @@ export default function PelangganPage() {
               )}
             </div>
             <FilterStatus
+              placeholder="Status"
               value={statusFilter}
               onChange={setStatusFilter}
             />

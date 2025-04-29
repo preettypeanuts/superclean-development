@@ -247,7 +247,7 @@ export const Sidebar = () => {
                 </div>
 
                 {/* Absolute components */}
-                <div className={`absolute w-full ${!isExpanded && "hidden"} rounded-b-3xl h-[25%] bottom-0 bg-gradient-to-t from-mainColor/30 dark:from-mainColor/10 to-transparent z-[555] gradient-blur-to-t`} />
+                <div className={`absolute w-full ${!isExpanded && "hidden"} rounded-b-3xl h-[22%] bottom-0 bg-gradient-to-t from-mainColor/30 dark:from-mainColor/10 to-transparent gradient-blur-to-t z-[555]`} />
 
                 <div className={`${isExpanded ? "bottom-2 left-2 w-full pr-4" : "bottom-0 p-3"} z-[666] absolute space-y-2`}>
                     <div onClick={() => setIsModalOpen(true)} className={`${isExpanded ? "px-3 py-3 flex items-center gap-2 rounded-2xl hover:bg-mainColor/20 duration-150" : "flex justify-center pb-1"} cursor-pointer`}>

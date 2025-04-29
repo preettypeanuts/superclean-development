@@ -5,13 +5,22 @@ import { Header } from "@shared/components/Header";
 import { Input } from "libs/ui-components/src/components/ui/input";
 import { Label } from "libs/ui-components/src/components/ui/label";
 import { Button } from "libs/ui-components/src/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectGroup, SelectLabel } from "libs/ui-components/src/components/ui/select";
 import { LuSave } from "react-icons/lu";
-import { TbCancel } from "react-icons/tb";
+import { TbArrowLeft } from "react-icons/tb";
 import { useParameterStore } from "libs/utils/useParameterStore";
 import { api } from "libs/utils/apiClient";
 import { useRouter } from "next/navigation";
+import { Checkbox } from "libs/ui-components/src/components/ui/checkbox";
 import { useToast } from "libs/ui-components/src/hooks/use-toast"
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+    SelectGroup,
+    SelectLabel
+} from "libs/ui-components/src/components/ui/select";
 
 export default function NewKaryawan() {
     const { toast } = useToast();
@@ -63,20 +72,20 @@ export default function NewKaryawan() {
             <Header label="Tambah Karyawan Baru" />
             <form className="space-y-4" onSubmit={handleSubmit}>
                 <div className="flex items-center space-x-4">
-                    <Label htmlFor="username" className="w-1/4 font-semibold">Username</Label>
-                    <Input placeholder="Masukkan username" id="username" value={formData.username} onChange={handleChange} />
+                    <Label htmlFor="username" className="w-1/4 font-semibold">Nama Pengguna</Label>
+                    <Input placeholder="Masukkan Nama Pengguna" id="username" value={formData.username} onChange={handleChange} />
                 </div>
                 <div className="flex items-center space-x-4">
-                    <Label htmlFor="fullname" className="w-1/4 font-semibold">Nama</Label>
-                    <Input placeholder="Masukkan nama karyawan" id="fullname" value={formData.fullname} onChange={handleChange} />
+                    <Label htmlFor="fullname" className="w-1/4 font-semibold">Nama Lengkap</Label>
+                    <Input placeholder="Masukkan lengkap karyawan" id="fullname" value={formData.fullname} onChange={handleChange} />
                 </div>
                 <div className="flex items-center space-x-4">
-                    <Label htmlFor="noWhatsapp" className="w-1/4 font-semibold">Phone</Label>
-                    <Input placeholder="Masukkan nomor telepon" type="text" id="noWhatsapp" value={formData.noWhatsapp} onChange={handleChange} />
+                    <Label htmlFor="noWhatsapp" className="w-1/4 font-semibold">No Whatsapp</Label>
+                    <Input placeholder="Masukkan no Whatsapp" type="text" id="noWhatsapp" value={formData.noWhatsapp} onChange={handleChange} />
                 </div>
                 <div className="flex items-center space-x-4">
-                    <Label htmlFor="password" className="w-1/4 font-semibold">Password</Label>
-                    <Input placeholder="Masukkan password" type="text" id="password" value={formData.password} onChange={handleChange} />
+                    <Label htmlFor="password" className="w-1/4 font-semibold">Kata sandi</Label>
+                    <Input placeholder="Masukkan kata sandi" type="text" id="password" value={formData.password} onChange={handleChange} />
                 </div>
                 <div className="flex items-center space-x-4">
                     <Label htmlFor="branchId" className="w-1/4">Cabang</Label>
@@ -86,7 +95,7 @@ export default function NewKaryawan() {
                         disabled={loadingParams}
                     >
                         <SelectTrigger className="w-full">
-                            <SelectValue placeholder={loadingParams ? "Memuat cabang..." : "Pilih cabang karyawan"} />
+                            <SelectValue placeholder={loadingParams ? "Memuat cabang..." : "Pilih lokasi cabang"} />
                         </SelectTrigger>
                         <SelectContent>
                             <SelectGroup>
@@ -107,14 +116,14 @@ export default function NewKaryawan() {
                     </Select>
                 </div>
                 <div className="flex items-center space-x-4">
-                    <Label htmlFor="roleId" className="w-1/4">Role</Label>
+                    <Label htmlFor="roleId" className="w-1/4">Akses Pengguna</Label>
                     <Select
                         onValueChange={(value) => handleSelectChange("roleId", value)}
                         value={formData.roleId}
                         disabled={loadingParams}
                     >
                         <SelectTrigger className="w-full">
-                            <SelectValue placeholder={loadingParams ? "Memuat role..." : "Pilih role karyawan"} />
+                            <SelectValue placeholder={loadingParams ? "Memuat role..." : "Pilih akses pengguna"} />
                         </SelectTrigger>
                         <SelectContent>
                             <SelectGroup>
@@ -135,32 +144,24 @@ export default function NewKaryawan() {
                     </Select>
                 </div>
                 <div className="flex items-center space-x-4">
-                    <Label htmlFor="status" className="w-1/4 font-semibold">Status</Label>
-                    <Select
-                        disabled
-                        onValueChange={(value) => handleSelectChange("status", Number(value))}
-                        value={String(formData.status)}
-                    >
-                        <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Pilih status karyawan" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectGroup>
-                                <SelectLabel>Status</SelectLabel>
-                                <SelectItem value="1">Aktif</SelectItem>
-                                <SelectItem value="2">Tidak Aktif</SelectItem>
-                            </SelectGroup>
-                        </SelectContent>
-                    </Select>
+                    <Label className="w-[20%] font-semibold">Status</Label>
+                    <div className="flex items-center space-x-2">
+                        <Checkbox
+                            disabled
+                            checked={formData.status === 1}
+                            onCheckedChange={(checked) => handleSelectChange("status", checked ? 1 : 2)}
+                        />
+                        <Label>{formData.status === 1 ? "Aktif" : "Tidak Aktif"}</Label>
+                    </div>
                 </div>
                 <div className="flex items-center space-x-4">
                     <div className="w-1/4"></div>
                     <div className="space-x-2 flex w-full">
-                        <Button type="button" variant="destructive" className="text-foreground w-[10lvw]" onClick={() => router.back()}>
-                            <TbCancel />
-                            Batal
+                        <Button type="button" variant="secondary" onClick={() => router.push("/master-data/karyawan")}>
+                            <TbArrowLeft />
+                            Kembali
                         </Button>
-                        <Button type="submit" variant="default" className="bg-success text-foreground hover:bg-green-600 w-[10lvw]">
+                        <Button type="submit" variant="submit">
                             <LuSave />
                             Simpan
                         </Button>

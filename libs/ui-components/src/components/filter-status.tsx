@@ -70,14 +70,13 @@ export function FilterStatus({
   placeholder = "Status",
   widthClass = "w-40",
 }: FilterDropdownProps) {
-  const currentLabel =
-    options.find((opt) => opt.value === value)?.label || placeholder;
+  const currentLabel = options.find((opt) => opt.value === value)?.label || placeholder;
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button icon={<LuListFilter size={16} />} iconPosition="left" variant="outline">
-          {currentLabel}
+            {value ? currentLabel : placeholder}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className={`${widthClass} border-none`}>

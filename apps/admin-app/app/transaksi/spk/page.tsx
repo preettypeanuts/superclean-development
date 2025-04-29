@@ -73,7 +73,7 @@ export default function SPKPage() {
   const fetchSPK = async () => {
     setLoading(true);
     try {
-      let url = `/transaction/page?search=${searchQuery}&page=${currentPage}&limit=${limit}`;
+      let url = `/transaction/page/spk?search=${searchQuery}&page=${currentPage}&limit=${limit}`;
 
       if (statusFilter !== "") {
         url += `&status=${statusFilter}`;
@@ -158,11 +158,10 @@ export default function SPKPage() {
               setBranchFilter={setBranchFilter}
             />
             <FilterStatus
+              placeholder="Status Transaksi" 
               value={statusFilter}
               onChange={setStatusFilter}
-              placeholder="Status Transaksi"
               options={trxStatusOptions}
-
             />
 
             <Button variant="secondary" onClick={handleSearch}>

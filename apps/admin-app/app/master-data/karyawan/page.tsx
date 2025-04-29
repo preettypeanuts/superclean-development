@@ -127,6 +127,7 @@ export default function KaryawanPage() {
               )}
             </div>
             <FilterStatus
+              placeholder="Status"
               value={statusFilter}
               onChange={setStatusFilter}
             />

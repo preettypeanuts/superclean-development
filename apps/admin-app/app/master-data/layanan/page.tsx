@@ -119,6 +119,7 @@ export default function LayananPage() {
               )}
             </div>
             <FilterStatus
+              placeholder="Status"
               value={statusFilter}
               onChange={setStatusFilter}
             />
