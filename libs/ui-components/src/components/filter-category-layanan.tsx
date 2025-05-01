@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { LuListFilter } from "react-icons/lu";
-import { useCategoryStore } from "libs/utils/useCategoryStore";
+import { useCategoryStore } from "../../../utils/useCategoryStore";
 
 interface FilterCategoryServicesProps {
   catFilter: string;
@@ -16,7 +16,7 @@ interface FilterCategoryServicesProps {
 }
 
 export function FilterCategoryLayanan({ catFilter, setcatFilter }: FilterCategoryServicesProps) {
-  const { catLayananMapping = {}, loading: loadingParams } = useCategoryStore();
+  const { catLayananMapping = {} } = useCategoryStore();
 
   return (
     <DropdownMenu>
@@ -41,7 +41,7 @@ export function FilterCategoryLayanan({ catFilter, setcatFilter }: FilterCategor
 
         >
           <DropdownMenuRadioItem value="">
-            Semua Cabang
+            Semua Layanan
           </DropdownMenuRadioItem>
           {Object.entries(catLayananMapping).map(([code, name]) => (
             <DropdownMenuRadioItem

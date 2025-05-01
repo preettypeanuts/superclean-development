@@ -102,7 +102,7 @@ export default function PromoPage() {
           </div>
           <Link href="diskon/baru">
             <Button icon={<LuPlus size={16} />} className="pl-2 pr-4" iconPosition="left" variant="default">
-              Tambah Diskon
+              Tambah
             </Button>
           </Link>
         </div>

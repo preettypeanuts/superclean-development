@@ -300,7 +300,7 @@ export default function SettlementPage() {
             </Button>
           </Link>
         </div>
-
+{/* 
         {processedKaryawan.length === 0 ? (
           <p className="text-center py-4">
             Karyawan dengan nama <span className="font-bold">{searchInput}</span> tidak ditemukan.
@@ -314,7 +314,7 @@ export default function SettlementPage() {
             limit={limit}
             fetchData={() => { }}
           />
-        )}
+        )} */}
       </div>
 
       <div className="flex items-center justify-between mt-4">
