@@ -8,7 +8,7 @@ import { Label } from "libs/ui-components/src/components/ui/label";
 import { Button } from "libs/ui-components/src/components/ui/button";
 import { Checkbox } from "libs/ui-components/src/components/ui/checkbox";
 import { LuSave } from "react-icons/lu";
-import { TbArrowLeft } from "react-icons/tb";
+import { TbArrowBack } from "react-icons/tb";
 import { api } from "libs/utils/apiClient";
 import { useParameterStore } from "libs/utils/useParameterStore";
 import { useToast } from "libs/ui-components/src/hooks/use-toast";
@@ -200,7 +200,7 @@ export default function EditKaryawan() {
             <div className="w-1/4"></div>
             <div className="space-x-2 flex w-full">
               <Button type="button" variant="secondary" onClick={() => router.push("/master-data/karyawan")}>
-                <TbArrowLeft />
+                <TbArrowBack />
                 Kembali
               </Button>
               <Button type="submit" variant="submit" disabled={updating}>

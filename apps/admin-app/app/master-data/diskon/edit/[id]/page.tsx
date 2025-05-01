@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import { api } from "libs/utils/apiClient";
 import { useToast } from "libs/ui-components/src/hooks/use-toast";
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogAction } from "libs/ui-components/src/components/ui/alert-dialog";
+import { formatDateInput } from "libs/utils/formatDate";
 
 interface Diskon {
     code: string;
@@ -104,7 +105,7 @@ export default function EditDiskon() {
                     </div>
 
                     {/* Nama Diskon */}
-                    <div className="c">
+                    <div className="flex items-center space-x-4">
                         <Label className="w-1/4 font-semibold">Nama Diskon</Label>
                         <Input name="name" value={diskon.name} onChange={handleChange} />
                     </div>
@@ -145,7 +146,7 @@ export default function EditDiskon() {
                     {/* Masa Berlaku */}
                     <div className="flex items-center space-x-4">
                         <Label className="w-1/4 font-semibold">Masa Berlaku</Label>
-                        <Input type="datetime-local" name="endDate" value={diskon.endDate.split(".")[0]} onChange={handleChange} />
+                        <Input type="date" name="endDate" value={formatDateInput(diskon.endDate)} onChange={handleChange} />
                     </div>
 
                     {/* Tombol Aksi */}

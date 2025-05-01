@@ -6,7 +6,7 @@ import { Input } from "libs/ui-components/src/components/ui/input";
 import { Label } from "libs/ui-components/src/components/ui/label";
 import { Button } from "libs/ui-components/src/components/ui/button";
 import { LuSave } from "react-icons/lu";
-import { TbArrowLeft } from "react-icons/tb";
+import { TbArrowBack } from "react-icons/tb";
 import { useParameterStore } from "libs/utils/useParameterStore";
 import { api } from "libs/utils/apiClient";
 import { useRouter } from "next/navigation";
@@ -158,7 +158,7 @@ export default function NewKaryawan() {
                     <div className="w-1/4"></div>
                     <div className="space-x-2 flex w-full">
                         <Button type="button" variant="secondary" onClick={() => router.push("/master-data/karyawan")}>
-                            <TbArrowLeft />
+                            <TbArrowBack />
                             Kembali
                         </Button>
                         <Button type="submit" variant="submit">

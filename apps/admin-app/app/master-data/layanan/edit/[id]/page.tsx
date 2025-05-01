@@ -17,7 +17,7 @@ import {
 } from "libs/ui-components/src/components/ui/select";
 import { Checkbox } from "libs/ui-components/src/components/ui/checkbox";
 import { LuSave } from "react-icons/lu";
-import { TbArrowLeft } from "react-icons/tb";
+import { TbArrowBack } from "react-icons/tb";
 import { api } from "libs/utils/apiClient";
 import { useCategoryStore } from "libs/utils/useCategoryStore";
 import { useToast } from "libs/ui-components/src/hooks/use-toast";
@@ -218,7 +218,7 @@ export default function EditLayanan() {
           <div className="flex items-center space-x-4">
             <Label className="w-[20%] font-semibold"></Label>
             <Button type="button" variant="secondary" onClick={() => router.back()}>
-              <TbArrowLeft />
+              <TbArrowBack />
               Kembali
             </Button>
             <Button type="submit" variant="submit" disabled={updating}>

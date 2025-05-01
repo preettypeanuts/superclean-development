@@ -5,7 +5,7 @@ import { Input } from "libs/ui-components/src/components/ui/input";
 import { Label } from "libs/ui-components/src/components/ui/label";
 import { Button } from "libs/ui-components/src/components/ui/button";
 import { LuSave } from "react-icons/lu";
-import { TbArrowLeft, TbCancel } from "react-icons/tb";
+import { TbArrowBack } from "react-icons/tb";
 import { Textarea } from "@ui-components/components/ui/textarea";
 import { useState } from "react";
 import { useLocationData } from "libs/utils/useLocationData";
@@ -250,7 +250,7 @@ export default function NewPelanggan() {
                 <div className="flex items-center space-x-4">
                     <Label className="w-[20%] font-semibold"></Label>
                     <Button type="button" variant="secondary" onClick={() => router.back()}>
-                        <TbArrowLeft />
+                        <TbArrowBack />
                         Kembali
                     </Button>
                     <Button type="submit" variant="submit">

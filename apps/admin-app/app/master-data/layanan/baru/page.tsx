@@ -15,7 +15,7 @@ import {
   SelectLabel,
 } from "libs/ui-components/src/components/ui/select";
 import { LuSave } from "react-icons/lu";
-import { TbArrowLeft, TbCancel } from "react-icons/tb";
+import { TbArrowBack } from "react-icons/tb";
 import { useCategoryStore } from "libs/utils/useCategoryStore";
 import { api } from "libs/utils/apiClient";
 import { useRouter } from "next/navigation";
@@ -238,7 +238,7 @@ export default function NewLayanan() {
           <div className="w-1/4"></div>
           <div className="space-x-2 flex w-full">
             <Button type="button" variant="secondary" onClick={() => router.back()}>
-              <TbArrowLeft />
+              <TbArrowBack />
               Kembali
             </Button>
             <Button type="submit" variant="submit">

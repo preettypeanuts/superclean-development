@@ -7,7 +7,7 @@ import { Label } from "libs/ui-components/src/components/ui/label";
 import { Button } from "libs/ui-components/src/components/ui/button";
 import { Checkbox } from "libs/ui-components/src/components/ui/checkbox";
 import { LuSave } from "react-icons/lu";
-import { TbArrowLeft, TbCancel } from "react-icons/tb";
+import { TbArrowBack } from "react-icons/tb";
 import { useEffect, useState } from 'react';
 import { api } from "libs/utils/apiClient";
 import { useLocationData } from "libs/utils/useLocationData";
@@ -262,8 +262,8 @@ export default function EditPelanggan() {
                     <div className="flex items-center space-x-4">
                         <div className="w-1/4"></div>
                         <div className="space-x-2 flex w-full">
-                            <Button type="button" variant="secondary" onClick={() => router.push("/master-data/pelanggan")}>
-                                <TbArrowLeft />
+                            <Button type="button" variant="secondary" onClick={() => router.back()}>
+                                <TbArrowBack />
                                 Kembali
                             </Button>
                             {/* Tombol Simpan */}

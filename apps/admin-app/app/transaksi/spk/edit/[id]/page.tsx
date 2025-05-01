@@ -11,7 +11,7 @@ import { Textarea } from "libs/ui-components/src/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectGroup } from "libs/ui-components/src/components/ui/select";
 import { useLocationData } from "libs/utils/useLocationData";
 import { api } from "libs/utils/apiClient";
-import { TbArrowLeft } from "react-icons/tb";
+import { TbArrowBack } from "react-icons/tb";
 import { formatDate } from "libs/utils/formatDate";
 import { formatRupiah } from "libs/utils/formatRupiah";
 import { SPKTableDetail } from "libs/ui-components/src/components/spk-table-detail";
@@ -153,7 +153,7 @@ export default function TransactionDetail() {
                 <p className="text-center text-red-500 py-8">Data tidak ditemukan!</p>
                 <div className="flex justify-center mt-4">
                     <Button onClick={() => router.back()} variant="outline">
-                        <TbArrowLeft />
+                        <TbArrowBack />
                         Kembali
                     </Button>
                 </div>
@@ -382,7 +382,7 @@ export default function TransactionDetail() {
                 {/* Tombol Kembali */}
                 <div className="flex justify-end mt-6 gap-3">
                     <Button onClick={() => router.back()} variant="outline">
-                        <TbArrowLeft />
+                        <TbArrowBack />
                         Kembali
                     </Button>
                     <Button
