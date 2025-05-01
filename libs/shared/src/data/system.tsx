@@ -2,7 +2,7 @@ import { FaHandsHelping } from "react-icons/fa";
 import { TbLayoutDashboardFilled } from "react-icons/tb";
 import { HiDocumentReport } from "react-icons/hi";
 import { FaChartSimple } from "react-icons/fa6";
-import { RiNotification4Fill, RiUserSettingsFill } from "react-icons/ri";
+import { RiNotification4Fill, RiSettings3Fill, RiUserSettingsFill } from "react-icons/ri";
 
 export const navigationItems = {
     menu: {
@@ -51,7 +51,7 @@ export const navigationItems = {
             {
                 label: "Pengaturan",
                 path: "/pengaturan",
-                icon: <RiUserSettingsFill />,
+                icon: <RiSettings3Fill />,
                 subs: []
             },
             {

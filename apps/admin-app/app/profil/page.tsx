@@ -58,11 +58,12 @@ export default function ProfilPage() {
                 title: "Berhasil!",
                 description: "Profil berhasil diperbarui.",
             });
+            window.location.reload(); 
         } catch (error) {
             console.error("Gagal memperbarui profil:", error);
             toast({
                 title: "Error!",
-                description: "Gagal memperbarui profil. Coba lagi nanti.",
+                description: `Gagal memperbarui profil. Error: ${(error as any)?.message || error}`,
                 variant: "destructive",
             });
         }
@@ -92,6 +93,7 @@ export default function ProfilPage() {
             });
             setPasswordData({ password: "", retypePassword: "" });
             setEditingPassword(false);
+            window.location.reload(); 
         } catch (error) {
             console.error("Gagal mengubah kata sandi:", error);
             toast({

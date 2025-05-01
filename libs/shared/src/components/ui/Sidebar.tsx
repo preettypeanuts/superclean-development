@@ -6,10 +6,20 @@ import { IoIosArrowDown } from "react-icons/io";
 import { SiCcleaner } from "react-icons/si";
 import { TbLayoutSidebarLeftExpandFilled, TbLayoutSidebarRightExpandFilled } from "react-icons/tb";
 import { ThemeSwitch } from "./ThemeSwitch";
-import { ModalProfile } from "../ModalProfile";
 import { usePathname, useRouter } from "next/navigation";
 import { IoReloadOutline } from "react-icons/io5";
 import { useUserProfile } from "../../../../utils/useUserProfile";
+import {
+    DropdownMenu,
+    DropdownMenuTrigger,
+    DropdownMenuContent,
+    DropdownMenuLabel,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+} from "../../../../ui-components/src/components/ui/dropdown-menu";
+import { RiLogoutCircleLine, RiUserSettingsFill } from "react-icons/ri";
+import { Button } from "../../../../ui-components/src/components/ui/button";
+
 
 export const Sidebar = () => {
     const [isExpanded, setIsExpanded] = useState(true);
@@ -202,25 +212,53 @@ export const Sidebar = () => {
                 <div className={`absolute w-full ${!isExpanded && "hidden"} rounded-b-3xl h-[22%] bottom-0 bg-gradient-to-t from-mainColor/30 dark:from-mainColor/10 to-transparent gradient-blur-to-t z-[555]`} />
 
                 <div className={`${isExpanded ? "bottom-2 left-2 w-full pr-4" : "bottom-0 p-3"} z-[666] absolute space-y-2`}>
-                    <div onClick={() => router.push("/profil")} className={`${isExpanded ? "px-3 py-3 flex items-center gap-2 rounded-2xl hover:bg-mainColor/20 duration-150" : "flex justify-center pb-1"} cursor-pointer`}>
-                        {loadingUser ? (
-                            <div className="animate-spin flex items-center justify-center text-xs font-medium w-11 h-11 rounded-full bg-neutral-500/20 dark:bg-neutral-500/30">
-                                <IoReloadOutline />
+                    {/* Profil Dropdown */}
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <div className={`${path.startsWith("/profil") && "bg-mainColor/50 dark:bg-mainColor/30"} ${isExpanded ? "px-3 py-3 flex items-center gap-2 rounded-2xl hover:bg-mainColor/20 duration-150" : "flex justify-center pb-1"} cursor-pointer truncate-parent`}>
+                                {loadingUser ? (
+                                    <div className="animate-spin flex items-center justify-center aspect-square text-xs font-medium w-11 h-11 rounded-full bg-neutral-500/20 dark:bg-neutral-500/30">
+                                        <IoReloadOutline />
+                                    </div>
+                                ) : (
+                                    <div className="flex items-center justify-center aspect-square text-xs font-medium w-11 h-11 rounded-full bg-neutral-500/20 dark:bg-neutral-500/30">
+                                        {processedRole}
+                                    </div>
+                                )}
+                                <div className={`${!isExpanded && "hidden"} flex flex-col text-sm`}>
+                                    <p className="font-medium truncate-1 untruncate">
+                                        {loadingUser ? "Loading..." : user?.fullname || "Tidak Diketahui"}
+                                    </p>
+                                    <p className="text-xs text-neutral-700 dark:text-neutral-400">
+                                        {loadingUser ? "Loading..." : user?.branchId || "Tidak Diketahui"}
+                                    </p>
+                                </div>
                             </div>
-                        ) : (
-                            <div className="flex items-center justify-center text-xs font-medium w-11 h-11 rounded-full bg-neutral-500/20 dark:bg-neutral-500/30">
-                                {processedRole}
-                            </div>
-                        )}
-                        <div className={`${!isExpanded && "hidden"} flex flex-col text-sm`}>
-                            <p className="font-medium">
-                                {loadingUser ? "Loading..." : user?.fullname || "Tidak Diketahui"}
-                            </p>
-                            <p className="text-xs text-neutral-700 dark:text-neutral-400">
-                                {loadingUser ? "Loading..." : user?.branchId || "Tidak Diketahui"}
-                            </p>
-                        </div>
-                    </div>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent
+                            align="end"
+                            side="right"
+                            className="w-[210px] ml-2 !bg-baseLight dark:!bg-baseDark !z-[100]">
+                            <DropdownMenuLabel>Akun Saya</DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem onClick={() => router.push("/profil")}>
+                                <RiUserSettingsFill />
+                                Profil
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                                className="text-red-700 dark:text-red-400"
+                                onClick={() => {
+                                    localStorage.clear();
+                                    router.push("/login");
+                                }}
+                            >
+                                <RiLogoutCircleLine />
+                                Keluar
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+
                     <ThemeSwitch isExpanded={isExpanded} />
                 </div>
             </div>
