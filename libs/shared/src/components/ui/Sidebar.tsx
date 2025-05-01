@@ -6,57 +6,23 @@ import { IoIosArrowDown } from "react-icons/io";
 import { SiCcleaner } from "react-icons/si";
 import { TbLayoutSidebarLeftExpandFilled, TbLayoutSidebarRightExpandFilled } from "react-icons/tb";
 import { ThemeSwitch } from "./ThemeSwitch";
-import { apiClient } from "../../../../utils/apiClient";
 import { ModalProfile } from "../ModalProfile";
-import { useParameterStore } from "../../../../utils/useParameterStore";
-import { IoReloadOutline } from "react-icons/io5";
 import { usePathname, useRouter } from "next/navigation";
-
-
-interface UserData {
-    username: string;
-    fullname: string;
-    role: string;
-    branch: string;
-}
+import { IoReloadOutline } from "react-icons/io5";
+import { useUserProfile } from "../../../../utils/useUserProfile";
 
 export const Sidebar = () => {
     const [isExpanded, setIsExpanded] = useState(true);
     const [openSubmenus, setOpenSubmenus] = useState<{ [key: string]: boolean }>({});
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [userData, setUserData] = useState<UserData | null>(null);
-    const [loadingUser, setLoadingUser] = useState(true);
 
-    const { roleMapping, branchMapping, loading: loadingParams } = useParameterStore();
+    const { user, loading: loadingUser } = useUserProfile();
     const path = usePathname();
     const router = useRouter();
-  
-    useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                setLoadingUser(true);
-                const result = await apiClient("/auth/whoAmI");
-    
-                if (result.status === "success") {
-                    setUserData(result.data);
-                }
-            } catch (error) {
-                console.error("Error fetching user data:", error);
-            } finally {
-                setLoadingUser(false);
-            }
-        };
-    
-        fetchUserData();
-    }, [path]); 
 
-    const processedUserProfile = userData
-        ? {
-            ...userData,
-            role: roleMapping[userData.role] || "Tidak Diketahui",
-            branch: branchMapping[userData.branch] || "Tidak Diketahui",
-        }
-        : null;
+    console.log('====================================');
+    console.log(user);
+    console.log('====================================');
 
     const getRoleAbbreviation = (roleValue: string) => {
         const roleMap: Record<string, string> = {
@@ -67,14 +33,10 @@ export const Sidebar = () => {
             "Supervisor": "SPV",
         };
 
-        return roleMap[roleValue] || "Tidak Diketahui";
+        return roleMap[roleValue] || "0";
     };
 
-
-    const processedRole = roleMapping[userData?.role ?? ""]
-        ? getRoleAbbreviation(roleMapping[userData?.role ?? ""])
-        : "UN";
-
+    const processedRole = user?.roleId ? getRoleAbbreviation(user.roleId) : "UN";
 
     const noNavigation = ["/login", "/forgot-password", "/reset-password"];
 
@@ -113,12 +75,10 @@ export const Sidebar = () => {
     }, [path]);
 
     return (
-        <nav
-            className={`${isExpanded ? "w-64" : "w-[79px]"} ${noNavigation.includes(path) && "hidden"} sticky top-0 h-screen flex transition-all duration-300 z-[100]`}>
+        <nav className={`${isExpanded ? "w-64" : "w-[79px]"} ${noNavigation.includes(path) && "hidden"} sticky top-0 h-screen flex transition-all duration-300 z-[100]`}>
             <div className={`w-full grow bg-mainColor/30 dark:bg-mainColor/20 rounded-3xl my-2 ml-2 flex flex-col relative shadow-mainShadow border border-white/50 dark:border-neutral-500/50 ${!isExpanded && "items-center"}`}>
-                {/* Header*/}
-                <div
-                    className={`${!isExpanded ? "border rounded-2xl border-neutral-500/10 bg-mainColor/20 mx-[7px] mt-2 w-fit p-3" : "py-3 pl-5 pr-[15px] w-full"} z-[666] absolute flex justify-between items-center gap-2 mb-3 cursor-pointer group`}>
+                {/* Header */}
+                <div className={`${!isExpanded ? "border rounded-2xl border-neutral-500/10 bg-mainColor/20 mx-[7px] mt-2 w-fit p-3" : "py-3 pl-5 pr-[15px] w-full"} z-[666] absolute flex justify-between items-center gap-2 mb-3 cursor-pointer group`}>
                     <div className={`flex items-center gap-2  duration-300`}>
                         <SiCcleaner className="text-xl" />
                         <h1 className={`${isExpanded ? "opacity-100" : "opacity-0 hidden"} text-lg font-semibold truncate max-w-32`}>
@@ -146,23 +106,19 @@ export const Sidebar = () => {
                         </button>
                     )}
 
-
                     {/* Navigation Sections */}
                     {Object.entries(navigationItems).map(([key, section]) => (
                         <div key={key}>
-                            {/* Section Title */}
                             <p className={`${!isExpanded && "w-full h-[1px] bg-neutral-500/30 rounded-full mb-3"} text-neutral-400 text-[10px] uppercase tracking-wide font-semibold px-3 pb-1`}>
                                 <span className={`${!isExpanded && "hidden"}`}>
                                     {section.label}
                                 </span>
                             </p>
 
-                            {/* Section Links */}
                             <ul className={`${isExpanded ? "" : "items-center justify-center"} flex flex-col gap-2 mb-3`}>
                                 {section.contents.map((item, idx) => (
                                     <li key={idx} className={`${!isExpanded && "dropdown dropdown-hover dropdown-right"}`}>
                                         <div tabIndex={idx} className="flex flex-col">
-                                            {/* Main Menu Item */}
                                             {!item.subs?.length ? (
                                                 <Link
                                                     href={item.path}
@@ -177,7 +133,6 @@ export const Sidebar = () => {
                                                 </Link>
 
                                             ) : (
-                                                /* Jika ada submenu → Gunakan <button> */
                                                 <button
                                                     onClick={(e) => {
                                                         e.preventDefault();
@@ -194,7 +149,6 @@ export const Sidebar = () => {
                                                         <span className={`${isExpanded ? "block" : "hidden"} capitalize`}>{item.label}</span>
                                                     </div>
 
-                                                    {/* Arrow Icon */}
                                                     {item.subs.length > 1 && (
                                                         <IoIosArrowDown
                                                             className={`text-neutral-400 transition-transform duration-200 
@@ -204,12 +158,10 @@ export const Sidebar = () => {
                                                 </button>
                                             )}
 
-                                            {/* Submenu (if exists) */}
                                             {item.subs && openSubmenus[item.label] && (
                                                 <ul className={`ml-[19px] mt-1 space-y-1 border-l border-neutral-500/50 ${!isExpanded ? "hidden" : "block"}`}>
                                                     {item.subs.map((sub, subIdx) => (
-                                                        <li key={subIdx}
-                                                        >
+                                                        <li key={subIdx}>
                                                             <Link
                                                                 href={sub.path}
                                                                 className="capitalize group ml-2 flex items-center text-sm text-neutral-600 dark:text-neutral-300 duration-150"
@@ -223,13 +175,11 @@ export const Sidebar = () => {
                                                 </ul>
                                             )}
 
-                                            {/* Submenu on hover (minimize) */}
                                             {item.subs.length > 0 && !isExpanded && (
                                                 <ul tabIndex={idx} className="ml-1 dropdown-content menu bg-baseLight dark:bg-baseDark rounded-box !z-[999] w-56 p-2 shadow">
                                                     <p className="block px-3 py-2 -m-1 bg-mainColor/20 border border-white/50 dark:border-neutral-500/50 rounded-xl capitalize mb-2 font-bold text-sm">{item.label}</p>
                                                     {item.subs.map((sub, subIdx) => (
-                                                        <li key={subIdx}
-                                                        >
+                                                        <li key={subIdx}>
                                                             <Link
                                                                 href={sub.path}
                                                                 className={`${path.startsWith(sub.path) && "bg-mainColor/50 dark:bg-mainColor/30"} capitalize group text-neutral-600 dark:text-neutral-300`}
@@ -262,19 +212,17 @@ export const Sidebar = () => {
                                 {processedRole}
                             </div>
                         )}
-
                         <div className={`${!isExpanded && "hidden"} flex flex-col text-sm`}>
                             <p className="font-medium">
-                                {loadingUser ? "Loading..." : processedUserProfile?.fullname || "Tidak Diketahui"}
+                                {loadingUser ? "Loading..." : user?.fullname || "Tidak Diketahui"}
                             </p>
-                            <p className="text-xs text-neutral-500">
-                                {loadingUser ? "Loading..." : processedUserProfile?.username || "Tidak Diketahui"}
+                            <p className="text-xs text-neutral-700 dark:text-neutral-400">
+                                {loadingUser ? "Loading..." : user?.branchId || "Tidak Diketahui"}
                             </p>
                         </div>
                     </div>
                     <ThemeSwitch isExpanded={isExpanded} />
                 </div>
-                <ModalProfile isOpen={isModalOpen} onOpenChange={setIsModalOpen} user={processedUserProfile} />
             </div>
         </nav>
     );
