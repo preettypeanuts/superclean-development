@@ -381,13 +381,13 @@ export default function TransactionDetail() {
 
                 {/* Tombol Kembali */}
                 <div className="flex justify-end mt-6 gap-3">
-                    <Button onClick={() => router.back()} variant="outline">
+                    <Button onClick={() => router.back()} variant="secondary">
                         <TbArrowBack />
                         Kembali
                     </Button>
                     <Button
                         type="button"
-                        className="bg-green-600"
+                        variant="submit"
                     //   onClick={() => setShowConfirmDialog(true)}
                     //    disabled={updating}
                     >

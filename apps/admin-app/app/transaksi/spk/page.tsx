@@ -176,7 +176,7 @@ export default function SPKPage() {
               variant="default"
               type="submit"
             >
-              Tambah SPK
+              Tambah
             </Button>
           </Link>
         </div>

@@ -7,12 +7,13 @@ import { Label } from "libs/ui-components/src/components/ui/label";
 import { Button } from "libs/ui-components/src/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "libs/ui-components/src/components/ui/select";
 import { LuSave } from "react-icons/lu";
-import { TbCancel } from "react-icons/tb";
+import { TbArrowBack } from "react-icons/tb";
 import { useEffect, useState } from "react";
 import { api } from "libs/utils/apiClient";
 import { useToast } from "libs/ui-components/src/hooks/use-toast";
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogAction } from "libs/ui-components/src/components/ui/alert-dialog";
 import { formatDateInput } from "libs/utils/formatDate";
+import { useCategoryStore } from "libs/utils/useCategoryStore";
 
 interface Diskon {
     code: string;
@@ -32,6 +33,7 @@ export default function EditDiskon() {
     const [diskon, setDiskon] = useState<Diskon | null>(null);
     const [updating, setUpdating] = useState(false);
     const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+    const { catLayananMapping = {} } = useCategoryStore();
 
     useEffect(() => {
         const fetchDiskon = async () => {
@@ -69,12 +71,12 @@ export default function EditDiskon() {
             endDate: diskon.endDate, // Pastikan format sesuai dengan aturan API
         };
 
-        console.log("data:", updatedData); 
+        console.log("data:", updatedData);
         setUpdating(true);
         try {
             const response = await api.put(`/promo/${id}`, updatedData);
 
-            console.log("Response:", response); 
+            console.log("Response:", response);
             toast({
                 title: "Berhasil",
                 description: "Diskon berhasil diperbarui!",
@@ -113,17 +115,23 @@ export default function EditDiskon() {
                     {/* Kategori */}
                     <div className="flex items-center space-x-4">
                         <Label className="w-1/4 font-semibold">Kategori</Label>
-                        <Select value={diskon.category} onValueChange={(value) => handleSelectChange("category", value)}>
+                        <Select
+                            value={diskon.category}
+                            onValueChange={(value) => handleSelectChange("category", value)}
+                        >
                             <SelectTrigger className="w-full">
                                 <SelectValue placeholder="Pilih Kategori" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="SPA">SPA</SelectItem>
-                                <SelectItem value="SALON">Salon</SelectItem>
-                                <SelectItem value="OTHER">Lainnya</SelectItem>
+                                {Object.entries(catLayananMapping).map(([key, label]) => (
+                                    <SelectItem key={key} value={key}>
+                                        {label}
+                                    </SelectItem>
+                                ))}
                             </SelectContent>
                         </Select>
                     </div>
+
 
                     {/* Kode Layanan */}
                     <div className="flex items-center space-x-4">
@@ -153,11 +161,11 @@ export default function EditDiskon() {
                     <div className="flex items-center space-x-4">
                         <div className="w-1/4"></div>
                         <div className="space-x-2 flex w-full">
-                            <Button type="button" variant="destructive" onClick={() => router.push("/master-data/diskon")}>
-                                <TbCancel />
-                                Batal
+                            <Button type="button" variant="secondary" onClick={() => router.push("/master-data/diskon")}>
+                                <TbArrowBack />
+                                Kembali
                             </Button>
-                            <Button type="button" className="bg-green-600" onClick={() => setShowConfirmDialog(true)} disabled={updating}>
+                            <Button type="button" variant="submit" onClick={() => setShowConfirmDialog(true)} disabled={updating}>
                                 <LuSave />
                                 {updating ? "Menyimpan..." : "Simpan"}
                             </Button>

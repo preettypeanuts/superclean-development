@@ -8,7 +8,7 @@ import { Input } from "libs/ui-components/src/components/ui/input";
 import { Label } from "libs/ui-components/src/components/ui/label";
 import { Button } from "libs/ui-components/src/components/ui/button";
 import { LuSave } from "react-icons/lu";
-import { TbCancel } from "react-icons/tb";
+import { TbArrowBack, TbCancel } from "react-icons/tb";
 import { useToast } from "libs/ui-components/src/hooks/use-toast";
 import { api } from "libs/utils/apiClient";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectGroup, SelectLabel } from "libs/ui-components/src/components/ui/select";
@@ -175,11 +175,11 @@ export default function NewSPK() {
                 <div className="flex items-center space-x-4">
                     <div className="w-1/4"></div>
                     <div className="space-x-2 flex w-full">
-                        <Button type="button" variant="destructive" className="text-foreground w-[10lvw]" onClick={() => router.back()}>
-                            <TbCancel />
-                            Batal
+                        <Button type="button" variant="secondary"  onClick={() => router.back()}>
+                            <TbArrowBack />
+                            Kembali
                         </Button>
-                        <Button type="submit" variant="default" className="bg-success text-foreground hover:bg-green-600 w-[10lvw]">
+                        <Button type="submit" variant="submit">
                             <LuSave />
                             Simpan
                         </Button>

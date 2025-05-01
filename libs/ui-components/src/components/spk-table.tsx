@@ -47,12 +47,12 @@ interface DataTableProps {
 export const SPKTable: React.FC<DataTableProps> = ({ data, columns, currentPage, limit, fetchData }) => {
     const { toast } = useToast(); // Inisialisasi toast
     const statusColors: Record<string, string> = {
-        "Baru": "bg-neutral-400 text-neutral-400",
-        "Proses": "bg-yellow-500 text-yellow-500",
-        "Batal": "bg-red-500 text-red-500",
-        "Menunggu Bayar": "bg-orange-500 text-orange-500",
-        "Sudah Bayar": "bg-blue-500 text-blue-500",
-        "Selesai": "bg-green-500 text-green-500",
+        "Baru": "bg-neutral-500 text-neutral-600 dark:bg-neutral-600 dark:text-neutral-100",
+        "Proses": "bg-yellow-500 text-yellow-600 dark:bg-yellow-600 dark:text-yellow-100",
+        "Batal": "bg-red-500 text-red-600 dark:bg-red-600 dark:text-red-100",
+        "Menunggu Bayar": "bg-orange-500 text-orange-600 dark:bg-orange-600 dark:text-orange-100",
+        "Sudah Bayar": "bg-blue-500 text-blue-600 dark:bg-blue-600 dark:text-blue-100",
+        "Selesai": "bg-green-500 text-green-600 dark:bg-green-600 dark:text-green-100",
     };
 
 
