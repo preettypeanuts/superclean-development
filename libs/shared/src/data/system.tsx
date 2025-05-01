@@ -31,7 +31,7 @@ export const navigationItems = {
                 icon: <FaHandsHelping />,
                 subs: [
                     { name: "SPK", path: "/transaksi/spk" },
-                    { name: "pembayaran", path: "/transaksi/settlement" },
+                    { name: "pembayaran", path: "/transaksi/pembayaran" },
                 ]
             },
             {
