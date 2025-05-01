@@ -5,12 +5,13 @@ import { navigationItems } from "../../data/system";
 import { IoIosArrowDown } from "react-icons/io";
 import { SiCcleaner } from "react-icons/si";
 import { TbLayoutSidebarLeftExpandFilled, TbLayoutSidebarRightExpandFilled } from "react-icons/tb";
-import { usePathname } from "next/navigation";
 import { ThemeSwitch } from "./ThemeSwitch";
 import { apiClient } from "../../../../utils/apiClient";
 import { ModalProfile } from "../ModalProfile";
 import { useParameterStore } from "../../../../utils/useParameterStore";
 import { IoReloadOutline } from "react-icons/io5";
+import { usePathname, useRouter } from "next/navigation";
+
 
 interface UserData {
     username: string;
@@ -28,6 +29,7 @@ export const Sidebar = () => {
 
     const { roleMapping, branchMapping, loading: loadingParams } = useParameterStore();
     const path = usePathname();
+    const router = useRouter();
   
     useEffect(() => {
         const fetchUserData = async () => {
@@ -208,14 +210,14 @@ export const Sidebar = () => {
                                                     {item.subs.map((sub, subIdx) => (
                                                         <li key={subIdx}
                                                         >
-                                                            <a
+                                                            <Link
                                                                 href={sub.path}
                                                                 className="capitalize group ml-2 flex items-center text-sm text-neutral-600 dark:text-neutral-300 duration-150"
                                                             >
                                                                 <p className={`${path.startsWith(sub.path) && "bg-mainColor/50 dark:bg-mainColor/30"} group-hover:bg-mainColor/20 px-2 py-2 w-full rounded-xl duration-150`}>
                                                                     {sub.name}
                                                                 </p>
-                                                            </a>
+                                                            </Link>
                                                         </li>
                                                     ))}
                                                 </ul>
@@ -228,12 +230,12 @@ export const Sidebar = () => {
                                                     {item.subs.map((sub, subIdx) => (
                                                         <li key={subIdx}
                                                         >
-                                                            <a
+                                                            <Link
                                                                 href={sub.path}
                                                                 className={`${path.startsWith(sub.path) && "bg-mainColor/50 dark:bg-mainColor/30"} capitalize group text-neutral-600 dark:text-neutral-300`}
                                                             >
                                                                 {sub.name}
-                                                            </a>
+                                                            </Link>
                                                         </li>
                                                     ))}
                                                 </ul>
@@ -250,7 +252,7 @@ export const Sidebar = () => {
                 <div className={`absolute w-full ${!isExpanded && "hidden"} rounded-b-3xl h-[22%] bottom-0 bg-gradient-to-t from-mainColor/30 dark:from-mainColor/10 to-transparent gradient-blur-to-t z-[555]`} />
 
                 <div className={`${isExpanded ? "bottom-2 left-2 w-full pr-4" : "bottom-0 p-3"} z-[666] absolute space-y-2`}>
-                    <div onClick={() => setIsModalOpen(true)} className={`${isExpanded ? "px-3 py-3 flex items-center gap-2 rounded-2xl hover:bg-mainColor/20 duration-150" : "flex justify-center pb-1"} cursor-pointer`}>
+                    <div onClick={() => router.push("/profil")} className={`${isExpanded ? "px-3 py-3 flex items-center gap-2 rounded-2xl hover:bg-mainColor/20 duration-150" : "flex justify-center pb-1"} cursor-pointer`}>
                         {loadingUser ? (
                             <div className="animate-spin flex items-center justify-center text-xs font-medium w-11 h-11 rounded-full bg-neutral-500/20 dark:bg-neutral-500/30">
                                 <IoReloadOutline />
