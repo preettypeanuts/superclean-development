@@ -24,11 +24,16 @@ import { Button } from "../../../../ui-components/src/components/ui/button";
 export const Sidebar = () => {
     const [isExpanded, setIsExpanded] = useState(true);
     const [openSubmenus, setOpenSubmenus] = useState<{ [key: string]: boolean }>({});
-    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const { user, loading: loadingUser } = useUserProfile();
     const path = usePathname();
     const router = useRouter();
+
+    useEffect(() => {
+        if (user) {
+            console.log("User data updated:", user);
+        }
+    }, [user, path]);
 
     console.log('====================================');
     console.log(user);

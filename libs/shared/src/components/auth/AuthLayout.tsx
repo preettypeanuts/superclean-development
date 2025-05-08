@@ -4,6 +4,7 @@ import { SiCcleaner } from "react-icons/si";
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 import { useState } from "react";
 import { useRouter } from "next/navigation"; // Gunakan next/navigation untuk router di client
+import { refetchUserProfile } from "../../../../utils/useUserProfile";
 
 interface AuthLayoutProps {
     headline: string,
@@ -55,6 +56,7 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({ headline, tagline, bgIma
             localStorage.setItem("access_token", accessToken);
 
             // Redirect ke dashboard
+            refetchUserProfile()
             router.push("/");
         } catch (err: unknown) {
             if (err instanceof Error) {

@@ -21,6 +21,7 @@ import {
     SelectGroup,
     SelectLabel
 } from "libs/ui-components/src/components/ui/select";
+import { formatDateInput } from "libs/utils/formatDate";
 
 export default function NewKaryawan() {
     const { toast } = useToast();
@@ -35,11 +36,13 @@ export default function NewKaryawan() {
         password: "",
         branchId: "",
         roleId: "",
+        // joinDate: "",
         status: 1, // Default ke "Aktif" true
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFormData({ ...formData, [e.target.id]: e.target.value });
+        const { id, name, value } = e.target;
+        setFormData({ ...formData, [id || name]: value });
     };
 
     const handleSelectChange = (id: string, value: string | number) => {
@@ -87,6 +90,11 @@ export default function NewKaryawan() {
                     <Label htmlFor="password" className="w-1/4 font-semibold">Kata sandi</Label>
                     <Input placeholder="Masukkan kata sandi" type="text" id="password" value={formData.password} onChange={handleChange} />
                 </div>
+
+                          <div className="flex items-center space-x-4">
+                            <Label className="w-1/4 font-semibold">Tanggal Daftar</Label>
+                            <Input type="text" name="noWhatsapp" value={formatDateInput(formData.joinDate)} onChange={handleChange} />
+                          </div>
                 <div className="flex items-center space-x-4">
                     <Label htmlFor="branchId" className="w-1/4">Cabang</Label>
                     <Select

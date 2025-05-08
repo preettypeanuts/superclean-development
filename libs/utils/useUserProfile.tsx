@@ -2,6 +2,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { api, apiClient } from "./apiClient";
 import { useParameterStore } from "./useParameterStore";
+import { usePathname } from "next/navigation";
 
 export interface RawUserData {
   username: string;
@@ -17,27 +18,33 @@ export interface ProcessedUserData {
   branchId: string; // mapped label
 }
 
+let _refetchUser: () => void = () => {};
+
 export const useUserProfile = () => {
   const [user, setUser] = useState<ProcessedUserData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const pathname = usePathname();
 
   const { roleMapping, branchMapping, loading: loadingParams } = useParameterStore();
 
-  const fetchUserProfile = useCallback(async () => {
-    try {
-      setLoading(true);
-      const response = await api.get("/profile");
+  // JANGAN taruh pathname di useCallback
+const fetchUserProfile = useCallback(async () => {
+    setLoading(true);
+    console.log("[useUserProfile] Fetch triggered due to pathname or mapping change");
 
+    try {
+      const response = await api.get("/profile");
+  
       if (response.status === "success") {
         const rawUser: RawUserData = response.data;
-
+  
         const processed: ProcessedUserData = {
           ...rawUser,
           roleId: roleMapping[rawUser.roleId] || "Tidak Diketahui",
           branchId: branchMapping[rawUser.branchId] || "Tidak Diketahui",
         };
-
+  
         setUser(processed);
         setError(null);
       } else {
@@ -50,10 +57,12 @@ export const useUserProfile = () => {
       setLoading(false);
     }
   }, [roleMapping, branchMapping]);
-
+  
+  // TARUH pathname di useEffect, bukan di useCallback
   useEffect(() => {
     fetchUserProfile();
-  }, [fetchUserProfile]);
+  }, [fetchUserProfile, pathname]);
+  
 
   return {
     user,
@@ -62,3 +71,7 @@ export const useUserProfile = () => {
     refetch: fetchUserProfile,
   };
 };
+
+export const refetchUserProfile = () => {
+    _refetchUser();
+  };
