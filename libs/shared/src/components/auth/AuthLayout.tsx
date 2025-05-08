@@ -5,7 +5,6 @@ import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 import { useState } from "react";
 import { useRouter } from "next/navigation"; // Gunakan next/navigation untuk router di client
 import { refetchUserProfile } from "../../../../utils/useUserProfile";
-
 interface AuthLayoutProps {
     headline: string,
     tagline: string,
@@ -40,18 +39,18 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({ headline, tagline, bgIma
             });
 
             const result = await response.json();
-    
+
             if (!response.ok) {
                 throw new Error(result.message || "Login gagal!");
             }
-    
+
 
             const accessToken = result?.data?.access_token;
-    
+
             if (!accessToken) {
                 throw new Error("Access token tidak ditemukan!");
             }
-    
+
             // Simpan token ke localStorage
             localStorage.setItem("access_token", accessToken);
 
@@ -68,31 +67,27 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({ headline, tagline, bgIma
     };
 
     return (
-        <section className="w-full h-screen max-h-screen">
-            <div className="flex md:flex-row flex-col h-full relative">
+        <section className="w-full h-screen max-h-screen relative">
+            <div className="absolute w-full h-full">
                 {/* Background Image */}
-                <div className="absolute w-full h-full">
-                    <Image
-                        className="block object-cover w-full md:h-full h-[30lvh] absolute"
-                        src={bgImage}
-                        alt="Background"
-                        fill
-                        priority
-                    />
-                    <div className="absolute top-5 left-5 z-20">
-                        <p className="flex gap-2 items-center text-white font-medium text-2xl">
-                            <SiCcleaner className="text-3xl" />
-                            Superclean
-                        </p>
-                    </div>
-                </div>
-
-                {/* Register Form */}
-                <div className="absolute flex justify-center items-center md:top-2 md:bottom-2 bottom-0 md:right-2 w-full md:w-[35lvw] h-auto md:flex-grow md:rounded-3xl rounded-t-3xl bg-white/65 dark:bg-black/65 shadow-custom backdrop-blur-xl md:px-12 px-5 py-10 border border-white/20 dark:border-neutral-500/50">
+                <Image
+                    className="block object-cover w-full md:h-full h-[30lvh] absolute"
+                    src={bgImage}
+                    alt="Background"
+                    fill
+                    priority
+                />
+            </div>
+            <div className="absolute inset-0 w-full h-full flex items-center justify-center">
+                {/* Login Form */}
+                <div className="rounded-xl w-full max-w-xl bg-white/50 dark:bg-black/50 shadow-mainShadow backdrop-blur-lg md:px-12 px-5 py-10 border border-white/20 dark:border-neutral-500/50">
                     <div className="flex flex-col justify-center w-full h-full">
                         {/* Header */}
-                        <div className="md:pb-5 flex flex-col items-start justify-center">
-                            <h1 className="text-2xl md:text-3xl font-medium text-mainColor dark:brightness-100 brightness-75">
+                        <div className="md:pb-5 flex flex-col items-center text-center justify-center">
+                            <p className="flex gap-2 items-center text-mainColor font-medium mb-10">
+                                <SiCcleaner className="text-5xl" />
+                            </p>
+                            <h1 className="text-2xl md:text-3xl font-medium text-mainColor dark:brightness-100">
                                 {headline}
                             </h1>
                             <p className="text-sm">{tagline}</p>
@@ -106,7 +101,7 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({ headline, tagline, bgIma
 
                             <label className="form-control w-full my-2">
                                 <div className="label">
-                                    <span className="text-neutral-500/80 text-xs">Username</span>
+                                    <span className="text-neutral-700/80 dark:text-neutral-300/90 font-medium text-base">Username</span>
                                 </div>
                                 <input
                                     type="text"
@@ -114,17 +109,17 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({ headline, tagline, bgIma
                                     value={username}
                                     onChange={(e) => serUsername(e.target.value)}
                                     placeholder="Masukkan username anda"
-                                    className="input bg-baseDark/30 dark:bg-baseLight/15 placeholder:text-neutral-200 dark:placeholder:text-neutral-500 w-full rounded-xl placeholder:text-sm"
+                                    className="input bg-white dark:bg-black placeholder:text-neutral-400 dark:placeholder:text-neutral-600 w-full rounded-lg placeholder:text-sm"
                                 />
                             </label>
 
                             <div className="label">
-                                <span className="text-neutral-500/80 text-xs">Password</span>
+                                <span className="text-neutral-700/80 dark:text-neutral-300/90 font-medium text-base">Password</span>
                             </div>
-                            <label className="input flex items-center gap-2 bg-baseDark/30 dark:bg-baseLight/15 w-full rounded-xl">
+                            <label className="input flex items-center gap-2 bg-white dark:bg-black w-full rounded-lg">
                                 <input
                                     type={visibleInputs["password"] ? "text" : "password"}
-                                    className="grow placeholder:text-neutral-200 dark:placeholder:text-neutral-500 placeholder:text-sm"
+                                    className="grow placeholder:text-neutral-400 dark:placeholder:text-neutral-600 placeholder:text-sm"
                                     required
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
@@ -141,7 +136,7 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({ headline, tagline, bgIma
                             </label>
 
                             <div className="mt-8">
-                                <button className="btn w-full rounded-xl border-none bg-mainColor text-white">
+                                <button className="btn w-full rounded-lg border-none bg-mainColor text-white">
                                     Login
                                 </button>
                             </div>

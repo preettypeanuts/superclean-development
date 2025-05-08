@@ -27,7 +27,8 @@ const nextConfig = {
       },
       {
         protocol: "https",
-        hostname: "picsum.photos",
+        hostname: "images.pexels.com",
+        
       },
     ],
   },

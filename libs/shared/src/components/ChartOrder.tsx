@@ -62,7 +62,7 @@ export const ChartOrder = () => {
             {data.map((el, idx) => (
                 <Card 
                     key={idx} 
-                    className={`p-5 w-fit space-y-3 rounded-3xl border border-white/50 dark:border-neutral-500/50 ${el.status ? 'bg-green-100' : 'bg-red-100'}`}
+                    className={`p-5 w-fit space-y-3 rounded-xl border border-white/50 dark:border-neutral-500/50 ${el.status ? 'bg-green-100' : 'bg-red-100'}`}
                 >
                     <span className="text-sm text-mainColor font-semibold">
                         {el.label}

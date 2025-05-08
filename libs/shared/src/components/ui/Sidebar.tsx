@@ -18,8 +18,6 @@ import {
     DropdownMenuSeparator,
 } from "../../../../ui-components/src/components/ui/dropdown-menu";
 import { RiLogoutCircleLine, RiUserSettingsFill } from "react-icons/ri";
-import { Button } from "../../../../ui-components/src/components/ui/button";
-
 
 export const Sidebar = () => {
     const [isExpanded, setIsExpanded] = useState(true);
@@ -34,10 +32,6 @@ export const Sidebar = () => {
             console.log("User data updated:", user);
         }
     }, [user, path]);
-
-    console.log('====================================');
-    console.log(user);
-    console.log('====================================');
 
     const getRoleAbbreviation = (roleValue: string) => {
         const roleMap: Record<string, string> = {
@@ -91,7 +85,7 @@ export const Sidebar = () => {
 
     return (
         <nav className={`${isExpanded ? "w-64" : "w-[79px]"} ${noNavigation.includes(path) && "hidden"} sticky top-0 h-screen flex transition-all duration-300 z-[100]`}>
-            <div className={`w-full grow bg-mainColor/30 dark:bg-mainColor/20 rounded-3xl my-2 ml-2 flex flex-col relative shadow-mainShadow border border-white/50 dark:border-neutral-500/50 ${!isExpanded && "items-center"}`}>
+            <div className={`w-full grow bg-mainColor/30 dark:bg-mainColor/20 rounded-xl my-2 ml-2 flex flex-col relative shadow-mainShadow border border-white/50 dark:border-neutral-500/50 ${!isExpanded && "items-center"}`}>
                 {/* Header */}
                 <div className={`${!isExpanded ? "border rounded-2xl border-neutral-500/10 bg-mainColor/20 mx-[7px] mt-2 w-fit p-3" : "py-3 pl-5 pr-[15px] w-full"} z-[666] absolute flex justify-between items-center gap-2 mb-3 cursor-pointer group`}>
                     <div className={`flex items-center gap-2  duration-300`}>
@@ -106,7 +100,7 @@ export const Sidebar = () => {
                         <TbLayoutSidebarRightExpandFilled className="text-xl" />
                     </div>
                 </div>
-                <div className={`absolute w-full ${!isExpanded && "hidden"} h-[10%] top-0 z-[555] rounded-t-3xl bg-gradient-to-b from-mainColor/30 dark:from-mainColor/10 via-mainColor/30 dark:via-mainColor/10 to-transparent gradient-blur-to-b`} />
+                <div className={`absolute w-full ${!isExpanded && "hidden"} h-[10%] top-0 z-[555] rounded-t-xl bg-gradient-to-b from-mainColor/30 dark:from-mainColor/10 via-mainColor/30 dark:via-mainColor/10 to-transparent gradient-blur-to-b`} />
 
                 {/* Expand Button on Minimize */}
                 <div className={`${!isExpanded ? "pt-14" : "pt-14 pb-28 overflow-y-scroll"} max-h-[100vh] mx-2 my-2 no-scrollbar overflow-visible`}>
@@ -214,7 +208,7 @@ export const Sidebar = () => {
                 </div>
 
                 {/* Absolute components */}
-                <div className={`absolute w-full ${!isExpanded && "hidden"} rounded-b-3xl h-[22%] bottom-0 bg-gradient-to-t from-mainColor/30 dark:from-mainColor/10 to-transparent gradient-blur-to-t z-[555]`} />
+                <div className={`absolute w-full ${!isExpanded && "hidden"} rounded-b-xl h-[22%] bottom-0 bg-gradient-to-t from-mainColor/30 dark:from-mainColor/10 to-transparent gradient-blur-to-t z-[555]`} />
 
                 <div className={`${isExpanded ? "bottom-2 left-2 w-full pr-4" : "bottom-0 p-3"} z-[666] absolute space-y-2`}>
                     {/* Profil Dropdown */}

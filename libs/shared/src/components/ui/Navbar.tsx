@@ -22,7 +22,7 @@ export const Navbar = () => {
     return (
         <div className={`${noNavigation.includes(pathname) && "hidden"} navbar h-[50px] !min-h-[50px] z-50 pl-3 pr-2 mt-[2px]`}>
             <div className="flex-1">
-                <div className="breadcrumbs text-sm bg-white dark:bg-black shadow-mainShadow rounded-3xl px-4 py-1">
+                <div className="breadcrumbs text-sm bg-white dark:bg-black shadow-mainShadow rounded-xl px-4 py-1">
                     <ul>
                         {getBreadcrumbs().map((crumb, index) => (
                             <li key={index}>
@@ -35,7 +35,7 @@ export const Navbar = () => {
                 </div>
             </div>
 
-            <div className="flex-none space-x-2 bg-white dark:bg-black px-0 shadow-mainShadow rounded-3xl">
+            <div className="flex-none space-x-2 bg-white dark:bg-black px-0 shadow-mainShadow rounded-xl">
             </div>
         </div>
     );

@@ -24,7 +24,7 @@ export function Breadcrumbs() {
     }
 
     return (
-        <Breadcrumb className="mt-2 px-4 py-2 dark:bg-black rounded-3xl bg-white shadow-mainShadow w-fit mx-2 mb-2 capitalize">
+        <Breadcrumb className="mt-2 px-4 py-2 dark:bg-black rounded-xl bg-white shadow-mainShadow w-fit mx-2 mb-2 capitalize">
             <BreadcrumbList>
                 <BreadcrumbItem>
                     <BreadcrumbLink href="/">

@@ -26,7 +26,7 @@ export default function RootLayout({
       <body
         className={`${fightree.className} antialiased md:flex`}
       >
-        <ThemeProvider enableSystem={true} defaultTheme='system' attribute="class">
+        <ThemeProvider enableSystem={false} defaultTheme='light' attribute="class">
           <ProtectedLayout>
             <Sidebar />
             <section className='flex flex-col max-h-[98lvh] h-[98lvh] w-full min-h-0'>

@@ -36,21 +36,21 @@ export const ThemeSwitch = ({ isExpanded }: ThemeSwitchProps) => {
       </button>
 
       {/* Expand Mode */}
-      <div className={`${!isExpanded && "hidden"} flex items-center gap-1 p-1 bg-neutral-100/40 dark:bg-neutral-500/20 rounded-xl relative overflow-hidden`}>
+      <div className={`${!isExpanded && "hidden"} flex items-center gap-1 p-1 bg-neutral-100/40 dark:bg-neutral-500/20 rounded-lg relative overflow-hidden`}>
         <button
-          className={`duration-300 w-full z-20 flex items-center justify-center py-1 rounded-lg ${currentTheme === 'light' ? 'bg-mainColor/0' : ''}`}
+          className={`duration-300 w-full z-20 flex items-center justify-center py-1 rounded-md ${currentTheme === 'light' ? 'bg-mainColor/0' : ''}`}
           onClick={() => setTheme("light")}
         >
           <TbSunFilled className="text-md" />
         </button>
         <button
-          className={`duration-300 w-full z-20 flex items-center justify-center py-1 rounded-lg ${currentTheme === 'dark' ? 'bg-mainColor/0' : ''}`}
+          className={`duration-300 w-full z-20 flex items-center justify-center py-1 rounded-md ${currentTheme === 'dark' ? 'bg-mainColor/0' : ''}`}
           onClick={() => setTheme("dark")}
         >
           <TbMoonFilled className="text-md" />
         </button>
         <div
-          className={`absolute z-10 h-6 w-[92px] bg-mainColor/50 rounded-lg transition-transform duration-300 ${currentTheme === 'dark' ? 'translate-x-full' : ''}`}
+          className={`absolute z-10 h-6 w-[92px] bg-mainColor/50 rounded-md transition-transform duration-300 ${currentTheme === 'dark' ? 'translate-x-full' : ''}`}
         />
       </div>
 
