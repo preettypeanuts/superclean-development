@@ -14,29 +14,29 @@ const TARGET_PENDAPATAN = 5000000;
 
 // Data dummy pencapaian pendapatan karyawan
 const rawData = [
-    { name: "Minah", value: 6000000 },
-    { name: "Jejen", value: 4000000 },
-    { name: "Sutisna", value: 0 },
-    { name: "Erik", value: 1200000 },
-    { name: "Udin", value: 2000000 },
-    { name: "John Doe", value: 2500000 },
-    { name: "Jane Smith", value: 5300000 },
-    { name: "Mike Johnson", value: 3000000 },
-    { name: "Sarah Brown", value: 0 },
-    { name: "Budi", value: 5000000 },
-    { name: "Ani", value: 3500000 },
-    { name: "Dewi", value: 4900000 },
-    { name: "Tono", value: 1000000 },
-    { name: "Siti", value: 3900000 },
-    { name: "Rahmat", value: 0 },
-    { name: "Yanto", value: 5200000 },
-    { name: "Wati", value: 5000000 },
-    { name: "Samsul", value: 0 },
-    { name: "Rina", value: 4500000 },
+    { name: "Minah", value: 6000000, branch: "Kantor Pusat" },
+    { name: "Jejen", value: 4000000, branch: "Bandung" },
+    { name: "Sutisna", value: 0, branch: "Surabaya" },
+    { name: "Erik", value: 1200000, branch: "Yogyakarta" },
+    { name: "Udin", value: 2000000, branch: "Bandung" },
+    { name: "John Doe", value: 2500000, branch: "Kantor Pusat" },
+    { name: "Jane Smith", value: 5300000, branch: "Surabaya" },
+    { name: "Mike Johnson", value: 3000000, branch: "Yogyakarta" },
+    { name: "Sarah Brown", value: 0, branch: "Kantor Pusat" },
+    { name: "Budi", value: 5000000, branch: "Bandung" },
+    { name: "Ani", value: 3500000, branch: "Surabaya" },
+    { name: "Dewi", value: 4900000, branch: "Yogyakarta" },
+    { name: "Tono", value: 1000000, branch: "Kantor Pusat" },
+    { name: "Siti", value: 3900000, branch: "Bandung" },
+    { name: "Rahmat", value: 0, branch: "Surabaya" },
+    { name: "Yanto", value: 5200000, branch: "Yogyakarta" },
+    { name: "Wati", value: 5000000, branch: "Kantor Pusat" },
+    { name: "Samsul", value: 0, branch: "Bandung" },
+    { name: "Rina", value: 4500000, branch: "Surabaya" },
 ];
 
 // Function to process chart data
-const processChartData = (data: { name: string, value: number }[]) => {
+const processChartData = (data: { name: string, value: number, branch: string }[]) => {
     return data.map((item) => {
         const percentage = (item.value / TARGET_PENDAPATAN) * 100;
         let fill;
@@ -49,6 +49,7 @@ const processChartData = (data: { name: string, value: number }[]) => {
         }
         return {
             ...item,
+            branch: item.branch, // Ensure branch is included
             percentage: percentage.toFixed(1),
             fill,
         };
@@ -75,24 +76,34 @@ export function ChartKaryawan() {
             </CardHeader>
 
             {/* Content yang grow dan scroll saat overflow */}
-            {/* <div className="absolute bottom-0 gradient-blur-to-t h-[15%] bg-gradient-to-t from-white/50 via-white/30 dark:from-black/50 dark:via-black/30 to-transparent z-30 rounded-b-3xl"></div> */}
-            <CardContent className="flex-grow overflow-auto py-24 no-scrollbar space-y-2">
-                {chartData.map((el, idx) => (
-                    <div key={idx}>
-                        <div className={`flex items-center justify-between ${el.fill} rounded-t-md bg-opacity-20 px-3 pt-1 pb-3 -mb-2`}>
-                            <div className="flex items-center gap-2">
-                                <span className={`rounded-full text-md font-semibold`}>{idx + 1}.</span>
-                                <h3 className="text-lg font-semibold">{el.name}</h3>
-                            </div>
-                            <span className="text-sm font-medium">{formatRupiah(el.value)}</span>
-                        </div>
-                        <div className="relative">
-                            <Progress value={parseFloat(el.percentage)} className="h-6 rounded-md shadow-custom" indicatorClassName={`${el.fill} rounded-r-md shadow-custom`} />
-                            <div className={`absolute right-2 top-1/2 transform -translate-y-1/2 text-[10px] font-medium text-white px-[5px] py-[1px] rounded-full ${el.fill} shadow-custom bg-opacity-35 dark:bg-opacity-10`}>
-                                {el.percentage}%
-                            </div>
-                        </div>
-                        <div className="flex items-center justify-between">
+            <CardContent className="flex-grow overflow-auto py-24 no-scrollbar space-y-4">
+                {Object.entries(
+                    chartData.reduce((acc, el) => {
+                        if (!acc[el.branch]) acc[el.branch] = [];
+                        acc[el.branch].push(el);
+                        return acc;
+                    }, {} as Record<string, typeof chartData>)
+                ).map(([branch, employees]) => (
+                    <div key={branch} className={`mb-5`}>
+                        <h2 className="font-semibold mb-2">{branch}</h2>
+                        <div className="space-y-2">
+                            {employees.map((el, idx) => (
+                                <div key={idx} className={` ${el.fill} rounded-md bg-opacity-20 px-3 pt-1 py-2`}>
+                                    <div className={`flex items-center justify-between`}>
+                                        <div className="flex items-center gap-2">
+                                            <span className={`rounded-full text-md font-semibold`}>{idx + 1}.</span>
+                                            <h3 className="text-lg font-semibold">{el.name}</h3>
+                                        </div>
+                                        <span className="text-sm font-medium">{formatRupiah(el.value)}</span>
+                                    </div>
+                                    <div className="flex items-center gap-2 dark:border rounded-md">
+                                        <Progress value={parseFloat(el.percentage)} className="h-5 shadow-custom" indicatorClassName={`${el.fill} !rounded-l-md shadow-mainShadow`} />
+                                        <div className={`text-[11px] font-bold text-neutral-500 dark:text-neutral-200 px-[5px] py-[4px] min-w-[45px] flex items-center justify-center h-full rounded-md`}>
+                                            {el.percentage}%
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     </div>
                 ))}

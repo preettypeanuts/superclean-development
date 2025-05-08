@@ -51,7 +51,7 @@ const formatToRupiah = (value: number) => {
 
 export function SalesChart() {
   return (
-    <Card className="flex flex-col justify-between !flex-grow">
+    <Card className="flex flex-col justify-between !flex-grow overflow-hidden">
       <CardHeader>
         <CardTitle>Statistik Profit Bulanan</CardTitle>
         <CardDescription>Melacak profit lunas dan belum lunas dalam setahun</CardDescription>
@@ -77,13 +77,13 @@ export function SalesChart() {
             <Bar
               dataKey="paidProfit"
               stackId="a"
-              fill="#71BBB2"
+              fill="#0569A2"
               radius={[0, 0, 4, 4]}
             />
             <Bar
               dataKey="unpaidProfit"
               stackId="a"
-              fill="#d39553"
+              fill="#DDA801"
               radius={[4, 4, 0, 0]}
             />
           </BarChart>

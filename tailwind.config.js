@@ -12,7 +12,7 @@ module.exports = {
     join(__dirname, 'src/**/*.{js,ts,jsx,tsx,mdx}'),
     ...createGlobPatternsForDependencies(__dirname),
   ],
-  
+
   theme: {
     container: {
       center: true,
@@ -24,7 +24,9 @@ module.exports = {
     extend: {
       colors: {
         mainColor: "#71BBB2",
-        secondaryColor: "#2973B2",
+        secondaryColor: "#CEE8F6",
+        secondaryColorDark: "#0569A2",
+        thirdColor: "#DDA801",
         baseLight: "#9ACBD0",
         baseDark: "#394B4D",
         baseColor: "#F2EFE7",

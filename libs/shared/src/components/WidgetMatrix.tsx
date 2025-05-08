@@ -28,7 +28,7 @@ export const WidgetMatrix: React.FC<WidgetMatrixProps> = ({ data }) => {
       {data.map((stat, index) => {
         const trend = stat.lastWeek !== null ? getTrend(stat.value, stat.lastWeek) : { trend: "stable", color: "", icon: <FaMinus />, percentage: "0.0%" };
         return (
-          <Card key={index} className="flex flex-col justify-between gap-8 px-3 py-3">
+          <Card key={index} className="flex flex-col justify-between gap-4 px-3 py-3">
             <div className={`flex items-center gap-2  ${stat.color} bg-opacity-20 rounded-full pr-2`}>
               <div className={`p-2 text-lg rounded-full ${stat.color} w-fit h-fit text-white`}>
                 {stat.icon}
@@ -38,12 +38,6 @@ export const WidgetMatrix: React.FC<WidgetMatrixProps> = ({ data }) => {
             <p className={`text-3xl font-semibold flex items-center gap-1 pb-1 pl-[2px]`}>
               {stat.value}
             </p>
-            {/* {stat.lastWeek !== null && (
-                  <div className={`${trend.color} text-sm font-medium flex items-center gap-1 truncate`}>
-                    {trend.icon} {trend.percentage} {trend.trend}
-                    <span> dari minggu lalu </span>
-                  </div>
-                )} */}
           </Card>
         );
       })}

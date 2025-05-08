@@ -4,6 +4,7 @@ import { SalesChart } from "@shared/components/SalesChart";
 import { TiCancel } from "react-icons/ti";
 import { FaClipboardCheck, FaClipboardList } from "react-icons/fa";
 import { FaPersonRunning, FaMoneyBillTransfer } from "react-icons/fa6";
+import { BirthdayReminder } from "@shared/components/BirthdayReminder"
 
 const totalSPK = [
   {
@@ -57,7 +58,10 @@ const waitPayment = [
 
 export default function Dashboard() {
   return (
-    <section className="flex flex-col gap-2 max-h-[99lvh] h-[99lvh] min-h-0 overflow-hidden pt-[8px] px-2">
+    <section className="flex flex-col gap-2 max-h-[91.5lvh] h-[91.5lvh] min-h-0 overflow-hidden pt-[8px] px-2">
+      <div className="h-fit">
+        <BirthdayReminder />
+      </div>
       {/* Bagian Atas: Widget (Tinggi Sesuai Konten) */}
       <div className="grid grid-cols-5 gap-2 h-fit">
         <WidgetMatrix data={totalSPK} />
