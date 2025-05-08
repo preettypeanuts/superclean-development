@@ -36,7 +36,7 @@ export default function NewKaryawan() {
         password: "",
         branchId: "",
         roleId: "",
-        // joinDate: "",
+        joinDate: "", // Add joinDate to the initial state
         status: 1, // Default ke "Aktif" true
     });
 

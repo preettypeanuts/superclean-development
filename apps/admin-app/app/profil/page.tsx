@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { api, apiClient } from "libs/utils/apiClient";
-import { toast, useToast } from "@ui-components/hooks/use-toast";
-import { useParameterStore } from "libs/utils/useParameterStore";
+import { api, apiClient } from "../../../../libs/utils/apiClient";
+import { useToast } from "@ui-components/hooks/use-toast";
+import { useParameterStore } from "../../../../libs/utils/useParameterStore";
 import { Button } from "@ui-components/components/ui/button";
 import { Wrapper } from "@shared/components/Wrapper";
 import { Header } from "@shared/components/Header";
@@ -63,7 +63,9 @@ export default function ProfilPage() {
             console.error("Gagal memperbarui profil:", error);
             toast({
                 title: "Error!",
-                description: `Gagal memperbarui profil. Error: ${(error as any)?.message || error}`,
+                description: `Gagal memperbarui profil. Error: ${
+                    error instanceof Error ? error.message : String(error)
+                }`,
                 variant: "destructive",
             });
         }

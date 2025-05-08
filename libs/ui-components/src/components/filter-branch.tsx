@@ -16,7 +16,7 @@ interface FilterBranchProps {
 }
 
 export function FilterBranch({ branchFilter, setBranchFilter }: FilterBranchProps) {
-  const { branchMapping = {}, loading: loadingParams } = useParameterStore();
+  const { branchMapping = {} } = useParameterStore();
 
   return (
     <DropdownMenu>
