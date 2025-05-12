@@ -36,6 +36,14 @@ import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
 import { Plus, Save } from "lucide-react";
 import { IoMdSave } from "react-icons/io";
 
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "libs/ui-components/src/components/ui/dialog";
+
 interface Karyawan {
   id: string;
   username: string;
@@ -218,22 +226,17 @@ export default function EditKaryawan() {
         )}
 
         {/* Dialog Konfirmasi Simpan */}
-        <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
-          <AlertDialogContent>
-            <div className="flex justify-end">
-              <button onClick={() => setShowConfirmDialog(false)} className="w-fit rounded-full rotate-45 text-neutral-400 dark:text-neutral-500 hover:text-destructive">
-                <Plus size={25} />
-              </button>
-            </div>
-            <AlertDialogHeader>
-              <div className="flex items-center justify-center mb-5-">
-                <div className=" text-5xl p-3 bg-secondaryColor text-secondaryColorDark rounded-lg">
-                  <IoMdSave />
-                </div>
+        <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
+          <DialogContent className="max-w-md">
+            <DialogHeader className="flex items-center justify-center">
+              <div className="text-5xl p-3 bg-secondaryColor text-secondaryColorDark rounded-lg my-5">
+                <IoMdSave />
               </div>
-              <AlertDialogTitle className="text-center">Apakah Anda yakin ingin menyimpan data?</AlertDialogTitle>
-            </AlertDialogHeader>
-            <AlertDialogFooter >
+              <DialogTitle className="text-center">
+                Apakah Anda yakin ingin menyimpan data?
+              </DialogTitle>
+            </DialogHeader>
+            <DialogFooter className="flex flex-row gap-2">
               <Button
                 variant="outline2"
                 className="w-1/2"
@@ -248,9 +251,9 @@ export default function EditKaryawan() {
               >
                 Simpan
               </Button>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </Wrapper>
     </>
   );

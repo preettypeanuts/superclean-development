@@ -15,6 +15,8 @@ import { useParameterStore } from "libs/utils/useParameterStore";
 import { Label } from "@ui-components/components/ui/label";
 import { IoClose } from "react-icons/io5";
 import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
+import { GroupFilter } from "libs/ui-components/src/components/group-filter"
+import { SelectFilter } from "libs/ui-components/src/components/select-filter"
 
 export const DataHeaderPelanggan = [
   { key: "id", label: "#" },
@@ -42,6 +44,12 @@ interface Karyawan {
   birthDate: string;
 }
 
+const options = [
+  { label: "Semua", value: 0 },
+  { label: "Aktif", value: 1 },
+  { label: "Nonaktif", value: 2 },
+]
+
 export default function KaryawanPage() {
   const [dataKaryawan, setDataKaryawan] = useState<Karyawan[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -49,20 +57,65 @@ export default function KaryawanPage() {
   const [totalData, setTotalData] = useState<number>(0);
   const [limit, setLimit] = useState<number>(10);
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchInput, setSearchInput] = useState(""); // Input Sementara
-  const [statusFilter, setStatusFilter] = useState<string>("");
+  const [branchFilter, setBranchFilter] = useState<string>("");
+  const [roleFilter, setRoleFilter] = useState<string>("");
+  const [statusFilter, setStatusFilter] = useState<number>(0);
+
+  // Filter sementara
+  const [searchInput, setSearchInput] = useState("");
+  const [tempBranchFilter, setTempBranchFilter] = useState<string>("");
+  const [tempRoleFilter, setTempRoleFilter] = useState<string>("");
+  const [tempStatusFilter, setTempStatusFilter] = useState<number>(0);
+
 
   const totalPages = Math.max(1, Math.ceil(totalData / limit));
   const { roleMapping, branchMapping, loading: loadingParams } = useParameterStore();
+
+  const branchOptions = Object.entries(branchMapping).map(([key, val]) => ({
+    label: val,
+    value: key,
+  }));
+
+  const roleOptions = Object.entries(roleMapping).map(([key, val]) => ({
+    label: val,
+    value: key,
+  }));
+
+  const handleApplyFilter = () => {
+    setBranchFilter(tempBranchFilter);
+    setRoleFilter(tempRoleFilter);
+    setStatusFilter(tempStatusFilter);
+    setCurrentPage(1);
+  };
+
+  const handleResetFilter = () => {
+    setTempBranchFilter("");
+    setTempRoleFilter("");
+    setTempStatusFilter(0);
+  };
+
+  const handleCancelFilter = () => {
+    setTempBranchFilter(branchFilter);
+    setTempRoleFilter(roleFilter);
+    setTempStatusFilter(statusFilter);
+  };
+
 
   const fetchKaryawan = async () => {
     setLoading(true);
     try {
       let url = `/user/page?search=${searchQuery}&page=${currentPage}&limit=${limit}`;
 
-      if (statusFilter !== "") {
+      if (statusFilter !== 0) {
         url += `&status=${statusFilter}`;
       }
+      if (branchFilter) {
+        url += `&branchId=${branchFilter}`;
+      }
+      if (roleFilter) {
+        url += `&roleId=${roleFilter}`;
+      }
+
 
       const result = await apiClient(url);
 
@@ -129,11 +182,37 @@ export default function KaryawanPage() {
                   </button>
                 )}
               </div>
-              <FilterStatus
-                placeholder="Status"
-                value={statusFilter}
-                onChange={setStatusFilter}
-              />
+              <GroupFilter
+                className="space-y-2"
+                onApply={handleApplyFilter}
+                onReset={handleResetFilter}
+                onCancel={handleCancelFilter}
+              >
+                <SelectFilter
+                  label="Cabang"
+                  id="cabang"
+                  placeholder="Pilih Cabang"
+                  value={tempBranchFilter}
+                  optionsString={branchOptions}
+                  onChange={setTempBranchFilter}
+                />
+                <SelectFilter
+                  label="Akses Pengguna"
+                  id="akses"
+                  placeholder="Pilih Akses Pengguna"
+                  value={tempRoleFilter}
+                  optionsString={roleOptions}
+                  onChange={setTempRoleFilter}
+                />
+                <SelectFilter
+                  label="Status"
+                  id="status"
+                  placeholder="Pilih Status"
+                  value={tempStatusFilter}
+                  optionsNumber={options}
+                  onChange={setTempStatusFilter}
+                />
+              </GroupFilter>
               <Button variant="main" onClick={handleSearch}>Cari</Button>
             </div>
             <Link href="karyawan/baru">

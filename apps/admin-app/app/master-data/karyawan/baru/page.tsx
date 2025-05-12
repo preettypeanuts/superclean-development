@@ -23,6 +23,7 @@ import {
 } from "libs/ui-components/src/components/ui/select";
 import { formatDate, formatDateInput } from "libs/utils/formatDate";
 import { DatePicker } from "@ui-components/components/date-picker";
+import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
 
 export default function NewKaryawan() {
     const { toast } = useToast();
@@ -73,110 +74,112 @@ export default function NewKaryawan() {
     };
 
     return (
-        <Wrapper>
-            <Header label="Tambah Karyawan Baru" />
-            <form className="space-y-4" onSubmit={handleSubmit}>
-                <div className="flex items-center space-x-4">
-                    <Label htmlFor="username" className="w-1/4 font-semibold">Nama Pengguna</Label>
-                    <Input placeholder="Masukkan Nama Pengguna" id="username" value={formData.username} onChange={handleChange} />
-                </div>
-                <div className="flex items-center space-x-4">
-                    <Label htmlFor="fullname" className="w-1/4 font-semibold">Nama Lengkap</Label>
-                    <Input placeholder="Masukkan lengkap karyawan" id="fullname" value={formData.fullname} onChange={handleChange} />
-                </div>
-                <div className="flex items-center space-x-4">
-                    <Label htmlFor="noWhatsapp" className="w-1/4 font-semibold">No Whatsapp</Label>
-                    <Input placeholder="Masukkan no Whatsapp" type="text" id="noWhatsapp" value={formData.noWhatsapp} onChange={handleChange} />
-                </div>
-                <div className="flex items-center space-x-4">
-                    <Label htmlFor="password" className="w-1/4 font-semibold">Kata sandi</Label>
-                    <Input placeholder="Masukkan kata sandi" type="text" id="password" value={formData.password} onChange={handleChange} />
-                </div>
-
-                <div className="flex items-center space-x-4">
-                    <Label htmlFor="birthDate" className="w-1/4 font-semibold">Tanggal Lahir</Label>
-                    <Input type="date" name="birthDate" id="birthDate" value={formatDateInput(formData.birthDate)} onChange={handleChange} />
-                </div>
-
-                <div className="flex items-center space-x-4">
-                    <Label htmlFor="joinDate" className="w-1/4 font-semibold">Tanggal Daftar</Label>
-                    <Input type="date" name="joinDate" id="joinDate" value={formatDateInput(formData.joinDate)} onChange={handleChange} />
-                </div>
-                <div className="flex items-center space-x-4">
-                    <Label htmlFor="branchId" className="w-1/4">Cabang</Label>
-                    <Select
-                        onValueChange={(value) => handleSelectChange("branchId", value)}
-                        value={formData.branchId}
-                        disabled={loadingParams}
-                    >
-                        <SelectTrigger className="w-full">
-                            <SelectValue placeholder={loadingParams ? "Memuat cabang..." : "Pilih lokasi cabang"} />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectGroup>
-                                <SelectLabel>Cabang</SelectLabel>
-                                {loadingParams ? (
-                                    <SelectItem value="loading" disabled>Loading...</SelectItem>
-                                ) : branchMapping && Object.keys(branchMapping).length > 0 ? (
-                                    Object.keys(branchMapping).map((key) => (
-                                        <SelectItem key={key} value={key}>
-                                            {branchMapping[key]}
-                                        </SelectItem>
-                                    ))
-                                ) : (
-                                    <SelectItem value="unavailable" disabled>Data tidak tersedia</SelectItem>
-                                )}
-                            </SelectGroup>
-                        </SelectContent>
-                    </Select>
-                </div>
-                <div className="flex items-center space-x-4">
-                    <Label htmlFor="roleId" className="w-1/4">Akses Pengguna</Label>
-                    <Select
-                        onValueChange={(value) => handleSelectChange("roleId", value)}
-                        value={formData.roleId}
-                        disabled={loadingParams}
-                    >
-                        <SelectTrigger className="w-full">
-                            <SelectValue placeholder={loadingParams ? "Memuat role..." : "Pilih akses pengguna"} />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectGroup>
-                                <SelectLabel>Role</SelectLabel>
-                                {loadingParams ? (
-                                    <SelectItem value="loading" disabled>Loading...</SelectItem>
-                                ) : roleMapping && Object.keys(roleMapping).length > 0 ? (
-                                    Object.keys(roleMapping).map((key) => (
-                                        <SelectItem key={key} value={key}>
-                                            {roleMapping[key]}
-                                        </SelectItem>
-                                    ))
-                                ) : (
-                                    <SelectItem value="unavailable" disabled>Data tidak tersedia</SelectItem>
-                                )}
-                            </SelectGroup>
-                        </SelectContent>
-                    </Select>
-                </div>
-                <div className="flex items-center space-x-4">
-                    <Label className="w-[20%] font-semibold">Status</Label>
-                    <div className="flex items-center space-x-2">
-                        <Checkbox
-                            checked={formData.status === 1}
-                            onCheckedChange={(checked) => handleSelectChange("status", checked ? 1 : 2)}
-                        />
-                        <Label>{formData.status === 1 ? "Aktif" : "Tidak Aktif"}</Label>
+        <>
+            <Breadcrumbs label="Tambah Karyawan Baru" />
+            <Wrapper>
+                <form className="space-y-4" onSubmit={handleSubmit}>
+                    <div className="flex items-center space-x-4">
+                        <Label htmlFor="username" className="w-1/4 font-semibold">Nama Pengguna</Label>
+                        <Input placeholder="Masukkan Nama Pengguna" id="username" value={formData.username} onChange={handleChange} />
                     </div>
-                </div>
-                <div className="flex justify-end w-full space-x-2">
-                    <Button type="button" variant="outline2" onClick={() => router.push("/master-data/karyawan")}>
-                        Kembali
-                    </Button>
-                    <Button type="submit" variant="main">
-                        Simpan
-                    </Button>
-                </div>
-            </form>
-        </Wrapper>
+                    <div className="flex items-center space-x-4">
+                        <Label htmlFor="fullname" className="w-1/4 font-semibold">Nama Lengkap</Label>
+                        <Input placeholder="Masukkan Nama lengkap karyawan" id="fullname" value={formData.fullname} onChange={handleChange} />
+                    </div>
+                    <div className="flex items-center space-x-4">
+                        <Label htmlFor="noWhatsapp" className="w-1/4 font-semibold">No Whatsapp</Label>
+                        <Input placeholder="Masukkan no Whatsapp" type="text" id="noWhatsapp" value={formData.noWhatsapp} onChange={handleChange} />
+                    </div>
+                    <div className="flex items-center space-x-4">
+                        <Label htmlFor="password" className="w-1/4 font-semibold">Kata sandi</Label>
+                        <Input placeholder="Masukkan kata sandi" type="text" id="password" value={formData.password} onChange={handleChange} />
+                    </div>
+
+                    <div className="flex items-center space-x-4">
+                        <Label htmlFor="birthDate" className="w-1/4 font-semibold">Tanggal Lahir</Label>
+                        <Input type="date" name="birthDate" id="birthDate" value={formatDateInput(formData.birthDate)} onChange={handleChange} />
+                    </div>
+
+                    <div className="flex items-center space-x-4">
+                        <Label htmlFor="joinDate" className="w-1/4 font-semibold">Tanggal Daftar</Label>
+                        <Input type="date" name="joinDate" id="joinDate" value={formatDateInput(formData.joinDate)} onChange={handleChange} />
+                    </div>
+                    <div className="flex items-center space-x-4">
+                        <Label htmlFor="branchId" className="w-1/4">Cabang</Label>
+                        <Select
+                            onValueChange={(value) => handleSelectChange("branchId", value)}
+                            value={formData.branchId}
+                            disabled={loadingParams}
+                        >
+                            <SelectTrigger className="w-full">
+                                <SelectValue placeholder={loadingParams ? "Memuat cabang..." : "Pilih lokasi cabang"} />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                    <SelectLabel>Cabang</SelectLabel>
+                                    {loadingParams ? (
+                                        <SelectItem value="loading" disabled>Loading...</SelectItem>
+                                    ) : branchMapping && Object.keys(branchMapping).length > 0 ? (
+                                        Object.keys(branchMapping).map((key) => (
+                                            <SelectItem key={key} value={key}>
+                                                {branchMapping[key]}
+                                            </SelectItem>
+                                        ))
+                                    ) : (
+                                        <SelectItem value="unavailable" disabled>Data tidak tersedia</SelectItem>
+                                    )}
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <div className="flex items-center space-x-4">
+                        <Label htmlFor="roleId" className="w-1/4">Akses Pengguna</Label>
+                        <Select
+                            onValueChange={(value) => handleSelectChange("roleId", value)}
+                            value={formData.roleId}
+                            disabled={loadingParams}
+                        >
+                            <SelectTrigger className="w-full">
+                                <SelectValue placeholder={loadingParams ? "Memuat role..." : "Pilih akses pengguna"} />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                    <SelectLabel>Role</SelectLabel>
+                                    {loadingParams ? (
+                                        <SelectItem value="loading" disabled>Loading...</SelectItem>
+                                    ) : roleMapping && Object.keys(roleMapping).length > 0 ? (
+                                        Object.keys(roleMapping).map((key) => (
+                                            <SelectItem key={key} value={key}>
+                                                {roleMapping[key]}
+                                            </SelectItem>
+                                        ))
+                                    ) : (
+                                        <SelectItem value="unavailable" disabled>Data tidak tersedia</SelectItem>
+                                    )}
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <div className="flex items-center space-x-4">
+                        <Label className="w-[20%] font-semibold">Status</Label>
+                        <div className="flex items-center space-x-2">
+                            <Checkbox
+                                checked={formData.status === 1}
+                                onCheckedChange={(checked) => handleSelectChange("status", checked ? 1 : 2)}
+                            />
+                            <Label>{formData.status === 1 ? "Aktif" : "Tidak Aktif"}</Label>
+                        </div>
+                    </div>
+                    <div className="flex justify-end w-full space-x-2">
+                        <Button type="button" variant="outline2" onClick={() => router.push("/master-data/karyawan")}>
+                            Kembali
+                        </Button>
+                        <Button type="submit" variant="main">
+                            Simpan
+                        </Button>
+                    </div>
+                </form>
+            </Wrapper>
+        </>
     );
 }

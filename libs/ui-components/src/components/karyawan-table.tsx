@@ -60,7 +60,7 @@ export const TableKaryawan: React.FC<DataTableProps> = ({ data, columns, current
                     {columns.map((header) => (
                         <TableHead
                             key={header.key}
-                            className={`${header.key === "menu" ? "w-[100px]" : ""} bg-neutral-300/30 dark:bg-neutral-500/30`}
+                            className={`${header.key === "menu" ? "w-[100px]" : ""}`}
                         >
                             {header.label}
                         </TableHead>
@@ -95,18 +95,15 @@ export const TableKaryawan: React.FC<DataTableProps> = ({ data, columns, current
                                                 </Button>
                                             </DialogTrigger>
                                             <DialogContent>
-                                                <DialogHeader className="flex items-center justify-center">
-                                                    <div className="text-5xl text-destructive bg-destructive-foreground/10 rounded-full p-2 w-fit mb-4">
+                                                <DialogHeader className="flex items-center justify-between">
+                                                    <div className="text-5xl text-destructive bg-destructive-foreground/10 rounded-lg p-2 w-fit my-5">
                                                         <IoMdTrash />
                                                     </div>
                                                     <DialogTitle>Kamu yakin menghapus akun {mitra.fullname}?</DialogTitle>
-                                                    <DialogDescription className="text-center">
-                                                        Data akan terhapus permanen dan tidak dapat dikembalikan.
-                                                    </DialogDescription>
                                                 </DialogHeader>
                                                 <div className="flex gap-2">
                                                     <DialogClose asChild>
-                                                        <Button variant="secondary" className="w-full">
+                                                        <Button variant="outline2" className="w-full">
                                                             Batal
                                                         </Button>
                                                     </DialogClose>
