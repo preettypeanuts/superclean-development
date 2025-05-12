@@ -31,6 +31,7 @@ interface Karyawan {
     branchId: number;
     roleId: string;
     status: number;
+    birthDate: string;
 }
 
 interface DataTableProps {
@@ -44,16 +45,16 @@ interface DataTableProps {
 export const TableKaryawan: React.FC<DataTableProps> = ({ data, columns, currentPage, limit, fetchData }) => {
     const { toast } = useToast(); // Inisialisasi toast
     const roleColors: Record<string, string> = {
-        "Super Admin": "bg-blue-500/30 text-blue-600 dark:bg-blue-400/30 dark:text-blue-300",
-        "Administrasi": "bg-yellow-500/30 text-yellow-600 dark:bg-yellow-400/30 dark:text-yellow-300",
-        "Staff Blower": "bg-green-500/30 text-green-600 dark:bg-green-400/30 dark:text-green-300",
-        "Staff Cleaning": "bg-purple-500/30 text-purple-600 dark:bg-purple-400/30 dark:text-purple-300",
-        "Supervisor": "bg-red-500/30 text-red-600 dark:bg-red-400/30 dark:text-red-300",
+        "Super Admin": "bg-white border-blue-600 text-blue-600 dark:bg-black dark:border-blue-300 dark:text-blue-300",
+        "Administrasi": "bg-white border-yellow-600 text-yellow-600 dark:bg-black dark:border-yellow-300 dark:text-yellow-300",
+        "Staff Blower": "bg-white border-green-600 text-green-600 dark:bg-black dark:border-green-300 dark:text-green-300",
+        "Staff Cleaning": "bg-white border-purple-600 text-purple-600 dark:bg-black dark:border-purple-300 dark:text-purple-300",
+        "Supervisor": "bg-white border-red-600 text-red-600 dark:bg-black dark:border-red-300 dark:text-red-300",
     };
 
 
     return (
-        <Table>
+        <Table >
             <TableHeader>
                 <TableRow>
                     {columns.map((header) => (
@@ -79,8 +80,7 @@ export const TableKaryawan: React.FC<DataTableProps> = ({ data, columns, current
                                         <Link href={`/master-data/karyawan/edit/${mitra.id}`}>
                                             <Button
                                                 size="icon"
-                                                variant="default"
-                                                className="bg-warning/25 text-warning border-warning"
+                                                variant="main"
                                             >
                                                 <HiMiniPencilSquare />
                                             </Button>
@@ -89,8 +89,7 @@ export const TableKaryawan: React.FC<DataTableProps> = ({ data, columns, current
                                             <DialogTrigger asChild>
                                                 <Button
                                                     size="icon"
-                                                    variant="default"
-                                                    className="bg-destructive/25 text-destructive border-destructive"
+                                                    variant="destructive"
                                                 >
                                                     <IoMdTrash />
                                                 </Button>
@@ -153,17 +152,20 @@ export const TableKaryawan: React.FC<DataTableProps> = ({ data, columns, current
                                         </Dialog>
                                     </div>
                                 ) : header.key === "status" ? (
-                                    <p className={`badge dark:bg-opacity-70 rounded-md !font-medium border-0 ${mitra.status === 1 ? "bg-green-200 text-green-900 dark:bg-green-500 dark:text-green-100" : "bg-red-200 text-red-900 dark:bg-red-500 dark:text-red-100"}`}>
+                                    <p className={`badge truncate dark:bg-opacity-70 rounded-md !font-medium border-0 ${mitra.status === 1 ? "bg-green-200 text-green-900 dark:bg-green-500 dark:text-green-100" : "bg-red-200 text-red-900 dark:bg-red-500 dark:text-red-100"}`}>
+                                        <span className={`mr-2 ${mitra.status ? "bg-green-500 dark:bg-green-200" : "bg-red-500 dark:bg-red-200"} rounded-full w-[6px] h-[6px]`}></span>
                                         {mitra.status === 1 ? "Aktif" : "Tidak Aktif"}
                                     </p>
                                 ) : header.key === "roleId" ? (
-                                    <p className={`badge rounded-md !font-medium border-0 ${roleColors[mitra.roleId] || "bg-gray-500 text-gray-100"}`}>
+                                    <p className={`badge truncate rounded-md !font-medium border ${roleColors[mitra.roleId] || "bg-gray-500 text-gray-100"}`}>
                                         {mitra.roleId}
                                     </p>
                                 ) : header.key === "id" ? (
                                     <p>{(currentPage - 1) * limit + rowIndex + 1}</p>
                                 ) : header.key === "createdAt" ? (
                                     <p>{formatDate(mitra.createdAt)}</p>
+                                ) : header.key === "birthDate" ? (
+                                    <p>{formatDate(mitra.birthDate)}</p>
                                 ) : header.key === "noWhatsapp" ? (
                                     <p> {mitra.noWhatsapp}</p>
                                 ) : header.key === "username" ? (

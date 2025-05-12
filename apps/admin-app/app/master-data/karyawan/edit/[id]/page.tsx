@@ -30,7 +30,8 @@ import {
   AlertDialogFooter,
   AlertDialogAction,
 } from "libs/ui-components/src/components/ui/alert-dialog";
-import { formatDate, formatDateInput } from "libs/utils/formatDate";
+import { formatDateInput } from "libs/utils/formatDate";
+import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
 
 interface Karyawan {
   id: string;
@@ -125,108 +126,110 @@ export default function EditKaryawan() {
   };
 
   return (
-    <Wrapper>
-      <Header label="Ubah Profil Karyawan" />
-      {loading || loadingParams ? (
-        <p className="text-center py-4">Memuat data...</p>
-      ) : karyawan ? (
-        <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); setShowConfirmDialog(true); }}>
-          <div className="flex items-center space-x-4">
-            <Label className="w-1/4 font-semibold">Nama Pengguna</Label>
-            <Input name="username" value={karyawan.username} disabled />
-          </div>
-          <div className="flex items-center space-x-4">
-            <Label className="w-1/4 font-semibold">Nama Lengkap</Label>
-            <Input name="fullname" value={karyawan.fullname} onChange={handleChange} />
-          </div>
-          <div className="flex items-center space-x-4">
-            <Label className="w-1/4 font-semibold">No. WhatsApp</Label>
-            <Input name="noWhatsapp" value={karyawan.noWhatsapp} onChange={handleChange} />
-          </div>
-
-          <div className="flex items-center space-x-4">
-            <Label className="w-1/4 font-semibold">Kata Sandi</Label>
-            <Input name="noWhatsapp" disabled placeholder="********" onChange={handleChange} />
-          </div>
-
-          <div className="flex items-center space-x-4">
-            <Label className="w-1/4 font-semibold">Tanggal Daftar</Label>
-            <Input type="text" name="noWhatsapp" value={formatDateInput(karyawan.joinDate)} onChange={handleChange} />
-          </div>
-
-          <div className="flex items-center space-x-4">
-            <Label className="w-1/4">Cabang</Label>
-            <Select value={karyawan.branchId} onValueChange={(value) => handleSelectChange("branchId", value)}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Pilih Cabang" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>Pilih Cabang</SelectLabel>
-                  {Object.entries(branchMapping).map(([key, value]) => (
-                    <SelectItem key={key} value={key}>{value}</SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="flex items-center space-x-4">
-            <Label className="w-1/4">Akses Pengguna</Label>
-            <Select value={karyawan.roleId} onValueChange={(value) => handleSelectChange("roleId", value)}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Pilih Akses Pengguna" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>Pilih Akses</SelectLabel>
-                  {Object.entries(roleMapping).map(([key, value]) => (
-                    <SelectItem key={key} value={key}>{value}</SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="flex items-center space-x-4">
-            <Label className="w-[20%] font-semibold">Status</Label>
-            <div className="flex items-center space-x-2">
-              <Checkbox checked={karyawan.status === 1} onCheckedChange={handleStatusChange} />
-              <Label>{karyawan.status === 1 ? "Aktif" : "Tidak Aktif"}</Label>
+    <>
+      <Breadcrumbs label="Ubah Profil Karyawan" />
+      <Wrapper>
+        {loading || loadingParams ? (
+          <p className="text-center py-4">Memuat data...</p>
+        ) : karyawan ? (
+          <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); setShowConfirmDialog(true); }}>
+            <div className="flex items-center space-x-4">
+              <Label className="w-1/4 font-semibold">Nama Pengguna</Label>
+              <Input name="username" value={karyawan.username} disabled />
             </div>
-          </div>
-
-          <div className="flex items-center space-x-4">
-            <div className="w-1/4"></div>
-            <div className="space-x-2 flex w-full">
-              <Button type="button" variant="secondary" onClick={() => router.push("/master-data/karyawan")}>
-                <TbArrowBack />
-                Kembali
-              </Button>
-              <Button type="submit" variant="submit" disabled={updating}>
-                <LuSave />
-                {updating ? "Menyimpan..." : "Simpan"}
-              </Button>
+            <div className="flex items-center space-x-4">
+              <Label className="w-1/4 font-semibold">Nama Lengkap</Label>
+              <Input name="fullname" value={karyawan.fullname} onChange={handleChange} />
             </div>
-          </div>
-        </form>
-      ) : (
-        <p className="text-center py-4 text-red-500">Karyawan tidak ditemukan!</p>
-      )}
+            <div className="flex items-center space-x-4">
+              <Label className="w-1/4 font-semibold">No. WhatsApp</Label>
+              <Input name="noWhatsapp" value={karyawan.noWhatsapp} onChange={handleChange} />
+            </div>
 
-      {/* Dialog Konfirmasi Simpan */}
-      <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Konfirmasi Simpan</AlertDialogTitle>
-            <AlertDialogDescription>Apakah Anda yakin ingin menyimpan data ini?</AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <Button variant="outline" onClick={() => setShowConfirmDialog(false)}>Batal</Button>
-            <AlertDialogAction onClick={handleSubmit}>Simpan</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </Wrapper>
+            <div className="flex items-center space-x-4">
+              <Label className="w-1/4 font-semibold">Kata Sandi</Label>
+              <Input name="noWhatsapp" disabled placeholder="********" onChange={handleChange} />
+            </div>
+
+            <div className="flex items-center space-x-4">
+              <Label className="w-1/4 font-semibold">Tanggal Daftar</Label>
+              <Input type="text" name="noWhatsapp" value={formatDateInput(karyawan.joinDate)} onChange={handleChange} />
+            </div>
+
+            <div className="flex items-center space-x-4">
+              <Label className="w-1/4">Cabang</Label>
+              <Select value={karyawan.branchId} onValueChange={(value) => handleSelectChange("branchId", value)}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Pilih Cabang" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Pilih Cabang</SelectLabel>
+                    {Object.entries(branchMapping).map(([key, value]) => (
+                      <SelectItem key={key} value={key}>{value}</SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex items-center space-x-4">
+              <Label className="w-1/4">Akses Pengguna</Label>
+              <Select value={karyawan.roleId} onValueChange={(value) => handleSelectChange("roleId", value)}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Pilih Akses Pengguna" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Pilih Akses</SelectLabel>
+                    {Object.entries(roleMapping).map(([key, value]) => (
+                      <SelectItem key={key} value={key}>{value}</SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex items-center space-x-4">
+              <Label className="w-[20%] font-semibold">Status</Label>
+              <div className="flex items-center space-x-2">
+                <Checkbox checked={karyawan.status === 1} onCheckedChange={handleStatusChange} />
+                <Label>{karyawan.status === 1 ? "Aktif" : "Tidak Aktif"}</Label>
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-4">
+              <div className="w-1/4"></div>
+              <div className="space-x-2 flex w-full">
+                <Button type="button" variant="secondary" onClick={() => router.push("/master-data/karyawan")}>
+                  <TbArrowBack />
+                  Kembali
+                </Button>
+                <Button type="submit" variant="submit" disabled={updating}>
+                  <LuSave />
+                  {updating ? "Menyimpan..." : "Simpan"}
+                </Button>
+              </div>
+            </div>
+          </form>
+        ) : (
+          <p className="text-center py-4 text-red-500">Karyawan tidak ditemukan!</p>
+        )}
+
+        {/* Dialog Konfirmasi Simpan */}
+        <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Konfirmasi Simpan</AlertDialogTitle>
+              <AlertDialogDescription>Apakah Anda yakin ingin menyimpan data ini?</AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <Button variant="outline" onClick={() => setShowConfirmDialog(false)}>Batal</Button>
+              <AlertDialogAction onClick={handleSubmit}>Simpan</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </Wrapper>
+    </>
   );
 }

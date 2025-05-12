@@ -15,6 +15,7 @@ import { PaginationNumber } from "libs/ui-components/src/components/pagination-n
 import { useParameterStore } from "libs/utils/useParameterStore";
 import { Label } from "@ui-components/components/ui/label";
 import { IoClose } from "react-icons/io5";
+import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
 
 export const DataHeaderPelanggan = [
   { key: "id", label: "#" },
@@ -23,6 +24,7 @@ export const DataHeaderPelanggan = [
   { key: "noWhatsapp", label: "No. WhatsApp" },
   { key: "cabang", label: "Cabang" },
   { key: "roleId", label: "Akses Pengguna" },
+  { key: "birthDate", label: "Tanggal Lahir" },
   { key: "createdAt", label: "Tanggal Daftar" },
   { key: "status", label: "Status" },
   { key: "menu", label: "Aksi" },
@@ -38,6 +40,7 @@ interface Karyawan {
   branchId: number;
   roleId: string;
   status: number;
+  birthDate: number;
 }
 
 export default function KaryawanPage() {
@@ -97,83 +100,85 @@ export default function KaryawanPage() {
   }));
 
   return (
-    <Wrapper>
-      <Header label="Daftar Karyawan" count={totalData} />
-      <div className="flex-grow">
-        <div className="flex items-center justify-between mb-4 gap-2">
-          <div className="flex items-center gap-2">
-            <div className="relative">
-              <Input
-                type="text"
-                placeholder="Cari nama karyawan..."
-                value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-                onKeyDown={(i) => {
-                  if (i.key === "Enter") {
-                    handleSearch();
-                  }
-                }}
-                className="w-[30lvw]"
-                icon={<Search size={16} />}
+    <>
+      <Breadcrumbs label="Daftar Karyawan" count={totalData} />
+      <Wrapper>
+        <div className="flex-grow">
+          <div className="flex items-center justify-between mb-4 gap-2">
+            <div className="flex items-center gap-2">
+              <div className="relative">
+                <Input
+                  type="text"
+                  placeholder="Cari nama karyawan..."
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
+                  onKeyDown={(i) => {
+                    if (i.key === "Enter") {
+                      handleSearch();
+                    }
+                  }}
+                  className="w-[30lvw]"
+                  icon={<Search size={16} />}
+                />
+                {searchInput && (
+                  <button
+                    type="button"
+                    onClick={resetSearch}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-700"
+                  >
+                    <IoClose size={16} />
+                  </button>
+                )}
+              </div>
+              <FilterStatus
+                placeholder="Status"
+                value={statusFilter}
+                onChange={setStatusFilter}
               />
-              {searchInput && (
-                <button
-                  type="button"
-                  onClick={resetSearch}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-700"
-                >
-                  <IoClose size={16} />
-                </button>
-              )}
+              <Button variant="main" onClick={handleSearch}>Cari</Button>
             </div>
-            <FilterStatus
-              placeholder="Status"
-              value={statusFilter}
-              onChange={setStatusFilter}
-            />
-            <Button variant="secondary" onClick={handleSearch}>Cari</Button>
+            <Link href="karyawan/baru">
+              <Button icon={<LuPlus size={14} />} iconPosition="left" variant="default" type="submit">
+                Tambah
+              </Button>
+            </Link>
           </div>
-          <Link href="karyawan/baru">
-            <Button icon={<LuPlus size={16} />} className="pl-2 pr-4" iconPosition="left" variant="default" type="submit">
-              Tambah
-            </Button>
-          </Link>
+
+          {loading || loadingParams ? (
+            <p className="text-center py-4">Memuat data...</p>
+          ) : processedKaryawan.length === 0 ? (
+            <p className="text-center py-4">Karyawan dengan nama <span className="font-bold">{searchInput}</span>  tidak ditemukan.</p>
+          ) : (
+            <TableKaryawan
+              data={processedKaryawan}
+              columns={DataHeaderPelanggan}
+              key={`${currentPage}-${limit}`}
+              currentPage={currentPage}
+              limit={limit}
+              fetchData={fetchKaryawan}
+            />
+          )}
         </div>
 
-        {loading || loadingParams ? (
-          <p className="text-center py-4">Memuat data...</p>
-        ) : processedKaryawan.length === 0 ? (
-          <p className="text-center py-4">Karyawan dengan nama <span className="font-bold">{searchInput}</span>  tidak ditemukan.</p>
-        ) : (
-          <TableKaryawan
-            data={processedKaryawan}
-            columns={DataHeaderPelanggan}
-            key={`${currentPage}-${limit}`}
+        <div className="flex items-center justify-between mt-4">
+          {totalData > 10 ? (
+            <SelectData
+              label="Data Per Halaman"
+              totalData={totalData}
+              currentLimit={limit}
+              onLimitChange={(limit: string) => setLimit(Number(limit))}
+            />
+          ) : (
+            <Label className="text-xs">Semua data telah ditampilkan ({totalData})</Label>
+          )}
+
+          <PaginationNumber
+            totalPages={totalPages}
             currentPage={currentPage}
-            limit={limit}
-            fetchData={fetchKaryawan}
+            onPageChange={(page) => setCurrentPage(page)}
           />
-        )}
-      </div>
-
-      <div className="flex items-center justify-between mt-4">
-        {totalData > 10 ? (
-          <SelectData
-            label="Data Per Halaman"
-            totalData={totalData}
-            currentLimit={limit}
-            onLimitChange={(limit: string) => setLimit(Number(limit))}
-          />
-        ) : (
-          <Label className="text-xs">Semua data telah ditampilkan ({totalData})</Label>
-        )}
-
-        <PaginationNumber
-          totalPages={totalPages}
-          currentPage={currentPage}
-          onPageChange={(page) => setCurrentPage(page)}
-        />
-      </div>
-    </Wrapper>
+        </div>
+      </Wrapper>
+    </>
   );
 }

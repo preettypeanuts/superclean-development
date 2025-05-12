@@ -97,7 +97,7 @@ export function ChartKaryawan() {
                                         <span className="text-sm font-medium">{formatRupiah(el.value)}</span>
                                     </div>
                                     <div className="flex items-center gap-2 dark:border rounded-md">
-                                        <Progress value={parseFloat(el.percentage)} className="h-5 shadow-custom" indicatorClassName={`${el.fill} !rounded-l-md shadow-mainShadow`} />
+                                        <Progress value={parseFloat(el.percentage)} className="h-5 shadow-secondaryShadow" indicatorClassName={`${el.fill} !rounded-l-md`} />
                                         <div className={`text-[11px] font-bold text-neutral-500 dark:text-neutral-200 px-[5px] py-[4px] min-w-[45px] flex items-center justify-center h-full rounded-md`}>
                                             {el.percentage}%
                                         </div>

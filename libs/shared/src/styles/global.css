@@ -153,15 +153,17 @@ input[type='date']::-webkit-calendar-picker-indicator {
 }
 input[type='date']::-webkit-calendar-picker-indicator {
   position: absolute;
-  left: 1%;
+  right: 1%;
 }
 input::-webkit-datetime-edit-fields-wrapper {
   position: relative;
-  left: 10%;
+  text-transform: uppercase; 
+  right: 0%;
 }
 input::-webkit-datetime-edit {
   position: relative;
-  left: 10%;
+  text-transform: uppercase; 
+  right: 0%;
 }
 
 .truncate-1 {

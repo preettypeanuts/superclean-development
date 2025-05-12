@@ -6,6 +6,7 @@ import { Input } from "../../../../ui-components/src/components/ui/input";
 import { Search } from "lucide-react";
 import { Button } from "../../../../ui-components/src/components/ui/button";
 import { RiNotification4Fill } from "react-icons/ri";
+import { Breadcrumbs } from "./Breadcrumbs";
 
 export const Navbar = () => {
     const pathname = usePathname();
@@ -26,7 +27,7 @@ export const Navbar = () => {
     };
 
     return (
-        <div className={`${noNavigation.includes(pathname) && "hidden"} navbar w-auto h-[50px] !min-h-[50px]  bg-white dark:bg-black shadow-mainShadow rounded-xl z-50 ml-2 mr-2 mt-2`}>
+        <div className={`${noNavigation.includes(pathname) && "hidden"} navbar w-auto h-[50px] !min-h-[50px]  bg-white dark:bg-black shadow-mainShadow rounded-xl z-50 ml-2 mr-2 mt-2 mb-2`}>
             <div className="flex-1">
                 <div className="w-1 self-stretch my-1 rounded-full bg-mainColor ml-[2px]"></div>
                 <div className="breadcrumbs text-sm  px-2 py-1">

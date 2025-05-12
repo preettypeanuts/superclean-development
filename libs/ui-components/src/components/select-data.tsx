@@ -39,7 +39,7 @@ export const SelectData = ({ label, totalData, currentLimit, onLimitChange }: Se
                     ))}
                 </SelectContent>
             </Select>
-            <Label className="text-sm opacity-70">
+            <Label className="text-sm text-neutral-400 dark:text-neutral-500">
                 {label}
             </Label>
         </div>

@@ -101,7 +101,7 @@ export default function PromoPage() {
             <Button variant="secondary" onClick={handleSearch}>Cari</Button>
           </div>
           <Link href="diskon/baru">
-            <Button icon={<LuPlus size={16} />} className="pl-2 pr-4" iconPosition="left" variant="default">
+            <Button icon={<LuPlus size={14} />} iconPosition="left" variant="default">
               Tambah
             </Button>
           </Link>

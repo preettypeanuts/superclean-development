@@ -31,8 +31,6 @@ export default function RootLayout({
           <ProtectedLayout>
             <Sidebar />
             <section className='flex flex-col max-h-[98lvh] h-[98lvh] w-full min-h-0'>
-              <Navbar/>
-              <Breadcrumbs />
               <Toaster />
               <main className='flex-grow min-h-0'>
                 {children}

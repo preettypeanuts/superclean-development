@@ -5,6 +5,7 @@ import { TiCancel } from "react-icons/ti";
 import { FaClipboardCheck, FaClipboardList } from "react-icons/fa";
 import { FaPersonRunning, FaMoneyBillTransfer } from "react-icons/fa6";
 import { BirthdayReminder } from "@shared/components/BirthdayReminder"
+import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
 
 const totalSPK = [
   {
@@ -58,7 +59,10 @@ const waitPayment = [
 
 export default function Dashboard() {
   return (
-    <section className="flex flex-col gap-2 max-h-[91.5lvh] h-[91.5lvh] min-h-0 overflow-hidden pt-[8px] px-2">
+    <section className="flex flex-col gap-2 max-h-[98.5lvh] h-[98.5lvh] min-h-0 overflow-hidden pt-[0px] px-2">
+      <div className="h-fit -mx-2 -mb-2">
+        <Breadcrumbs label="Dashboard" />
+      </div>
       <div className="h-fit">
         <BirthdayReminder />
       </div>

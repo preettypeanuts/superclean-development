@@ -26,7 +26,7 @@ module.exports = {
         mainColor: "#71BBB2",
         secondaryColor: "#CEE8F6",
         secondaryColorDark: "#0569A2",
-        thirdColor: "#DDA801",
+        thirdColor: "#FABA57",
         baseLight: "#9ACBD0",
         baseDark: "#394B4D",
         baseColor: "#F2EFE7",
@@ -96,7 +96,7 @@ module.exports = {
   },
   plugins: [
     require('daisyui'),
-    require('tailwindcss-animate')
+    require('tailwindcss-animate'),
   ],
 
   daisyui: {

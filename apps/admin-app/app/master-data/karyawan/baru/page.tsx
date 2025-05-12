@@ -21,7 +21,8 @@ import {
     SelectGroup,
     SelectLabel
 } from "libs/ui-components/src/components/ui/select";
-import { formatDateInput } from "libs/utils/formatDate";
+import { formatDate, formatDateInput } from "libs/utils/formatDate";
+import { DatePicker } from "@ui-components/components/date-picker";
 
 export default function NewKaryawan() {
     const { toast } = useToast();
@@ -36,6 +37,7 @@ export default function NewKaryawan() {
         password: "",
         branchId: "",
         roleId: "",
+        birthDate: "", // Add joinDate to the initial state
         joinDate: "", // Add joinDate to the initial state
         status: 1, // Default ke "Aktif" true
     });
@@ -91,10 +93,15 @@ export default function NewKaryawan() {
                     <Input placeholder="Masukkan kata sandi" type="text" id="password" value={formData.password} onChange={handleChange} />
                 </div>
 
-                          <div className="flex items-center space-x-4">
-                            <Label className="w-1/4 font-semibold">Tanggal Daftar</Label>
-                            <Input type="text" name="noWhatsapp" value={formatDateInput(formData.joinDate)} onChange={handleChange} />
-                          </div>
+                <div className="flex items-center space-x-4">
+                    <Label htmlFor="birthDate" className="w-1/4 font-semibold">Tanggal Lahir</Label>
+                    <Input type="date" name="birthDate" id="birthDate" value={formatDateInput(formData.birthDate)} onChange={handleChange} />
+                </div>
+
+                <div className="flex items-center space-x-4">
+                    <Label htmlFor="joinDate" className="w-1/4 font-semibold">Tanggal Daftar</Label>
+                    <Input type="date" name="joinDate" id="joinDate" value={formatDateInput(formData.joinDate)} onChange={handleChange} />
+                </div>
                 <div className="flex items-center space-x-4">
                     <Label htmlFor="branchId" className="w-1/4">Cabang</Label>
                     <Select
@@ -155,25 +162,19 @@ export default function NewKaryawan() {
                     <Label className="w-[20%] font-semibold">Status</Label>
                     <div className="flex items-center space-x-2">
                         <Checkbox
-                            disabled
                             checked={formData.status === 1}
                             onCheckedChange={(checked) => handleSelectChange("status", checked ? 1 : 2)}
                         />
                         <Label>{formData.status === 1 ? "Aktif" : "Tidak Aktif"}</Label>
                     </div>
                 </div>
-                <div className="flex items-center space-x-4">
-                    <div className="w-1/4"></div>
-                    <div className="space-x-2 flex w-full">
-                        <Button type="button" variant="secondary" onClick={() => router.push("/master-data/karyawan")}>
-                            <TbArrowBack />
-                            Kembali
-                        </Button>
-                        <Button type="submit" variant="submit">
-                            <LuSave />
-                            Simpan
-                        </Button>
-                    </div>
+                <div className="flex justify-end w-full space-x-2">
+                    <Button type="button" variant="outline2" onClick={() => router.push("/master-data/karyawan")}>
+                        Kembali
+                    </Button>
+                    <Button type="submit" variant="main">
+                        Simpan
+                    </Button>
                 </div>
             </form>
         </Wrapper>

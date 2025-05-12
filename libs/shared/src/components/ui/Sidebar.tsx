@@ -20,17 +20,14 @@ import {
 import { RiLogoutCircleLine, RiUserSettingsFill } from "react-icons/ri";
 
 export const Sidebar = () => {
-    const [isExpanded, setIsExpanded] = useState(true);
-    const [openSubmenus, setOpenSubmenus] = useState<{ [key: string]: boolean }>({});
-
-    const { user, loading: loadingUser } = useUserProfile();
     const path = usePathname();
     const router = useRouter();
+    
+    const [isExpanded, setIsExpanded] = useState(true);
+    const [openSubmenus, setOpenSubmenus] = useState<{ [key: string]: boolean }>({});
+    const { user, loading: loadingUser } = useUserProfile();
 
     useEffect(() => {
-        if (user) {
-            console.log("User data updated:", user);
-        }
     }, [user, path]);
 
     const getRoleAbbreviation = (roleValue: string) => {
