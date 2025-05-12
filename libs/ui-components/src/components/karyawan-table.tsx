@@ -54,13 +54,13 @@ export const TableKaryawan: React.FC<DataTableProps> = ({ data, columns, current
 
 
     return (
-        <Table >
+        <Table>
             <TableHeader>
                 <TableRow>
                     {columns.map((header) => (
                         <TableHead
                             key={header.key}
-                            className={`${header.key === "menu" ? "w-[100px]" : ""}`}
+                            className={`${header.key === "menu" && "w-[100px]"}`}
                         >
                             {header.label}
                         </TableHead>
