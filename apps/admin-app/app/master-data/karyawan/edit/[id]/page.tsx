@@ -29,9 +29,12 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogAction,
+  AlertDialogCancel,
 } from "libs/ui-components/src/components/ui/alert-dialog";
 import { formatDateInput } from "libs/utils/formatDate";
 import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
+import { Plus, Save } from "lucide-react";
+import { IoMdSave } from "react-icons/io";
 
 interface Karyawan {
   id: string;
@@ -39,6 +42,7 @@ interface Karyawan {
   fullname: string;
   noWhatsapp: string;
   branchId: string;
+  birthDate: string;
   joinDate: string;
   roleId: string;
   status: number;
@@ -94,6 +98,7 @@ export default function EditKaryawan() {
       noWhatsapp: karyawan.noWhatsapp,
       branchId: karyawan.branchId,
       roleId: karyawan.roleId,
+      birthDate: karyawan.birthDate,
       joinDate: karyawan.joinDate,
       status: karyawan.status,
     };
@@ -101,9 +106,6 @@ export default function EditKaryawan() {
     setShowConfirmDialog(false);
     setUpdating(true);
     try {
-      console.log('====================================');
-      console.log(payload);
-      console.log('====================================');
       await api.put(`/user/${karyawan.id}`, payload);
 
       toast({
@@ -148,12 +150,16 @@ export default function EditKaryawan() {
 
             <div className="flex items-center space-x-4">
               <Label className="w-1/4 font-semibold">Kata Sandi</Label>
-              <Input name="noWhatsapp" disabled placeholder="********" onChange={handleChange} />
+              <Input name="noWhatsapp" disabled placeholder="•••••••••" onChange={handleChange} />
             </div>
 
             <div className="flex items-center space-x-4">
+              <Label className="w-1/4 font-semibold">Tanggal Lahir</Label>
+              <Input type="date" name="birthDate" value={formatDateInput(karyawan.birthDate)} onChange={handleChange} />
+            </div>
+            <div className="flex items-center space-x-4">
               <Label className="w-1/4 font-semibold">Tanggal Daftar</Label>
-              <Input type="text" name="noWhatsapp" value={formatDateInput(karyawan.joinDate)} onChange={handleChange} />
+              <Input type="date" name="joinDate" value={formatDateInput(karyawan.joinDate)} onChange={handleChange} />
             </div>
 
             <div className="flex items-center space-x-4">
@@ -198,18 +204,13 @@ export default function EditKaryawan() {
               </div>
             </div>
 
-            <div className="flex items-center space-x-4">
-              <div className="w-1/4"></div>
-              <div className="space-x-2 flex w-full">
-                <Button type="button" variant="secondary" onClick={() => router.push("/master-data/karyawan")}>
-                  <TbArrowBack />
-                  Kembali
-                </Button>
-                <Button type="submit" variant="submit" disabled={updating}>
-                  <LuSave />
-                  {updating ? "Menyimpan..." : "Simpan"}
-                </Button>
-              </div>
+            <div className="flex justify-end space-x-2">
+              <Button type="button" variant="outline2" onClick={() => router.push("/master-data/karyawan")}>
+                Kembali
+              </Button>
+              <Button type="submit" variant="main" disabled={updating}>
+                {updating ? "Menyimpan..." : "Simpan"}
+              </Button>
             </div>
           </form>
         ) : (
@@ -219,13 +220,34 @@ export default function EditKaryawan() {
         {/* Dialog Konfirmasi Simpan */}
         <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
           <AlertDialogContent>
+            <div className="flex justify-end">
+              <button onClick={() => setShowConfirmDialog(false)} className="w-fit rounded-full rotate-45 text-neutral-400 dark:text-neutral-500 hover:text-destructive">
+                <Plus size={25} />
+              </button>
+            </div>
             <AlertDialogHeader>
-              <AlertDialogTitle>Konfirmasi Simpan</AlertDialogTitle>
-              <AlertDialogDescription>Apakah Anda yakin ingin menyimpan data ini?</AlertDialogDescription>
+              <div className="flex items-center justify-center mb-5-">
+                <div className=" text-5xl p-3 bg-secondaryColor text-secondaryColorDark rounded-lg">
+                  <IoMdSave />
+                </div>
+              </div>
+              <AlertDialogTitle className="text-center">Apakah Anda yakin ingin menyimpan data?</AlertDialogTitle>
             </AlertDialogHeader>
-            <AlertDialogFooter>
-              <Button variant="outline" onClick={() => setShowConfirmDialog(false)}>Batal</Button>
-              <AlertDialogAction onClick={handleSubmit}>Simpan</AlertDialogAction>
+            <AlertDialogFooter >
+              <Button
+                variant="outline2"
+                className="w-1/2"
+                onClick={() => setShowConfirmDialog(false)}
+              >
+                Batal
+              </Button>
+              <Button
+                variant="main"
+                className="w-1/2"
+                onClick={handleSubmit}
+              >
+                Simpan
+              </Button>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>

@@ -3,7 +3,6 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { apiClient } from "libs/utils/apiClient";
 import { TableKaryawan } from "libs/ui-components/src/components/karyawan-table";
-import { Header } from "@shared/components/Header";
 import { Wrapper } from "libs/shared/src/components/Wrapper";
 import { Input } from "libs/ui-components/src/components/ui/input";
 import { Button } from "libs/ui-components/src/components/ui/button";
@@ -40,7 +39,7 @@ interface Karyawan {
   branchId: number;
   roleId: string;
   status: number;
-  birthDate: number;
+  birthDate: string;
 }
 
 export default function KaryawanPage() {
