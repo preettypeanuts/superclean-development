@@ -40,12 +40,12 @@ export function Breadcrumbs({ label, desc, count }: HeaderProps) {
                 <section className="flex gap-2 items-center">
                     <div className="w-1 self-stretch rounded-full bg-mainColor"></div>
                     <div>
-                        <h1 className="text-xl font-medium flex items-center gap-2">
+                        <div className="text-xl font-medium flex items-center gap-2">
                             {label}
-                            <span className={`${!count && "hidden"} text-sm px-1 py-[1px] bg-thirdColor text-white dark:text-black rounded-[7px]`}>
+                            <div className={`${!count && "hidden"} flex items-center justify-center text-sm px-1 py-[1px] w-5 h-5 bg-thirdColor text-white dark:text-black rounded-[5px] !aspect-square`}>
                                 {count}
-                            </span>
-                        </h1>
+                            </div>
+                        </div>
                         <p className="opacity-70">
                             {desc}
                         </p>

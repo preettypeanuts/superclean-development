@@ -50,7 +50,7 @@ export const TablePelanggan: React.FC<DataTableProps> = ({ data, columns, curren
             <TableHeader>
                 <TableRow>
                     {columns.map((header) => (
-                        <TableHead key={header.key} className={`${header.key === "menu" && "w-[100px]"} bg-neutral-300/30 dark:bg-neutral-500/30`}>
+                        <TableHead key={header.key} className={`${header.key === "menu" && "w-[100px]"}`}>
                             {header.label}
                         </TableHead>
                     ))}

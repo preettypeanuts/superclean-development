@@ -150,11 +150,11 @@ export const TableKaryawan: React.FC<DataTableProps> = ({ data, columns, current
                                     </div>
                                 ) : header.key === "status" ? (
                                     <p className={`badge truncate dark:bg-opacity-70 rounded-md !font-medium border-0 ${mitra.status === 1 ? "bg-green-200 text-green-900 dark:bg-green-500 dark:text-green-100" : "bg-red-200 text-red-900 dark:bg-red-500 dark:text-red-100"}`}>
-                                        <span className={`mr-2 ${mitra.status ? "bg-green-500 dark:bg-green-200" : "bg-red-500 dark:bg-red-200"} rounded-full w-[6px] h-[6px]`}></span>
+                                        <span className={`mr-2 ${mitra.status === 1 ? "bg-green-500 dark:bg-green-200" : "bg-red-500 dark:bg-red-200"} rounded-full w-[6px] h-[6px]`}></span>
                                         {mitra.status === 1 ? "Aktif" : "Tidak Aktif"}
                                     </p>
                                 ) : header.key === "roleId" ? (
-                                    <p className={`badge truncate rounded-md !font-medium border ${roleColors[mitra.roleId] || "bg-gray-500 text-gray-100"}`}>
+                                    <p className={`badge truncate rounded-md !font-medium border ${roleColors[mitra.roleId] || "border-neutral-500 text-neutral-500 dark:border-neutral-300 dark:text-neutral-300 bg-white dark:bg-black"}`}>
                                         {mitra.roleId}
                                     </p>
                                 ) : header.key === "id" ? (

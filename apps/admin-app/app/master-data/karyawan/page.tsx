@@ -47,7 +47,7 @@ interface Karyawan {
 const options = [
   { label: "Semua", value: 0 },
   { label: "Aktif", value: 1 },
-  { label: "Nonaktif", value: 2 },
+  { label: "Tidak-Aktif", value: 2 },
 ]
 
 export default function KaryawanPage() {
@@ -131,7 +131,7 @@ export default function KaryawanPage() {
   // Fetch data hanya saat query/filters berubah
   useEffect(() => {
     fetchKaryawan();
-  }, [searchQuery, statusFilter, currentPage, limit]);
+  }, [searchQuery, statusFilter, currentPage, limit, branchFilter, roleFilter]);
 
   const handleSearch = () => {
     setSearchQuery(searchInput);
