@@ -45,7 +45,7 @@ export default function MultiSelect() {
                 </Button>
             </PopoverTrigger>
 
-            <PopoverContent align="start" className="w-[390px]">
+            <PopoverContent align="start" className="w-[390px] !p-2">
                 <Command>
                     <CommandInput className="border px-2 mb-2 h-9 rounded-lg dark:bg-black" placeholder="Cari petugas..." />
                     <CommandList>

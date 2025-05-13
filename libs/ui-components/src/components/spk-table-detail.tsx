@@ -15,6 +15,7 @@ import {
     DialogTrigger,
 } from "./ui/dialog";
 import { formatRupiah } from "libs/utils/formatRupiah";
+import { HiMiniPencilSquare } from "react-icons/hi2";
 // Removed unused import
 // Removed unused import
 // Removed unused import
@@ -57,7 +58,7 @@ export const SPKTableDetail: React.FC<DataTableProps> = ({ data, columns, fetchD
                     {columns.map((header) => (
                         <TableHead
                             key={header.key}
-                            className={`${header.key === "menu" ? "w-[100px]" : ""} capitalize bg-neutral-300/30 dark:bg-neutral-500/30`}
+                            className={`${header.key === "menu" ? "w-[100px]" : ""} capitalize truncate`}
                         >
                             {header.label}
                         </TableHead>
@@ -74,12 +75,14 @@ export const SPKTableDetail: React.FC<DataTableProps> = ({ data, columns, fetchD
                             <TableCell key={header.key} className={`${header.key === "menu" ? "!w-fit" : ""}`}>
                                 {header.key === "menu" ? (
                                     <div className="w-fit flex gap-2">
+                                        <Button size="icon" variant="main">
+                                            <HiMiniPencilSquare />
+                                        </Button>
                                         <Dialog>
                                             <DialogTrigger asChild>
                                                 <Button
                                                     size="icon"
-                                                    variant="default"
-                                                    className="bg-destructive/25 text-destructive border-destructive"
+                                                    variant="destructive"
                                                 >
                                                     <IoMdTrash />
                                                 </Button>

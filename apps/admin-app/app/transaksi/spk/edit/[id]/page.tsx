@@ -19,6 +19,7 @@ import { LuPlus, LuSave } from "react-icons/lu";
 import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@ui-components/components/ui/tabs";
 import MultiSelect from "libs/ui-components/src/components/multi-select"
+import { PiWarningCircleFill, PiWarningCircleLight } from "react-icons/pi";
 
 interface Transaction {
     id: string;
@@ -177,7 +178,7 @@ export default function TransactionDetail() {
                             Riwayat
                         </TabsTrigger>
                         <TabsTrigger value="foto">
-                            Foto 
+                            Foto
                         </TabsTrigger>
                     </TabsList>
                     <div className="w-full border-t my-3 -mx-10"></div>
@@ -194,7 +195,15 @@ export default function TransactionDetail() {
 
                                     <div className="flex items-center space-x-4">
                                         <Label className="w-[40%] font-semibold">No Whatsapp</Label>
-                                        <Input value={transaction.noWhatsapp} />
+                                        <div className="w-full flex items-center">
+                                            <Input value={transaction.noWhatsapp} className="rounded-r-none border-r-0" />
+                                            <Button
+                                            className="rounded-l-none"
+                                                variant={"main"}
+                                            >
+                                                Cari
+                                            </Button>
+                                        </div>
                                     </div>
 
                                     <div className="flex items-center space-x-4">
@@ -321,9 +330,9 @@ export default function TransactionDetail() {
                                     <div className="flex items-center space-x-4">
                                         <Label className="w-[40%] font-semibold">Petugas Cleaning</Label>
                                         <MultiSelect
-                                            // selected={cleaningStaff}
-                                            // setSelected={setCleaningStaff}
-                                            // options={allStaff}
+                                        // selected={cleaningStaff}
+                                        // setSelected={setCleaningStaff}
+                                        // options={allStaff}
                                         />
                                     </div>
 
@@ -338,13 +347,16 @@ export default function TransactionDetail() {
                                     <div className="flex items-center space-x-4">
                                         <Label className="w-[40%] font-semibold">Petugas Blower</Label>
                                         <MultiSelect
-                                            // selected={blowerStaff}
-                                            // setSelected={setBlowerStaff}
-                                            // options={allStaff}
+                                        // selected={blowerStaff}
+                                        // setSelected={setBlowerStaff}
+                                        // options={allStaff}
                                         />
                                     </div>
                                 </div>
                             </div>
+
+                            {/* Divider */}
+                            <div className="w-full border-t mt-7"></div>
 
 
                             <div className="mt-5 space-y-3">
@@ -372,28 +384,29 @@ export default function TransactionDetail() {
 
                             <div className="grid grid-cols-2 gap-20 mt-5">
                                 {/* Kolom Kiri */}
-                                <div className="col-span-1 space-y-4">
-
-                                </div>
+                                <div className="col-span-1 space-y-4"></div>
 
                                 {/* Kolom Kanan */}
                                 <div className="col-span-1 space-y-4">
                                     <div className="flex items-center space-x-4">
-                                        <Label className="w-[40%] font-semibold">Total harga</Label>
-                                        <Input disabled value={transaction.totalPrice} />
+                                        <Label className="w-[40%] font-semibold flex items-center gap-1">
+                                            Total harga
+                                            <PiWarningCircleFill />
+                                        </Label>
+                                        <Input className="text-right" disabled value={formatRupiah(transaction.totalPrice)} />
                                     </div>
 
                                     <div className="flex items-center space-x-4">
                                         <Label className="w-[40%] font-semibold">Promo</Label>
-                                        <Input disabled value={transaction.promoPrice} />
+                                        <Input className="text-right" disabled value={formatRupiah(transaction.promoPrice)} />
                                     </div>
 
                                     <div className="flex items-center space-x-4">
                                         <Label className="w-[40%] font-semibold">Diskon</Label>
-                                        <Input value={transaction.discountPrice} />
+                                        <Input className="text-right" value={formatRupiah(transaction.discountPrice)} />
                                     </div>
 
-                                    <div className="flex items-center justify-between pt-5">
+                                    <div className="flex items-center justify-between mt-5 px-3 py-2 bg-neutral-200 rounded-lg">
                                         <Label className="w-[50%] font-bold text-2xl">Total Akhir</Label>
                                         <Label className="text-right font-bold text-2xl">{formatRupiah(transaction.finalPrice)}</Label>
                                     </div>
@@ -401,20 +414,21 @@ export default function TransactionDetail() {
                             </div>
 
                             {/* Tombol Kembali */}
-                            <div className="flex justify-end mt-6 gap-3">
-                                <Button onClick={() => router.back()} variant="secondary">
-                                    <TbArrowBack />
+                            <div className="flex justify-end mt-6 gap-2">
+                                <Button onClick={() => router.back()} variant="outline2">
                                     Kembali
                                 </Button>
                                 <Button
                                     type="button"
-                                    variant="submit"
+                                    variant="main"
                                 //   onClick={() => setShowConfirmDialog(true)}
                                 //    disabled={updating}
                                 >
-                                    <LuSave />
                                     Simpan
                                     {/* {updating ? "Menyimpan..." : "Simpan"} */}
+                                </Button>
+                                <Button onClick={() => router.back()} variant="destructive">
+                                    Batalkan
                                 </Button>
                             </div>
                         </div>
