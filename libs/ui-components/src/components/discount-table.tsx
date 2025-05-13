@@ -1,21 +1,15 @@
+import Link from "next/link";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
 import { Button } from "./ui/button";
 import { HiMiniPencilSquare } from "react-icons/hi2";
 import { IoMdTrash } from "react-icons/io";
-import slugify from "../../../utils/slugify";
-import Link from "next/link";
 import { api } from "libs/utils/apiClient";
 import { useToast } from "libs/ui-components/src/hooks/use-toast";
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "./ui/dialog";
 import { formatRupiah } from "libs/utils/formatRupiah";
 import { formatDate, daysRemaining } from "../../../utils/formatDate"
+import { useState } from "react";
+import { DeleteDialog } from "./delete-dialog";
+import { PiWarningCircleLight } from "react-icons/pi";
 
 interface TableHeader {
     key: string;
@@ -25,9 +19,14 @@ interface TableHeader {
 interface Column {
     id: number;
     kodeDiskon: string;
+    code: string;
+    name: string;
     namaDiskon: string;
+    promoType: string;
     potonganHarga: string;
     layanan: string;
+    serviceName: string;
+    serviceCode: string;
     minimal: number;
     masaBerlaku: string;
     category: string;
@@ -43,13 +42,41 @@ interface DataTableProps {
 
 export const DiscountTable: React.FC<DataTableProps> = ({ data, columns, currentPage, limit, fetchData }) => {
     const { toast } = useToast();
+    const [selectedDiscount, setSelectedDiscount] = useState<Column | null>(null);
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+    const handleDelete = async (id: number, name: string) => {
+        try {
+            const response = await api.delete(`/promo/${id}`);
+            if (response.status === "success") {
+                toast({
+                    title: "Sukses!",
+                    description: `Diskon ${name} berhasil dihapus.`,
+                    variant: "success",
+                });
+                fetchData();
+            } else {
+                toast({
+                    title: "Gagal!",
+                    description: "Terjadi kesalahan saat menghapus diskon.",
+                    variant: "destructive",
+                });
+            }
+        } catch (error) {
+            toast({
+                title: "Error!",
+                description: "Terjadi kesalahan. Coba lagi nanti.",
+                variant: "destructive",
+            });
+        }
+    };
 
     return (
         <Table>
             <TableHeader>
                 <TableRow>
                     {columns.map((header) => (
-                        <TableHead key={header.key} className={`${header.key === "menu" && "w-[100px]"} bg-neutral-300/30 dark:bg-neutral-500/30`}>
+                        <TableHead key={header.key} className={`${header.key === "menu" && "w-[100px]"}`}>
                             {header.label}
                         </TableHead>
                     ))}
@@ -65,101 +92,65 @@ export const DiscountTable: React.FC<DataTableProps> = ({ data, columns, current
                                         <Link href={`/master-data/diskon/edit/${discount.id}`} >
                                             <Button
                                                 size={"icon"}
-                                                variant={"default"}
-                                                className="bg-warning/25 text-warning border-warning"
+                                                variant={"main"}
                                             >
                                                 <HiMiniPencilSquare />
                                             </Button>
                                         </Link>
-                                        <Dialog>
-                                            <DialogTrigger asChild>
-                                                <Button
-                                                    size={"icon"}
-                                                    variant={"default"}
-                                                    className="bg-destructive/25 text-destructive border-destructive"
-                                                >
-                                                    <IoMdTrash />
-                                                </Button>
-                                            </DialogTrigger>
-                                            <DialogContent>
-                                                <DialogHeader className="flex items-center justify-center">
-                                                    <div className="text-5xl text-destructive bg-destructive-foreground/10 rounded-full p-2 w-fit mb-4" >
-                                                        <IoMdTrash />
-                                                    </div>
-                                                    <DialogTitle>Kamu yakin menghapus diskon {discount.namaDiskon}?</DialogTitle>
-                                                    <DialogDescription className="text-center">
-                                                        Data akan terhapus permanen dan tidak dapat dikembalikan.
-                                                    </DialogDescription>
-                                                </DialogHeader>
-                                                <div className="flex gap-2">
-                                                    <Button
-                                                        variant="secondary"
-                                                        className="w-full"
-                                                    >
-                                                        Batal
-                                                    </Button>
-                                                    <Button
-                                                        variant="destructive"
-                                                        className="w-full"
-                                                        onClick={async () => {
-                                                            try {
-                                                                const response = await api.delete(`/promo/${discount.id}`);
-                                                                if (response.status === 'success') {
-                                                                    toast({
-                                                                        title: "Sukses!",
-                                                                        description: `Diskon ${discount.namaDiskon} berhasil dihapus.`,
-                                                                        variant: "default",
-                                                                    });
-                                                                    fetchData();
-                                                                } else {
-                                                                    toast({
-                                                                        title: "Gagal!",
-                                                                        description: "Terjadi kesalahan saat menghapus diskon.",
-                                                                        variant: "destructive",
-                                                                    });
-                                                                }
-                                                            } catch (error) {
-                                                                toast({
-                                                                    title: "Error!",
-                                                                    description: "Terjadi kesalahan. Coba lagi nanti.",
-                                                                    variant: "destructive",
-                                                                });
-                                                            }
-                                                        }}
-                                                    >
-                                                        Hapus
-                                                    </Button>
-                                                </div>
-                                            </DialogContent>
-                                        </Dialog>
+                                        <Button
+                                            size="icon"
+                                            variant="destructive"
+                                            onClick={() => {
+                                                setSelectedDiscount(discount);
+                                                setIsDialogOpen(true);
+                                            }}
+                                        >
+                                            <IoMdTrash />
+                                        </Button>
                                     </div>
                                 ) : header.key === "endDate" ? (
-                                    <div className="relative group">
+                                    <div className="relative group cursor-pointer flex items-center gap-1">
+                                        <p className={`${new Date(String(discount[header.key as keyof Column])) < new Date()
+                                            ? " text-red-500  dark:text-red-100"
+                                            : " text-green-500 dark:text-green-100"
+                                            }`}>
+                                            <PiWarningCircleLight />
+                                        </p>
                                         <p
                                             className={`badge dark:bg-opacity-70 rounded-md !font-medium border-0 ${new Date(String(discount[header.key as keyof Column])) < new Date()
-                                                ? "bg-red-500 text-red-100"
-                                                : "bg-green-500 text-green-100"
+                                                ? "bg-red-100 text-red-500 dark:bg-red-500 dark:text-red-100"
+                                                : "bg-green-100 text-green-500 dark:bg-green-500 dark:text-green-100"
                                                 }`}
                                         >
                                             {formatDate(String(discount[header.key as keyof Column]))}
-                                            <br />
-
                                         </p>
                                         <span className="absolute truncate left-[102px] top-1/2 transform -translate-y-1/2 hidden group-hover:inline-block bg-lightColor dark:bg-darkColor text-black shadow-custom dark:text-white text-xs rounded-lg px-2 py-1">
                                             {daysRemaining(String(discount[header.key as keyof Column]))}
                                         </span>
                                     </div>
+                                ) : header.key === "serviceCode" ? (
+                                    <p className="uppercase">
+                                        {discount.serviceCode} -
+                                        {" "}
+                                        {discount.serviceName}
+                                    </p>
                                 ) : header.key === "category" ? (
                                     <p className="uppercase">
                                         {discount[header.key as keyof Column]}
                                     </p>
                                 ) : header.key === "amount" ? (
                                     <p>
-                                        {formatRupiah(Number(discount[header.key as keyof Column]))}
+                                        {discount.promoType !== "Persentase"
+                                            ? formatRupiah(Number(discount[header.key as keyof Column]))
+                                            : `${discount[header.key as keyof Column]}%`}
                                     </p>
                                 ) : header.key === "minItem" ? (
                                     <p>
-                                        {formatRupiah(Number(discount[header.key as keyof Column]))}
+                                        {(Number(discount[header.key as keyof Column]))}
+                                    </p>
+                                ) : header.key === "code" ? (
+                                    <p className="uppercase">
+                                        {((discount[header.key as keyof Column]))}
                                     </p>
                                 ) : header.key === "id" ? (
                                     <p>{(currentPage - 1) * limit + rowIndex + 1}</p>
@@ -171,6 +162,20 @@ export const DiscountTable: React.FC<DataTableProps> = ({ data, columns, current
                     </TableRow>
                 ))}
             </TableBody>
+            {selectedDiscount && (
+                <DeleteDialog
+                    open={isDialogOpen}
+                    onOpenChange={setIsDialogOpen}
+                    onConfirm={() =>
+                        handleDelete(selectedDiscount.id, selectedDiscount.name)
+                    }
+                    isLoading={false}
+                    title={`Kamu yakin menghapus diskon ${selectedDiscount.code}  - ${selectedDiscount.name}?`}
+                    itemName={selectedDiscount.namaDiskon}
+                    cancelLabel="Batal"
+                    confirmLabel="Hapus"
+                />
+            )}
         </Table>
     );
 };

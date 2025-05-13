@@ -13,16 +13,17 @@ import { SelectData } from "libs/ui-components/src/components/select-data";
 import { PaginationNumber } from "libs/ui-components/src/components/pagination-number";
 import { DiscountTable } from "libs/ui-components/src/components/discount-table";
 import { Label } from "@ui-components/components/ui/label";
+import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
 
 export const DataHeaderPromo = [
   { key: "id", label: "#" },
   { key: "code", label: "Kode Promo" },
   { key: "name", label: "Nama Promo" },
-  { key: "amount", label: "Potongan Harga" },
+  { key: "promoType", label: "Tipe Promo" },
+  { key: "amount", label: "Potongan (Rp / %)" },
   { key: "serviceCode", label: "Layanan" },
-  { key: "minItem", label: "Minimal" },
+  { key: "minItem", label: "Minimal Item" },
   { key: "endDate", label: "Masa Berlaku" },
-  { key: "category", label: "Kategori" },
   { key: "menu", label: "Aksi" },
 ];
 
@@ -68,71 +69,73 @@ export default function PromoPage() {
   };
 
   return (
-    <Wrapper>
-      <Header label="Daftar Promo" count={totalData} />
-      <div className="flex-grow">
-        <div className="flex items-center justify-between mb-4 gap-2">
-          <div className="flex items-center gap-2">
-            <div className="relative">
-              <Input
-                type="text"
-                placeholder="Cari promo..."
-                value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-                onKeyDown={(i) => {
-                  if (i.key === "Enter") {
-                    handleSearch();
-                  }
-                }}
-                className="w-[30lvw]"
-                icon={<Search size={16} />}
-              />
-              {searchInput && (
-                <button
-                  type="button"
-                  onClick={resetSearch}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-700"
-                >
-                  <IoClose size={16} />
-                </button>
-              )}
-            </div>
+    <>
+      <Breadcrumbs label="Daftar Promo" count={totalData} />
+      <Wrapper>
+        <div className="flex-grow">
+          <div className="flex items-center justify-between mb-4 gap-2">
+            <div className="flex items-center gap-2">
+              <div className="relative">
+                <Input
+                  type="text"
+                  placeholder="Cari Kode Promo, Nama Promo"
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
+                  onKeyDown={(i) => {
+                    if (i.key === "Enter") {
+                      handleSearch();
+                    }
+                  }}
+                  className="w-[30lvw]"
+                  icon={<Search size={16} />}
+                />
+                {searchInput && (
+                  <button
+                    type="button"
+                    onClick={resetSearch}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-700"
+                  >
+                    <IoClose size={16} />
+                  </button>
+                )}
+              </div>
 
-            <Button variant="secondary" onClick={handleSearch}>Cari</Button>
+              <Button variant="main" onClick={handleSearch}>Cari</Button>
+            </div>
+            <Link href="diskon/baru">
+              <Button icon={<LuPlus size={14} />} iconPosition="left" variant="default">
+                Tambah
+              </Button>
+            </Link>
           </div>
-          <Link href="diskon/baru">
-            <Button icon={<LuPlus size={14} />} iconPosition="left" variant="default">
-              Tambah
-            </Button>
-          </Link>
+
+          {loading ? (
+            <p className="text-center py-4">Memuat data...</p>
+          ) : dataPromo.length === 0 && searchInput !== "" ? (
+            <p className="text-center py-4">Promo dengan nama <span className="font-bold">{searchInput}</span> tidak ditemukan.</p>
+          ) : dataPromo.length === 0 ? (
+            <p className="text-center py-4">Gagal memuat data.</p>
+          ) : (
+            <DiscountTable
+              data={dataPromo}
+              columns={DataHeaderPromo}
+              key={`${currentPage}-${limit}`}
+              currentPage={currentPage}
+              limit={limit}
+              fetchData={fetchPromo} // Pass the fetchPromo function to the table
+            />
+          )}
         </div>
 
-        {loading ? (
-          <p className="text-center py-4">Memuat data...</p>
-        ) : dataPromo.length === 0 && searchInput !== "" ? (
-          <p className="text-center py-4">Promo dengan nama <span className="font-bold">{searchInput}</span> tidak ditemukan.</p>
-        ) : dataPromo.length === 0 ? (
-          <p className="text-center py-4">Gagal memuat data.</p>
-        ) : (
-          <DiscountTable
-            data={dataPromo}
-            columns={DataHeaderPromo}
-            key={`${currentPage}-${limit}`}
-            currentPage={currentPage}
-            limit={limit}
-            fetchData={fetchPromo} // Pass the fetchPromo function to the table
-          />
-        )}
-      </div>
-
-      <div className="flex items-center justify-between mt-4">
-        {totalData > 10 ? (
-          <SelectData label="Data Per Halaman" totalData={totalData} currentLimit={limit} onLimitChange={(val) => setLimit(Number(val))} />
-        ) : (
-          <Label className="text-xs">Semua data telah ditampilkan ({totalData})</Label>
-        )}
-        <PaginationNumber totalPages={totalPages} currentPage={currentPage} onPageChange={(page) => setCurrentPage(page)} />
-      </div>
-    </Wrapper>
+        <div className="flex items-center justify-between mt-4">
+          {totalData > 10 ? (
+            <SelectData label="Data Per Halaman" totalData={totalData} currentLimit={limit} onLimitChange={(val) => setLimit(Number(val))} />
+          ) : (
+            <Label className="text-xs">Semua data telah ditampilkan ({totalData})</Label>
+          )}
+          <PaginationNumber totalPages={totalPages} currentPage={currentPage} onPageChange={(page) => setCurrentPage(page)} />
+        </div>
+      </Wrapper>
+    </>
   );
 }

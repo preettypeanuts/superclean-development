@@ -210,3 +210,13 @@ input::-webkit-datetime-edit {
     max-height: 5em; /* Untuk layar dengan lebar minimal 1024px, tampilkan lebih banyak teks */
   }
 }
+
+.no-spinner::-webkit-inner-spin-button,
+.no-spinner::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.no-spinner {
+  -moz-appearance: textfield; /* Firefox */
+}
