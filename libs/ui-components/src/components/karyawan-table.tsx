@@ -1,20 +1,13 @@
+import Link from "next/link";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
 import { Button } from "./ui/button";
 import { HiMiniPencilSquare } from "react-icons/hi2";
 import { IoMdTrash } from "react-icons/io";
-import Link from "next/link";
 import { api } from "libs/utils/apiClient";
-import { useToast } from "libs/ui-components/src/hooks/use-toast"
-import {
-    Dialog,
-    DialogClose,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "./ui/dialog";
+import { useToast } from "libs/ui-components/src/hooks/use-toast";
 import { formatDate } from "libs/utils/formatDate";
+import { DeleteDialog } from "libs/ui-components/src/components/delete-dialog";
+import { useState } from "react";
 
 interface TableHeader {
     key: string;
@@ -43,7 +36,7 @@ interface DataTableProps {
 }
 
 export const TableKaryawan: React.FC<DataTableProps> = ({ data, columns, currentPage, limit, fetchData }) => {
-    const { toast } = useToast(); // Inisialisasi toast
+    const { toast } = useToast(); // Initialize toast
     const roleColors: Record<string, string> = {
         "Super Admin": "bg-white border-blue-600 text-blue-600 dark:bg-black dark:border-blue-300 dark:text-blue-300",
         "Administrasi": "bg-white border-yellow-600 text-yellow-600 dark:bg-black dark:border-yellow-300 dark:text-yellow-300",
@@ -52,16 +45,45 @@ export const TableKaryawan: React.FC<DataTableProps> = ({ data, columns, current
         "Supervisor": "bg-white border-red-600 text-red-600 dark:bg-black dark:border-red-300 dark:text-red-300",
     };
 
+    // Dialog state management
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [currentKaryawan, setCurrentKaryawan] = useState<Karyawan | null>(null);
+
+    const handleDelete = async (id: string, fullname: string) => {
+        if (!id || !fullname) return;
+
+        try {
+            const response = await api.delete(`/user/${id}`);
+            if (response.status === 'success') {
+                toast({
+                    title: "Sukses!",
+                    description: `Karyawan ${fullname} berhasil dihapus.`,
+                    variant: "default",
+                });
+                fetchData();
+            } else {
+                toast({
+                    title: "Gagal!",
+                    description: "Terjadi kesalahan saat menghapus karyawan.",
+                    variant: "destructive",
+                });
+            }
+        } catch (error) {
+            toast({
+                title: "Error!",
+                description: "Terjadi kesalahan. Coba lagi nanti.",
+                variant: "destructive",
+            });
+        }
+        setIsDialogOpen(false);
+    };
 
     return (
         <Table>
             <TableHeader>
                 <TableRow>
                     {columns.map((header) => (
-                        <TableHead
-                            key={header.key}
-                            className={`${header.key === "menu" && "w-[100px]"}`}
-                        >
+                        <TableHead key={header.key} className={`${header.key === "menu" && "w-[100px]"}`}>
                             {header.label}
                         </TableHead>
                     ))}
@@ -78,75 +100,20 @@ export const TableKaryawan: React.FC<DataTableProps> = ({ data, columns, current
                                 {header.key === "menu" ? (
                                     <div className="w-fit flex gap-2">
                                         <Link href={`/master-data/karyawan/edit/${mitra.id}`}>
-                                            <Button
-                                                size="icon"
-                                                variant="main"
-                                            >
+                                            <Button size="icon" variant="main">
                                                 <HiMiniPencilSquare />
                                             </Button>
                                         </Link>
-                                        <Dialog>
-                                            <DialogTrigger asChild>
-                                                <Button
-                                                    size="icon"
-                                                    variant="destructive"
-                                                >
-                                                    <IoMdTrash />
-                                                </Button>
-                                            </DialogTrigger>
-                                            <DialogContent>
-                                                <DialogHeader className="flex items-center justify-between">
-                                                    <div className="text-5xl text-destructive bg-destructive-foreground/10 rounded-lg p-2 w-fit my-5">
-                                                        <IoMdTrash />
-                                                    </div>
-                                                    <DialogTitle>Kamu yakin menghapus akun {mitra.fullname}?</DialogTitle>
-                                                </DialogHeader>
-                                                <div className="flex gap-2">
-                                                    <DialogClose asChild>
-                                                        <Button variant="outline2" className="w-full">
-                                                            Batal
-                                                        </Button>
-                                                    </DialogClose>
-                                                    <Button
-                                                        variant="destructive"
-                                                        className="w-full"
-                                                        onClick={async () => {
-                                                            console.log(`Menghapus karyawan dengan ID: ${mitra.id}`);
-                                                            try {
-                                                                const response = await api.delete(`/user/${mitra.id}`);
-
-                                                                console.log("Response dari server:", response);
-
-                                                                if (response.status === 'success') {
-                                                                    toast({
-                                                                        title: "Sukses!",
-                                                                        description: `Karyawan ${mitra.fullname} berhasil dihapus.`,
-                                                                        variant: "default", // Bisa diganti ke "success" jika tersedia
-                                                                    });
-                                                                    fetchData();
-                                                                } else {
-                                                                    console.error("Gagal menghapus karyawan:", response);
-                                                                    toast({
-                                                                        title: "Gagal!",
-                                                                        description: "Terjadi kesalahan saat menghapus karyawan.",
-                                                                        variant: "destructive",
-                                                                    });
-                                                                }
-                                                            } catch (error) {
-                                                                console.error("Error saat menghapus karyawan:", error);
-                                                                toast({
-                                                                    title: "Error!",
-                                                                    description: "Terjadi kesalahan. Coba lagi nanti.",
-                                                                    variant: "destructive",
-                                                                });
-                                                            }
-                                                        }}
-                                                    >
-                                                        Hapus
-                                                    </Button>
-                                                </div>
-                                            </DialogContent>
-                                        </Dialog>
+                                        <Button
+                                            size="icon"
+                                            variant="destructive"
+                                            onClick={() => {
+                                                setCurrentKaryawan(mitra);
+                                                setIsDialogOpen(true);
+                                            }}
+                                        >
+                                            <IoMdTrash />
+                                        </Button>
                                     </div>
                                 ) : header.key === "status" ? (
                                     <p className={`badge truncate dark:bg-opacity-70 rounded-md !font-medium border-0 ${mitra.status === 1 ? "bg-green-200 text-green-900 dark:bg-green-500 dark:text-green-100" : "bg-red-200 text-red-900 dark:bg-red-500 dark:text-red-100"}`}>
@@ -164,7 +131,7 @@ export const TableKaryawan: React.FC<DataTableProps> = ({ data, columns, current
                                 ) : header.key === "birthDate" ? (
                                     <p>{formatDate(mitra.birthDate)}</p>
                                 ) : header.key === "noWhatsapp" ? (
-                                    <p> {mitra.noWhatsapp}</p>
+                                    <p>{mitra.noWhatsapp}</p>
                                 ) : header.key === "username" ? (
                                     <div className="flex items-center">
                                         <span className={`mr-2 ${mitra.status ? "bg-green-500" : "bg-red-500"} rounded-full w-[6px] h-[6px]`}></span>
@@ -178,6 +145,20 @@ export const TableKaryawan: React.FC<DataTableProps> = ({ data, columns, current
                     </TableRow>
                 ))}
             </TableBody>
+
+            {/* Delete Confirmation Dialog */}
+            {currentKaryawan && (
+                <DeleteDialog
+                    open={isDialogOpen}
+                    onOpenChange={setIsDialogOpen}
+                    onConfirm={() => handleDelete(currentKaryawan.id, currentKaryawan.fullname)}
+                    isLoading={false}
+                    title={`Kamu yakin menghapus karyawan ${currentKaryawan.fullname}?`}
+                    itemName={currentKaryawan.fullname}
+                    cancelLabel="Batal"
+                    confirmLabel="Hapus"
+                />
+            )}
         </Table>
     );
 };

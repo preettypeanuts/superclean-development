@@ -14,6 +14,8 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "./ui/dialog";
+import { useState } from "react";
+import { DeleteDialog } from "libs/ui-components/src/components/delete-dialog";
 
 interface TableHeader {
     key: string;
@@ -45,7 +47,37 @@ interface DataTableProps {
 }
 
 export const TablePelanggan: React.FC<DataTableProps> = ({ data, columns, currentPage, limit, fetchData }) => {
-    const { toast } = useToast(); // Inisialisasi toast
+    const { toast } = useToast();
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [selectedCustomer, setSelectedCustomer] = useState<Pelanggan | null>(null);
+
+    const handleDelete = async (customerId: string, fullname: string) => {
+        try {
+            const response = await api.delete(`/customer/${customerId}`);
+            if (response.status === "success") {
+                toast({
+                    title: "Sukses!",
+                    description: `${fullname} berhasil dihapus.`,
+                    variant: "default",
+                });
+                fetchData();
+            } else {
+                toast({
+                    title: "Gagal!",
+                    description: "Terjadi kesalahan saat menghapus pelanggan.",
+                    variant: "destructive",
+                });
+            }
+        } catch (error) {
+            toast({
+                title: "Error!",
+                description: "Terjadi kesalahan. Coba lagi nanti.",
+                variant: "destructive",
+            });
+        } finally {
+            setIsDialogOpen(false);
+        }
+    };
     return (
         <Table>
             <TableHeader>
@@ -67,79 +99,21 @@ export const TablePelanggan: React.FC<DataTableProps> = ({ data, columns, curren
                                         <Link href={`/master-data/pelanggan/edit/${customer.id}`}>
                                             <Button
                                                 size={"icon"}
-                                                variant={"default"}
-                                                className="bg-warning/25 text-warning border-warning"
+                                                variant={"main"}
                                             >
                                                 <HiMiniPencilSquare />
                                             </Button>
                                         </Link>
-                                        <Dialog>
-                                            <DialogTrigger asChild>
-                                                <Button
-                                                    size={"icon"}
-                                                    variant={"default"}
-                                                >
-                                                    <IoMdTrash />
-                                                </Button>
-                                            </DialogTrigger>
-                                            <DialogContent>
-                                                <DialogHeader className="flex items-center justify-center">
-                                                    <div className="text-5xl text-destructive bg-destructive-foreground/10 rounded-lg p-2 w-fit my-5">
-                                                        <IoMdTrash />
-                                                    </div>
-                                                    <DialogTitle>Kamu yakin menghapus akun {customer.fullname}?</DialogTitle>
-                                                    <DialogDescription className="text-center">
-                                                        Data akan terhapus permanent dan tidak dapat dikembalikan.
-                                                    </DialogDescription>
-                                                </DialogHeader>
-                                                <div className="flex gap-2">
-                                                    <Button
-                                                        variant="secondary"
-                                                        className="w-full"
-                                                    >
-                                                        Batal
-                                                    </Button>
-                                                    <Button
-                                                        variant="destructive"
-                                                        className="w-full"
-                                                        onClick={async () => {
-                                                            console.log(`Menghapus karyawan dengan ID: ${customer.id}`);
-                                                            try {
-                                                                const response = await api.delete(`/customer/${customer.id}`);
-
-                                                                console.log("Response dari server:", response);
-
-                                                                if (response.status === 'success') {
-                                                                    toast({
-                                                                        title: "Sukses!",
-                                                                        description: `Karyawan ${customer.fullname} berhasil dihapus.`,
-                                                                        variant: "default",
-                                                                    });
-                                                                    fetchData();
-                                                                } else {
-                                                                    console.error("Gagal menghapus karyawan:", response);
-                                                                    toast({
-                                                                        title: "Gagal!",
-                                                                        description: "Terjadi kesalahan saat menghapus karyawan.",
-                                                                        variant: "destructive",
-                                                                    });
-                                                                }
-                                                            } catch (error) {
-                                                                console.error("Error saat menghapus karyawan:", error);
-                                                                toast({
-                                                                    title: "Error!",
-                                                                    description: "Terjadi kesalahan. Coba lagi nanti.",
-                                                                    variant: "destructive",
-                                                                });
-                                                            }
-                                                        }}
-
-                                                    >
-                                                        Hapus
-                                                    </Button>
-                                                </div>
-                                            </DialogContent>
-                                        </Dialog>
+                                        <Button
+                                            size="icon"
+                                            variant="destructive"
+                                            onClick={() => {
+                                                setSelectedCustomer(customer);
+                                                setIsDialogOpen(true);
+                                            }}
+                                        >
+                                            <IoMdTrash />
+                                        </Button>
                                     </div>
                                 ) : header.key === "createdAt" ? (
                                     <p>{formatDate(String(customer[header.key as keyof Pelanggan]))}</p>
@@ -151,7 +125,7 @@ export const TablePelanggan: React.FC<DataTableProps> = ({ data, columns, curren
                                     <p>{(currentPage - 1) * limit + rowIndex + 1}</p>
                                 ) : header.key === "status" ? (
                                     <p className={`badge truncate dark:bg-opacity-70 rounded-md !font-medium border-0 ${customer[header.key as keyof Pelanggan] === 1 ? "bg-green-200 text-green-900 dark:bg-green-500 dark:text-green-100" : "bg-red-200 text-red-900 dark:bg-red-500 dark:text-red-100"}`}>
-                                        <span className={`mr-2 ${customer["status"] === 1 ? "bg-green-500" : "bg-red-500"} rounded-full w-[6px] h-[6px]`}></span>
+                                        <span className={`mr-2 ${customer["status"] === 1 ?  "bg-green-500 dark:bg-green-200" : "bg-red-500 dark:bg-red-200"} rounded-full w-[6px] h-[6px]`}></span>
                                         {customer[header.key as keyof Pelanggan] === 1 ? "Aktif" : "Tidak Aktif"}
                                     </p>
                                 ) : header.key === "fullname" ? (
@@ -167,6 +141,19 @@ export const TablePelanggan: React.FC<DataTableProps> = ({ data, columns, curren
                     </TableRow>
                 ))}
             </TableBody>
+            {/* Delete Confirmation Dialog */}
+            {selectedCustomer && (
+                <DeleteDialog
+                    open={isDialogOpen}
+                    onOpenChange={setIsDialogOpen}
+                    onConfirm={() => handleDelete(selectedCustomer.id, selectedCustomer.fullname)}
+                    isLoading={false}
+                    title={`Kamu yakin menghapus karyawan ${selectedCustomer.fullname}?`}
+                    itemName={selectedCustomer.fullname}
+                    cancelLabel="Batal"
+                    confirmLabel="Hapus"
+                />
+            )}
         </Table>
     );
 };
