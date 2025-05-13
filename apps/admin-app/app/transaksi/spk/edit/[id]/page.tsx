@@ -12,10 +12,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectGr
 import { useLocationData } from "libs/utils/useLocationData";
 import { api } from "libs/utils/apiClient";
 import { TbArrowBack } from "react-icons/tb";
-import { formatDate } from "libs/utils/formatDate";
+import { formatDate, formatDateInput } from "libs/utils/formatDate";
 import { formatRupiah } from "libs/utils/formatRupiah";
 import { SPKTableDetail } from "libs/ui-components/src/components/spk-table-detail";
 import { LuPlus, LuSave } from "react-icons/lu";
+import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@ui-components/components/ui/tabs";
 
 interface Transaction {
     id: string;
@@ -162,241 +164,264 @@ export default function TransactionDetail() {
     }
 
     return (
-        <Wrapper>
-            <Header label={`Detail SPK - ${transaction.trxNumber}`} />
-            <div className="flex flex-col gap-4">
-                <div className="grid grid-cols-2 gap-20">
-                    {/* Kolom Kiri */}
-                    <div className="col-span-1 space-y-4">
-                        <div className="flex items-center space-x-4">
-                            <Label className="w-[20%] font-semibold">No Transaksi</Label>
-                            <Input disabled value={transaction.trxNumber} />
+        <>
+            <Breadcrumbs label={`Ubah SPK`} />
+            <Wrapper>
+                <Tabs defaultValue="detail" className="-mt-2">
+                    <TabsList>
+                        <TabsTrigger value="detail" >
+                            Detail
+                        </TabsTrigger>
+                        <TabsTrigger value="riwayat">
+                            Riwayat
+                        </TabsTrigger>
+                        <TabsTrigger value="foto">
+                            Foto
+                        </TabsTrigger>
+                    </TabsList>
+                    <div className="w-full border-t my-3 -mx-10"></div>
+
+                    <TabsContent value="detail">
+                        <div className="flex flex-col gap-4">
+                            <div className="grid grid-cols-2 gap-20">
+                                {/* Kolom Kiri */}
+                                <div className="col-span-1 space-y-4">
+                                    <div className="flex items-center space-x-4">
+                                        <Label className="w-[40%] font-semibold">No Transaksi</Label>
+                                        <Input disabled value={transaction.trxNumber} />
+                                    </div>
+
+                                    <div className="flex items-center space-x-4">
+                                        <Label className="w-[40%] font-semibold">No Whatsapp</Label>
+                                        <Input value={transaction.noWhatsapp} />
+                                    </div>
+
+                                    <div className="flex items-center space-x-4">
+                                        <Label className="w-[40%] font-semibold">Nama Pelanggan</Label>
+                                        <Input value={""} />
+                                    </div>
+
+                                    <div className="flex items-center space-x-4">
+                                        <Label className="w-[40%] font-semibold">Alamat</Label>
+                                        <Textarea
+                                            className="resize-none"
+                                            value={transaction.address}
+                                            rows={4}
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Kolom Kanan */}
+                                <div className="col-span-1 space-y-4">
+                                    <div className="flex items-center space-x-4">
+                                        <Label className="w-[40%] font-semibold">Status</Label>
+                                        <Input
+                                            value={
+                                                transaction.status === 0
+                                                    ? "Baru"
+                                                    : transaction.status === 1
+                                                    ? "Proses"
+                                                    : "Batal"
+                                            }
+                                            disabled
+                                        />
+                                    </div>
+                                    {/* Provinsi */}
+                                    <div className="flex items-center space-x-4">
+                                        <Label className="w-[40%] font-semibold">Provinsi</Label>
+                                        <Select
+                                            value={selectedProvince}
+                                            onValueChange={handleProvinceChange}
+                                        >
+                                            <SelectTrigger className="w-full">
+                                                <SelectValue placeholder="Pilih Provinsi" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectGroup>
+                                                    {provinces.map((prov) => (
+                                                        <SelectItem key={prov.id} value={prov.paramKey}>{prov.paramValue}</SelectItem>
+                                                    ))}
+                                                </SelectGroup>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+
+                                    {/* Kota/Kabupaten */}
+                                    <div className="flex items-center space-x-4">
+                                        <Label className="w-[40%] font-semibold">Kab/Kota</Label>
+                                        <Select
+                                            disabled={!selectedProvince}
+                                            value={selectedCity}
+                                            onValueChange={handleCityChange}
+                                        >
+                                            <SelectTrigger className="w-full">
+                                                <SelectValue placeholder="Pilih Kota/Kabupaten" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectGroup>
+                                                    {cities.map((city) => (
+                                                        <SelectItem key={city.id} value={city.paramKey}>{city.paramValue}</SelectItem>
+                                                    ))}
+                                                </SelectGroup>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+
+                                    {/* Kecamatan */}
+                                    <div className="flex items-center space-x-4">
+                                        <Label className="w-[40%] font-semibold">Kecamatan</Label>
+                                        <Select
+                                            disabled={!selectedCity}
+                                            value={selectedDistrict}
+                                            onValueChange={handleDistrictChange}
+                                        >
+                                            <SelectTrigger className="w-full">
+                                                <SelectValue placeholder="Pilih Kecamatan" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectGroup>
+                                                    {districts.map((district) => (
+                                                        <SelectItem key={district.id} value={district.paramKey}>{district.paramValue}</SelectItem>
+                                                    ))}
+                                                </SelectGroup>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+
+                                    {/* Kelurahan */}
+                                    <div className="flex items-center space-x-4">
+                                        <Label className="w-[40%] font-semibold">Kelurahan</Label>
+                                        <Select
+                                            disabled={!selectedDistrict}
+                                            value={transaction.subDistrict}
+                                            onValueChange={handleSubDistrictChange}
+                                        >
+                                            <SelectTrigger className="w-full">
+                                                <SelectValue placeholder="Pilih Kelurahan" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectGroup>
+                                                    {subDistricts.map((sub) => (
+                                                        <SelectItem key={sub.id} value={sub.paramKey}>{sub.paramValue}</SelectItem>
+                                                    ))}
+                                                </SelectGroup>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Divider */}
+                            <div className="w-full border-t my-7"></div>
+
+                            <div className="grid grid-cols-2 gap-20">
+                                {/* Kolom Kiri */}
+                                <div className="col-span-1 space-y-4">
+                                    <div className="flex items-center space-x-4">
+                                        <Label className="w-[40%] font-semibold">Petugas Cleaning</Label>
+                                        <Input disabled value={transaction.trxNumber} />
+                                    </div>
+
+                                    <div className="flex items-center space-x-4">
+                                        <Label className="w-[40%] font-semibold">Tanggal Transaksi</Label>
+                                        <Input type="date" value={formatDateInput(transaction.trxDate)} />
+                                    </div>
+
+                                </div>
+
+                                {/* Kolom Kanan */}
+                                <div className="col-span-1 space-y-4">
+                                    <div className="flex items-center space-x-4">
+                                        <Label className="w-[40%] font-semibold">Petugas Blower</Label>
+                                        <Input disabled value={transaction.trxNumber} />
+                                    </div>
+
+
+                                </div>
+                            </div>
+
+                            <div className="mt-5 space-y-3">
+                                <div className="flex justify-end">
+                                    <Button
+                                        icon={<LuPlus size={16} />}
+                                        className="pl-2 pr-4"
+                                        iconPosition="left"
+                                        variant="default"
+                                        type="submit"
+                                    >
+                                        Tambah
+                                    </Button>
+                                </div>
+                                <SPKTableDetail
+                                    data={DataDummySPK}
+                                    columns={DataHeaderSPKDetail}
+                                    currentPage={1}
+                                    limit={10}
+                                    fetchData={() => {
+                                        console.log("Fetching data...");
+                                    }}
+                                />
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-20 mt-5">
+                                {/* Kolom Kiri */}
+                                <div className="col-span-1 space-y-4">
+
+                                </div>
+
+                                {/* Kolom Kanan */}
+                                <div className="col-span-1 space-y-4">
+                                    <div className="flex items-center space-x-4">
+                                        <Label className="w-[40%] font-semibold">Total harga</Label>
+                                        <Input disabled value={transaction.totalPrice} />
+                                    </div>
+
+                                    <div className="flex items-center space-x-4">
+                                        <Label className="w-[40%] font-semibold">Promo</Label>
+                                        <Input disabled value={transaction.promoPrice} />
+                                    </div>
+
+                                    <div className="flex items-center space-x-4">
+                                        <Label className="w-[40%] font-semibold">Diskon</Label>
+                                        <Input value={transaction.discountPrice} />
+                                    </div>
+
+                                    <div className="flex items-center justify-between pt-5">
+                                        <Label className="w-[50%] font-bold text-2xl">Total Akhir</Label>
+                                        <Label className="text-right font-bold text-2xl">{formatRupiah(transaction.finalPrice)}</Label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Tombol Kembali */}
+                            <div className="flex justify-end mt-6 gap-3">
+                                <Button onClick={() => router.back()} variant="secondary">
+                                    <TbArrowBack />
+                                    Kembali
+                                </Button>
+                                <Button
+                                    type="button"
+                                    variant="submit"
+                                //   onClick={() => setShowConfirmDialog(true)}
+                                //    disabled={updating}
+                                >
+                                    <LuSave />
+                                    Simpan
+                                    {/* {updating ? "Menyimpan..." : "Simpan"} */}
+                                </Button>
+                            </div>
                         </div>
+                    </TabsContent>
+                    <TabsContent value="riwayat">
+                        Settings component
+                    </TabsContent>
+                    <TabsContent value="akses">
+                        Settings component
+                    </TabsContent>
+                </Tabs>
 
-                        <div className="flex items-center space-x-4">
-                            <Label className="w-[20%] font-semibold">No Whatsapp</Label>
-                            <Input value={transaction.noWhatsapp} />
-                        </div>
 
-                        <div className="flex items-center space-x-4">
-                            <Label className="w-[20%] font-semibold">Alamat</Label>
-                            <Textarea
-                                className="resize-none"
-                                value={transaction.address}
-                                rows={4}
-                            />
-                        </div>
-                    </div>
-
-                    {/* Kolom Kanan */}
-                    <div className="col-span-1 space-y-4">
-                        {/* Provinsi */}
-                        <div className="flex items-center space-x-4">
-                            <Label className="w-[20%] font-semibold">Provinsi</Label>
-                            <Select
-                                value={selectedProvince}
-                                onValueChange={handleProvinceChange}
-                            >
-                                <SelectTrigger className="w-full">
-                                    <SelectValue placeholder="Pilih Provinsi" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectGroup>
-                                        {provinces.map((prov) => (
-                                            <SelectItem key={prov.id} value={prov.paramKey}>{prov.paramValue}</SelectItem>
-                                        ))}
-                                    </SelectGroup>
-                                </SelectContent>
-                            </Select>
-                        </div>
-
-                        {/* Kota/Kabupaten */}
-                        <div className="flex items-center space-x-4">
-                            <Label className="w-[20%] font-semibold">Kab/Kota</Label>
-                            <Select
-                                disabled={!selectedProvince}
-                                value={selectedCity}
-                                onValueChange={handleCityChange}
-                            >
-                                <SelectTrigger className="w-full">
-                                    <SelectValue placeholder="Pilih Kota/Kabupaten" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectGroup>
-                                        {cities.map((city) => (
-                                            <SelectItem key={city.id} value={city.paramKey}>{city.paramValue}</SelectItem>
-                                        ))}
-                                    </SelectGroup>
-                                </SelectContent>
-                            </Select>
-                        </div>
-
-                        {/* Kecamatan */}
-                        <div className="flex items-center space-x-4">
-                            <Label className="w-[20%] font-semibold">Kecamatan</Label>
-                            <Select
-                                disabled={!selectedCity}
-                                value={selectedDistrict}
-                                onValueChange={handleDistrictChange}
-                            >
-                                <SelectTrigger className="w-full">
-                                    <SelectValue placeholder="Pilih Kecamatan" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectGroup>
-                                        {districts.map((district) => (
-                                            <SelectItem key={district.id} value={district.paramKey}>{district.paramValue}</SelectItem>
-                                        ))}
-                                    </SelectGroup>
-                                </SelectContent>
-                            </Select>
-                        </div>
-
-                        {/* Kelurahan */}
-                        <div className="flex items-center space-x-4">
-                            <Label className="w-[20%] font-semibold">Kelurahan</Label>
-                            <Select
-                                disabled={!selectedDistrict}
-                                value={transaction.subDistrict}
-                                onValueChange={handleSubDistrictChange}
-                            >
-                                <SelectTrigger className="w-full">
-                                    <SelectValue placeholder="Pilih Kelurahan" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectGroup>
-                                        {subDistricts.map((sub) => (
-                                            <SelectItem key={sub.id} value={sub.paramKey}>{sub.paramValue}</SelectItem>
-                                        ))}
-                                    </SelectGroup>
-                                </SelectContent>
-                            </Select>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Divider */}
-                <div className="w-full border-t my-7"></div>
-
-                <div className="grid grid-cols-2 gap-20">
-                    {/* Kolom Kiri */}
-                    <div className="col-span-1 space-y-4">
-                        <div className="flex items-center space-x-4">
-                            <Label className="w-[20%] font-semibold">Petugas Cleaning</Label>
-                            <Input disabled value={transaction.trxNumber} />
-                        </div>
-
-                        <div className="flex items-center space-x-4">
-                            <Label className="w-[20%] font-semibold">Tanggal Transaksi</Label>
-                            <Input value={formatDate(transaction.trxDate)} />
-                        </div>
-
-                    </div>
-
-                    {/* Kolom Kanan */}
-                    <div className="col-span-1 space-y-4">
-                        <div className="flex items-center space-x-4">
-                            <Label className="w-[20%] font-semibold">Petugas Blower</Label>
-                            <Input disabled value={transaction.trxNumber} />
-                        </div>
-
-                        <div className="flex items-center space-x-4">
-                            <Label className="w-[20%] font-semibold">Status</Label>
-                            <Select
-                                value={String(transaction.status)}
-                                onValueChange={(value) =>
-                                    setTransaction((prev) =>
-                                        prev ? { ...prev, status: parseInt(value) } : null
-                                    )
-                                }
-                                disabled
-                            >
-                                <SelectTrigger className="w-full">
-                                    <SelectValue placeholder="Pilih Status" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectGroup>
-                                        <SelectItem value="0">Baru</SelectItem>
-                                        <SelectItem value="1">Proses</SelectItem>
-                                        <SelectItem value="2">Batal</SelectItem>
-                                    </SelectGroup>
-                                </SelectContent>
-                            </Select>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="mt-5 space-y-3">
-                    <div className="flex justify-end">
-                        <Button
-                            icon={<LuPlus size={16} />}
-                            className="pl-2 pr-4"
-                            iconPosition="left"
-                            variant="default"
-                            type="submit"
-                        >
-                            Tambah
-                        </Button>
-                    </div>
-                    <SPKTableDetail
-                        data={DataDummySPK}
-                        columns={DataHeaderSPKDetail}
-                        currentPage={1}
-                        limit={10}
-                        fetchData={() => {
-                            console.log("Fetching data...");
-                        }}
-                    />
-                </div>
-
-                <div className="grid grid-cols-2 gap-20 mt-5">
-                    {/* Kolom Kiri */}
-                    <div className="col-span-1 space-y-4">
-
-                    </div>
-
-                    {/* Kolom Kanan */}
-                    <div className="col-span-1 space-y-4">
-                        <div className="flex items-center space-x-4">
-                            <Label className="w-[20%] font-semibold">Total harga</Label>
-                            <Input disabled value={transaction.totalPrice} />
-                        </div>
-
-                        <div className="flex items-center space-x-4">
-                            <Label className="w-[20%] font-semibold">Promo</Label>
-                            <Input disabled value={transaction.promoPrice} />
-                        </div>
-
-                        <div className="flex items-center space-x-4">
-                            <Label className="w-[20%] font-semibold">Diskon</Label>
-                            <Input value={transaction.discountPrice} />
-                        </div>
-
-                        <div className="flex items-center justify-between pt-5">
-                            <Label className="w-[50%] font-bold text-2xl">Total Akhir</Label>
-                            <Label className="text-right font-bold text-2xl">{formatRupiah(transaction.finalPrice)}</Label>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Tombol Kembali */}
-                <div className="flex justify-end mt-6 gap-3">
-                    <Button onClick={() => router.back()} variant="secondary">
-                        <TbArrowBack />
-                        Kembali
-                    </Button>
-                    <Button
-                        type="button"
-                        variant="submit"
-                    //   onClick={() => setShowConfirmDialog(true)}
-                    //    disabled={updating}
-                    >
-                        <LuSave />
-                        Simpan
-                        {/* {updating ? "Menyimpan..." : "Simpan"} */}
-                    </Button>
-                </div>
-            </div>
-        </Wrapper>
+            </Wrapper>
+        </>
     );
 }
