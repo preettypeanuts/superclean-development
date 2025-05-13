@@ -1,7 +1,6 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Header } from "@shared/components/Header";
 import { Wrapper } from "@shared/components/Wrapper";
 import { Input } from "libs/ui-components/src/components/ui/input";
 import { Button } from "libs/ui-components/src/components/ui/button";
@@ -15,21 +14,26 @@ import { apiClient } from "libs/utils/apiClient";
 import { IoClose } from "react-icons/io5";
 import { Label } from "@ui-components/components/ui/label";
 import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
+import { useLocationData, getCitiesLabel } from "libs/utils/useLocationData";
 
 export const DataHeaderPelanggan = [
   { key: "id", label: "#" },
   { key: "fullname", label: "Nama Lengkap" },
   { key: "noWhatsapp", label: "No. WhatsApp" },
-  { key: "createdAt", label: "Tanggal Daftar" },
+  { key: "customerType", label: "Tipe Pelanggan" },
+  { key: "address", label: "Alamat" },
+  { key: "city", label: "Kota" },
   { key: "createdBy", label: "Didaftarkan Oleh" },
   { key: "status", label: "Status" },
   { key: "menu", label: "Aksi" },
 ];
+
 interface Pelanggan {
   id: string;
   createdAt: string;
   createdBy: string;
   noWhatsapp: string;
+  customerType: string;
   fullname: string;
   address: string;
   province: string;
@@ -46,7 +50,7 @@ export default function PelangganPage() {
   const [totalData, setTotalData] = useState<number>(0);
   const [limit, setLimit] = useState<number>(10);
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchInput, setSearchInput] = useState(""); // Input Sementara
+  const [searchInput, setSearchInput] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("");
 
   const totalPages = Math.max(1, Math.ceil(totalData / limit));
@@ -55,13 +59,11 @@ export default function PelangganPage() {
     setLoading(true);
     try {
       let url = `/customer/page?search=${searchQuery}&page=${currentPage}&limit=${limit}`;
-
       if (statusFilter !== "") {
         url += `&status=${statusFilter}`;
       }
 
       const result = await apiClient(url);
-
       setDataPelanggan(result.data[0] || []);
       setTotalData(result.data[1] || 0);
     } catch (error) {
@@ -71,7 +73,6 @@ export default function PelangganPage() {
     }
   };
 
-  // Fetch data hanya saat query/filters berubah
   useEffect(() => {
     fetchPelanggan();
   }, [searchQuery, statusFilter, currentPage, limit]);
@@ -87,6 +88,30 @@ export default function PelangganPage() {
     setCurrentPage(1);
   };
 
+  const selectedProvince = [...new Set(dataPelanggan.map((item) => item.province).filter(Boolean))];
+
+  const { provinces } = useLocationData();
+  const [cities, setCities] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (selectedProvince.length === 0) return;
+
+    const fetchCities = async () => {
+      const result = await getCitiesLabel(selectedProvince);
+      setCities(result);
+    };
+
+    fetchCities();
+  }, [selectedProvince]);
+
+  const processedPelanggan = dataPelanggan.map((item) => ({
+    ...item,
+    province:
+      provinces.find((prov: { paramKey: string; paramValue: string }) => prov.paramKey === item.province)?.paramValue || "Tidak Diketahui",
+    city:
+      cities.find((cty) => cty.paramKey === item.city)?.paramValue || "Tidak Diketahui",
+  }));
+
   return (
     <>
       <Breadcrumbs label="Daftar Pelanggan" count={totalData} />
@@ -97,7 +122,7 @@ export default function PelangganPage() {
               <div className="relative">
                 <Input
                   type="text"
-                  placeholder="Cari nama karyawan..."
+                  placeholder="Cari nama pelanggan..."
                   value={searchInput}
                   onChange={(e) => setSearchInput(e.target.value)}
                   onKeyDown={(i) => {
@@ -123,26 +148,32 @@ export default function PelangganPage() {
                 value={statusFilter}
                 onChange={setStatusFilter}
               />
-              <Button
-                variant="main"
-                onClick={handleSearch}>
+              <Button variant="main" onClick={handleSearch}>
                 Cari
               </Button>
             </div>
             <Link href="pelanggan/baru">
-              <Button icon={<LuPlus size={16} />} className="pl-2 pr-4" iconPosition="left" variant="default">
+              <Button
+                icon={<LuPlus size={16} />}
+                className="pl-2 pr-4"
+                iconPosition="left"
+                variant="default"
+              >
                 Tambah
               </Button>
             </Link>
           </div>
+
           {loading ? (
             <p className="text-center py-4">Memuat data...</p>
           ) : dataPelanggan.length === 0 ? (
-            <p className="text-center py-4">Pelanggan dengan nama <span className="font-bold">{searchInput}</span>  tidak ditemukan.</p>
+            <p className="text-center py-4">
+              Pelanggan dengan nama <span className="font-bold">{searchInput}</span> tidak ditemukan.
+            </p>
           ) : (
             <TablePelanggan
               key={`${currentPage}-${limit}`}
-              data={dataPelanggan}
+              data={processedPelanggan}
               columns={DataHeaderPelanggan}
               currentPage={currentPage}
               limit={limit}
@@ -150,6 +181,7 @@ export default function PelangganPage() {
             />
           )}
         </div>
+
         <div className="flex items-center justify-between mt-4">
           {totalData > 10 ? (
             <SelectData

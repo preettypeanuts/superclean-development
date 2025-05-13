@@ -154,11 +154,11 @@ export const TableLayanan: React.FC<DataTableProps> = ({ data, columns, currentP
                                     ) : header.key === "vacuumPrice" || header.key === "cleanPrice" || header.key === "generalPrice" ? (
                                         layanan[header.key as keyof Service] === 0 ? (
                                             <p className="badge rounded-md border-0   bg-neutral-300/20 dark:bg-neutral-500/20 text-neutral-500 dark:text-neutral-500">
-                                                {formatRupiah(layanan[header.key as keyof Service] as number)}
+                                                {/* {formatRupiah(layanan[header.key as keyof Service] as number)} */}
                                             </p>
                                         ) : (
                                             <p className={`badge rounded-md border-0 ${isGeneral && header.key === "generalPrice" ? generalColor : otherColor}`}>
-                                                {formatRupiah(layanan[header.key as keyof Service] as number)}
+                                                {/* {formatRupiah(layanan[header.key as keyof Service] as number)} */}
                                             </p>
                                         )
                                     ) : header.key === "category" ? (

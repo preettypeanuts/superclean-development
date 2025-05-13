@@ -30,12 +30,19 @@ import {
 } from "libs/ui-components/src/components/ui/alert-dialog";
 import { useToast } from "libs/ui-components/src/hooks/use-toast"
 import { Textarea } from '@ui-components/components/ui/textarea';
+import { RadioGroup, RadioGroupItem } from '@ui-components/components/ui/radio-group';
+import { Breadcrumbs } from '@shared/components/ui/Breadcrumbs';
+import { Dialog, DialogContent, DialogHeader } from '@ui-components/components/ui/dialog';
+import { IoMdSave } from 'react-icons/io';
+import { DialogTitle } from '@radix-ui/react-dialog';
+import { ConfirmSaveDialog } from "libs/ui-components/src/components/save-dialog";
 
 
 interface Pelanggan {
     id: string;
     fullname: string;
     noWhatsapp: string;
+    customerType: string;
     address: string;
     province: string;
     city: string;
@@ -54,7 +61,9 @@ export default function EditPelanggan() {
     const [pelanggan, setPelanggan] = useState<Pelanggan | null>(null);
     const [status, setStatus] = useState<boolean>(true);
     const [updating, setUpdating] = useState<boolean>(false);
-    const { provinces, cities, districts, subDistricts, loading } = useLocationData(
+    const [load, setLoad] = useState<boolean>(false);
+
+    const { provinces, cities, districts, subDistricts } = useLocationData(
         pelanggan?.province,
         pelanggan?.city,
         pelanggan?.district
@@ -62,16 +71,21 @@ export default function EditPelanggan() {
 
     useEffect(() => {
         const fetchPelanggan = async () => {
+            setLoad(true);
             try {
                 const result = await api.get(`/customer/id/${noWhatsapp}`);
                 setPelanggan(result.data);
                 setStatus(result.data.status === 1);
             } catch (error) {
                 console.error("Gagal mengambil data pelanggan:", error);
+            } finally {
+                setLoad(false);
             }
         };
+
         fetchPelanggan();
     }, [noWhatsapp]);
+
 
     // Handle Change Generic untuk Input Teks
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -105,6 +119,7 @@ export default function EditPelanggan() {
 
         const updatedData = {
             fullname: pelanggan.fullname,
+            customerType: pelanggan.customerType,
             address: pelanggan.address,
             province: pelanggan.province,
             city: pelanggan.city,
@@ -138,163 +153,173 @@ export default function EditPelanggan() {
 
 
     return (
-        <Wrapper>
-            <Header label="Edit Profil Pelanggan" />
-            {loading ? (
-                <p className="text-center py-4">Memuat data...</p>
-            ) : pelanggan ? (
-                <form className='space-y-4' onSubmit={handleSubmit}>
-                    {/* Nama Lengkap */}
-                    <div className="flex items-center space-x-4">
-                        <div className="w-1/4 font-semibold">
-                            <Label>Nama Lengkap</Label>
+        <>
+            <Breadcrumbs label="Ubah Profil Pelanggan" />
+            <Wrapper>
+                {load ? (
+                    <p className="text-center py-4">Memuat data...</p>
+                ) : pelanggan ? (
+                    <form className='space-y-4' onSubmit={handleSubmit}>
+                        {/* Nama Lengkap */}
+                        <div className="flex items-center space-x-4">
+                            <div className="w-1/4 font-semibold">
+                                <Label>Nama Lengkap</Label>
+                            </div>
+                            <Input name="fullname" value={pelanggan.fullname} onChange={handleChange} />
                         </div>
-                        <Input name="fullname" value={pelanggan.fullname} onChange={handleChange} />
-                    </div>
 
-                    {/* Nomor WhatsApp */}
-                    <div className="flex items-center space-x-4">
-                        <div className="w-1/4 font-semibold">
-                            <Label>No Whatsapp</Label>
+                        {/* Nomor WhatsApp */}
+                        <div className="flex items-center space-x-4">
+                            <div className="w-1/4 font-semibold">
+                                <Label>No Whatsapp</Label>
+                            </div>
+                            <Input value={pelanggan.noWhatsapp} disabled />
                         </div>
-                        <Input value={pelanggan.noWhatsapp} disabled />
-                    </div>
 
-                    {/* Alamat */}
-                    <div className="flex items-center space-x-4">
-                        <div className="w-1/4 font-semibold">
-                            <Label>Alamat</Label>
+                        {/* Tipe Pelanggan */}
+                        <div className="flex items-center space-x-4">
+                            <Label htmlFor="customerType" className="w-[20%] font-semibold">Tipe</Label>
+                            <RadioGroup
+                                value={pelanggan.customerType}
+                                onValueChange={(value) => handleSelectChange("customerType", value)}
+                                className="flex items-center gap-5"
+                            >
+                                <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="Pribadi" id="Pribadi" />
+                                    <Label className="capitalize" htmlFor="Pribadi">pribadi</Label>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="Perusahaan" id="Perusahaan" />
+                                    <Label className="capitalize" htmlFor="Perusahaan">Perusahaan</Label>
+                                </div>
+                            </RadioGroup>
                         </div>
-                        <Textarea className='resize-none' name="address" value={pelanggan.address} onChange={handleChange} />
-                    </div>
 
-                    {/* Provinsi */}
-                    <div className="flex items-center space-x-4">
-                        <div className="w-1/4 font-semibold">
-                            <Label>Provinsi</Label>
+                        {/* Alamat */}
+                        <div className="flex items-center space-x-4">
+                            <div className="w-1/4 font-semibold">
+                                <Label>Alamat</Label>
+                            </div>
+                            <Textarea className='resize-none' name="address" value={pelanggan.address} onChange={handleChange} />
                         </div>
-                        <Select value={pelanggan.province} onValueChange={(value) => handleSelectChange("province", value)}>
-                            <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Pilih Provinsi" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectGroup>
-                                    {provinces.map(prov => (
-                                        <SelectItem key={prov.id} value={prov.paramKey}>{prov.paramValue}</SelectItem>
-                                    ))}
-                                </SelectGroup>
-                            </SelectContent>
-                        </Select>
-                    </div>
 
-                    {/* Kota */}
-                    <div className="flex items-center space-x-4">
-                        <div className="w-1/4 font-semibold">
-                            <Label>Kota</Label>
+                        {/* Provinsi */}
+                        <div className="flex items-center space-x-4">
+                            <div className="w-1/4 font-semibold">
+                                <Label>Provinsi</Label>
+                            </div>
+                            <Select value={pelanggan.province} onValueChange={(value) => handleSelectChange("province", value)}>
+                                <SelectTrigger className="w-full">
+                                    <SelectValue placeholder="Pilih Provinsi" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        {provinces.map(prov => (
+                                            <SelectItem key={prov.id} value={prov.paramKey}>{prov.paramValue}</SelectItem>
+                                        ))}
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
                         </div>
-                        <Select value={pelanggan.city} onValueChange={(value) => handleSelectChange("city", value)}>
-                            <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Pilih Kota" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectGroup>
-                                    {cities.map(city => (
-                                        <SelectItem key={city.id} value={city.paramKey}>{city.paramValue}</SelectItem>
-                                    ))}
-                                </SelectGroup>
-                            </SelectContent>
-                        </Select>
-                    </div>
 
-                    {/* Kecamatan */}
-                    <div className="flex items-center space-x-4">
-                        <div className="w-1/4 font-semibold">
-                            <Label>Kecamatan</Label>
+                        {/* Kota */}
+                        <div className="flex items-center space-x-4">
+                            <div className="w-1/4 font-semibold">
+                                <Label>Kota</Label>
+                            </div>
+                            <Select value={pelanggan.city} onValueChange={(value) => handleSelectChange("city", value)}>
+                                <SelectTrigger className="w-full">
+                                    <SelectValue placeholder="Pilih Kota" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        {cities.map(city => (
+                                            <SelectItem key={city.id} value={city.paramKey}>{city.paramValue}</SelectItem>
+                                        ))}
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
                         </div>
-                        <Select value={pelanggan.district} onValueChange={(value) => handleSelectChange("district", value)}>
-                            <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Pilih Kecamatan" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectGroup>
-                                    {districts.map(district => (
-                                        <SelectItem key={district.id} value={district.paramKey}>{district.paramValue}</SelectItem>
-                                    ))}
-                                </SelectGroup>
-                            </SelectContent>
-                        </Select>
-                    </div>
 
-                    {/* Kelurahan */}
-                    <div className="flex items-center space-x-4">
-                        <div className="w-1/4 font-semibold">
-                            <Label>Kelurahan</Label>
+                        {/* Kecamatan */}
+                        <div className="flex items-center space-x-4">
+                            <div className="w-1/4 font-semibold">
+                                <Label>Kecamatan</Label>
+                            </div>
+                            <Select value={pelanggan.district} onValueChange={(value) => handleSelectChange("district", value)}>
+                                <SelectTrigger className="w-full">
+                                    <SelectValue placeholder="Pilih Kecamatan" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        {districts.map(district => (
+                                            <SelectItem key={district.id} value={district.paramKey}>{district.paramValue}</SelectItem>
+                                        ))}
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
                         </div>
-                        <Select value={pelanggan.subDistrict} onValueChange={(value) => handleSelectChange("subDistrict", value)}>
-                            <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Pilih Kelurahan" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectGroup>
-                                    {subDistricts.map(sub => (
-                                        <SelectItem key={sub.id} value={sub.paramKey}>{sub.paramValue}</SelectItem>
-                                    ))}
-                                </SelectGroup>
-                            </SelectContent>
-                        </Select>
-                    </div>
 
-                    {/* Status */}
-                    <div className="flex items-center space-x-4">
-                        <Label htmlFor="status" className="w-[20%] font-semibold">Status</Label>
-                        <div className="flex items-center space-x-2">
-                            <Checkbox
-                                id="status"
-                                checked={pelanggan?.status === 1}
-                                onCheckedChange={(checked) => handleStatusChange(checked ? 1 : 0)}
-                            />
-                            <Label htmlFor="status">
-                                {pelanggan?.status === 1 ? "Aktif" : "Tidak Aktif"}
-                            </Label>
+                        {/* Kelurahan */}
+                        <div className="flex items-center space-x-4">
+                            <div className="w-1/4 font-semibold">
+                                <Label>Kelurahan</Label>
+                            </div>
+                            <Select value={pelanggan.subDistrict} onValueChange={(value) => handleSelectChange("subDistrict", value)}>
+                                <SelectTrigger className="w-full">
+                                    <SelectValue placeholder="Pilih Kelurahan" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        {subDistricts.map(sub => (
+                                            <SelectItem key={sub.id} value={sub.paramKey}>{sub.paramValue}</SelectItem>
+                                        ))}
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
                         </div>
-                    </div>
 
-                    <div className="flex items-center space-x-4">
-                        <div className="w-1/4"></div>
-                        <div className="space-x-2 flex w-full">
-                            <Button type="button" variant="secondary" onClick={() => router.back()}>
-                                <TbArrowBack />
+                        {/* Status */}
+                        <div className="flex items-center space-x-4">
+                            <Label htmlFor="status" className="w-[20%] font-semibold">Status</Label>
+                            <div className="flex items-center space-x-2">
+                                <Checkbox
+                                    id="status"
+                                    checked={pelanggan?.status === 1}
+                                    onCheckedChange={(checked) => handleStatusChange(checked ? 1 : 0)}
+                                />
+                                <Label htmlFor="status">
+                                    {pelanggan?.status === 1 ? "Aktif" : "Tidak Aktif"}
+                                </Label>
+                            </div>
+                        </div>
+
+                        <div className="flex justify-end space-x-2">
+                            <Button type="button" variant="outline2" onClick={() => router.back()}>
                                 Kembali
                             </Button>
                             {/* Tombol Simpan */}
-                            <Button type="button" variant="submit" onClick={() => setShowConfirmDialog(true)} disabled={updating}>
-                                <LuSave />
+                            <Button type="button" variant="main" onClick={() => setShowConfirmDialog(true)} disabled={updating}>
                                 {updating ? "Menyimpan..." : "Simpan"}
                             </Button>
                         </div>
-                    </div>
-                </form>
-            ) : (
-                <p className="text-center py-4 text-red-500">Pelanggan tidak ditemukan!</p>
-            )}
+                    </form>
+                ) : (
+                    <p className="text-center py-4 text-red-500">Pelanggan tidak ditemukan!</p>
+                )}
 
-            {/* Dialog Konfirmasi Simpan */}
-            <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
-                <AlertDialogContent>
-                    <AlertDialogHeader>
-                        <AlertDialogTitle>Apakah Anda yakin menyimpan data ini?</AlertDialogTitle>
-                        <AlertDialogDescription>
-                            Jika "Ya", data akan diperbarui. Jika "Tidak", proses dibatalkan.
-                        </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                        <Button variant="outline" onClick={() => setShowConfirmDialog(false)}>Tidak</Button>
-                        <AlertDialogAction onClick={(e) => { setShowConfirmDialog(false); handleSubmit(e as unknown as React.FormEvent<HTMLFormElement>); }}>
-                            Ya
-                        </AlertDialogAction>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
-        </Wrapper>
+                {/* Dialog Konfirmasi Simpan */}
+                <ConfirmSaveDialog
+                    open={showConfirmDialog}
+                    onOpenChange={setShowConfirmDialog}
+                    onConfirm={() => { 
+                        setShowConfirmDialog(false); 
+                        handleSubmit(new Event('submit') as unknown as React.FormEvent<HTMLFormElement>); 
+                    }}
+                    isLoading={updating}
+                />
+
+            </Wrapper>
+        </>
     );
 }

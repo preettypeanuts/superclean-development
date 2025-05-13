@@ -25,6 +25,7 @@ interface Pelanggan {
     createdAt: string;
     createdBy: string;
     noWhatsapp: string;
+    customerType: string;
     fullname: string;
     address: string;
     province: string;
@@ -60,7 +61,7 @@ export const TablePelanggan: React.FC<DataTableProps> = ({ data, columns, curren
                 {data.map((customer, rowIndex) => (
                     <TableRow key={customer.id} className={rowIndex % 2 === 0 ? "" : "bg-neutral-300/20 dark:bg-neutral-500/20"}>
                         {columns.map((header) => (
-                            <TableCell key={header.key} className={`${header.key === "menu" && "!w-fit"}`}>
+                            <TableCell key={header.key} className={`${header.key === "menu" && "!w-fit"} truncate-paren`}>
                                 {header.key === "menu" ? (
                                     <div className="w-fit flex gap-2">
                                         <Link href={`/master-data/pelanggan/edit/${customer.id}`}>
@@ -77,14 +78,13 @@ export const TablePelanggan: React.FC<DataTableProps> = ({ data, columns, curren
                                                 <Button
                                                     size={"icon"}
                                                     variant={"default"}
-                                                    className="bg-destructive/25 text-destructive border-destructive"
                                                 >
                                                     <IoMdTrash />
                                                 </Button>
                                             </DialogTrigger>
                                             <DialogContent>
                                                 <DialogHeader className="flex items-center justify-center">
-                                                    <div className="text-5xl text-destructive bg-destructive-foreground/10 rounded-full p-2 w-fit mb-4" >
+                                                    <div className="text-5xl text-destructive bg-destructive-foreground/10 rounded-lg p-2 w-fit my-5">
                                                         <IoMdTrash />
                                                     </div>
                                                     <DialogTitle>Kamu yakin menghapus akun {customer.fullname}?</DialogTitle>
@@ -143,10 +143,15 @@ export const TablePelanggan: React.FC<DataTableProps> = ({ data, columns, curren
                                     </div>
                                 ) : header.key === "createdAt" ? (
                                     <p>{formatDate(String(customer[header.key as keyof Pelanggan]))}</p>
+                                ) : header.key === "address" ? (
+                                    <p className="truncate-2 untruncate">
+                                        {customer[header.key as keyof Pelanggan]}
+                                    </p>
                                 ) : header.key === "id" ? (
                                     <p>{(currentPage - 1) * limit + rowIndex + 1}</p>
                                 ) : header.key === "status" ? (
-                                    <p className={`badge dark:bg-opacity-70 rounded-md !font-medium border-0 ${customer[header.key as keyof Pelanggan] === 1 ? "bg-green-200 text-green-900 dark:bg-green-500 dark:text-green-100" : "bg-red-200 text-red-900 dark:bg-red-500 dark:text-red-100"}`}>
+                                    <p className={`badge truncate dark:bg-opacity-70 rounded-md !font-medium border-0 ${customer[header.key as keyof Pelanggan] === 1 ? "bg-green-200 text-green-900 dark:bg-green-500 dark:text-green-100" : "bg-red-200 text-red-900 dark:bg-red-500 dark:text-red-100"}`}>
+                                        <span className={`mr-2 ${customer["status"] === 1 ? "bg-green-500" : "bg-red-500"} rounded-full w-[6px] h-[6px]`}></span>
                                         {customer[header.key as keyof Pelanggan] === 1 ? "Aktif" : "Tidak Aktif"}
                                     </p>
                                 ) : header.key === "fullname" ? (

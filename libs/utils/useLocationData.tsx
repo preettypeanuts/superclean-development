@@ -90,3 +90,20 @@ export function useLocationData(province?: string, city?: string, district?: str
 
   return { provinces, cities, districts, subDistricts, loading, error };
 }
+
+export async function getCitiesLabel(cityCode: string[]): Promise<LocationData[]> {
+  const allCities: LocationData[] = [];
+
+  await Promise.all(
+    cityCode.map(async (code) => {
+      try {
+        const res = await apiClient(`/parameter/cities?province=${code}`);
+        allCities.push(...res.data);
+      } catch (error) {
+        console.error(`Gagal fetch kota dari provinsi ${code}:`, error);
+      }
+    })
+  );
+
+  return allCities;
+}

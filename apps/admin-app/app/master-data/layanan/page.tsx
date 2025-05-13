@@ -111,7 +111,7 @@ export default function LayananPage() {
                   }
                 }}
                 className="w-[30lvw]"
-                icon={<Search size={16} />}
+                icon={<Search sixze={16} />}
               />
               {searchInput && (
                 <button

@@ -181,6 +181,21 @@ input::-webkit-datetime-edit {
   }
 }
 
+.truncate-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* Jumlah baris yang ingin Anda tampilkan sebelum truncate */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  max-height: 5em;
+  @media screen and (min-width: 768px) {
+    max-height: 4.5em; /* Untuk layar dengan lebar minimal 768px, tampilkan lebih banyak teks */
+  }
+
+  @media screen and (min-width: 1024px) {
+    max-height: 5em; /* Untuk layar dengan lebar minimal 1024px, tampilkan lebih banyak teks */
+  }
+}
+
 .truncate-parent:hover .untruncate {
   display: -webkit-box;
   -webkit-line-clamp: 2; /* Jumlah baris yang ingin Anda tampilkan sebelum truncate */
