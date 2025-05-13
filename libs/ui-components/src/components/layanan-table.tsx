@@ -66,13 +66,19 @@ export const TableLayanan: React.FC<DataTableProps> = ({ data, columns, currentP
                                     {header.key === "menu" ? (
                                         <div className="w-fit flex gap-2">
                                             <Link href={`/master-data/layanan/edit/${layanan.id}`}>
-                                                <Button size="icon" variant="default" className="bg-warning/25 text-warning border-warning">
+                                                <Button
+                                                    size="icon"
+                                                    variant="main"
+                                                >
                                                     <HiMiniPencilSquare />
                                                 </Button>
                                             </Link>
                                             <Dialog>
                                                 <DialogTrigger asChild>
-                                                    <Button size="icon" variant="default" className="bg-destructive/25 text-destructive border-destructive">
+                                                    <Button
+                                                        size="icon"
+                                                        variant="destructive"
+                                                    >
                                                         <IoMdTrash />
                                                     </Button>
                                                 </DialogTrigger>

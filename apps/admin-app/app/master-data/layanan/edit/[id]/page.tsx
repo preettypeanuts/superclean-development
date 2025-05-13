@@ -5,6 +5,13 @@ import { Wrapper } from "@shared/components/Wrapper";
 import { Input } from "libs/ui-components/src/components/ui/input";
 import { Label } from "libs/ui-components/src/components/ui/label";
 import { Button } from "libs/ui-components/src/components/ui/button";
+import { Checkbox } from "libs/ui-components/src/components/ui/checkbox";
+import { api } from "libs/utils/apiClient";
+import { useCategoryStore } from "libs/utils/useCategoryStore";
+import { useToast } from "libs/ui-components/src/hooks/use-toast";
+import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
+import { formatRupiah, unformatRupiah } from "libs/utils/formatRupiah";
+import { ConfirmSaveDialog } from "@ui-components/components/save-dialog";
 import {
   Select,
   SelectContent,
@@ -14,24 +21,6 @@ import {
   SelectGroup,
   SelectLabel,
 } from "libs/ui-components/src/components/ui/select";
-import { Checkbox } from "libs/ui-components/src/components/ui/checkbox";
-import { LuSave } from "react-icons/lu";
-import { TbArrowBack } from "react-icons/tb";
-import { api } from "libs/utils/apiClient";
-import { useCategoryStore } from "libs/utils/useCategoryStore";
-import { useToast } from "libs/ui-components/src/hooks/use-toast";
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogAction,
-} from "libs/ui-components/src/components/ui/alert-dialog";
-import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
-import { formatRupiah, unformatRupiah } from "libs/utils/formatRupiah";
-import { log } from "node:console";
 
 interface Layanan {
   id: string;
@@ -188,6 +177,17 @@ export default function EditLayanan() {
               </Select>
             </div>
 
+            <div className="flex items-center space-x-4">
+              <Label className="w-1/4 font-semibold">Harga Vacuum</Label>
+              <Input
+                className="text-right"
+                type="text"
+                name="vacuumPrice"
+                value={formatRupiah(layanan.vacuumPrice)}
+                onChange={handleChange}
+                disabled={layanan.category === "GENERAL" || layanan.category === "BLOWER"}
+              />
+            </div>
 
             <div className="flex items-center space-x-4">
               <Label className="w-1/4 font-semibold">Harga Cuci</Label>
@@ -196,17 +196,6 @@ export default function EditLayanan() {
                 type="text"
                 name="cleanPrice"
                 value={formatRupiah(layanan.cleanPrice)}
-                onChange={handleChange}
-              />
-            </div>
-
-            <div className="flex items-center space-x-4">
-              <Label className="w-1/4 font-semibold">Harga Vacuum</Label>
-              <Input
-                className="text-right"
-                type="text"
-                name="vacuumPrice"
-                value={formatRupiah(layanan.vacuumPrice)}
                 onChange={handleChange}
               />
             </div>
@@ -232,18 +221,13 @@ export default function EditLayanan() {
           <p className="text-center py-4 text-red-500">Layanan tidak ditemukan!</p>
         )}
 
-        <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Konfirmasi Simpan</AlertDialogTitle>
-              <AlertDialogDescription>Apakah Anda yakin ingin menyimpan perubahan?</AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <Button variant="outline" onClick={() => setShowConfirmDialog(false)}>Batal</Button>
-              <AlertDialogAction onClick={handleSubmit}>Simpan</AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+        {/* Dialog Konfirmasi Simpan */}
+        <ConfirmSaveDialog
+          open={showConfirmDialog}
+          onOpenChange={setShowConfirmDialog}
+          onConfirm={handleSubmit}
+          isLoading={updating}
+        />
       </Wrapper>
     </>
   );
