@@ -1,8 +1,8 @@
+import Link from "next/link";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
 import { Button } from "./ui/button";
 import { HiMiniPencilSquare } from "react-icons/hi2";
 import { IoMdTrash } from "react-icons/io";
-import Link from "next/link";
 import { api } from "libs/utils/apiClient";
 import { useToast } from "libs/ui-components/src/hooks/use-toast";
 import {
@@ -14,7 +14,8 @@ import {
     DialogDescription,
 } from "./ui/dialog";
 import { formatRupiah } from "libs/utils/formatRupiah";
-import { useCategoryStore } from "libs/utils/useCategoryStore";
+import { useState } from "react";
+import { DeleteDialog } from "./delete-dialog";
 
 
 interface TableHeader {
@@ -44,7 +45,36 @@ interface DataTableProps {
 
 export const TableLayanan: React.FC<DataTableProps> = ({ data, columns, currentPage, limit, fetchData }) => {
     const { toast } = useToast();
-    const { unitLayananMapping, catLayananMapping, loading: loadingParams } = useCategoryStore();
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [selectedLayanan, setSelectedLayanan] = useState<Service | null>(null);
+
+    const handleDelete = async (id: string, name: string) => {
+        try {
+            const response = await api.delete(`/service/${id}`);
+            if (response.status === "success") {
+                toast({
+                    title: "Sukses!",
+                    description: `Layanan ${name} berhasil dihapus.`,
+                    variant: "default",
+                });
+                fetchData();
+            } else {
+                toast({
+                    title: "Gagal!",
+                    description: "Terjadi kesalahan saat menghapus layanan.",
+                    variant: "destructive",
+                });
+            }
+        } catch (error) {
+            toast({
+                title: "Error!",
+                description: "Terjadi kesalahan. Coba lagi nanti.",
+                variant: "destructive",
+            });
+        } finally {
+            setIsDialogOpen(false);
+        }
+    };
 
     return (
         <Table>
@@ -73,63 +103,16 @@ export const TableLayanan: React.FC<DataTableProps> = ({ data, columns, currentP
                                                     <HiMiniPencilSquare />
                                                 </Button>
                                             </Link>
-                                            <Dialog>
-                                                <DialogTrigger asChild>
-                                                    <Button
-                                                        size="icon"
-                                                        variant="destructive"
-                                                    >
-                                                        <IoMdTrash />
-                                                    </Button>
-                                                </DialogTrigger>
-                                                <DialogContent>
-                                                    <DialogHeader className="flex items-center justify-center">
-                                                        <div className="text-5xl text-destructive bg-destructive-foreground/10 rounded-full p-2 w-fit mb-4">
-                                                            <IoMdTrash />
-                                                        </div>
-                                                        <DialogTitle>Kamu yakin menghapus layanan {layanan.name}?</DialogTitle>
-                                                        <DialogDescription className="text-center">
-                                                            Data akan terhapus permanen dan tidak dapat dikembalikan.
-                                                        </DialogDescription>
-                                                    </DialogHeader>
-                                                    <div className="flex gap-2">
-                                                        <Button variant="secondary" className="w-full">
-                                                            Batal
-                                                        </Button>
-                                                        <Button
-                                                            variant="destructive"
-                                                            className="w-full"
-                                                            onClick={async () => {
-                                                                try {
-                                                                    const response = await api.delete(`/service/${layanan.id}`);
-                                                                    if (response.status === "success") {
-                                                                        toast({
-                                                                            title: "Sukses!",
-                                                                            description: `Layanan ${layanan.name} berhasil dihapus.`,
-                                                                            variant: "default",
-                                                                        });
-                                                                        fetchData();
-                                                                    } else {
-                                                                        toast({
-                                                                            title: "Gagal!",
-                                                                            description: "Terjadi kesalahan saat menghapus layanan.",
-                                                                            variant: "destructive",
-                                                                        });
-                                                                    }
-                                                                } catch (error) {
-                                                                    toast({
-                                                                        title: "Error!",
-                                                                        description: "Terjadi kesalahan. Coba lagi nanti.",
-                                                                        variant: "destructive",
-                                                                    });
-                                                                }
-                                                            }}
-                                                        >
-                                                            Hapus
-                                                        </Button>
-                                                    </div>
-                                                </DialogContent>
-                                            </Dialog>
+                                            <Button
+                                                size="icon"
+                                                variant="destructive"
+                                                onClick={() => {
+                                                    setSelectedLayanan(layanan);
+                                                    setIsDialogOpen(true);
+                                                }}
+                                            >
+                                                <IoMdTrash />
+                                            </Button>
                                         </div>
                                     ) : header.key === "status" ? (
                                         <p className={`badge dark:bg-opacity-70 rounded-md !font-medium border-0 ${layanan.status ? "bg-green-200 text-green-900 dark:bg-green-500 dark:text-green-100" : "bg-red-200 text-red-900 dark:bg-red-500 dark:text-red-100"}`}>
@@ -162,6 +145,20 @@ export const TableLayanan: React.FC<DataTableProps> = ({ data, columns, currentP
                     );
                 })}
             </TableBody>
+
+            {selectedLayanan && (
+                <DeleteDialog
+                    open={isDialogOpen}
+                    onOpenChange={setIsDialogOpen}
+                    onConfirm={() => handleDelete(selectedLayanan.id, selectedLayanan.name)}
+                    isLoading={false} // Atur jika butuh loading
+                    title={`Kamu yakin menghapus layanan ${selectedLayanan.name}?`}
+                    itemName={selectedLayanan.name}
+                    cancelLabel="Batal"
+                    confirmLabel="Hapus"
+                />
+            )}
+
         </Table>
     );
 };
