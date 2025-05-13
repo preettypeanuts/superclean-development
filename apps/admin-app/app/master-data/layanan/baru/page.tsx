@@ -21,6 +21,7 @@ import { useRouter } from "next/navigation";
 import { useToast } from "libs/ui-components/src/hooks/use-toast";
 import { Checkbox } from "libs/ui-components/src/components/ui/checkbox";
 import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
+import { formatRupiah, unformatRupiah } from "libs/utils/formatRupiah";
 
 export default function NewLayanan() {
   const { toast } = useToast();
@@ -63,8 +64,8 @@ export default function NewLayanan() {
       name: formData.name,
       category: formData.category,
       unit: formData.unit,
-      vacuumPrice: Number(formData.vacuumPrice),
-      cleanPrice: Number(formData.cleanPrice),
+      vacuumPrice: unformatRupiah(formData.vacuumPrice),
+      cleanPrice: unformatRupiah(formData.cleanPrice),
       status: Number(formData.status),
     };
 
@@ -184,10 +185,11 @@ export default function NewLayanan() {
               Harga Vacuum
             </Label>
             <Input
-              type="number"
+              className="text-right"
+              type="text"
               id="vacuumPrice"
               disabled={formData.category === "GENERAL" || formData.category === "BLOWER"}
-              value={formData.vacuumPrice}
+              value={formatRupiah(formData.vacuumPrice)}
               onChange={handleChange}
             />
           </div>
@@ -197,9 +199,10 @@ export default function NewLayanan() {
               Harga Cuci
             </Label>
             <Input
-              type="number"
+              className="text-right"
+              type="text"
               id="cleanPrice"
-              value={formData.cleanPrice}
+              value={formatRupiah(formData.cleanPrice)}
               onChange={handleChange}
             />
           </div>
@@ -221,15 +224,6 @@ export default function NewLayanan() {
             <Button
               type="submit"
               variant="main"
-              className="disabled"
-              disabled={
-              !formData.code ||
-              !formData.name ||
-              !formData.category ||
-              !formData.unit ||
-              (!formData.vacuumPrice && formData.category !== "GENERAL") ||
-              !formData.cleanPrice
-              }
             >
               Simpan
             </Button>

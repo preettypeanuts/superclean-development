@@ -38,7 +38,7 @@ export function DeleteDialog({
           <div className="text-5xl p-3 bg-destructive/40 text-destructive-foreground dark:text-destructive rounded-lg my-5">
             {icon}
           </div>
-          <DialogTitle className="text-center">{title}</DialogTitle>
+          <DialogTitle className="text-center leading-snug">{title}</DialogTitle>
         </DialogHeader>
         <DialogFooter className="flex flex-row gap-2">
           <Button

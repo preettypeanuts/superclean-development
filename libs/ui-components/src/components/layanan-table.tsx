@@ -5,14 +5,6 @@ import { HiMiniPencilSquare } from "react-icons/hi2";
 import { IoMdTrash } from "react-icons/io";
 import { api } from "libs/utils/apiClient";
 import { useToast } from "libs/ui-components/src/hooks/use-toast";
-import {
-    Dialog,
-    DialogTrigger,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogDescription,
-} from "./ui/dialog";
 import { formatRupiah } from "libs/utils/formatRupiah";
 import { useState } from "react";
 import { DeleteDialog } from "./delete-dialog";
@@ -152,7 +144,7 @@ export const TableLayanan: React.FC<DataTableProps> = ({ data, columns, currentP
                     onOpenChange={setIsDialogOpen}
                     onConfirm={() => handleDelete(selectedLayanan.id, selectedLayanan.name)}
                     isLoading={false} // Atur jika butuh loading
-                    title={`Kamu yakin menghapus layanan ${selectedLayanan.name}?`}
+                    title={`Kamu yakin menghapus layanan ${selectedLayanan.code} - ${selectedLayanan.name}?`}
                     itemName={selectedLayanan.name}
                     cancelLabel="Batal"
                     confirmLabel="Hapus"
