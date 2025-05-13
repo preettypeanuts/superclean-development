@@ -1,7 +1,6 @@
 import * as React from "react"
 import * as DialogPrimitive from "@radix-ui/react-dialog"
 import { X } from "lucide-react"
-
 import { cn } from "@superclean-workspace/ui-components/utils"
 
 const Dialog = DialogPrimitive.Root

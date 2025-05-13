@@ -18,6 +18,7 @@ import { SPKTableDetail } from "libs/ui-components/src/components/spk-table-deta
 import { LuPlus, LuSave } from "react-icons/lu";
 import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@ui-components/components/ui/tabs";
+import MultiSelect from "libs/ui-components/src/components/multi-select"
 
 interface Transaction {
     id: string;
@@ -176,7 +177,7 @@ export default function TransactionDetail() {
                             Riwayat
                         </TabsTrigger>
                         <TabsTrigger value="foto">
-                            Foto
+                            Foto 
                         </TabsTrigger>
                     </TabsList>
                     <div className="w-full border-t my-3 -mx-10"></div>
@@ -220,8 +221,8 @@ export default function TransactionDetail() {
                                                 transaction.status === 0
                                                     ? "Baru"
                                                     : transaction.status === 1
-                                                    ? "Proses"
-                                                    : "Batal"
+                                                        ? "Proses"
+                                                        : "Batal"
                                             }
                                             disabled
                                         />
@@ -319,26 +320,32 @@ export default function TransactionDetail() {
                                 <div className="col-span-1 space-y-4">
                                     <div className="flex items-center space-x-4">
                                         <Label className="w-[40%] font-semibold">Petugas Cleaning</Label>
-                                        <Input disabled value={transaction.trxNumber} />
+                                        <MultiSelect
+                                            // selected={cleaningStaff}
+                                            // setSelected={setCleaningStaff}
+                                            // options={allStaff}
+                                        />
                                     </div>
 
                                     <div className="flex items-center space-x-4">
                                         <Label className="w-[40%] font-semibold">Tanggal Transaksi</Label>
                                         <Input type="date" value={formatDateInput(transaction.trxDate)} />
                                     </div>
-
                                 </div>
 
                                 {/* Kolom Kanan */}
                                 <div className="col-span-1 space-y-4">
                                     <div className="flex items-center space-x-4">
                                         <Label className="w-[40%] font-semibold">Petugas Blower</Label>
-                                        <Input disabled value={transaction.trxNumber} />
+                                        <MultiSelect
+                                            // selected={blowerStaff}
+                                            // setSelected={setBlowerStaff}
+                                            // options={allStaff}
+                                        />
                                     </div>
-
-
                                 </div>
                             </div>
+
 
                             <div className="mt-5 space-y-3">
                                 <div className="flex justify-end">
