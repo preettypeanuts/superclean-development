@@ -195,8 +195,8 @@ export default function TransactionDetail() {
 
                                     <div className="flex items-center space-x-4">
                                         <Label className="w-[40%] font-semibold">No Whatsapp</Label>
-                                        <div className="w-full flex items-center">
-                                            <Input value={transaction.noWhatsapp} className="rounded-r-none border-r-0" />
+                                        <div className="w-full flex items-center focus-within:ring-1 focus-within:ring-ring rounded-lg">
+                                            <Input value={transaction.noWhatsapp} className="rounded-r-none border-r-0 focus-visible:ring-0" />
                                             <Button
                                             className="rounded-l-none"
                                                 variant={"main"}
@@ -434,10 +434,10 @@ export default function TransactionDetail() {
                         </div>
                     </TabsContent>
                     <TabsContent value="riwayat">
-                        Settings component
+                      Coming Soon
                     </TabsContent>
-                    <TabsContent value="akses">
-                        Settings component
+                    <TabsContent value="foto">
+                      Coming Soon
                     </TabsContent>
                 </Tabs>
 
