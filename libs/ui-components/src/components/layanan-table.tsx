@@ -51,7 +51,7 @@ export const TableLayanan: React.FC<DataTableProps> = ({ data, columns, currentP
             <TableHeader>
                 <TableRow>
                     {columns.map((header) => (
-                        <TableHead key={header.key} className={`${header.key === "menu" && "w-[100px]"} bg-neutral-300/30 dark:bg-neutral-500/30`}>
+                        <TableHead key={header.key} className={`${header.key === "menu" && "w-[100px]"} truncate`}>
                             {header.label}
                         </TableHead>
                     ))}
@@ -59,10 +59,6 @@ export const TableLayanan: React.FC<DataTableProps> = ({ data, columns, currentP
             </TableHeader>
             <TableBody>
                 {data.map((layanan, rowIndex) => {
-                    const isGeneral = layanan.category === "GENERAL";
-                    const otherColor = "bg-neutral-300/50 dark:bg-neutral-500/50 text-black dark:text-white"; // Warna khusus untuk kategori GENERAL
-                    const generalColor = "bg-mainColor/50 dark:bg-mainColor/50 text-black dark:text-white"; // Warna khusus untuk kategori GENERAL
-
                     return (
                         <TableRow key={layanan.id} className={rowIndex % 2 === 0 ? "" : "bg-neutral-300/20 dark:bg-neutral-500/20"}>
                             {columns.map((header) => (
@@ -129,42 +125,21 @@ export const TableLayanan: React.FC<DataTableProps> = ({ data, columns, currentP
                                                 </DialogContent>
                                             </Dialog>
                                         </div>
-                                    ) : header.key === "category" ? (
-                                        <p className={`badge rounded-md border-0 ${isGeneral ? generalColor : otherColor}`}>
-                                            {catLayananMapping[layanan.category] || layanan.category}
-                                        </p>
-                                    ) : header.key === "unit" ? (
-                                        <p
-                                            className={`badge rounded-md border-0 ${
-                                                layanan.unit === "HOUR"
-                                                    ? "bg-yellow-200 text-black dark:bg-yellow-600 dark:text-white"
-                                                    : layanan.unit === "PCS"
-                                                    ? "bg-purple-200 text-black dark:bg-purple-600 dark:text-white"
-                                                    : layanan.unit === "SEATER"
-                                                    ? "bg-teal-200 text-black dark:bg-teal-600 dark:text-white"
-                                                    : "bg-blue-200 text-black dark:bg-blue-600 dark:text-white"
-                                            }`}
-                                        >
-                                            {unitLayananMapping[layanan.unit] || layanan.unit}
-                                        </p>
                                     ) : header.key === "status" ? (
                                         <p className={`badge dark:bg-opacity-70 rounded-md !font-medium border-0 ${layanan.status ? "bg-green-200 text-green-900 dark:bg-green-500 dark:text-green-100" : "bg-red-200 text-red-900 dark:bg-red-500 dark:text-red-100"}`}>
+                                            <span className={`mr-2 ${layanan.status ? "bg-green-500" : "bg-red-500"} rounded-full w-[6px] h-[6px]`}></span>
                                             {layanan.status ? "Aktif" : "Tidak Aktif"}
                                         </p>
-                                    ) : header.key === "vacuumPrice" || header.key === "cleanPrice" || header.key === "generalPrice" ? (
+                                    ) : header.key === "vacuumPrice" || header.key === "cleanPrice" ? (
                                         layanan[header.key as keyof Service] === 0 ? (
-                                            <p className="badge rounded-md border-0   bg-neutral-300/20 dark:bg-neutral-500/20 text-neutral-500 dark:text-neutral-500">
-                                                {/* {formatRupiah(layanan[header.key as keyof Service] as number)} */}
+                                            <p >
+                                                {formatRupiah(layanan[header.key as keyof Service] as number)}
                                             </p>
                                         ) : (
-                                            <p className={`badge rounded-md border-0 ${isGeneral && header.key === "generalPrice" ? generalColor : otherColor}`}>
-                                                {/* {formatRupiah(layanan[header.key as keyof Service] as number)} */}
+                                            <p >
+                                                {formatRupiah(layanan[header.key as keyof Service] as number)}
                                             </p>
                                         )
-                                    ) : header.key === "category" ? (
-                                        <p className={`badge rounded-md border-0 ${isGeneral ? generalColor : otherColor}`}>
-                                            {layanan.category}
-                                        </p>
                                     ) : header.key === "name" ? (
                                         <div className="flex items-center">
                                             <span className={`mr-2 ${layanan.status ? "bg-green-500" : "bg-red-500"} rounded-full w-[6px] h-[6px]`}></span>

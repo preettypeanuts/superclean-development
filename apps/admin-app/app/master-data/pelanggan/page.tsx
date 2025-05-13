@@ -155,7 +155,6 @@ export default function PelangganPage() {
             <Link href="pelanggan/baru">
               <Button
                 icon={<LuPlus size={16} />}
-                className="pl-2 pr-4"
                 iconPosition="left"
                 variant="default"
               >

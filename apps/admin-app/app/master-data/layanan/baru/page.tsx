@@ -1,7 +1,6 @@
 "use client";
 import { useState } from "react";
 import { Wrapper } from "@shared/components/Wrapper";
-import { Header } from "@shared/components/Header";
 import { Input } from "libs/ui-components/src/components/ui/input";
 import { Label } from "libs/ui-components/src/components/ui/label";
 import { Button } from "libs/ui-components/src/components/ui/button";
@@ -21,6 +20,7 @@ import { api } from "libs/utils/apiClient";
 import { useRouter } from "next/navigation";
 import { useToast } from "libs/ui-components/src/hooks/use-toast";
 import { Checkbox } from "libs/ui-components/src/components/ui/checkbox";
+import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
 
 export default function NewLayanan() {
   const { toast } = useToast();
@@ -32,10 +32,8 @@ export default function NewLayanan() {
     name: "",
     category: "",
     unit: "",
-    isGeneral: 0,
     vacuumPrice: 0,
     cleanPrice: 0,
-    generalPrice: 0,
     status: 1,
   });
 
@@ -43,13 +41,12 @@ export default function NewLayanan() {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
-  const handleSelectChange = (id: string, value: string) => {
+  const handleSelectChange = (id: string, value: string | number) => {
     if (id === "category") {
       const isGeneral = value === "GENERAL" ? 1 : 0;
       setFormData({
         ...formData,
-        category: value,
-        isGeneral,
+        category: String(value),
         vacuumPrice: isGeneral ? 0 : formData.vacuumPrice,
         cleanPrice: isGeneral ? 0 : formData.cleanPrice,
       });
@@ -66,10 +63,8 @@ export default function NewLayanan() {
       name: formData.name,
       category: formData.category,
       unit: formData.unit,
-      isGeneral: formData.isGeneral,
       vacuumPrice: Number(formData.vacuumPrice),
       cleanPrice: Number(formData.cleanPrice),
-      generalPrice: Number(formData.generalPrice),
       status: Number(formData.status),
     };
 
@@ -95,159 +90,152 @@ export default function NewLayanan() {
 
 
   return (
-    <Wrapper>
-      <Header label="Tambah Layanan Baru" />
-      <form className="space-y-4" onSubmit={handleSubmit}>
-        <div className="flex items-center space-x-4">
-          <Label htmlFor="code" className="w-1/4 font-semibold">
-            Kode Layanan
-          </Label>
-          <Input
-            placeholder="Masukkan kode layanan"
-            id="code"
-            value={formData.code}
-            onChange={handleChange}
-          />
-        </div>
-        <div className="flex items-center space-x-4">
-          <Label htmlFor="name" className="w-1/4 font-semibold">
-            Nama Layanan
-          </Label>
-          <Input
-            placeholder="Masukkan nama layanan"
-            id="name"
-            value={formData.name}
-            onChange={handleChange}
-          />
-        </div>
-        <div className="flex items-center space-x-4">
-          <Label htmlFor="category" className="w-1/4">
-            Kategori
-          </Label>
-          <Select
-            onValueChange={(value) => handleSelectChange("category", value)}
-            value={formData.category}
-            disabled={loadingParams}
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Pilih kategori layanan" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>Kategori</SelectLabel>
-                {loadingParams ? (
-                  <SelectItem value="loading" disabled>
-                    Loading...
-                  </SelectItem>
-                ) : (
-                  Object.keys(catLayananMapping).map((key) => (
-                    <SelectItem key={key} value={key}>
-                      {catLayananMapping[key]}
-                    </SelectItem>
-                  ))
-                )}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="flex items-center space-x-4">
-          <Label htmlFor="unit" className="w-1/4">
-            Satuan
-          </Label>
-          <Select
-            onValueChange={(value) => handleSelectChange("unit", value)}
-            value={formData.unit}
-            disabled={loadingParams}
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Pilih satuan layanan" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>Satuan</SelectLabel>
-                {loadingParams ? (
-                  <SelectItem value="loading" disabled>
-                    Loading...
-                  </SelectItem>
-                ) : (
-                  Object.keys(unitLayananMapping).map((key) => (
-                    <SelectItem key={key} value={key}>
-                      {unitLayananMapping[key]}
-                    </SelectItem>
-                  ))
-                )}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-
-        {/* Hanya tampilkan harga Vacuum dan Clean jika kategori bukan "GENERAL" & "BLOWER" */}
-        {(formData.category !== "GENERAL" && formData.category !== "BLOWER") ? (
-          <>
-            <div className="flex items-center space-x-4">
-              <Label htmlFor="vacuumPrice" className="w-1/4 font-semibold">
-                Harga Vacuum
-              </Label>
-              <Input
-                type="number"
-                id="vacuumPrice"
-                value={formData.vacuumPrice}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="flex items-center space-x-4">
-              <Label htmlFor="cleanPrice" className="w-1/4 font-semibold">
-                Harga Cuci
-              </Label>
-              <Input
-                type="number"
-                id="cleanPrice"
-                value={formData.cleanPrice}
-                onChange={handleChange}
-              />
-            </div>
-          </>
-        ) : (
+    <>
+      <Breadcrumbs label="Tambah Layanan Baru" />
+      <Wrapper>
+        <form className="space-y-4" onSubmit={handleSubmit}>
           <div className="flex items-center space-x-4">
-            <Label htmlFor="generalPrice" className="w-1/4 font-semibold">
-              Harga
+            <Label htmlFor="code" className="w-1/4 font-semibold">
+              Kode Layanan
             </Label>
             <Input
-              type="number"
-              id="generalPrice"
-              value={formData.generalPrice}
+              placeholder="Masukkan kode layanan"
+              id="code"
+              value={formData.code}
               onChange={handleChange}
             />
           </div>
-        )}
-
-        <div className="flex items-center space-x-4">
-          <Label className="w-[20%] font-semibold">Status</Label>
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              disabled
-              checked={formData.status === 1}
-              onCheckedChange={(checked) =>
-                handleSelectChange("status", checked ? "1" : "0")
-              }
+          <div className="flex items-center space-x-4">
+            <Label htmlFor="name" className="w-1/4 font-semibold">
+              Nama Layanan
+            </Label>
+            <Input
+              placeholder="Masukkan nama layanan"
+              id="name"
+              value={formData.name}
+              onChange={handleChange}
             />
-            <Label>{formData.status === 1 ? "Aktif" : "Tidak Aktif"}</Label>
           </div>
-        </div>
-        <div className="flex items-center space-x-4">
-          <div className="w-1/4"></div>
-          <div className="space-x-2 flex w-full">
-            <Button type="button" variant="secondary" onClick={() => router.back()}>
-              <TbArrowBack />
+          <div className="flex items-center space-x-4">
+            <Label htmlFor="category" className="w-1/4">
+              Kategori
+            </Label>
+            <Select
+              onValueChange={(value) => handleSelectChange("category", value)}
+              value={formData.category}
+              disabled={loadingParams}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Pilih kategori layanan" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Kategori</SelectLabel>
+                  {loadingParams ? (
+                    <SelectItem value="loading" disabled>
+                      Loading...
+                    </SelectItem>
+                  ) : (
+                    Object.keys(catLayananMapping).map((key) => (
+                      <SelectItem key={key} value={key}>
+                        {catLayananMapping[key]}
+                      </SelectItem>
+                    ))
+                  )}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex items-center space-x-4">
+            <Label htmlFor="unit" className="w-1/4">
+              Satuan
+            </Label>
+            <Select
+              onValueChange={(value) => handleSelectChange("unit", value)}
+              value={formData.unit}
+              disabled={loadingParams}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Pilih satuan layanan" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Satuan</SelectLabel>
+                  {loadingParams ? (
+                    <SelectItem value="loading" disabled>
+                      Loading...
+                    </SelectItem>
+                  ) : (
+                    Object.keys(unitLayananMapping).map((key) => (
+                      <SelectItem key={key} value={key}>
+                        {unitLayananMapping[key]}
+                      </SelectItem>
+                    ))
+                  )}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
+
+
+
+          <div className="flex items-center space-x-4">
+            <Label htmlFor="vacuumPrice" className="w-1/4 font-semibold">
+              Harga Vacuum
+            </Label>
+            <Input
+              type="number"
+              id="vacuumPrice"
+              disabled={formData.category === "GENERAL" || formData.category === "BLOWER"}
+              value={formData.vacuumPrice}
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className="flex items-center space-x-4">
+            <Label htmlFor="cleanPrice" className="w-1/4 font-semibold">
+              Harga Cuci
+            </Label>
+            <Input
+              type="number"
+              id="cleanPrice"
+              value={formData.cleanPrice}
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className="flex items-center space-x-4">
+            <Label className="w-[20%] font-semibold">Status</Label>
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                checked={formData.status === 1}
+                onCheckedChange={(checked) => handleSelectChange("status", checked ? 1 : 0)}
+              />
+              <Label>{formData.status === 1 ? "Aktif" : "Tidak Aktif"}</Label>
+            </div>
+          </div>
+          <div className="space-x-2 flex justify-end w-full">
+            <Button type="button" variant="outline2" onClick={() => router.back()}>
               Kembali
             </Button>
-            <Button type="submit" variant="submit">
-              <LuSave />
+            <Button
+              type="submit"
+              variant="main"
+              className="disabled"
+              disabled={
+              !formData.code ||
+              !formData.name ||
+              !formData.category ||
+              !formData.unit ||
+              (!formData.vacuumPrice && formData.category !== "GENERAL") ||
+              !formData.cleanPrice
+              }
+            >
               Simpan
             </Button>
           </div>
-        </div>
-      </form>
-    </Wrapper>
+        </form>
+      </Wrapper>
+    </>
   );
 }

@@ -3,7 +3,6 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { apiClient } from "libs/utils/apiClient";
 import { TableLayanan } from "libs/ui-components/src/components/layanan-table";
-import { Header } from "@shared/components/Header";
 import { Wrapper } from "libs/shared/src/components/Wrapper";
 import { Input } from "libs/ui-components/src/components/ui/input";
 import { Button } from "libs/ui-components/src/components/ui/button";
@@ -15,16 +14,15 @@ import { SelectData } from "libs/ui-components/src/components/select-data";
 import { PaginationNumber } from "libs/ui-components/src/components/pagination-number";
 import { Label } from "@ui-components/components/ui/label";
 import { IoClose } from "react-icons/io5";
+import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
 
 export const DataHeaderLayanan = [
   { key: "id", label: "#" },
   { key: "code", label: "Kode Layanan" },
   { key: "name", label: "Nama Layanan" },
   { key: "category", label: "Kategori" },
-  { key: "vacuumPrice", label: "Harga Vacuum" },
+  { key: "vacuumPrice", label: "Harga Vakum" },
   { key: "cleanPrice", label: "Harga Cuci" },
-  { key: "generalPrice", label: "Harga General" },
-  { key: "unit", label: "Satuan" },
   { key: "status", label: "Status" },
   { key: "menu", label: "Aksi" },
 ];
@@ -94,94 +92,105 @@ export default function LayananPage() {
   };
 
   return (
-    <Wrapper>
-      <Header label="Daftar Layanan" count={totalData} />
-      <div className="flex-grow">
-        <div className="flex items-center justify-between mb-4 gap-2">
-          <div className="flex items-center gap-2">
-            <div className="relative">
-              <Input
-                type="text"
-                placeholder="Cari layanan..."
-                value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    handleSearch();
-                  }
-                }}
-                className="w-[30lvw]"
-                icon={<Search sixze={16} />}
-              />
-              {searchInput && (
-                <button
-                  type="button"
-                  onClick={resetSearch}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-700"
-                >
-                  <IoClose size={16} />
-                </button>
-              )}
-            </div>
+    <>
+      <Breadcrumbs label="Daftar Layanan" count={totalData} />
+      <Wrapper>
+        <div className="flex-grow">
+          <div className="flex items-center justify-between mb-4 gap-2">
+            <div className="flex items-center gap-2">
+              <div className="relative">
+                <Input
+                  type="text"
+                  placeholder="Cari Kode Layanan, Nama Layanan"
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      handleSearch();
+                    }
+                  }}
+                  className="w-[30lvw]"
+                  icon={<Search size={16} />}
+                />
+                {searchInput && (
+                  <button
+                    type="button"
+                    onClick={resetSearch}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-700"
+                  >
+                    <IoClose size={16} />
+                  </button>
+                )}
+              </div>
 
-            <FilterCategoryLayanan
-            catFilter={catFilter}
-            setcatFilter={setCatFilter}
-            />
-            <FilterStatus
-              placeholder="Status"
-              value={statusFilter}
-              onChange={setStatusFilter}
-            />
-            <Button variant="secondary" onClick={handleSearch}>Cari</Button>
+              <FilterCategoryLayanan
+                catFilter={catFilter}
+                setcatFilter={setCatFilter}
+              />
+              <FilterStatus
+                placeholder="Status"
+                value={statusFilter}
+                onChange={setStatusFilter}
+              />
+              <Button
+                variant="main"
+                onClick={handleSearch}
+              >
+                Cari
+              </Button>
+            </div>
+            <Link href="layanan/baru">
+              <Button
+                icon={<LuPlus size={16} />}
+                iconPosition="left"
+                variant="default"
+              >
+                Tambah
+              </Button>
+            </Link>
           </div>
-          <Link href="layanan/baru">
-            <Button icon={<LuPlus size={16} />} className="pl-2 pr-4" iconPosition="left" variant="default" type="submit">
-              Tambah
-            </Button>
-          </Link>
+
+          {loading ? (
+            <p className="text-center py-4">Memuat data...</p>
+          ) : dataLayanan.length === 0 ? (
+            searchQuery ? (
+              <p className="text-center py-4">
+                Layanan dengan nama <span className="font-bold">{searchQuery}</span> tidak ditemukan.
+              </p>
+            ) : (
+              <p className="text-center py-4">Tidak ada data layanan yang tersedia.</p>
+            )
+          ) : (
+            <TableLayanan
+              data={dataLayanan}
+              columns={DataHeaderLayanan}
+              key={`${currentPage}-${limit}`}
+              currentPage={currentPage}
+              limit={limit}
+              fetchData={fetchLayanan}
+            />
+          )}
         </div>
 
-        {loading ? (
-          <p className="text-center py-4">Memuat data...</p>
-        ) : dataLayanan.length === 0 ? (
-          searchQuery ? (
-            <p className="text-center py-4">
-              Layanan dengan nama <span className="font-bold">{searchQuery}</span> tidak ditemukan.
-            </p>
+        <div className="flex items-center justify-between mt-4">
+          {totalData > 10 ? (
+            <SelectData
+              label="Data Per Halaman"
+              totalData={totalData}
+              currentLimit={limit}
+              onLimitChange={(limit: string) => setLimit(Number(limit))}
+            />
           ) : (
-            <p className="text-center py-4">Tidak ada data layanan yang tersedia.</p>
-          )
-        ) : (
-          <TableLayanan
-            data={dataLayanan}
-            columns={DataHeaderLayanan}
-            key={`${currentPage}-${limit}`}
+            <Label className="text-xs">Semua data telah ditampilkan ({totalData})</Label>
+          )}
+
+          <PaginationNumber
+            totalPages={totalPages}
             currentPage={currentPage}
-            limit={limit}
-            fetchData={fetchLayanan}
+            onPageChange={(page) => setCurrentPage(page)}
           />
-        )}
-      </div>
-
-      <div className="flex items-center justify-between mt-4">
-        {totalData > 10 ? (
-          <SelectData
-            label="Data Per Halaman"
-            totalData={totalData}
-            currentLimit={limit}
-            onLimitChange={(limit: string) => setLimit(Number(limit))}
-          />
-        ) : (
-          <Label className="text-xs">Semua data telah ditampilkan ({totalData})</Label>
-        )}
-
-        <PaginationNumber
-          totalPages={totalPages}
-          currentPage={currentPage}
-          onPageChange={(page) => setCurrentPage(page)}
-        />
-      </div>
-    </Wrapper>
+        </div>
+      </Wrapper>
+    </>
   );
 }
