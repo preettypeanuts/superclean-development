@@ -198,7 +198,7 @@ export default function TransactionDetail() {
                                         <div className="w-full flex items-center focus-within:ring-1 focus-within:ring-ring rounded-lg">
                                             <Input value={transaction.noWhatsapp} className="rounded-r-none border-r-0 focus-visible:ring-0" />
                                             <Button
-                                            className="rounded-l-none"
+                                                className="rounded-l-none"
                                                 variant={"main"}
                                             >
                                                 Cari
@@ -434,10 +434,10 @@ export default function TransactionDetail() {
                         </div>
                     </TabsContent>
                     <TabsContent value="riwayat">
-                      Coming Soon
+                        Coming Soon
                     </TabsContent>
                     <TabsContent value="foto">
-                      Coming Soon
+                        Coming Soon
                     </TabsContent>
                 </Tabs>
 

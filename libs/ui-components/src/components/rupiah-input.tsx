@@ -39,7 +39,7 @@ const RupiahInput = React.forwardRef<HTMLInputElement, RupiahInputProps>(
         value={displayValue}
         onChange={handleChange}
         icon={icon}
-        className={cn(className)}
+        className={cn("text-right", className)}
         {...props}
       />
     );

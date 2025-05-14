@@ -12,7 +12,7 @@ const allStaff = ["Dani", "Ahmad", "Dewi", "Budi", "Sari"]
 
 export default function MultiSelect() {
     const [open, setOpen] = useState(false)
-    const [selected, setSelected] = useState(["Dani", "Ahmad", "Dewi"])
+    const [selected, setSelected] = useState([])
 
     const toggleSelect = (name: string) => {
         setSelected((prev) =>
