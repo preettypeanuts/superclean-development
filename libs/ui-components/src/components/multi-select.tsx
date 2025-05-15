@@ -1,18 +1,18 @@
 "use client"
 import { useState } from "react"
-import { ArrowDown, Check } from "lucide-react"
+import { Check } from "lucide-react"
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover"
 import { Button } from "./ui/button"
 import { Badge } from "./ui/badge"
 import { Command, CommandItem, CommandList } from "./ui/command"
 import { CommandInput } from "cmdk"
-import { IoIosArrowDown, IoMdArrowDown } from "react-icons/io"
+import { IoIosArrowDown } from "react-icons/io"
 
 const allStaff = ["Dani", "Ahmad", "Dewi", "Budi", "Sari"]
 
 export default function MultiSelect() {
     const [open, setOpen] = useState(false)
-    const [selected, setSelected] = useState([])
+    const [selected, setSelected] = useState<string[]>([])
 
     const toggleSelect = (name: string) => {
         setSelected((prev) =>
