@@ -1,12 +1,9 @@
 "use client";
 import { useState } from "react";
 import { Wrapper } from "@shared/components/Wrapper";
-import { Header } from "@shared/components/Header";
 import { Input } from "libs/ui-components/src/components/ui/input";
 import { Label } from "libs/ui-components/src/components/ui/label";
 import { Button } from "libs/ui-components/src/components/ui/button";
-import { LuSave } from "react-icons/lu";
-import { TbArrowBack } from "react-icons/tb";
 import { useParameterStore } from "libs/utils/useParameterStore";
 import { api } from "libs/utils/apiClient";
 import { useRouter } from "next/navigation";
@@ -21,8 +18,7 @@ import {
     SelectGroup,
     SelectLabel
 } from "libs/ui-components/src/components/ui/select";
-import { formatDate, formatDateInput } from "libs/utils/formatDate";
-import { DatePicker } from "@ui-components/components/date-picker";
+import { formatDateInput } from "libs/utils/formatDate";
 import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
 
 export default function NewKaryawan() {

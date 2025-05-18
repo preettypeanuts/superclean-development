@@ -22,7 +22,8 @@ import { RiLogoutCircleLine, RiUserSettingsFill } from "react-icons/ri";
 // @ts-ignore
 import SCLogo from "libs/assets/SC_Primary.png"
 // @ts-ignore
-import SCLogoOnly from "libs/assets/SC_LogoOnly.png"
+import SCLogoOnly from "libs/assets/SC_LogoOnlyBig.png"
+
 import Image from "next/image";
 
 export const Sidebar = () => {
@@ -102,13 +103,12 @@ export const Sidebar = () => {
                             />
                         </div>
                         <div className={`${!isExpanded ? "opacity-100 w-5 h-5 flex items-center justify-center" : "opacity-0 hidden"} max-w-32`}>
-
                             <Image
                                 width={100}
                                 height={100}
                                 src={SCLogoOnly}
                                 alt="LogoSC"
-                                className="w-12 h-12 object-cover saturate-0 brightness-0 dark:invert"
+                                className="w-6 h-6 object-cover saturate-0 brightness-0 dark:invert"
                             />
                         </div>
                     </div>

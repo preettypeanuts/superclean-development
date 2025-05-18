@@ -5,6 +5,8 @@ import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 import { useState } from "react";
 import { useRouter } from "next/navigation"; // Gunakan next/navigation untuk router di client
 import { refetchUserProfile } from "../../../../utils/useUserProfile";
+import SCLogoOnly from "libs/assets/SC_LogoOnlyBig.png"
+
 interface AuthLayoutProps {
     headline: string,
     tagline: string,
@@ -84,10 +86,14 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({ headline, tagline, bgIma
                     <div className="flex flex-col justify-center w-full h-full">
                         {/* Header */}
                         <div className="md:pb-5 flex flex-col items-center text-center justify-center">
-                            <p className="flex gap-2 items-center text-mainColor font-medium mb-10">
-                                <SiCcleaner className="text-5xl" />
-                            </p>
-                            <h1 className="text-2xl md:text-3xl font-medium text-mainColor dark:brightness-100">
+                            <Image
+                                width={100}
+                                height={100}
+                                src={SCLogoOnly}
+                                alt="LogoSC"
+                                className="w-[80px] h-[80px] object-cover p-1 bg-white/70 dark:bg-black/70 rounded-lg mb-5"
+                            />
+                            <h1 className="text-2xl md:text-3xl font-bold text-mainColor brightness-105 dark:brightness-100">
                                 {headline}
                             </h1>
                             <p className="text-sm">{tagline}</p>
