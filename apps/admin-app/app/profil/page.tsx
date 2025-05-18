@@ -10,9 +10,8 @@ import { Input } from "@ui-components/components/ui/input";
 import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@ui-components/components/ui/tabs";
 import { useRouter } from "next/navigation";
-import { formatDateInput } from "libs/utils/formatDate";
+import { formatDateInput } from '@shared/utils/formatDate';
 import { ConfirmSaveDialog } from "@ui-components/components/save-dialog";
-
 interface UserData {
     username: string;
     fullname: string;

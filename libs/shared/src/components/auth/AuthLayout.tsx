@@ -1,11 +1,10 @@
 "use client";
 import Image from "next/image";
-import { SiCcleaner } from "react-icons/si";
 import { IoMdEye, IoMdEyeOff } from "react-icons/io";
 import { useState } from "react";
 import { useRouter } from "next/navigation"; // Gunakan next/navigation untuk router di client
 import { refetchUserProfile } from "../../../../utils/useUserProfile";
-import SCLogoOnly from "libs/assets/SC_LogoOnlyBig.png"
+
 
 interface AuthLayoutProps {
     headline: string,
@@ -89,7 +88,7 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({ headline, tagline, bgIma
                             <Image
                                 width={100}
                                 height={100}
-                                src={SCLogoOnly}
+                                src={"/assets/SC_LogoOnlyBig.png"}
                                 alt="LogoSC"
                                 className="w-[80px] h-[80px] object-cover p-1 bg-white/70 dark:bg-black/70 rounded-lg mb-5"
                             />

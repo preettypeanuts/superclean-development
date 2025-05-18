@@ -20,6 +20,7 @@
       "@superclean-workspace/shared/styles": ["libs/shared/src/styles/global.css"],
       "@superclean-workspace/ui-components": ["libs/ui-components/src/index.ts"],
       "@shared/*": ["libs/shared/src/*"],
+      "@shared/utils/*": ["libs/utils/*"],
       "@shared/data": ["libs/shared/src/data/index.ts"],
       "@ui-components/*": ["libs/ui-components/src/*"],
       "@superclean-workspace/ui-components/*": ["libs/ui-components/src/*"],

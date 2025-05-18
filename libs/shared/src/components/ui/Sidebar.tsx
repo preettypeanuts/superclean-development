@@ -17,12 +17,7 @@ import {
     DropdownMenuItem,
     DropdownMenuSeparator,
 } from "../../../../ui-components/src/components/ui/dropdown-menu";
-import { RiLogoutCircleLine, RiUserSettingsFill } from "react-icons/ri";
-
-// @ts-ignore
-import SCLogo from "libs/assets/SC_Primary.png"
-// @ts-ignore
-import SCLogoOnly from "libs/assets/SC_LogoOnlyBig.png"
+import { RiLogoutCircleFill, RiLogoutCircleLine, RiUserFill, RiUserSettingsFill } from "react-icons/ri";
 
 import Image from "next/image";
 
@@ -97,7 +92,7 @@ export const Sidebar = () => {
                             <Image
                                 width={100}
                                 height={100}
-                                src={SCLogo}
+                                src={"/assets/SC_Primary.png"}
                                 alt="LogoSC"
                                 className="w-[250px] h-10 object-cover saturate-0 brightness-0 dark:invert"
                             />
@@ -106,7 +101,7 @@ export const Sidebar = () => {
                             <Image
                                 width={100}
                                 height={100}
-                                src={SCLogoOnly}
+                                src={"/assets/SC_LogoOnlyBig.png"}
                                 alt="LogoSC"
                                 className="w-6 h-6 object-cover saturate-0 brightness-0 dark:invert"
                             />
@@ -118,7 +113,7 @@ export const Sidebar = () => {
                         <TbLayoutSidebarRightExpandFilled className="text-xl" />
                     </div>
                 </div>
-                <div className={`absolute w-full ${!isExpanded && "hidden"} h-[10%] top-0 z-[555] rounded-t-xl bg-gradient-to-b from-mainColor/30 dark:from-mainColor/10 via-mainColor/30 dark:via-mainColor/10 to-transparent gradient-blur-to-b`} />
+                <div className={`absolute w-full ${!isExpanded && "hidden"} h-[10%] top-0 z-[555] rounded-t-xl bg-gradient-to-b from-mainColor/30 dark:from-mainColor/10 via-mainColor/15 dark:via-mainColor/10 to-transparent gradient-blur-to-b`} />
 
                 {/* Expand Button on Minimize */}
                 <div className={`${!isExpanded ? "pt-14" : "pt-14 pb-28 overflow-y-scroll"} max-h-[100vh] mx-2 my-2 no-scrollbar overflow-visible`}>
@@ -259,7 +254,7 @@ export const Sidebar = () => {
                             <DropdownMenuLabel>Akun Saya</DropdownMenuLabel>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem onClick={() => router.push("/profil")}>
-                                <RiUserSettingsFill />
+                                <RiUserFill />
                                 Profil
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
@@ -270,7 +265,7 @@ export const Sidebar = () => {
                                     router.push("/login");
                                 }}
                             >
-                                <RiLogoutCircleLine />
+                                <RiLogoutCircleFill />
                                 Keluar
                             </DropdownMenuItem>
                         </DropdownMenuContent>

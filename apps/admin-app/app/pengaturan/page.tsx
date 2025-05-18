@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 import { ReactNode } from "react";
 
 const Title = ({ children }: { children: ReactNode }) => (
-  <p className="px-2 py-2 bg-mainColor/10 rounded-md font-semibold text-mainDark mb-3">
+  <p className="px-2 py-2 bg-mainColor/10 rounded-md font-semibold text-mainDark dark:text-mainColor mb-3">
     {children}
   </p>
 )
