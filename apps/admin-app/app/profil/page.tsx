@@ -1,37 +1,46 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import { api, apiClient } from "../../../../libs/utils/apiClient";
 import { useToast } from "@ui-components/hooks/use-toast";
 import { useParameterStore } from "../../../../libs/utils/useParameterStore";
 import { Button } from "@ui-components/components/ui/button";
 import { Wrapper } from "@shared/components/Wrapper";
-import { Header } from "@shared/components/Header";
 import { Label } from "@ui-components/components/ui/label";
 import { Input } from "@ui-components/components/ui/input";
-import { LuSave } from "react-icons/lu";
+import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@ui-components/components/ui/tabs";
+import { useRouter } from "next/navigation";
+import { formatDateInput } from "libs/utils/formatDate";
+import { ConfirmSaveDialog } from "@ui-components/components/save-dialog";
 
 interface UserData {
     username: string;
     fullname: string;
     noWhatsapp: string;
+    birthDate: string;
     branchId: string;
 }
 
 export default function ProfilPage() {
     const { toast } = useToast();
+    const router = useRouter();
+    const { branchMapping } = useParameterStore();
 
     const [userData, setUserData] = useState<UserData | null>(null);
     const [formData, setFormData] = useState({
         fullname: "",
         noWhatsapp: "",
+        birthDate: "",
     });
     const [passwordData, setPasswordData] = useState({
         password: "",
         retypePassword: "",
     });
+
     const [editingPassword, setEditingPassword] = useState(false);
-    const { branchMapping } = useParameterStore();
+    const [showConfirmProfile, setShowConfirmProfile] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [updating, setUpdating] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -42,172 +51,172 @@ export default function ProfilPage() {
                 setFormData({
                     fullname: data.fullname || "",
                     noWhatsapp: data.noWhatsapp || "",
+                    birthDate: data.birthDate || "",
                 });
             }
         };
         fetchData();
     }, []);
 
-    const handleProfileSave = async () => {
+    const submitProfileUpdate = async () => {
+        setUpdating(true);
         try {
-            await api.put("/profile", {
-                fullname: formData.fullname,
-                noWhatsapp: formData.noWhatsapp,
-            });
-            toast({
-                title: "Berhasil!",
-                description: "Profil berhasil diperbarui.",
-            });
-            window.location.reload(); 
+            await api.put("/profile", formData);
+            toast({ title: "Berhasil!", description: "Profil berhasil diperbarui." });
+            setShowConfirmProfile(false);
+            window.location.reload();
         } catch (error) {
-            console.error("Gagal memperbarui profil:", error);
             toast({
                 title: "Error!",
-                description: `Gagal memperbarui profil. Error: ${
-                    error instanceof Error ? error.message : String(error)
-                }`,
+                description: `Gagal memperbarui profil. Error: ${error instanceof Error ? error.message : String(error)}`,
                 variant: "destructive",
             });
+        } finally {
+            setUpdating(false);
         }
     };
 
-    const handlePasswordSave = async () => {
+    const submitPasswordUpdate = async () => {
         if (passwordData.password !== passwordData.retypePassword) {
             toast({
                 title: "Error!",
                 description: "Kata sandi tidak sama.",
                 variant: "destructive",
             });
+            setShowConfirmPassword(false);
             return;
         }
 
-        const confirm = window.confirm("Apakah yakin mengubah kata sandi?");
-        if (!confirm) return;
-
+        setUpdating(true);
         try {
-            await api.post("/profile/change-password", {
-                password: passwordData.password,
-                retypePassword: passwordData.retypePassword,
-            });
-            toast({
-                title: "Berhasil!",
-                description: "Kata sandi berhasil diubah.",
-            });
+            await api.post("/profile/change-password", passwordData);
+            toast({ title: "Berhasil!", description: "Kata sandi berhasil diubah." });
             setPasswordData({ password: "", retypePassword: "" });
             setEditingPassword(false);
-            window.location.reload(); 
+            setShowConfirmPassword(false);
+            window.location.reload();
         } catch (error) {
-            console.error("Gagal mengubah kata sandi:", error);
             toast({
                 title: "Error!",
                 description: "Gagal mengubah kata sandi. Coba lagi nanti.",
                 variant: "destructive",
             });
+        } finally {
+            setUpdating(false);
         }
     };
 
     if (!userData) return <p>Loading...</p>;
 
     return (
-        <Wrapper>
-            <Header label="Profil Pengguna" desc="Informasi pengguna yang sedang login." />
-            <div className="space-y-4">
-                <div className="flex items-center space-x-4">
-                    <Label htmlFor="username" className="w-1/4">Nama Pengguna</Label>
-                    <Input
-                        id="username"
-                        value={userData.username}
-                        readOnly
-                        disabled
-                    />
-                </div>
+        <>
+            <Breadcrumbs label="Profil Pengguna" />
+            <Wrapper>
+                <Tabs defaultValue="profil" className="-mt-2">
+                    <TabsList>
+                        <TabsTrigger value="profil">Profil</TabsTrigger>
+                        <TabsTrigger value="password">Ubah Kata Sandi</TabsTrigger>
+                    </TabsList>
+                    <div className="w-full border-t my-3 -mx-10" />
 
-                <div className="flex items-center space-x-4">
-                    <Label htmlFor="fullname" className="w-1/4">Nama Lengkap</Label>
-                    <Input
-                        id="fullname"
-                        value={formData.fullname}
-                        onChange={(e) => setFormData({ ...formData, fullname: e.target.value })}
-                    />
-                </div>
+                    <TabsContent value="profil">
+                        <div className="space-y-4">
+                            <FormRow label="Nama Pengguna">
+                                <Input value={userData.username} readOnly disabled />
+                            </FormRow>
 
-                <div className="flex items-center space-x-4">
-                    <Label htmlFor="noWhatsapp" className="w-1/4">No Whatsapp</Label>
-                    <Input
-                        id="noWhatsapp"
-                        value={formData.noWhatsapp}
-                        onChange={(e) => setFormData({ ...formData, noWhatsapp: e.target.value })}
-                    />
-                </div>
+                            <FormRow label="Nama Lengkap">
+                                <Input
+                                    value={formData.fullname}
+                                    onChange={(e) => setFormData({ ...formData, fullname: e.target.value })}
+                                />
+                            </FormRow>
 
-                <div className="flex items-center space-x-4">
-                    <Label htmlFor="branch" className="w-1/4">Cabang</Label>
-                    <Input
-                        id="branch"
-                        value={branchMapping[userData.branchId] || userData.branchId}
-                        readOnly
-                        disabled
-                    />
-                </div>
+                            <FormRow label="No Whatsapp">
+                                <Input
+                                    value={formData.noWhatsapp}
+                                    onChange={(e) => setFormData({ ...formData, noWhatsapp: e.target.value })}
+                                />
+                            </FormRow>
 
-                <div className="flex items-center space-x-4">
-                    <Label className="w-[20%]"></Label>
-                    <Button variant="submit" onClick={handleProfileSave}>
-                        <LuSave />
-                        Simpan
-                    </Button>
-                </div>
-            </div>
+                            <FormRow label="Tanggal Lahir">
+                                <Input
+                                    type="date"
+                                    value={formatDateInput(formData.birthDate)}
+                                    onChange={(e) => setFormData({ ...formData, birthDate: e.target.value })}
+                                />
+                            </FormRow>
 
-            <div className="w-full border-t my-7"></div>
+                            <FormRow label="Cabang">
+                                <Input value={branchMapping[userData.branchId] || userData.branchId} readOnly disabled />
+                            </FormRow>
 
-            <div className="space-y-4">
-                <h2 className="font-bold text-lg -md">Ubah Kata Sandi</h2>
+                            <div className="flex justify-end mt-6 gap-2">
+                                <Button onClick={() => router.back()} variant="outline2">Kembali</Button>
+                                <Button onClick={() => setShowConfirmProfile(true)} variant="main">
+                                    Simpan Perubahan
+                                </Button>
+                            </div>
+                        </div>
+                    </TabsContent>
 
-                <div className="flex items-center space-x-4">
-                    <Label className="w-1/4">Kata Sandi</Label>
-                    <Input
-                        type="password"
-                        placeholder={!editingPassword ? "********" : "Masukkan kata sandi baru"}
-                        disabled={!editingPassword}
-                        value={passwordData.password}
-                        onChange={(e) =>
-                            setPasswordData({ ...passwordData, password: e.target.value })
-                        }
-                    />
-                </div>
+                    <TabsContent value="password">
+                        <div className="space-y-4">
+                            <FormRow label="Kata Sandi Baru">
+                                <Input
+                                    type="password"
+                                    placeholder={!editingPassword ? "********" : "Masukkan kata sandi baru"}
+                                    value={passwordData.password}
+                                    onChange={(e) => setPasswordData({ ...passwordData, password: e.target.value })}
+                                />
+                            </FormRow>
 
-                <div className="flex items-center space-x-4">
-                    <Label className="w-1/4">Ulangi Kata Sandi</Label>
-                    <Input
-                        type="password"
-                        placeholder={!editingPassword ? "********" : "Ulangi kata sandi baru"}
-                        disabled={!editingPassword}
-                        value={passwordData.retypePassword}
-                        onChange={(e) =>
-                            setPasswordData({
-                                ...passwordData,
-                                retypePassword: e.target.value,
-                            })
-                        }
-                    />
-                </div>
+                            <FormRow label="Ulangi Kata Sandi Baru">
+                                <Input
+                                    type="password"
+                                    placeholder={!editingPassword ? "********" : "Ulangi kata sandi baru"}
+                                    value={passwordData.retypePassword}
+                                    onChange={(e) => setPasswordData({ ...passwordData, retypePassword: e.target.value })}
+                                />
+                            </FormRow>
 
-                <div className="flex items-center space-x-4">
-                    <Label className="w-[20%]"></Label>
-                    <div className="flex items-center gap-2">
-                        <Button onClick={() => setEditingPassword(true)}>Ubah</Button>
-                        <Button
-                            variant="submit"
-                            className={editingPassword ? "opacity-100" : "opacity-0"}
-                            onClick={handlePasswordSave}
-                        >
-                            <LuSave />
-                            Simpan
-                        </Button>
-                    </div>
-                </div>
-            </div>
-        </Wrapper>
+                            <div className="flex justify-end mt-6 gap-2">
+                                <Button onClick={() => router.back()} variant="outline2">Kembali</Button>
+                                <Button onClick={() => setShowConfirmPassword(true)} variant="main">
+                                    Simpan Perubahan
+                                </Button>
+                            </div>
+                        </div>
+                    </TabsContent>
+                </Tabs>
+
+                {/* Dialog Konfirmasi */}
+                <ConfirmSaveDialog
+                    title="Simpan perubahan profil?"
+                    open={showConfirmProfile}
+                    onOpenChange={setShowConfirmProfile}
+                    onConfirm={submitProfileUpdate}
+                    isLoading={updating}
+                />
+
+                <ConfirmSaveDialog
+                    title="Simpan perubahan kata sandi?"
+                    open={showConfirmPassword}
+                    onOpenChange={setShowConfirmPassword}
+                    onConfirm={submitPasswordUpdate}
+                    isLoading={updating}
+                />
+            </Wrapper>
+        </>
+    );
+}
+
+// Komponen baris form reusable
+function FormRow({ label, children }: { label: string; children: React.ReactNode }) {
+    return (
+        <div className="flex items-center space-x-4">
+            <Label className="w-1/4">{label}</Label>
+            {children}
+        </div>
     );
 }
