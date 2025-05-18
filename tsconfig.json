@@ -7,6 +7,7 @@
       ],
       "@superclean-workspace/ui-components/*": ["libs/ui-components/src/*"]
     },
+    
     "jsx": "react-jsx"
   }
 }

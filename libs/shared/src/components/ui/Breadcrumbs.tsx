@@ -2,7 +2,6 @@
 import React from 'react';
 import {
     Breadcrumb,
-    BreadcrumbEllipsis,
     BreadcrumbItem,
     BreadcrumbLink,
     BreadcrumbList,
@@ -10,7 +9,6 @@ import {
     BreadcrumbSeparator,
 } from "../../../../ui-components/src/components/ui/breadcrumb"
 import { usePathname } from 'next/navigation'
-import { TbLayoutDashboardFilled } from 'react-icons/tb';
 import { Input } from '../../../../ui-components/src/components/ui/input';
 import { Search } from 'lucide-react';
 import { Button } from '../../../../ui-components/src/components/ui/button';
@@ -59,7 +57,10 @@ export function Breadcrumbs({ label, desc, count }: HeaderProps) {
                             </BreadcrumbLink>
                         </BreadcrumbItem>
                         {pathSegments
-                            .filter(segment => !/^[a-zA-Z0-9]{10,}$/.test(segment)) // filter ID dulu
+                            .filter(segment =>
+                                !/^[a-zA-Z0-9]{10,}$/.test(segment) && // filter ID
+                                segment !== "TRX-134544" // filter TRX-134544
+                            )
                             .map((segment, index, filteredSegments) => {
                                 const isLast = index === filteredSegments.length - 1;
                                 const originalIndex = pathSegments.findIndex(s => s === segment); // temukan index asli dari segment ini

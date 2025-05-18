@@ -100,7 +100,7 @@ export default function TransactionDetail() {
     useEffect(() => {
         const fetchTransaction = async () => {
             try {
-                const result = await api.get(`/transaction/id/${id}`);
+                const result = await api.get(`/transaction/${id}`);
                 setTransaction(result.data);
 
                 // Sekaligus set default selected

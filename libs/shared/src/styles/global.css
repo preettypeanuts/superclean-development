@@ -8,7 +8,7 @@
 
 .bg-root {
   @apply bg-lightColor dark:bg-darkColor;
-}
+}`
 
 body {
   @apply bg-lightColor dark:bg-darkColor text-neutral-900 dark:text-neutral-100;

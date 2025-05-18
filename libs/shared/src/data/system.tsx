@@ -39,8 +39,9 @@ export const navigationItems = {
                 path: "/laporan",
                 icon: <HiDocumentReport />,
                 subs: [
-                    { name: "pemesanan", path: "/laporan/pemesanan" },
-                    { name: "teknisi", path: "/laporan/teknisi" },
+                    { name: "inquiry transaksi", path: "/laporan/inquiry-transaksi" },
+                    { name: "kinerja karyawan", path: "/laporan/kinerja-karyawan" },
+                    { name: "benefit karyawan", path: "/laporan/benefit-karyawan" },
                 ]
             }
         ]

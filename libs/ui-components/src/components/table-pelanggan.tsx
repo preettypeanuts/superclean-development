@@ -115,7 +115,8 @@ export const TablePelanggan: React.FC<DataTableProps> = ({ data, columns, curren
                                             <IoMdTrash />
                                         </Button>
                                     </div>
-                                ) : header.key === "createdAt" ? (
+                                ) : header.
+                                key === "createdAt" ? (
                                     <p>{formatDate(String(customer[header.key as keyof Pelanggan]))}</p>
                                 ) : header.key === "address" ? (
                                     <p className="truncate-2 untruncate">

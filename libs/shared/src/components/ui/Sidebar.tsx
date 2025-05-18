@@ -19,10 +19,16 @@ import {
 } from "../../../../ui-components/src/components/ui/dropdown-menu";
 import { RiLogoutCircleLine, RiUserSettingsFill } from "react-icons/ri";
 
+// @ts-ignore
+import SCLogo from "libs/assets/SC_Primary.png"
+// @ts-ignore
+import SCLogoOnly from "libs/assets/SC_LogoOnly.png"
+import Image from "next/image";
+
 export const Sidebar = () => {
     const path = usePathname();
     const router = useRouter();
-    
+
     const [isExpanded, setIsExpanded] = useState(true);
     const [openSubmenus, setOpenSubmenus] = useState<{ [key: string]: boolean }>({});
     const { user, loading: loadingUser } = useUserProfile();
@@ -84,12 +90,27 @@ export const Sidebar = () => {
         <nav className={`${isExpanded ? "w-64" : "w-[79px]"} ${noNavigation.includes(path) && "hidden"} sticky top-0 h-screen flex transition-all duration-300 z-[100]`}>
             <div className={`w-full grow bg-mainColor/30 dark:bg-mainColor/20 rounded-xl my-2 ml-2 flex flex-col relative shadow-mainShadow border border-white/50 dark:border-neutral-500/50 ${!isExpanded && "items-center"}`}>
                 {/* Header */}
-                <div className={`${!isExpanded ? "border rounded-2xl border-neutral-500/10 bg-mainColor/20 mx-[7px] mt-2 w-fit p-3" : "py-3 pl-5 pr-[15px] w-full"} z-[666] absolute flex justify-between items-center gap-2 mb-3 cursor-pointer group`}>
-                    <div className={`flex items-center gap-2  duration-300`}>
-                        <SiCcleaner className="text-xl" />
-                        <h1 className={`${isExpanded ? "opacity-100" : "opacity-0 hidden"} text-lg font-semibold truncate max-w-32`}>
-                            Superclean
-                        </h1>
+                <div className={`${!isExpanded ? "border rounded-2xl border-neutral-500/10 bg-mainColor/20 mx-[7px] mt-2 w-fit p-3" : "py-2 pl-0 pr-[15px] w-full"} z-[666] absolute flex justify-between items-center gap-2 mb-3 cursor-pointer group`}>
+                    <div className={`flex items-center w-full h-full`}>
+                        <div className={`${isExpanded ? "opacity-100" : "opacity-0 hidden"}`}>
+                            <Image
+                                width={100}
+                                height={100}
+                                src={SCLogo}
+                                alt="LogoSC"
+                                className="w-[250px] h-10 object-cover saturate-0 brightness-0 dark:invert"
+                            />
+                        </div>
+                        <div className={`${!isExpanded ? "opacity-100 w-5 h-5 flex items-center justify-center" : "opacity-0 hidden"} max-w-32`}>
+
+                            <Image
+                                width={100}
+                                height={100}
+                                src={SCLogoOnly}
+                                alt="LogoSC"
+                                className="w-12 h-12 object-cover saturate-0 brightness-0 dark:invert"
+                            />
+                        </div>
                     </div>
                     <div
                         onClick={toggleSidebar}

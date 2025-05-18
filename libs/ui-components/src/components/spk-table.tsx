@@ -5,15 +5,6 @@ import { HiMiniPencilSquare } from "react-icons/hi2";
 import { IoMdTrash } from "react-icons/io";
 import { api } from "libs/utils/apiClient";
 import { useToast } from "libs/ui-components/src/hooks/use-toast"
-import {
-    Dialog,
-    DialogClose,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "./ui/dialog";
 import { formatRupiah } from "libs/utils/formatRupiah";
 import { formatDate } from "libs/utils/formatDate";
 import { TrxStatus } from "../../../shared/src/data/system"
@@ -116,7 +107,7 @@ export const SPKTable: React.FC<DataTableProps> = ({ data, columns, currentPage,
                 <TableCell key={header.key} className={header.key === "menu" ? "!w-fit" : ""}>
                   {header.key === "menu" ? (
                     <div className="w-fit flex gap-2">
-                      <Link href={`/transaksi/spk/edit/${spk.id}`}>
+                      <Link href={`/transaksi/spk/edit/${spk.trxNumber}`}>
                         <Button size="icon" variant="main">
                           <HiMiniPencilSquare />
                         </Button>

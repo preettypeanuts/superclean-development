@@ -85,7 +85,7 @@ export const PembayaranTable: React.FC<DataTableProps> = ({
                 return (
                   <TableCell key="menu">
                     <div className="flex gap-2">
-                      <Link href={`/transaksi/pembayaran/edit/${item.id}`}>
+                      <Link href={`/transaksi/pembayaran/detail/${item.trxNumber}`}>
                         <Button
                           size="icon"
                           variant="main"
