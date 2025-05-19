@@ -1,10 +1,12 @@
 {
-  "projects": {
-    "admin-app": {
-      "rootDirectory": "apps/admin-app"
-    }
-  },
-  "buildCommand": "npx nx build admin-app",
-  "outputDirectory": "dist/apps/admin-app/.next",
-  "framework": "nextjs"
-}
+    "version": 2,
+    "buildCommand": "npx nx build admin-app",
+    "outputDirectory": "dist/apps/admin-app/.next",
+    "routes": [
+      {
+        "src": "/(.*)",
+        "dest": "/apps/admin-app/$1"
+      }
+    ]
+  }
+  
