@@ -34,7 +34,7 @@ export const SelectData = ({ label, totalData, currentLimit, onLimitChange }: Se
                 <SelectContent>
                     {availableOptions.map((value, idx) => (
                         <SelectItem key={idx} value={String(value)}>
-                            {value} {value === totalData ? "(Semua data)" : ""}
+                            {value} {value === totalData && totalData > 10 ? "(Semua data)" : ""}
                         </SelectItem>
                     ))}
                 </SelectContent>

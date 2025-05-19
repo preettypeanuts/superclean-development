@@ -1,4 +1,4 @@
-import { Figtree, Plus_Jakarta_Sans } from "next/font/google";
+import { Figtree, Plus_Jakarta_Sans, Roboto_Mono } from "next/font/google";
 import { ThemeProvider } from 'next-themes';
 import { Sidebar } from "@shared/components/ui/Sidebar"
 import { Toaster } from "libs/ui-components/src/components/ui/toaster"
@@ -9,10 +9,12 @@ const fightree = Figtree({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700", "800", "900"]
 });
+
 const jakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
   weight: ["200", "300", "400", "500", "600", "700", "800"]
 });
+
 export const metadata = {
   title: 'Superclean',
   description: 'Superclean Backoffice',

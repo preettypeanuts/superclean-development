@@ -84,7 +84,7 @@ export const Sidebar = () => {
 
     return (
         <nav className={`${isExpanded ? "w-64" : "w-[79px]"} ${noNavigation.includes(path) && "hidden"} sticky top-0 h-screen flex transition-all duration-300 z-[100]`}>
-            <div className={`w-full grow bg-mainColor/30 dark:bg-mainColor/20 rounded-xl my-2 ml-2 flex flex-col relative shadow-mainShadow border border-white/50 dark:border-neutral-500/50 ${!isExpanded && "items-center"}`}>
+            <div className={`w-full grow bg-mainColor/30 dark:bg-mainColor/20 rounded-lg my-2 ml-2 flex flex-col relative shadow-mainShadow border border-white/50 dark:border-neutral-500/50 ${!isExpanded && "items-center"}`}>
                 {/* Header */}
                 <div className={`${!isExpanded ? "border rounded-2xl border-neutral-500/10 bg-mainColor/20 mx-[7px] mt-2 w-fit p-3" : "py-2 pl-0 pr-[15px] w-full"} z-[666] absolute flex justify-between items-center gap-2 mb-3 cursor-pointer group`}>
                     <div className={`flex items-center w-full h-full`}>
@@ -113,14 +113,14 @@ export const Sidebar = () => {
                         <TbLayoutSidebarRightExpandFilled className="text-xl" />
                     </div>
                 </div>
-                <div className={`absolute w-full ${!isExpanded && "hidden"} h-[10%] top-0 z-[555] rounded-t-xl bg-gradient-to-b from-mainColor/30 dark:from-mainColor/10 via-mainColor/15 dark:via-mainColor/10 to-transparent gradient-blur-to-b`} />
+                <div className={`absolute w-full ${!isExpanded && "hidden"} h-[10%] top-0 z-[555] rounded-t-lg bg-gradient-to-b from-mainColor/30 dark:from-mainColor/10 via-mainColor/15 dark:via-mainColor/10 to-transparent gradient-blur-to-b`} />
 
                 {/* Expand Button on Minimize */}
                 <div className={`${!isExpanded ? "pt-14" : "pt-14 pb-28 overflow-y-scroll"} max-h-[100vh] mx-2 my-2 no-scrollbar overflow-visible`}>
                     {!isExpanded && (
                         <button
                             onClick={toggleSidebar}
-                            className={`mb-3 py-2 px-3 rounded-xl hover:bg-mainColor/50 flex items-center gap-2 w-fit  duration-300 ${!isExpanded ? "justify-center w-9 h-9 p-5 mx-auto scale-100" : "scale-0"}`}
+                            className={`mb-3 py-2 px-3 rounded-lg hover:bg-mainColor/50 flex items-center gap-2 w-fit  duration-300 ${!isExpanded ? "justify-center w-9 h-9 p-5 mx-auto scale-100" : "scale-0"}`}
                         >
                             <span>
                                 <TbLayoutSidebarLeftExpandFilled />
@@ -144,7 +144,7 @@ export const Sidebar = () => {
                                             {!item.subs?.length ? (
                                                 <Link
                                                     href={item.path}
-                                                    className={`capitalize py-2 px-3 rounded-xl hover:bg-mainColor/50 duration-150 flex items-center gap-2 w-full 
+                                                    className={`capitalize py-2 px-3 rounded-lg hover:bg-mainColor/50 duration-150 flex items-center gap-2 w-full 
                                                                 ${path === item.path ? "bg-mainColor/50 dark:bg-mainColor/30" : ""} 
                                                                 ${!isExpanded ? "justify-center w-9 h-9 p-5 mx-auto" : "justify-start"}`}
                                                 >
@@ -160,7 +160,7 @@ export const Sidebar = () => {
                                                         e.preventDefault();
                                                         toggleSubmenu(item.label);
                                                     }}
-                                                    className={`${path.startsWith(item.path) && "bg-mainColor/50 dark:bg-mainColor/30"} capitalize group py-2 px-3 rounded-xl hover:bg-mainColor/50 duration-150 flex items-center gap-2 w-full 
+                                                    className={`${path.startsWith(item.path) && "bg-mainColor/50 dark:bg-mainColor/30"} capitalize group py-2 px-3 rounded-lg hover:bg-mainColor/50 duration-150 flex items-center gap-2 w-full 
                                                               ${!isExpanded ? "justify-center w-9 h-9 p-5 mx-auto" : "justify-between"}`}
                                                 >
                                                     <div className={` flex items-center gap-2 relative`}>
@@ -188,7 +188,7 @@ export const Sidebar = () => {
                                                                 href={sub.path}
                                                                 className="capitalize group ml-2 flex items-center text-sm text-neutral-600 dark:text-neutral-300 duration-150"
                                                             >
-                                                                <p className={`${path.startsWith(sub.path) && "bg-mainColor/50 dark:bg-mainColor/30"} group-hover:bg-mainColor/20 px-2 py-2 w-full rounded-xl duration-150`}>
+                                                                <p className={`${path.startsWith(sub.path) && "bg-mainColor/50 dark:bg-mainColor/30"} group-hover:bg-mainColor/20 px-2 py-2 w-full rounded-lg duration-150`}>
                                                                     {sub.name}
                                                                 </p>
                                                             </Link>
@@ -198,8 +198,8 @@ export const Sidebar = () => {
                                             )}
 
                                             {item.subs.length > 0 && !isExpanded && (
-                                                <ul tabIndex={idx} className="ml-1 dropdown-content menu bg-baseLight dark:bg-baseDark rounded-box !z-[999] w-56 p-2 shadow">
-                                                    <p className="block px-3 py-2 -m-1 bg-mainColor/20 border border-white/50 dark:border-neutral-500/50 rounded-xl capitalize mb-2 font-bold text-sm">{item.label}</p>
+                                                <ul tabIndex={idx} className="ml-1 dropdown-content menu bg-baseLight dark:bg-baseDark rounded-lg !z-[999] w-56 p-2 shadow">
+                                                    <p className="block px-3 py-2 -m-1 bg-mainColor/20 border border-white/50 dark:border-neutral-500/50 rounded-md capitalize mb-2 font-bold text-sm">{item.label}</p>
                                                     {item.subs.map((sub, subIdx) => (
                                                         <li key={subIdx}>
                                                             <Link
@@ -221,7 +221,7 @@ export const Sidebar = () => {
                 </div>
 
                 {/* Absolute components */}
-                <div className={`absolute w-full ${!isExpanded && "hidden"} rounded-b-xl h-[22%] bottom-0 bg-gradient-to-t from-mainColor/30 dark:from-mainColor/10 to-transparent gradient-blur-to-t z-[555]`} />
+                <div className={`absolute w-full ${!isExpanded && "hidden"} rounded-b-lg h-[22%] bottom-0 bg-gradient-to-t from-mainColor/30 dark:from-mainColor/10 to-transparent gradient-blur-to-t z-[555]`} />
 
                 <div className={`${isExpanded ? "bottom-2 left-2 w-full pr-4" : "bottom-0 p-3"} z-[666] absolute space-y-2`}>
                     {/* Profil Dropdown */}

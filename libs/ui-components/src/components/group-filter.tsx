@@ -29,7 +29,7 @@ export function GroupFilter({
   side = "bottom",
   align = "start",
   withArrow = true,
-  className,
+  className = "space-y-2",
   onApply,
   onReset,
   onCancel,
