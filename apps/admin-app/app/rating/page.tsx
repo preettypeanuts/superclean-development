@@ -1,16 +1,10 @@
-
-
 import { HeaderMobile } from "@shared/components/Header";
 import { WrapperMobile } from "@shared/components/Wrapper";
 import { Button } from "@ui-components/components/ui/button";
-import { Label } from "@ui-components/components/ui/label";
 import { Textarea } from "@ui-components/components/ui/textarea";
-import Image from "next/image";
 import Link from "next/link";
-import { BsClockHistory } from "react-icons/bs";
 import { FaRegCheckCircle } from "react-icons/fa";
-import { FaCloudArrowUp } from "react-icons/fa6";
-import { IoIosStar, IoMdStar } from "react-icons/io";
+import {  IoMdStar } from "react-icons/io";
 export default function RatingPage() {
     return (
         <>
