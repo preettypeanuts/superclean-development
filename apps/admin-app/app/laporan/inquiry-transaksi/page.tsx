@@ -164,6 +164,15 @@ export default function InquiryTransaksiPage() {
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
 
+  const fetchInquiry = async () => {
+    // Dummy fetch, just return dummyData after a delay
+    return new Promise<typeof dummyData>((resolve) => {
+      setTimeout(() => {
+        resolve(dummyData);
+      }, 500);
+    });
+  };
+
   // Handler menggunakan useCallback untuk mencegah warning eslint react-hooks/exhaustive-deps
   const handleApplyFilter = useCallback(() => {
     // implementasi filter jika ada
@@ -265,7 +274,7 @@ export default function InquiryTransaksiPage() {
             columns={columns}
             currentPage={currentPage}
             limit={limit}
-            fetchData={() => { }}
+            fetchData={fetchInquiry}
           />
         </div>
 

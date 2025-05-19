@@ -15,19 +15,14 @@ interface TableHeader {
 interface InquiryTransaksi {
   id: string;
   trxNumber: string;
-  noWhatsapp: string;
   customerName: string;
+  noWhatsapp: string;
+  address: string;
+  city: string;
   branchId: string;
   finalPrice: number;
   trxDate: string;
   status: number;
-  createdBy: string;
-  createdAt: string;
-  address: string;
-  province: string;
-  city: string;
-  district: string;
-  subDistrict: string;
 }
 
 interface DataTableProps {
