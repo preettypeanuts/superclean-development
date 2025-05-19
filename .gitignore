@@ -43,3 +43,6 @@ Thumbs.db
 /apps/admin-app/.next
 .next
 .vercel
+
+# Nx Cache
+.nx/cache/

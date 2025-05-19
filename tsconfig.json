@@ -1,13 +1,13 @@
 {
   "compilerOptions": {
+    "jsx": "react",
+    "noImplicitAny": false,
     "baseUrl": ".",
     "paths": {
       "@superclean-workspace/ui-components": [
         "libs/ui-components/src/index.ts"
       ],
       "@superclean-workspace/ui-components/*": ["libs/ui-components/src/*"]
-    },
-    
-    "jsx": "react-jsx"
+    }
   }
 }

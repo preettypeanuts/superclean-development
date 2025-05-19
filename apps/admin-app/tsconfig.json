@@ -3,6 +3,7 @@
   "compilerOptions": {
     "jsx": "preserve",
     "allowJs": true,
+    "noImplicitAny": false,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "strict": true,
@@ -16,20 +17,16 @@
         "name": "next"
       }
     ],
-    "types": [
-      "jest",
-      "node"
-    ]
+    "types": ["jest", "node"]
   },
   "include": [
-    "**/*.js",
-    "**/*.jsx",
     "**/*.ts",
     "**/*.tsx",
+    "**/*.js",
+    "**/*.jsx",
     "../../apps/admin-app/.next/types/**/*.ts",
     "../../dist/apps/admin-app/.next/types/**/*.ts",
-    "next-env.d.ts",
-    ".next/types/**/*.ts"
+    "next-env.d.ts"
   ],
   "exclude": [
     "node_modules",

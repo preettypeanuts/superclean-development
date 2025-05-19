@@ -75,3 +75,8 @@ Node.js v22.11.0
 [NX v21.0.3 Daemon Server] - 2025-05-19T09:02:12.504Z - [SYNC]: project graph hash is the same, not collecting task sync generators
 [NX v21.0.3 Daemon Server] - 2025-05-19T09:02:12.504Z - [SYNC]: nx.json hash is the same, not collecting global sync generators
 [NX v21.0.3 Daemon Server] - 2025-05-19T09:02:12.504Z - Time taken for 'total execution time for createProjectGraph()' 28.41804200000479ms
+[NX v21.0.3 Daemon Server] - 2025-05-19T10:21:46.499Z - [WATCHER]: .gitignore was modified
+[NX v21.0.3 Daemon Server] - 2025-05-19T10:21:46.503Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-05-19T10:21:46.504Z - [WATCHER]: Stopping the watcher for /Users/mra.fly/Documents/Projects/superclean-workspace (sources)
+[NX v21.0.3 Daemon Server] - 2025-05-19T10:21:46.504Z - [WATCHER]: Stopping the watcher for /Users/mra.fly/Documents/Projects/superclean-workspace (outputs)
+[NX v21.0.3 Daemon Server] - 2025-05-19T10:21:46.506Z - Server stopped because: "Stopping the daemon the set of ignored files changed (native)"
