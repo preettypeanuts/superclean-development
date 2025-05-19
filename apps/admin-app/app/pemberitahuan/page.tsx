@@ -28,7 +28,7 @@ const TabItems = [
   { value: "read", label: "Sudah Dibaca" },
 ];
 
-const initialDummy: Notification[] = Array.from({ length: 12 }, (_, i) => ({
+const initialDummy: Notification[] = Array.from({ length: 15 }, (_, i) => ({
   id: i + 1,
   date: new Date(Date.now() - Math.floor(Math.random() * 10 * 86400000)).toISOString(),
   title: ["SPK Baru", "Pembayaran Diterima", "Layanan Selesai", "User Baru", "Diskon Baru", "Perubahan Jadwal", "Maintenance Sistem", "SPK Ditolak", "Laporan Bulanan", "Notifikasi Sistem", "Feedback Customer", "Reminder Jadwal"][i],
