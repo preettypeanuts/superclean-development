@@ -26,7 +26,7 @@ interface SPK {
     kode: string;
     layanan: string;
     kategori: string;
-    jumlah: string;
+    jumlah: string | number;
     satuan: string;
     harga: number;
     promo: number;
