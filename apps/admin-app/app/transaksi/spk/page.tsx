@@ -31,7 +31,7 @@ const DataHeaderSPK = [
   { key: "menu", label: "Aksi" },
 ];
 
-export const SPKStatus = [
+const SPKStatus = [
   { label: "Baru", value: 0 },
   { label: "Proses", value: 1 },
   { label: "Batal", value: 2 },

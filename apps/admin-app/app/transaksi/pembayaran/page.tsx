@@ -59,7 +59,7 @@ const trxStatusOptions = [
   }))
 ];
 
-export const PaymentStatus = [
+const PaymentStatus = [
   { label: "Menunggu Bayar", value: 3 },
   { label: "Sudah Bayar", value: 4 },
   { label: "Selesai", value: 5 },
