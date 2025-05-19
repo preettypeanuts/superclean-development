@@ -43,3 +43,35 @@ Error: Missing field `outputs` on TaskGraph.tasks
 }
 
 Node.js v22.11.0
+[NX v21.0.3 Daemon Server] - 2025-05-19T09:00:36.101Z - Started listening on: /var/folders/z6/4_69c17n7116zlqjnt9l_mhh0000gn/T/707d4982765518ebc196/d.sock
+[NX v21.0.3 Daemon Server] - 2025-05-19T09:00:36.122Z - [WATCHER]: Subscribed to changes within: /Users/mra.fly/Documents/Projects/superclean-workspace (native)
+[NX v21.0.3 Daemon Server] - 2025-05-19T09:00:36.123Z - Established a connection. Number of open connections: 1
+[NX v21.0.3 Daemon Server] - 2025-05-19T09:00:36.123Z - Established a connection. Number of open connections: 2
+[NX v21.0.3 Daemon Server] - 2025-05-19T09:00:36.124Z - Closed a connection. Number of open connections: 1
+[NX v21.0.3 Daemon Server] - 2025-05-19T09:00:36.125Z - [REQUEST]: Client Request for Project Graph Received
+[NX v21.0.3 Daemon Server] - 2025-05-19T09:00:36.129Z - Time taken for 'loadSpecifiedNxPlugins' 0.5609580000000278ms
+[NX v21.0.3 Daemon Server] - 2025-05-19T09:00:36.264Z - Time taken for 'Load Nx Plugin: /Users/mra.fly/Documents/Projects/superclean-workspace/node_modules/@nx/next/node_modules/nx/src/plugins/project-json/build-nodes/project-json' 138.52025000000003ms
+[NX v21.0.3 Daemon Server] - 2025-05-19T09:00:36.267Z - Time taken for 'Load Nx Plugin: /Users/mra.fly/Documents/Projects/superclean-workspace/node_modules/@nx/next/node_modules/nx/src/plugins/package-json' 141.5475ms
+[NX v21.0.3 Daemon Server] - 2025-05-19T09:00:36.302Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX v21.0.3 Daemon Server] - 2025-05-19T09:00:36.302Z - [REQUEST]: 
+[NX v21.0.3 Daemon Server] - 2025-05-19T09:00:36.302Z - [REQUEST]: 
+[NX v21.0.3 Daemon Server] - 2025-05-19T09:00:36.310Z - Time taken for 'loadDefaultNxPlugins' 174.84662500000002ms
+[NX v21.0.3 Daemon Server] - 2025-05-19T09:00:36.346Z - Time taken for 'build-project-configs' 23.853625000000022ms
+[NX v21.0.3 Daemon Server] - 2025-05-19T09:00:36.496Z - [SYNC]: collect registered sync generators
+[NX v21.0.3 Daemon Server] - 2025-05-19T09:00:36.497Z - [REQUEST]: Responding to the client. project-graph
+[NX v21.0.3 Daemon Server] - 2025-05-19T09:00:36.497Z - Time taken for 'total for creating and serializing project graph' 371.982042ms
+[NX v21.0.3 Daemon Server] - 2025-05-19T09:00:36.499Z - Done responding to the client project-graph
+[NX v21.0.3 Daemon Server] - 2025-05-19T09:00:36.499Z - Handled REQUEST_PROJECT_GRAPH. Handling time: 372. Response time: 2.
+[NX v21.0.3 Daemon Server] - 2025-05-19T09:00:37.238Z - Closed a connection. Number of open connections: 0
+[NX v21.0.3 Daemon Server] - 2025-05-19T09:00:37.295Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-05-19T09:02:12.327Z - [WATCHER]: package-lock.json was modified
+[NX v21.0.3 Daemon Server] - 2025-05-19T09:02:12.330Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-05-19T09:02:12.432Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX v21.0.3 Daemon Server] - 2025-05-19T09:02:12.433Z - [REQUEST]: package-lock.json
+[NX v21.0.3 Daemon Server] - 2025-05-19T09:02:12.433Z - [REQUEST]: 
+[NX v21.0.3 Daemon Server] - 2025-05-19T09:02:12.438Z - Time taken for 'hash changed files from watcher' 1.864041000008001ms
+[NX v21.0.3 Daemon Server] - 2025-05-19T09:02:12.465Z - Time taken for 'build-project-configs' 25.79229199999827ms
+[NX v21.0.3 Daemon Server] - 2025-05-19T09:02:12.504Z - [SYNC]: collect registered sync generators
+[NX v21.0.3 Daemon Server] - 2025-05-19T09:02:12.504Z - [SYNC]: project graph hash is the same, not collecting task sync generators
+[NX v21.0.3 Daemon Server] - 2025-05-19T09:02:12.504Z - [SYNC]: nx.json hash is the same, not collecting global sync generators
+[NX v21.0.3 Daemon Server] - 2025-05-19T09:02:12.504Z - Time taken for 'total execution time for createProjectGraph()' 28.41804200000479ms

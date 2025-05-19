@@ -16548,7 +16548,7 @@
     "admin-app": [
       {
         "source": "admin-app",
-        "target": "npm:react",
+        "target": "shared",
         "type": "static"
       },
       {
@@ -16558,12 +16558,7 @@
       },
       {
         "source": "admin-app",
-        "target": "shared",
-        "type": "static"
-      },
-      {
-        "source": "admin-app",
-        "target": "npm:lucide-react",
+        "target": "npm:next",
         "type": "static"
       },
       {
@@ -16573,7 +16568,12 @@
       },
       {
         "source": "admin-app",
-        "target": "npm:next",
+        "target": "npm:react",
+        "type": "static"
+      },
+      {
+        "source": "admin-app",
+        "target": "npm:lucide-react",
         "type": "static"
       },
       {
@@ -40893,5 +40893,5 @@
   },
   "version": "6.0",
   "errors": [],
-  "computedAt": 1747624503881
+  "computedAt": 1747645332493
 }
