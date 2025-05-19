@@ -3,7 +3,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 // List halaman yang tidak butuh proteksi
-const PUBLIC_ROUTES = ["/login", "/register", "/about"];
+const PUBLIC_ROUTES = ["/login", "/register", "/about", "/invoice", "/rating"];
 
 const ProtectedRoutes = ({ children }: { children: React.ReactNode }) => {
     const router = useRouter();

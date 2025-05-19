@@ -1,25 +1,52 @@
 "use client";
-
+import Link from "next/link";
 import { useState } from "react";
 import { DatePicker } from "@ui-components/components/date-picker";
 import { Wrapper } from "@shared/components/Wrapper";
-import { Input } from "@ui-components/components/ui/input";
 import { Button } from "@ui-components/components/ui/button";
 import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
-import { Search } from "lucide-react";
-import { SelectData } from "@ui-components/components/select-data";
-import { PaginationNumber } from "@ui-components/components/pagination-number";
 import { Label } from "@ui-components/components/ui/label";
 import { IoClose } from "react-icons/io5";
 import { GroupFilter } from "@ui-components/components/group-filter";
 import { SelectFilter } from "@ui-components/components/select-filter";
-import Link from "next/link";
 import { FaFileExcel, FaFilePdf } from "react-icons/fa6";
+import { RadioGroup, RadioGroupItem } from "@ui-components/components/ui/radio-group";
 
 export default function KinerjaKaryawanPage() {
   const [searchInput, setSearchInput] = useState("");
-  const [limit, setLimit] = useState(10);
-  const [currentPage, setCurrentPage] = useState(1);
+
+  // filter aktif
+  const [statusFilter, setStatusFilter] = useState<number>(0);
+  const [branchFilter, setBranchFilter] = useState<string>("");
+  const [startDate, setStartDate] = useState<Date>();
+  const [endDate, setEndDate] = useState<Date>();
+
+  // filter sementara
+  const [tempStatus, setTempStatus] = useState<number>(0);
+  const [tempBranch, setTempBranch] = useState<string>("");
+  const [tempStartDate, setTempStartDate] = useState<Date>();
+  const [tempEndDate, setTempEndDate] = useState<Date>();
+
+  const handleApplyFilters = () => {
+    setStatusFilter(tempStatus);
+    setBranchFilter(tempBranch);
+    setStartDate(tempStartDate);
+    setEndDate(tempEndDate);
+  };
+
+  const handleResetFilters = () => {
+    setTempStatus(0);
+    setTempBranch("");
+    setTempStartDate(undefined);
+    setTempEndDate(undefined);
+  };
+
+  const handleCancelFilters = () => {
+    setTempStatus(statusFilter);
+    setTempBranch(branchFilter);
+    setTempStartDate(startDate);
+    setTempEndDate(endDate);
+  };
 
   return (
     <>
@@ -29,14 +56,22 @@ export default function KinerjaKaryawanPage() {
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
               <div className="relative">
-                <Input
-                  type="text"
-                  placeholder="Cari nama karyawan atau cabang"
-                  value={searchInput}
-                  onChange={(e) => setSearchInput(e.target.value)}
-                  className="w-[30lvw]"
-                  icon={<Search size={16} />}
-                />
+                <div className="flex items-center space-x-4 min-w-[300px]">
+                  <RadioGroup
+                    // value={pelanggan.customerType}
+                    // onValueChange={(value) => handleSelectChange("customerType", value)}
+                    className="flex items-center gap-5"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="ringkasan" id="ringkasan" />
+                      <Label className="w-1/2 capitalize" htmlFor="ringkasan">Ringkasan</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="detail" id="detail" />
+                      <Label className="w-1/2 capitalize" htmlFor="detail">Detail</Label>
+                    </div>
+                  </RadioGroup>
+                </div>
                 {searchInput && (
                   <button
                     type="button"
@@ -49,21 +84,21 @@ export default function KinerjaKaryawanPage() {
               </div>
 
               <GroupFilter
-                onApply={() => { }}
-                onReset={() => { }}
-                onCancel={() => { }}
+                onApply={handleApplyFilters}
+                onReset={handleResetFilters}
+                onCancel={handleCancelFilters}
               >
                 <SelectFilter
                   label="Status Transaksi"
                   id="status"
                   placeholder="Pilih Status"
-                  value=""
+                  value={tempStatus}
                   optionsNumber={[
                     { label: "Menunggu Bayar", value: 3 },
                     { label: "Sudah Bayar", value: 4 },
                     { label: "Selesai", value: 5 },
                   ]}
-                  onChange={() => { }}
+                  onChange={setTempStatus}
                 />
                 <SelectFilter
                   label="Cabang"
@@ -71,15 +106,28 @@ export default function KinerjaKaryawanPage() {
                   placeholder="Pilih Cabang"
                   value=""
                   optionsString={[]}
-                  onChange={() => { }}
+                  onChange={setTempBranch}
                 />
                 <div className="flex items-center space-x-4">
-                  <Label className="w-1/2 font-semibold capitalize">Tanggal awal</Label>
-                  <DatePicker label="DD/MM/YYYY" value={null} onChange={() => { }} />
+                  <Label className={`w-1/2 font-semibold capitalize`}>
+                    Tanggal awal
+                  </Label>
+
+                  <DatePicker
+                    label="DD/MM/YYYY"
+                    value={tempStartDate}
+                    onChange={(date) => setTempStartDate(date)}
+                  />
                 </div>
                 <div className="flex items-center space-x-4">
-                  <Label className="w-1/2 font-semibold capitalize">Tanggal akhir</Label>
-                  <DatePicker label="DD/MM/YYYY" value={null} onChange={() => { }} />
+                  <Label className={`w-1/2 font-semibold capitalize`}>
+                    Tanggal akhir
+                  </Label>
+                  <DatePicker
+                    label="DD/MM/YYYY"
+                    value={tempEndDate}
+                    onChange={(date) => setTempEndDate(date)}
+                  />
                 </div>
               </GroupFilter>
 
@@ -104,15 +152,6 @@ export default function KinerjaKaryawanPage() {
           <div className="text-center text-muted-foreground text-sm py-7 my-3 border-y">
             Saat ini belum ada data yang dapat ditampilkan
           </div>
-        </div>
-
-        <div className="flex items-center justify-between mt-4">
-          <Label className="text-xs">Tidak ada data ditampilkan</Label>
-          <PaginationNumber
-            totalPages={1}
-            currentPage={currentPage}
-            onPageChange={setCurrentPage}
-          />
         </div>
       </Wrapper>
     </>

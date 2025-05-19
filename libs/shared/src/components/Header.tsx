@@ -21,4 +21,17 @@ export const Header = ({ label, desc, count }: HeaderProps) => {
             </div>
         </section>
     )
-} 
+}
+
+
+
+export const HeaderMobile = ({ label, desc, count }: HeaderProps) => {
+    return (
+        <section className="navbar h-16 shadow">
+            <h1 className="w-full text-xl font-semibold flex items-center justify-center">
+                {label}
+            </h1>
+        </section>
+    )
+}
+

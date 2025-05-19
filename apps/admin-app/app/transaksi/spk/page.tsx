@@ -204,7 +204,7 @@ export default function SPKPage() {
                 </div>
                 <div className="flex items-center space-x-4">
                   <Label className={`w-1/2 font-semibold capitalize`}>
-                    Tanggal awal
+                    Tanggal akhir
                   </Label>
                   <DatePicker
                     label="DD/MM/YYYY"

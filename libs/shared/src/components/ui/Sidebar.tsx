@@ -17,7 +17,7 @@ import {
     DropdownMenuItem,
     DropdownMenuSeparator,
 } from "../../../../ui-components/src/components/ui/dropdown-menu";
-import { RiLogoutCircleFill, RiLogoutCircleLine, RiUserFill, RiUserSettingsFill } from "react-icons/ri";
+import { RiLogoutCircleFill, RiUserFill } from "react-icons/ri";
 
 import Image from "next/image";
 
@@ -46,7 +46,7 @@ export const Sidebar = () => {
 
     const processedRole = user?.roleId ? getRoleAbbreviation(user.roleId) : "UN";
 
-    const noNavigation = ["/login", "/forgot-password", "/reset-password"];
+    const noNavigation = ["/login", "/forgot-password", "/reset-password", "/invoice", "/rating"];
 
     const toggleSidebar = () => {
         setIsExpanded((prev) => {

@@ -183,7 +183,7 @@
       },
       {
         "file": "components.json",
-        "hash": "10225814145206869131"
+        "hash": "4280279583905880420"
       },
       {
         "file": "jest.config.ts",
@@ -271,11 +271,11 @@
       },
       {
         "file": ".nx/cache/file-map.json",
-        "hash": "15385759200910687584"
+        "hash": "8106306266498409627"
       },
       {
         "file": ".nx/cache/project-graph.json",
-        "hash": "288518174173107806"
+        "hash": "5442874705952113454"
       }
     ],
     "projectFileMap": {
@@ -286,14 +286,13 @@
         },
         {
           "file": "apps/admin-app/app/laporan/benefit-karyawan/page.tsx",
-          "hash": "8317403964026405",
+          "hash": "7675502537591350138",
           "deps": [
+            "npm:next",
             "npm:react",
             "ui-components",
             "shared",
-            "npm:lucide-react",
-            "npm:react-icons",
-            "npm:next"
+            "npm:react-icons"
           ]
         },
         {
@@ -310,14 +309,13 @@
         },
         {
           "file": "apps/admin-app/app/laporan/kinerja-karyawan/page.tsx",
-          "hash": "12115978345214279249",
+          "hash": "8549579119690189874",
           "deps": [
+            "npm:next",
             "npm:react",
             "ui-components",
             "shared",
-            "npm:lucide-react",
-            "npm:react-icons",
-            "npm:next"
+            "npm:react-icons"
           ]
         },
         {
@@ -678,6 +676,30 @@
         {
           "file": "apps/admin-app/tsconfig.spec.json",
           "hash": "6922413205408300107"
+        },
+        {
+          "file": "apps/admin-app/app/invoice/page.tsx",
+          "hash": "3673633208654956851",
+          "deps": [
+            "shared",
+            "ui-components",
+            "npm:next",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "apps/admin-app/public/assets/qris.png",
+          "hash": "12941780059054163540"
+        },
+        {
+          "file": "apps/admin-app/app/invoice copy/page.tsx",
+          "hash": "3673633208654956851",
+          "deps": [
+            "shared",
+            "ui-components",
+            "npm:next",
+            "npm:react-icons"
+          ]
         }
       ],
       "mitra-app": [
@@ -1220,7 +1242,7 @@
         },
         {
           "file": "libs/shared/src/components/ChartKaryawan.tsx",
-          "hash": "11776331461315393144",
+          "hash": "6044121996849257150",
           "deps": [
             "ui-components"
           ]
@@ -1235,7 +1257,7 @@
         },
         {
           "file": "libs/shared/src/components/Header.tsx",
-          "hash": "1551171328930149948"
+          "hash": "13793345546249389096"
         },
         {
           "file": "libs/shared/src/components/ModalProfile.tsx",
@@ -1247,7 +1269,7 @@
         },
         {
           "file": "libs/shared/src/components/ProtectedLayout.tsx",
-          "hash": "5605926908063544230",
+          "hash": "6325317855064738127",
           "deps": [
             "npm:next",
             "npm:react"
@@ -1271,7 +1293,7 @@
         },
         {
           "file": "libs/shared/src/components/Wrapper.tsx",
-          "hash": "5686352580769701061",
+          "hash": "5489800743355297811",
           "deps": [
             "npm:react"
           ]
@@ -1318,7 +1340,7 @@
         },
         {
           "file": "libs/shared/src/components/ui/Sidebar.tsx",
-          "hash": "8572230974037065643",
+          "hash": "7890485451781856753",
           "deps": [
             "npm:next",
             "npm:react",

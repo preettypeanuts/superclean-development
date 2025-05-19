@@ -14,3 +14,13 @@ export const Wrapper = ({ children, className = "" }: WrapperProps) => {
         </div>
     );
 };
+
+export const WrapperMobile = ({ children, className = "" }: WrapperProps) => {
+    return (
+        <div
+            className={`m-5 ${className}`}
+        >
+            {children}
+        </div>
+    );
+};

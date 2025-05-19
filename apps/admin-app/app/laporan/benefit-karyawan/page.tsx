@@ -1,24 +1,19 @@
 "use client";
-
+import Link from "next/link";
 import { useState, useCallback } from "react";
 import { DatePicker } from "@ui-components/components/date-picker";
 import { Wrapper } from "@shared/components/Wrapper";
-import { Input } from "@ui-components/components/ui/input";
 import { Button } from "@ui-components/components/ui/button";
 import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
-import { Search } from "lucide-react";
-import { PaginationNumber } from "@ui-components/components/pagination-number";
 import { Label } from "@ui-components/components/ui/label";
 import { IoClose } from "react-icons/io5";
 import { GroupFilter } from "@ui-components/components/group-filter";
 import { SelectFilter } from "@ui-components/components/select-filter";
-import Link from "next/link";
 import { FaFileExcel, FaFilePdf } from "react-icons/fa6";
+import { RadioGroup, RadioGroupItem } from "@ui-components/components/ui/radio-group";
 
 export default function BenefitKaryawanPage() {
   const [searchInput, setSearchInput] = useState("");
-  const [limit, setLimit] = useState(10);
-  const [currentPage, setCurrentPage] = useState(1);
   const [status, setStatus] = useState("");
   const [branch, setBranch] = useState("");
   const [startDate, setStartDate] = useState<Date | null>(null);
@@ -49,14 +44,22 @@ export default function BenefitKaryawanPage() {
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
               <div className="relative">
-                <Input
-                  type="text"
-                  placeholder="Cari nama karyawan atau cabang"
-                  value={searchInput}
-                  onChange={(e) => setSearchInput(e.target.value)}
-                  className="w-[30lvw]"
-                  icon={<Search size={16} />}
-                />
+                <div className="flex items-center space-x-4 min-w-[300px]">
+                  <RadioGroup
+                    // value={pelanggan.customerType}
+                    // onValueChange={(value) => handleSelectChange("customerType", value)}
+                    className="flex items-center gap-5"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="ringkasan" id="ringkasan" />
+                      <Label className="w-1/2 capitalize" htmlFor="ringkasan">Ringkasan</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="detail" id="detail" />
+                      <Label className="w-1/2 capitalize" htmlFor="detail">Detail</Label>
+                    </div>
+                  </RadioGroup>
+                </div>
                 {searchInput && (
                   <button
                     type="button"
@@ -125,15 +128,6 @@ export default function BenefitKaryawanPage() {
           <div className="text-center text-muted-foreground text-sm py-7 my-3 border-y">
             Saat ini belum ada data yang dapat ditampilkan
           </div>
-        </div>
-
-        <div className="flex items-center justify-between mt-4">
-          <Label className="text-xs">Tidak ada data ditampilkan</Label>
-          <PaginationNumber
-            totalPages={1}
-            currentPage={currentPage}
-            onPageChange={setCurrentPage}
-          />
         </div>
       </Wrapper>
     </>

@@ -16551,6 +16551,11 @@
     "admin-app": [
       {
         "source": "admin-app",
+        "target": "npm:next",
+        "type": "static"
+      },
+      {
+        "source": "admin-app",
         "target": "npm:react",
         "type": "static"
       },
@@ -16566,17 +16571,12 @@
       },
       {
         "source": "admin-app",
-        "target": "npm:lucide-react",
-        "type": "static"
-      },
-      {
-        "source": "admin-app",
         "target": "npm:react-icons",
         "type": "static"
       },
       {
         "source": "admin-app",
-        "target": "npm:next",
+        "target": "npm:lucide-react",
         "type": "static"
       },
       {
