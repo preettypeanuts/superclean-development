@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { InquiryTransaksiTable } from "@ui-components/components/inquiry-transaksi-table";
 import { DatePicker } from "@ui-components/components/date-picker";
 import { Wrapper } from "@shared/components/Wrapper";
@@ -159,6 +159,27 @@ export default function InquiryTransaksiPage() {
   const [searchInput, setSearchInput] = useState("");
   const [limit, setLimit] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
+  const [status, setStatus] = useState(0);
+  const [branch, setBranch] = useState("");
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
+
+  // Handler menggunakan useCallback untuk mencegah warning eslint react-hooks/exhaustive-deps
+  const handleApplyFilter = useCallback(() => {
+    // implementasi filter jika ada
+  }, []);
+
+  const handleResetFilter = useCallback(() => {
+    setStatus(0);
+    setBranch("");
+    setStartDate(null);
+    setEndDate(null);
+    setSearchInput("");
+  }, []);
+
+  const handleCancelFilter = useCallback(() => {
+    // bisa set state atau close dialog filter jika ada
+  }, []);
 
   return (
     <>
@@ -188,9 +209,9 @@ export default function InquiryTransaksiPage() {
               </div>
 
               <GroupFilter
-                onApply={() => { }}
-                onReset={() => { }}
-                onCancel={() => { }}
+                onApply={handleApplyFilter}
+                onReset={handleResetFilter}
+                onCancel={handleCancelFilter}
               >
                 <SelectFilter
                   label="Cabang"
@@ -198,27 +219,35 @@ export default function InquiryTransaksiPage() {
                   placeholder="Pilih Cabang"
                   value=""
                   optionsString={[]}
-                  onChange={() => { }}
+                  onChange={(val) => setBranch(val)}
                 />
                 <SelectFilter
                   label="Status Transaksi"
                   id="status"
                   placeholder="Pilih Status"
-                  value=""
+                  value={status}
                   optionsNumber={[
                     { label: "Menunggu Bayar", value: 3 },
                     { label: "Sudah Bayar", value: 4 },
                     { label: "Selesai", value: 5 },
                   ]}
-                  onChange={() => { }}
+                  onChange={(val) => setStatus(val)}
                 />
                 <div className="flex items-center space-x-4">
                   <Label className="w-1/2 font-semibold capitalize">Tanggal awal</Label>
-                  <DatePicker label="DD/MM/YYYY" value={null} onChange={() => { }} />
+                  <DatePicker
+                    label="DD/MM/YYYY"
+                    value={startDate}
+                    onChange={(date) => setStartDate(date ?? null)}
+                  />
                 </div>
                 <div className="flex items-center space-x-4">
                   <Label className="w-1/2 font-semibold capitalize">Tanggal akhir</Label>
-                  <DatePicker label="DD/MM/YYYY" value={null} onChange={() => { }} />
+                  <DatePicker
+                    label="DD/MM/YYYY"
+                    value={endDate}
+                    onChange={(date) => setEndDate(date ?? null)}
+                  />
                 </div>
               </GroupFilter>
 
