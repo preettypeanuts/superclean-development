@@ -15,7 +15,7 @@ import { DiscountTable } from "libs/ui-components/src/components/discount-table"
 import { Label } from "@ui-components/components/ui/label";
 import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
 
-export const DataHeaderPromo = [
+const DataHeaderPromo = [
   { key: "id", label: "#" },
   { key: "code", label: "Kode Promo" },
   { key: "name", label: "Nama Promo" },
