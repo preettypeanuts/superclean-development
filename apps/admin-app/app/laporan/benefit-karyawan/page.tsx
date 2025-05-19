@@ -14,7 +14,7 @@ import { RadioGroup, RadioGroupItem } from "@ui-components/components/ui/radio-g
 
 export default function BenefitKaryawanPage() {
   const [searchInput, setSearchInput] = useState("");
-  const [status, setStatus] = useState("");
+  const [status, setStatus] = useState(0);
   const [branch, setBranch] = useState("");
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
@@ -25,7 +25,7 @@ export default function BenefitKaryawanPage() {
   }, []);
 
   const handleResetFilter = useCallback(() => {
-    setStatus("");
+    setStatus(0);
     setBranch("");
     setStartDate(null);
     setEndDate(null);
@@ -99,11 +99,19 @@ export default function BenefitKaryawanPage() {
                 />
                 <div className="flex items-center space-x-4">
                   <Label className="w-1/2 font-semibold capitalize">Tanggal awal</Label>
-                  <DatePicker label="DD/MM/YYYY" value={startDate} onChange={setStartDate} />
+                  <DatePicker
+                    label="DD/MM/YYYY"
+                    value={startDate}
+                    onChange={(date) => setStartDate(date ?? null)}
+                  />
                 </div>
                 <div className="flex items-center space-x-4">
                   <Label className="w-1/2 font-semibold capitalize">Tanggal akhir</Label>
-                  <DatePicker label="DD/MM/YYYY" value={endDate} onChange={setEndDate} />
+                  <DatePicker
+                    label="DD/MM/YYYY"
+                    value={endDate}
+                    onChange={(date) => setEndDate(date ?? null)}
+                  />
                 </div>
               </GroupFilter>
 
