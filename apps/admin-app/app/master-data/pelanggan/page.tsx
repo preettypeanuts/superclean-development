@@ -16,7 +16,7 @@ import { Label } from "@ui-components/components/ui/label";
 import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
 import { useLocationData, getCitiesLabel } from "libs/utils/useLocationData";
 
-export const DataHeaderPelanggan = [
+const DataHeaderPelanggan = [
   { key: "id", label: "#" },
   { key: "fullname", label: "Nama Lengkap" },
   { key: "noWhatsapp", label: "No. WhatsApp" },

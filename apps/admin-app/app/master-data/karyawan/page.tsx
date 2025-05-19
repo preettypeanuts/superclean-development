@@ -17,7 +17,7 @@ import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
 import { GroupFilter } from "libs/ui-components/src/components/group-filter"
 import { SelectFilter } from "libs/ui-components/src/components/select-filter"
 
-export const DataHeaderPelanggan = [
+const DataHeaderPelanggan = [
   { key: "id", label: "#" },
   { key: "username", label: "Nama Pengguna" },
   { key: "fullname", label: "Nama" },

@@ -16,7 +16,7 @@ import { Label } from "@ui-components/components/ui/label";
 import { IoClose } from "react-icons/io5";
 import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
 
-export const DataHeaderLayanan = [
+const DataHeaderLayanan = [
   { key: "id", label: "#" },
   { key: "code", label: "Kode Layanan" },
   { key: "name", label: "Nama Layanan" },
