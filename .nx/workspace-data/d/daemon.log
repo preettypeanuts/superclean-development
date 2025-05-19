@@ -1,0 +1,45 @@
+[NX v21.0.3 Daemon Server] - 2025-05-19T03:15:03.270Z - Started listening on: /var/folders/z6/4_69c17n7116zlqjnt9l_mhh0000gn/T/707d4982765518ebc196/d.sock
+[NX v21.0.3 Daemon Server] - 2025-05-19T03:15:03.274Z - [WATCHER]: Subscribed to changes within: /Users/mra.fly/Documents/Projects/superclean-workspace (native)
+[NX v21.0.3 Daemon Server] - 2025-05-19T03:15:03.276Z - Established a connection. Number of open connections: 1
+[NX v21.0.3 Daemon Server] - 2025-05-19T03:15:03.277Z - Established a connection. Number of open connections: 2
+[NX v21.0.3 Daemon Server] - 2025-05-19T03:15:03.278Z - Closed a connection. Number of open connections: 1
+[NX v21.0.3 Daemon Server] - 2025-05-19T03:15:03.279Z - [REQUEST]: Client Request for Project Graph Received
+[NX v21.0.3 Daemon Server] - 2025-05-19T03:15:03.284Z - Time taken for 'loadSpecifiedNxPlugins' 1.069250000000011ms
+[NX v21.0.3 Daemon Server] - 2025-05-19T03:15:03.470Z - Time taken for 'Load Nx Plugin: /Users/mra.fly/Documents/Projects/superclean-workspace/node_modules/@nx/next/node_modules/nx/src/plugins/package-json' 189.31020800000002ms
+[NX v21.0.3 Daemon Server] - 2025-05-19T03:15:03.471Z - Time taken for 'Load Nx Plugin: /Users/mra.fly/Documents/Projects/superclean-workspace/node_modules/@nx/next/node_modules/nx/src/plugins/project-json/build-nodes/project-json' 190.71283300000002ms
+[NX v21.0.3 Daemon Server] - 2025-05-19T03:15:03.474Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX v21.0.3 Daemon Server] - 2025-05-19T03:15:03.474Z - [REQUEST]: 
+[NX v21.0.3 Daemon Server] - 2025-05-19T03:15:03.474Z - [REQUEST]: 
+[NX v21.0.3 Daemon Server] - 2025-05-19T03:15:03.480Z - Time taken for 'loadDefaultNxPlugins' 193.94845800000002ms
+[NX v21.0.3 Daemon Server] - 2025-05-19T03:15:03.537Z - Time taken for 'build-project-configs' 42.987167ms
+[NX v21.0.3 Daemon Server] - 2025-05-19T03:15:03.887Z - [SYNC]: collect registered sync generators
+[NX v21.0.3 Daemon Server] - 2025-05-19T03:15:03.887Z - [REQUEST]: Responding to the client. project-graph
+[NX v21.0.3 Daemon Server] - 2025-05-19T03:15:03.888Z - Time taken for 'total for creating and serializing project graph' 608.12775ms
+[NX v21.0.3 Daemon Server] - 2025-05-19T03:15:03.890Z - Done responding to the client project-graph
+[NX v21.0.3 Daemon Server] - 2025-05-19T03:15:03.890Z - Handled REQUEST_PROJECT_GRAPH. Handling time: 608. Response time: 3.
+[NX v21.0.3 Daemon Server] - 2025-05-19T03:15:04.493Z - Closed a connection. Number of open connections: 0
+[NX v21.0.3 Daemon Server] - 2025-05-19T03:15:04.550Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-05-19T03:15:05.313Z - Established a connection. Number of open connections: 1
+[NX v21.0.3 Daemon Server] - 2025-05-19T03:15:05.313Z - Closed a connection. Number of open connections: 0
+[NX v21.0.3 Daemon Server] - 2025-05-19T03:15:05.313Z - Established a connection. Number of open connections: 1
+[NX v21.0.3 Daemon Server] - 2025-05-19T03:15:05.315Z - [REQUEST]: Client Request for Project Graph Received
+[NX v21.0.3 Daemon Server] - 2025-05-19T03:15:05.315Z - [REQUEST]: Responding to the client. project-graph
+[NX v21.0.3 Daemon Server] - 2025-05-19T03:15:05.316Z - Time taken for 'total for creating and serializing project graph' 0.1959590000001299ms
+[NX v21.0.3 Daemon Server] - 2025-05-19T03:15:05.318Z - Done responding to the client project-graph
+[NX v21.0.3 Daemon Server] - 2025-05-19T03:15:05.318Z - Handled REQUEST_PROJECT_GRAPH. Handling time: 0. Response time: 3.
+/Users/mra.fly/Documents/Projects/superclean-workspace/node_modules/@nx/next/node_modules/nx/src/hasher/native-task-hasher-impl.js:32
+        const plans = this.planner.getPlansReference(tasks.map((t) => t.id), taskGraph);
+                                   ^
+
+Error: Missing field `outputs` on TaskGraph.tasks
+    at NativeTaskHasherImpl.hashTasks [90m(/Users/mra.fly/Documents/Projects/superclean-workspace/[39mnode_modules/[4m@nx[24m/next/node_modules/[4mnx[24m/src/hasher/native-task-hasher-impl.js:32:36[90m)[39m
+    at InProcessTaskHasher.hashTasks [90m(/Users/mra.fly/Documents/Projects/superclean-workspace/[39mnode_modules/[4m@nx[24m/next/node_modules/[4mnx[24m/src/hasher/task-hasher.js:41:46[90m)[39m
+    at handleHashTasks [90m(/Users/mra.fly/Documents/Projects/superclean-workspace/[39mnode_modules/[4m@nx[24m/next/node_modules/[4mnx[24m/src/daemon/server/handle-hash-tasks.js:30:56[90m)[39m
+[90m    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)[39m
+    at async handleResult [90m(/Users/mra.fly/Documents/Projects/superclean-workspace/[39mnode_modules/[4m@nx[24m/next/node_modules/[4mnx[24m/src/daemon/server/server.js:186:16[90m)[39m
+    at async handleMessage [90m(/Users/mra.fly/Documents/Projects/superclean-workspace/[39mnode_modules/[4m@nx[24m/next/node_modules/[4mnx[24m/src/daemon/server/server.js:112:9[90m)[39m
+    at async [90m/Users/mra.fly/Documents/Projects/superclean-workspace/[39mnode_modules/[4m@nx[24m/next/node_modules/[4mnx[24m/src/daemon/server/server.js:74:9 {
+  code: [32m'InvalidArg'[39m
+}
+
+Node.js v22.11.0

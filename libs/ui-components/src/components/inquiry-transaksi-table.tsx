@@ -80,7 +80,7 @@ export const InquiryTransaksiTable: React.FC<DataTableProps> = ({
             className={rowIndex % 2 === 0 ? "" : "bg-neutral-300/20 dark:bg-neutral-500/20"}
           >
             {columns.map((header) => {
-              const value = item[header.key as keyof InquryTransaksi];
+              const value = item[header.key as keyof InquiryTransaksi];
               if (header.key === "menu") {
                 return (
                   <TableCell key="menu">
@@ -125,7 +125,7 @@ export const InquiryTransaksiTable: React.FC<DataTableProps> = ({
               if (header.key === "trxNumber") {
                 const label = statusLabels[item.status] ?? item.status;
                 return (
-                  <TableCell key="customerName">
+                  <TableCell key={`trxNumber-${item.id}`}>
                     <div className="flex items-center">
                       <div className={`mr-2 rounded-full w-[6px] h-[6px] ${statusColors[label]}`} />
                       <p>{item.trxNumber}</p>
