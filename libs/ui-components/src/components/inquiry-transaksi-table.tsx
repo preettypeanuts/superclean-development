@@ -110,7 +110,7 @@ export const InquiryTransaksiTable: React.FC<DataTableProps> = ({
                 return (
                   <TableCell key="status">
                     <div className={`badge bg-opacity-20 rounded-md !font-medium border-0 truncate ${statusColors[label]}`}>
-                      <div className={`mr-2 rounded-full w-[6px] h-[6px] ${statusColors[label]}`} />
+                      <div className={`mr-2 rounded-full w-[6px] h-[6px] dark:brightness-50 ${statusColors[label]}`} />
                       {label}
                     </div>
                   </TableCell>

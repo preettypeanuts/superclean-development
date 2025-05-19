@@ -1,7 +1,6 @@
-// Removed unused import
+
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
 import { Button } from "./ui/button";
-// Removed unused import
 import { IoMdTrash } from "react-icons/io";
 import { api } from "libs/utils/apiClient";
 import { useToast } from "libs/ui-components/src/hooks/use-toast"
@@ -16,9 +15,6 @@ import {
 } from "./ui/dialog";
 import { formatRupiah } from "libs/utils/formatRupiah";
 import { HiMiniPencilSquare } from "react-icons/hi2";
-// Removed unused import
-// Removed unused import
-// Removed unused import
 
 interface TableHeader {
     key: string;
@@ -30,7 +26,7 @@ interface SPK {
     kode: string;
     layanan: string;
     kategori: string;
-    jumlah: number;
+    jumlah: string;
     satuan: string;
     harga: number;
     promo: number;

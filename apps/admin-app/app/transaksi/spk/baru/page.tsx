@@ -59,8 +59,8 @@ const DataDummySPK = [
         kategori: "-",
         jumlah: "-",
         satuan: "-",
-        harga: "-",
-        promo: "-",
+        harga: 0,
+        promo: 0,
         createdBy: "-",
         createdAt: "-",
     },
@@ -78,6 +78,7 @@ export default function NewSPK() {
         customerName: "",
         address: "",
         province: "",
+        category: "",
         city: "",
         district: "",
         subDistrict: "",
@@ -291,8 +292,6 @@ export default function NewSPK() {
                                         <div className="flex items-center space-x-4">
                                             <Label className="w-[40%] font-semibold">Petugas Cleaning</Label>
                                             <MultiSelect
-                                                value={formData.cleaningStaff}
-                                                onChange={(value) => handleChange("cleaningStaff", value)}
                                             />
                                         </div>
 
@@ -310,9 +309,7 @@ export default function NewSPK() {
                                     <div className="col-span-1 space-y-4">
                                         <div className="flex items-center space-x-4">
                                             <Label className="w-[40%] font-semibold">Petugas Blower</Label>
-                                            <MultiSelect
-                                                value={formData.blowerStaff}
-                                                onChange={(value) => handleChange("blowerStaff", value)}
+                                            <MultiSelect 
                                             />
                                         </div>
                                     </div>
@@ -415,7 +412,7 @@ export default function NewSPK() {
                                 Kategori
                             </Label>
                             <Select
-                                onValueChange={(value) => handleSelectChange("category", value)}
+                                onValueChange={(value) => handleSelectChangeTable("category", value)}
                                 value={formDataTable.category}
                                 disabled={loadingParams}
                             >
@@ -474,7 +471,7 @@ export default function NewSPK() {
 
                         <div className="flex items-center space-x-4">
                             <Label htmlFor="code" className="w-1/4 font-semibold">Jumlah</Label>
-                            <Input placeholder="Masukkan Jumlah" type="number" id="code" value={formDataTable.code} onChange={handleChange} />
+                            <Input placeholder="Masukkan Jumlah" type="number" id="code" value={formDataTable.code} onChange={handleChangeTable} />
                         </div>
 
                         {/* Tampilkan RadioGroup dan disable jika kategori bukan GENERAL atau BLOWER */}
