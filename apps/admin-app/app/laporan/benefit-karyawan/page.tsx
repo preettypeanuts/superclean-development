@@ -44,7 +44,7 @@ export default function BenefitKaryawanPage() {
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
               <div className="relative">
-                <div className="flex items-center space-x-4 min-w-[300px]">
+                <div className="flex items-center space-x-4 min-w-[200px]">
                   <RadioGroup
                     // value={pelanggan.customerType}
                     // onValueChange={(value) => handleSelectChange("customerType", value)}
