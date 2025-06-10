@@ -36,6 +36,8 @@ interface Transaction {
     status: number;
 }
 
+
+
 const DataHeaderSPKDetail = [
     { key: "id", label: "#" },
     { key: "kode", label: "kode" },

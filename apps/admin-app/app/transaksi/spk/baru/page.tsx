@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Wrapper } from "@shared/components/Wrapper";
 import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
@@ -23,7 +23,7 @@ import { useCategoryStore } from "libs/utils/useCategoryStore";
 import { RupiahInput } from "@ui-components/components/rupiah-input";
 import { RadioGroup, RadioGroupItem } from "@ui-components/components/ui/radio-group";
 import { Header } from "@shared/components/Header";
-import { Popover, PopoverContent, PopoverTrigger } from "@ui-components/components/ui/popover";
+import { Check, ChevronsUpDown, Cross, Plus, PlusCircle, Search } from "lucide-react";
 
 // Dummy data sementara agar tidak error saat preview
 const transaction = {
@@ -66,12 +66,161 @@ const DataDummySPK = [
     },
 ];
 
+// Searchable Combobox Component untuk WhatsApp
+function WhatsAppCombobox({
+    value,
+    onValueChange,
+    onCustomerSelect,
+    searchResults,
+    loading,
+    placeholder = "Masukkan No Whatsapp"
+}: {
+    value: string;
+    onValueChange: (value: string) => void;
+    onCustomerSelect: (customer: any) => void;
+    searchResults: any[];
+    loading: boolean;
+    placeholder?: string;
+}) {
+    const [open, setOpen] = useState(false);
+    const [searchQuery, setSearchQuery] = useState(value);
+
+    // Sync searchQuery dengan value prop
+    useEffect(() => {
+        setSearchQuery(value);
+    }, [value]);
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newValue = e.target.value;
+        setSearchQuery(newValue);
+        onValueChange(newValue);
+        setOpen(true);
+    };
+
+    const handleSelectCustomer = (customer: any) => {
+        setSearchQuery(customer.noWhatsapp);
+        onCustomerSelect(customer);
+        setOpen(false);
+    };
+
+    const handleClearSelection = () => {
+        setSearchQuery("");
+        onValueChange("");
+        setOpen(false);
+    };
+
+    return (
+        <div className="relative w-full">
+            {/* Input Field */}
+            <div
+                className={`flex h-10 w-full items-center justify-between rounded-lg border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-within:ring-1 focus-within:ring-ring cursor-text ${open ? "ring-1 ring-ring" : ""
+                    }`}
+                onClick={() => setOpen(true)}
+            >
+                <div className="flex items-center gap-2 flex-1">
+                    <Search className="h-4 w-4 text-muted-foreground shrink-0" />
+                    <input
+                        type="text"
+                        placeholder={placeholder}
+                        value={searchQuery}
+                        onChange={handleInputChange}
+                        onFocus={() => setOpen(true)}
+                        className="bg-transparent border-none outline-none flex-1 placeholder:text-muted-foreground"
+                        onClick={(e) => e.stopPropagation()}
+                    />
+                </div>
+            </div>
+
+            {/* Dropdown Results */}
+            {open && (
+                <div className="absolute top-full z-50 mt-1 w-full rounded-md border bg-popover text-popover-foreground shadow-lg">
+                    <div className="max-h-[300px] overflow-y-auto no-scrollbar">
+                        {loading && (
+                            <div className="px-2 py-6 text-center text-sm text-muted-foreground">
+                                Loading...
+                            </div>
+                        )}
+                        {!loading && searchQuery.trim().length < 3 && (
+                            <div className="px-2 py-4 text-center text-sm text-muted-foreground">
+                                <div className="flex items-center gap-2 justify-center">
+                                    <Search size={18} />
+                                    Masukkan minimal 3 karakter
+                                </div>
+                            </div>
+                        )}
+                        {!loading && searchQuery.trim().length >= 3 && searchResults.length === 0 && (
+                            <div className="px-2 py-6 text-center text-sm text-muted-foreground">
+                                Tidak ditemukan
+                            </div>
+                        )}
+                        {searchResults.map((customer) => (
+                            <div
+                                key={customer.id}
+                                className="relative flex cursor-pointer select-none border-b flex-col rounded-sm px-2 py-2 text-sm outline-none hover:bg-baseLight dark:hover:bg-baseDark hover:text-accent-foreground"
+                                onClick={() => handleSelectCustomer(customer)}
+                            >
+                                <div className="flex items-center gap-2">
+                                    <Check
+                                        className={`h-4 w-4 ${value === customer.noWhatsapp ? "opacity-100" : "opacity-0"
+                                            }`}
+                                    />
+                                    <div className="flex-1">
+                                        <p className="font-medium">{customer.fullname} - {customer.noWhatsapp}</p>
+                                        <p className="text-xs text-muted-foreground">{customer.address}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            {/* Clear Button */}
+            {searchQuery ? (
+                <button
+                    onClick={handleClearSelection}
+                    className="absolute right-3 top-1/2 rotate-45 -translate-y-1/2 h-4 w-4 rounded-full bg-muted-foreground/20 hover:bg-muted-foreground/40 flex items-center justify-center text-xs"
+                    type="button"
+                >
+                    <Plus className="opacity-50" />
+                </button>
+            ) : (
+                <button
+                    className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 rounded-full flex items-center justify-center text-xs"
+                    type="button"
+                >
+                    <ChevronsUpDown className="opacity-50" />
+                </button>
+            )}
+
+            {/* Click outside to close */}
+            {open && (
+                <div
+                    className="fixed inset-0 z-40"
+                    onClick={() => setOpen(false)}
+                />
+            )}
+        </div>
+    );
+}
+
 export default function NewSPK() {
     const router = useRouter();
     const { toast } = useToast();
-    const { provinces, cities, districts, subDistricts } = useLocationData();
     const [openDialog, setOpenDialog] = useState(false);
-
+    const [searchResult, setSearchResult] = useState<any[]>([]);
+    const [loading, setLoading] = useState(false);
+    
+    // State untuk menyimpan data customer yang dipilih
+    const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
+    
+    // State untuk menyimpan display names dari location codes
+    const [locationLabels, setLocationLabels] = useState({
+        provinceName: "",
+        cityName: "",
+        districtName: "",
+        subDistrictName: ""
+    });
 
     const [formData, setFormData] = useState({
         noWhatsapp: "",
@@ -87,8 +236,107 @@ export default function NewSPK() {
         trxDate: formatDateInput(new Date().toISOString()),
     });
 
+    // Hook untuk mengambil data lokasi berdasarkan customer yang dipilih
+    const { provinces, cities, districts, subDistricts } = useLocationData(
+        selectedCustomer?.province,
+        selectedCustomer?.city,
+        selectedCustomer?.district
+    );
+
+    // Effect untuk mengambil label lokasi berdasarkan customer yang dipilih
+    useEffect(() => {
+        if (selectedCustomer) {
+            // Helper function untuk mendapatkan label berdasarkan code
+            const getLocationLabel = (items: any[], code: string) => {
+                const item = items.find(item => item.paramKey === code);
+                return item ? item.paramValue : code;
+            };
+
+            // Update location labels
+            setLocationLabels({
+                provinceName: getLocationLabel(provinces, selectedCustomer.province),
+                cityName: getLocationLabel(cities, selectedCustomer.city),
+                districtName: getLocationLabel(districts, selectedCustomer.district),
+                subDistrictName: getLocationLabel(subDistricts, selectedCustomer.subDistrict)
+            });
+        } else {
+            // Clear location labels jika tidak ada customer yang dipilih
+            setLocationLabels({
+                provinceName: "",
+                cityName: "",
+                districtName: "",
+                subDistrictName: ""
+            });
+        }
+    }, [selectedCustomer, provinces, cities, districts, subDistricts]);
+
+    console.log('====================================');
+    console.log('Selected Customer:', selectedCustomer);
+    console.log('Location Labels:', locationLabels);
+    console.log('====================================');
+
     const handleChange = (id: string, value: string | number | string[]) => {
         setFormData({ ...formData, [id]: value });
+    };
+
+    useEffect(() => {
+        const delay = setTimeout(() => {
+            const search = formData.noWhatsapp.trim();
+            if (search.length >= 3) {
+                setLoading(true);
+                api.get(`/customer/page?search=${encodeURIComponent(search)}&page=1&limit=10`)
+                    .then((res) => {
+                        setSearchResult(res?.data[0] || []);
+                    })
+                    .catch(() => setSearchResult([]))
+                    .finally(() => setLoading(false));
+            } else {
+                setSearchResult([]);
+            }
+        }, 500);
+        return () => clearTimeout(delay);
+    }, [formData.noWhatsapp]);
+
+    const handleSelectCustomer = (customer: any) => {
+        // Simpan data customer yang dipilih ke state
+        setSelectedCustomer(customer);
+        
+        // Update formData dengan data customer
+        setFormData(prev => ({
+            ...prev,
+            noWhatsapp: customer.noWhatsapp,
+            customerName: customer.fullname,
+            address: customer.address,
+            province: customer.province,
+            city: customer.city,
+            district: customer.district,
+            subDistrict: customer.subDistrict,
+        }));
+    };
+
+    // Handler untuk clear/reset customer selection
+    const handleClearCustomer = () => {
+        setSelectedCustomer(null);
+        setFormData(prev => ({
+            ...prev,
+            noWhatsapp: "",
+            customerName: "",
+            address: "",
+            province: "",
+            city: "",
+            district: "",
+            subDistrict: "",
+        }));
+    };
+
+    // Handler untuk WhatsApp combobox value change
+    const handleWhatsAppChange = (value: string) => {
+        handleChange("noWhatsapp", value);
+        
+        // Jika value kosong, clear customer selection
+        if (!value.trim()) {
+            handleClearCustomer();
+        }
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -136,8 +384,6 @@ export default function NewSPK() {
         setFormData({ ...formData, [key]: value });
     };
 
-
-
     return (
         <>
             <Breadcrumbs label="Tambah SPK" />
@@ -155,132 +401,88 @@ export default function NewSPK() {
                             <form onSubmit={handleSubmit}>
                                 <div className="grid grid-cols-2 gap-20">
                                     <div className="col-span-1 space-y-4">
+                                        {/* WhatsApp Combobox */}
                                         <div className="flex items-center space-x-4">
                                             <Label className="w-[40%] font-semibold">No Whatsapp</Label>
-                                            <div className="w-full flex items-center focus-within:ring-1 focus-within:ring-ring rounded-lg">
-                                                <Input
-                                                    placeholder="Masukkan No Whatsapp"
-                                                    value={transaction.noWhatsapp}
-                                                    className="rounded-r-none border-r-0 focus-visible:ring-0"
-                                                />
-                                                <Button
-                                                    className="rounded-l-none"
-                                                    variant={"main"}
-                                                >
-                                                    Cari
-                                                </Button>
-                                            </div>
+                                            <WhatsAppCombobox
+                                                value={formData.noWhatsapp}
+                                                onValueChange={handleWhatsAppChange}
+                                                onCustomerSelect={handleSelectCustomer}
+                                                searchResults={searchResult}
+                                                loading={loading}
+                                                placeholder="Masukkan No Whatsapp"
+                                            />
                                         </div>
 
+                                        {/* Nama Pelanggan - View Only */}
                                         <div className="flex items-center space-x-4">
                                             <Label className="w-[40%] font-semibold">Nama Pelanggan</Label>
                                             <Input
                                                 id="customerName"
                                                 value={formData.customerName}
-                                                onChange={(e) => handleChange("customerName", e.target.value)}
-                                                placeholder="Masukkan Nama Pelanggan"
+                                                placeholder="Nama Pelanggan akan terisi otomatis"
+                                                readOnly
+                                                className="bg-muted/50 cursor-not-allowed"
                                             />
                                         </div>
 
+                                        {/* Alamat - View Only */}
                                         <div className="flex items-center space-x-4">
                                             <Label className="w-[40%] font-semibold">Alamat</Label>
                                             <Textarea
                                                 id="address"
                                                 value={formData.address}
-                                                onChange={(e) => handleChange("address", e.target.value)}
-                                                placeholder="Masukkan Alamat"
+                                                placeholder="Alamat akan terisi otomatis"
                                                 rows={4}
-                                                className="resize-none"
+                                                className="resize-none bg-muted/50 cursor-not-allowed"
+                                                readOnly
                                             />
                                         </div>
                                     </div>
 
                                     <div className="col-span-1 space-y-4">
+                                        {/* Provinsi - View Only */}
                                         <div className="flex items-center space-x-4">
                                             <Label className="w-[40%] font-semibold">Provinsi</Label>
-                                            <Select
-                                                value={formData.province}
-                                                onValueChange={(value) => handleChange("province", value)}
-                                            >
-                                                <SelectTrigger className="w-full">
-                                                    <SelectValue placeholder="Pilih Provinsi" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    <SelectGroup>
-                                                        {provinces.map((prov) => (
-                                                            <SelectItem key={prov.id} value={prov.paramKey}>
-                                                                {prov.paramValue}
-                                                            </SelectItem>
-                                                        ))}
-                                                    </SelectGroup>
-                                                </SelectContent>
-                                            </Select>
+                                            <Input
+                                                value={locationLabels.provinceName}
+                                                placeholder="Provinsi akan terisi otomatis"
+                                                readOnly
+                                                className="bg-muted/50 cursor-not-allowed"
+                                            />
                                         </div>
 
+                                        {/* Kab/Kota - View Only */}
                                         <div className="flex items-center space-x-4">
                                             <Label className="w-[40%] font-semibold">Kab/Kota</Label>
-                                            <Select
-                                                value={formData.city}
-                                                onValueChange={(value) => handleChange("city", value)}
-                                                disabled={!formData.province}
-                                            >
-                                                <SelectTrigger className="w-full">
-                                                    <SelectValue placeholder="Pilih Kota/Kabupaten" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    <SelectGroup>
-                                                        {cities.map((city) => (
-                                                            <SelectItem key={city.id} value={city.paramKey}>
-                                                                {city.paramValue}
-                                                            </SelectItem>
-                                                        ))}
-                                                    </SelectGroup>
-                                                </SelectContent>
-                                            </Select>
+                                            <Input
+                                                value={locationLabels.cityName}
+                                                placeholder="Kota/Kabupaten akan terisi otomatis"
+                                                readOnly
+                                                className="bg-muted/50 cursor-not-allowed"
+                                            />
                                         </div>
 
+                                        {/* Kecamatan - View Only */}
                                         <div className="flex items-center space-x-4">
                                             <Label className="w-[40%] font-semibold">Kecamatan</Label>
-                                            <Select
-                                                value={formData.district}
-                                                onValueChange={(value) => handleChange("district", value)}
-                                                disabled={!formData.city}
-                                            >
-                                                <SelectTrigger className="w-full">
-                                                    <SelectValue placeholder="Pilih Kecamatan" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    <SelectGroup>
-                                                        {districts.map((district) => (
-                                                            <SelectItem key={district.id} value={district.paramKey}>
-                                                                {district.paramValue}
-                                                            </SelectItem>
-                                                        ))}
-                                                    </SelectGroup>
-                                                </SelectContent>
-                                            </Select>
+                                            <Input
+                                                value={locationLabels.districtName}
+                                                placeholder="Kecamatan akan terisi otomatis"
+                                                readOnly
+                                                className="bg-muted/50 cursor-not-allowed"
+                                            />
                                         </div>
 
+                                        {/* Kelurahan - View Only */}
                                         <div className="flex items-center space-x-4">
                                             <Label className="w-[40%] font-semibold">Kelurahan</Label>
-                                            <Select
-                                                value={formData.subDistrict}
-                                                onValueChange={(value) => handleChange("subDistrict", value)}
-                                                disabled={!formData.district}
-                                            >
-                                                <SelectTrigger className="w-full">
-                                                    <SelectValue placeholder="Pilih Kelurahan" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    <SelectGroup>
-                                                        {subDistricts.map((sub) => (
-                                                            <SelectItem key={sub.id} value={sub.paramKey}>
-                                                                {sub.paramValue}
-                                                            </SelectItem>
-                                                        ))}
-                                                    </SelectGroup>
-                                                </SelectContent>
-                                            </Select>
+                                            <Input
+                                                value={locationLabels.subDistrictName}
+                                                placeholder="Kelurahan akan terisi otomatis"
+                                                readOnly
+                                                className="bg-muted/50 cursor-not-allowed"
+                                            />
                                         </div>
                                     </div>
                                 </div>
@@ -291,8 +493,7 @@ export default function NewSPK() {
                                     <div className="col-span-1 space-y-4">
                                         <div className="flex items-center space-x-4">
                                             <Label className="w-[40%] font-semibold">Petugas Cleaning</Label>
-                                            <MultiSelect
-                                            />
+                                            <MultiSelect />
                                         </div>
 
                                         <div className="flex items-center space-x-4">
@@ -309,22 +510,18 @@ export default function NewSPK() {
                                     <div className="col-span-1 space-y-4">
                                         <div className="flex items-center space-x-4">
                                             <Label className="w-[40%] font-semibold">Petugas Blower</Label>
-                                            <MultiSelect 
-                                            />
+                                            <MultiSelect />
                                         </div>
                                     </div>
                                 </div>
                             </form>
-
 
                             <div className="w-full border-t mt-7"></div>
 
                             <div className="mt-5 space-y-3">
                                 <div className="flex justify-end">
                                     <Button
-                                        icon={<LuPlus
-                                            size={16}
-                                        />}
+                                        icon={<LuPlus size={16} />}
                                         className="pl-2 pr-4"
                                         iconPosition="left"
                                         variant="default"
@@ -369,7 +566,6 @@ export default function NewSPK() {
                                 </div>
                             </div>
 
-
                             <div className="flex justify-end mt-6 gap-2">
                                 <Button onClick={() => router.back()} variant="outline2">
                                     Kembali
@@ -406,7 +602,6 @@ export default function NewSPK() {
             >
                 <div className="mx-2">
                     <form className="space-y-4" onSubmit={handleSubmit}>
-
                         <div className="flex items-center space-x-4">
                             <Label htmlFor="category" className="w-1/4">
                                 Kategori
@@ -436,7 +631,6 @@ export default function NewSPK() {
                                     </SelectGroup>
                                 </SelectContent>
                             </Select>
-                         
                         </div>
 
                         <div className="flex items-center space-x-4">
@@ -477,8 +671,8 @@ export default function NewSPK() {
                         {/* Tampilkan RadioGroup dan disable jika kategori bukan GENERAL atau BLOWER */}
                         <div className="flex items-center space-x-4">
                             <Label htmlFor="tipe" className="w-[20%] font-semibold">Tipe</Label>
-                            <RadioGroup 
-                                defaultValue="option-one" 
+                            <RadioGroup
+                                defaultValue="option-one"
                                 className="flex items-center gap-5"
                                 disabled={!(formDataTable.category === "GENERAL" || formDataTable.category === "BLOWER")}
                             >
