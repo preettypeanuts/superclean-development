@@ -1,8 +1,17 @@
 import { useEffect, useState } from "react";
-import { apiClient } from "libs/utils/apiClient";
+import { api } from "libs/utils/apiClient";
 
 // Tipe data untuk hasil mapping
 type ParameterMapping = Record<string, string>;
+
+// Tipe data untuk service berdasarkan response API
+interface Service {
+  serviceCode: string;
+  serviceName: string;
+  vacuumPrice: number;
+  cleanPrice: number;
+  unit: string;
+}
 
 export function useCategoryStore() {
   const [unitLayananMapping, setUnitLayananMapping] = useState<ParameterMapping>({});
@@ -13,19 +22,19 @@ export function useCategoryStore() {
     const fetchData = async () => {
       try {
         const [unitRes, catRes] = await Promise.all([
-          apiClient("/parameter/category?category=UNIT_LAYANAN"),
-          apiClient("/parameter/category?category=CAT_LAYANAN"),
+          api.get("/parameter/category?category=UNIT_LAYANAN"),
+          api.get("/parameter/category?category=CAT_LAYANAN"),
         ]);
 
         // Mapping UNIT_LAYANAN
         const unitMap: ParameterMapping = {};
-        unitRes.data.forEach((unit) => {
+        unitRes.data.forEach((unit: any) => {
           unitMap[unit.paramKey] = unit.paramValue;
         });
 
         // Mapping CAT_LAYANAN
         const catMap: ParameterMapping = {};
-        catRes.data.forEach((cat) => {
+        catRes.data.forEach((cat: any) => {
           catMap[cat.paramKey] = cat.paramValue;
         });
 
@@ -42,4 +51,38 @@ export function useCategoryStore() {
   }, []);
 
   return { unitLayananMapping, catLayananMapping, loading };
+}
+
+// Hook khusus untuk service lookup berdasarkan kategori
+export function useServiceLookup(category: string) {
+  const [services, setServices] = useState<Service[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchServices = async () => {
+      if (!category || category.trim() === "") {
+        setServices([]);
+        return;
+      }
+
+      setLoading(true);
+      setError(null);
+      
+      try {
+        const response = await api.get(`/service/lookup?category=${category}`);
+        setServices(response.data || []);
+      } catch (err: any) {
+        console.error(`Gagal mengambil data service untuk kategori ${category}:`, err);
+        setError(err.message || "Gagal mengambil data service");
+        setServices([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchServices();
+  }, [category]);
+
+  return { services, loading, error };
 }

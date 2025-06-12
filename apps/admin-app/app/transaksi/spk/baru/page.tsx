@@ -19,51 +19,47 @@ import { formatDateInput } from "libs/utils/formatDate";
 import { SPKTableDetail } from "libs/ui-components/src/components/spk-table-detail";
 import { DialogWrapper } from "libs/ui-components/src/components/dialog-wrapper";
 import { formatRupiah } from "libs/utils/formatRupiah";
-import { useCategoryStore } from "libs/utils/useCategoryStore";
+import { useCategoryStore, useServiceLookup } from "libs/utils/useCategoryStore";
 import { RupiahInput } from "@ui-components/components/rupiah-input";
 import { RadioGroup, RadioGroupItem } from "@ui-components/components/ui/radio-group";
 import { Header } from "@shared/components/Header";
-import { Check, ChevronsUpDown, Cross, Plus, PlusCircle, Search } from "lucide-react";
+import { Check, ChevronsUpDown, Cross, Plus, PlusCircle, Search, AlertTriangle } from "lucide-react";
+import { DatePicker } from "@ui-components/components/date-picker";
 
-// Dummy data sementara agar tidak error saat preview
-const transaction = {
-    trxNumber: "SPK-00123",
-    noWhatsapp: "",
-    address: "Jl. Contoh Alamat No. 1",
-    trxDate: new Date().toISOString(),
-    status: 0,
-    subDistrict: "",
-    totalPrice: 0,
-    promoPrice: 0,
-    discountPrice: 0,
-    finalPrice: 0,
-};
+// Interface untuk SPK Item (tanpa total)
+interface SPKItem {
+    id: string;
+    kode: string;
+    layanan: string;
+    kategori: string;
+    kategoriCode: string;
+    jumlah: number;
+    satuan: string;
+    harga: number;
+    promo: number;
+    tipe?: string;
+    promoCode?: string;
+    promoType?: string;
+}
 
+// Interface untuk promo response
+interface PromoResponse {
+    amount: number;
+    code: string;
+    type: string;
+}
+
+// Header table tanpa kolom total
 const DataHeaderSPKDetail = [
-    { key: "id", label: "#" },
-    { key: "kode", label: "kode" },
-    { key: "layanan", label: "layanan" },
-    { key: "kategori", label: "kategori" },
-    { key: "jumlah", label: "jumlah" },
-    { key: "satuan", label: "satuan" },
-    { key: "harga", label: "harga" },
-    { key: "promo", label: "promo" },
-    { key: "id", label: "Aksi" }
-];
-
-const DataDummySPK = [
-    {
-        id: "-",
-        kode: "-",
-        layanan: "-",
-        kategori: "-",
-        jumlah: "-",
-        satuan: "-",
-        harga: 0,
-        promo: 0,
-        createdBy: "-",
-        createdAt: "-",
-    },
+    { key: "no", label: "#" },
+    { key: "kode", label: "Kode Service" },
+    { key: "layanan", label: "Layanan" },
+    { key: "kategori", label: "Kategori" },
+    { key: "jumlah", label: "Jumlah" },
+    { key: "satuan", label: "Satuan" },
+    { key: "harga", label: "Harga" },
+    { key: "promo", label: "Promo" },
+    { key: "menu", label: "Aksi" }
 ];
 
 // Searchable Combobox Component untuk WhatsApp
@@ -85,7 +81,6 @@ function WhatsAppCombobox({
     const [open, setOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState(value);
 
-    // Sync searchQuery dengan value prop
     useEffect(() => {
         setSearchQuery(value);
     }, [value]);
@@ -111,7 +106,6 @@ function WhatsAppCombobox({
 
     return (
         <div className="relative w-full">
-            {/* Input Field */}
             <div
                 className={`flex h-10 w-full items-center justify-between rounded-lg border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-within:ring-1 focus-within:ring-ring cursor-text ${open ? "ring-1 ring-ring" : ""
                     }`}
@@ -131,7 +125,6 @@ function WhatsAppCombobox({
                 </div>
             </div>
 
-            {/* Dropdown Results */}
             {open && (
                 <div className="absolute top-full z-50 mt-1 w-full rounded-md border bg-popover text-popover-foreground shadow-lg">
                     <div className="max-h-[300px] overflow-y-auto no-scrollbar">
@@ -175,7 +168,6 @@ function WhatsAppCombobox({
                 </div>
             )}
 
-            {/* Clear Button */}
             {searchQuery ? (
                 <button
                     onClick={handleClearSelection}
@@ -193,7 +185,6 @@ function WhatsAppCombobox({
                 </button>
             )}
 
-            {/* Click outside to close */}
             {open && (
                 <div
                     className="fixed inset-0 z-40"
@@ -210,10 +201,25 @@ export default function NewSPK() {
     const [openDialog, setOpenDialog] = useState(false);
     const [searchResult, setSearchResult] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
-    
+
+    // State untuk SPK Items
+    const [spkItems, setSPKItems] = useState<SPKItem[]>([]);
+
+    // State untuk diskon manual
+    const [manualDiscount, setManualDiscount] = useState<number>(0);
+
     // State untuk menyimpan data customer yang dipilih
     const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
-    
+
+    // State untuk staff data
+    const [cleaningStaffList, setCleaningStaffList] = useState<any[]>([]);
+    const [blowerStaffList, setBlowerStaffList] = useState<any[]>([]);
+    const [loadingCleaningStaff, setLoadingCleaningStaff] = useState(false);
+    const [loadingBlowerStaff, setLoadingBlowerStaff] = useState(false);
+
+    // State untuk loading promo
+    const [loadingPromo, setLoadingPromo] = useState(false);
+
     // State untuk menyimpan display names dari location codes
     const [locationLabels, setLocationLabels] = useState({
         provinceName: "",
@@ -222,12 +228,24 @@ export default function NewSPK() {
         subDistrictName: ""
     });
 
-    const [formData, setFormData] = useState({
+    type FormDataType = {
+        noWhatsapp: string;
+        customerName: string;
+        address: string;
+        province: string;
+        city: string;
+        district: string;
+        subDistrict: string;
+        cleaningStaff: string[];
+        blowerStaff: string[];
+        trxDate: string;
+    };
+
+    const [formData, setFormData] = useState<FormDataType>({
         noWhatsapp: "",
         customerName: "",
         address: "",
         province: "",
-        category: "",
         city: "",
         district: "",
         subDistrict: "",
@@ -246,13 +264,11 @@ export default function NewSPK() {
     // Effect untuk mengambil label lokasi berdasarkan customer yang dipilih
     useEffect(() => {
         if (selectedCustomer) {
-            // Helper function untuk mendapatkan label berdasarkan code
             const getLocationLabel = (items: any[], code: string) => {
                 const item = items.find(item => item.paramKey === code);
                 return item ? item.paramValue : code;
             };
 
-            // Update location labels
             setLocationLabels({
                 provinceName: getLocationLabel(provinces, selectedCustomer.province),
                 cityName: getLocationLabel(cities, selectedCustomer.city),
@@ -260,7 +276,6 @@ export default function NewSPK() {
                 subDistrictName: getLocationLabel(subDistricts, selectedCustomer.subDistrict)
             });
         } else {
-            // Clear location labels jika tidak ada customer yang dipilih
             setLocationLabels({
                 provinceName: "",
                 cityName: "",
@@ -270,10 +285,107 @@ export default function NewSPK() {
         }
     }, [selectedCustomer, provinces, cities, districts, subDistricts]);
 
-    console.log('====================================');
-    console.log('Selected Customer:', selectedCustomer);
-    console.log('Location Labels:', locationLabels);
-    console.log('====================================');
+    // Function untuk fetch staff data
+    const fetchStaffData = async (roleId: string, city: string, setStaffList: Function, setLoading: Function) => {
+        if (!roleId || !city) {
+            setStaffList([]);
+            return;
+        }
+
+        setLoading(true);
+        try {
+            const response = await api.get(`/user/lookup?roleId=${roleId}&city=${city}`);
+            setStaffList(response?.data || []);
+        } catch (error) {
+            console.error(`Error fetching ${roleId} staff:`, error);
+            setStaffList([]);
+            toast({
+                title: "Error",
+                description: `Gagal mengambil data petugas ${roleId.toLowerCase()}`,
+                variant: "destructive",
+            });
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Function untuk fetch promo berdasarkan serviceCode dan quantity
+    const fetchPromo = async (serviceCode: string, quantity: string): Promise<PromoResponse> => {
+        if (!serviceCode || !quantity || parseInt(quantity) <= 0) {
+            return { amount: 0, code: "", type: "" };
+        }
+
+        setLoadingPromo(true);
+        try {
+            const response = await api.get(`/promo/current?serviceCode=${serviceCode}&quantity=${quantity}`);
+
+            return {
+                amount: response.data?.amount || 0,
+                code: response.data?.code || "",
+                type: response.data?.promoType || ""
+            };
+        } catch (error) {
+            console.error("Error fetching promo:", error);
+            return { amount: 0, code: "", type: "" };
+        } finally {
+            setLoadingPromo(false);
+        }
+    };
+
+    // Function untuk manual check promo dengan toast feedback
+    const handleCheckPromo = async () => {
+        if (!formDataTable.serviceCode) {
+            toast({
+                title: "Peringatan",
+                description: "Silakan pilih layanan terlebih dahulu",
+                variant: "destructive",
+            });
+            return;
+        }
+
+        if (!formDataTable.jumlah || parseInt(formDataTable.jumlah) <= 0) {
+            toast({
+                title: "Peringatan",
+                description: "Silakan masukkan jumlah yang valid",
+                variant: "destructive",
+            });
+            return;
+        }
+
+        const promoData = await fetchPromo(formDataTable.serviceCode, formDataTable.jumlah);
+
+        setFormDataTable(prev => ({
+            ...prev,
+            promo: promoData.amount,
+            promoCode: promoData.code,
+            promoType: promoData.type
+        }));
+
+        if (promoData.amount > 0) {
+            toast({
+                title: "Promo Ditemukan!",
+                description: `Anda mendapat promo sebesar ${formatRupiah(promoData.amount)}`,
+                variant: "default",
+            });
+        } else {
+            toast({
+                title: "Tidak Ada Promo",
+                description: "Tidak ada promo yang tersedia untuk layanan dan jumlah ini",
+                variant: "default",
+            });
+        }
+    };
+
+    // Effect untuk fetch staff data ketika customer berubah
+    useEffect(() => {
+        if (selectedCustomer?.city) {
+            fetchStaffData("CLEANER", selectedCustomer.city, setCleaningStaffList, setLoadingCleaningStaff);
+            fetchStaffData("BLOWER", selectedCustomer.city, setBlowerStaffList, setLoadingBlowerStaff);
+        } else {
+            setCleaningStaffList([]);
+            setBlowerStaffList([]);
+        }
+    }, [selectedCustomer?.city]);
 
     const handleChange = (id: string, value: string | number | string[]) => {
         setFormData({ ...formData, [id]: value });
@@ -298,10 +410,7 @@ export default function NewSPK() {
     }, [formData.noWhatsapp]);
 
     const handleSelectCustomer = (customer: any) => {
-        // Simpan data customer yang dipilih ke state
         setSelectedCustomer(customer);
-        
-        // Update formData dengan data customer
         setFormData(prev => ({
             ...prev,
             noWhatsapp: customer.noWhatsapp,
@@ -314,7 +423,20 @@ export default function NewSPK() {
         }));
     };
 
-    // Handler untuk clear/reset customer selection
+    const handleCleaningStaffChange = (selectedStaffIds: string[]) => {
+        setFormData(prev => ({
+            ...prev,
+            cleaningStaff: selectedStaffIds
+        }));
+    };
+
+    const handleBlowerStaffChange = (selectedStaffIds: string[]) => {
+        setFormData(prev => ({
+            ...prev,
+            blowerStaff: selectedStaffIds
+        }));
+    };
+
     const handleClearCustomer = () => {
         setSelectedCustomer(null);
         setFormData(prev => ({
@@ -326,26 +448,115 @@ export default function NewSPK() {
             city: "",
             district: "",
             subDistrict: "",
+            cleaningStaff: [],
+            blowerStaff: [],
         }));
+        setCleaningStaffList([]);
+        setBlowerStaffList([]);
     };
 
-    // Handler untuk WhatsApp combobox value change
     const handleWhatsAppChange = (value: string) => {
         handleChange("noWhatsapp", value);
-        
-        // Jika value kosong, clear customer selection
         if (!value.trim()) {
             handleClearCustomer();
         }
     };
 
+    // Function untuk menghitung total dari semua SPK items (update)
+    const calculateTotals = () => {
+        const totalPrice = spkItems.reduce((sum, item) => sum + item.harga, 0);
+        const totalPromo = spkItems.reduce((sum, item) => sum + item.promo, 0);
+        const finalPrice = totalPrice - totalPromo - manualDiscount;
+
+        // Validasi: total pengurangan tidak boleh lebih besar dari total harga
+        const totalReductions = totalPromo + manualDiscount;
+        const isInvalidTotal = totalReductions > totalPrice;
+
+        return {
+            totalPrice,
+            totalPromo,
+            manualDiscount,
+            totalReductions,
+            finalPrice,
+            isInvalidTotal
+        };
+    };
+
+    const totals = calculateTotals();
+
+    // Function untuk menghapus SPK item
+    const handleDeleteSPKItem = (id: string) => {
+        setSPKItems(prev => prev.filter(item => item.id !== id));
+        toast({
+            title: "Berhasil",
+            description: "Item SPK berhasil dihapus",
+            variant: "default",
+        });
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        console.log("Payload yang dikirim:", JSON.stringify(formData, null, 2)); // Cek di console
+        // Validasi dasar
+        if (spkItems.length === 0) {
+            toast({
+                title: "Peringatan",
+                description: "Harap tambahkan minimal satu item SPK",
+                variant: "destructive",
+            });
+            return;
+        }
+
+        if (!selectedCustomer?.id) {
+            toast({
+                title: "Peringatan",
+                description: "Harap pilih customer terlebih dahulu",
+                variant: "destructive",
+            });
+            return;
+        }
+
+        if (formData.cleaningStaff.length === 0 && formData.blowerStaff.length === 0) {
+            toast({
+                title: "Peringatan",
+                description: "Harap pilih minimal satu petugas",
+                variant: "destructive",
+            });
+            return;
+        }
+
+        if (totals.isInvalidTotal) {
+            toast({
+                title: "Peringatan",
+                description: "Total pengurangan (promo + diskon) tidak boleh lebih besar dari total harga",
+                variant: "destructive",
+            });
+            return;
+        }
+
+        // Prepare data sesuai expected request body
+        const submitData = {
+            customerId: selectedCustomer.id,
+            discountPrice: totals.totalReductions, // Total promo + diskon manual
+            trxDate: new Date(formData.trxDate).toISOString(),
+            assigns: formData.cleaningStaff,
+            blowers: formData.blowerStaff,
+            details: spkItems.map(item => ({
+                serviceCategory: item.kategoriCode,
+                serviceCode: item.kode,
+                serviceType: item.tipe === "vakum" ? 0 : 1,
+                servicePrice: item.harga,
+                quantity: item.jumlah,
+                promoCode: item.promoCode || "",
+                promoType: item.promoType || "",
+                promoAmount: item.promo
+            }))
+        };
+
+        console.log("Payload yang dikirim:", JSON.stringify(submitData, null, 2));
 
         try {
-            await api.post("/spk", formData);
+            await api.post("/transaction", submitData);
             toast({
                 title: "Berhasil",
                 description: "SPK berhasil ditambahkan!",
@@ -362,26 +573,211 @@ export default function NewSPK() {
         }
     };
 
-    // Input Dialog 
-    const { catLayananMapping, unitLayananMapping, loading: loadingParams } = useCategoryStore();
+    // Input Dialog Form
+    const { catLayananMapping, loading: loadingParams } = useCategoryStore();
 
+    // State untuk tracking mode edit
+    const [editMode, setEditMode] = useState<string | null>(null);
+
+    // State untuk form dialog
     const [formDataTable, setFormDataTable] = useState({
-        code: "",
-        name: "",
-        amount: "",
         category: "",
         serviceCode: "",
-        minItem: "",
-        endDate: "",
-        servicesType: "",
+        jumlah: "",
+        tipe: "vakum",
+        harga: 0,
+        promo: 0,
+        promoCode: "",
+        promoType: "",
     });
 
-    const handleChangeTable = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFormData({ ...formData, [e.target.id]: e.target.value });
+    // Hook untuk service lookup berdasarkan kategori yang dipilih
+    const { services, loading: loadingServices } = useServiceLookup(formDataTable.category);
+
+    // Updated handleChangeTable function untuk handle promo fetching
+    const handleChangeTable = async (field: string, value: any) => {
+        setFormDataTable(prev => {
+            const newData = { ...prev, [field]: value };
+
+            // Jika kategori berubah, reset serviceCode
+            if (field === "category") {
+                newData.serviceCode = "";
+                newData.harga = 0;
+                newData.promo = 0;
+                newData.promoCode = "";
+                newData.promoType = "";
+            }
+
+            // Jika serviceCode berubah, auto-fill harga dari service yang dipilih
+            if (field === "serviceCode" && value) {
+                const selectedService = services.find(service => service.serviceCode === value);
+                if (selectedService) {
+                    const price = newData.tipe === "vakum"
+                        ? selectedService.vacuumPrice
+                        : selectedService.cleanPrice;
+                    newData.harga = price;
+                }
+
+                newData.promo = 0;
+                newData.promoCode = "";
+                newData.promoType = "";
+            }
+
+            // Jika tipe berubah dan ada service yang dipilih, update harga
+            if (field === "tipe" && newData.serviceCode) {
+                const selectedService = services.find(service => service.serviceCode === newData.serviceCode);
+                if (selectedService) {
+                    const price = value === "vakum"
+                        ? selectedService.vacuumPrice
+                        : selectedService.cleanPrice;
+                    newData.harga = price;
+                }
+
+                newData.promo = 0;
+                newData.promoCode = "";
+                newData.promoType = "";
+            }
+
+            return newData;
+        });
+
+        // Auto fetch promo jika serviceCode dan jumlah sudah ada
+        setTimeout(async () => {
+            const currentData = { ...formDataTable, [field]: value };
+
+            if ((field === "serviceCode" || field === "jumlah") &&
+                currentData.serviceCode &&
+                currentData.jumlah &&
+                parseInt(currentData.jumlah) > 0) {
+
+                const promoData = await fetchPromo(currentData.serviceCode, currentData.jumlah);
+
+                setFormDataTable(prev => ({
+                    ...prev,
+                    promo: promoData.amount,
+                    promoCode: promoData.code,
+                    promoType: promoData.type
+                }));
+            }
+        }, 100);
     };
 
-    const handleSelectChangeTable = (key: keyof typeof formData, value: string) => {
-        setFormData({ ...formData, [key]: value });
+    // resetFormDialog function
+    const resetFormDialog = () => {
+        setFormDataTable({
+            category: "",
+            serviceCode: "",
+            jumlah: "",
+            tipe: "vakum",
+            harga: 0,
+            promo: 0,
+            promoCode: "",
+            promoType: "",
+        });
+        setEditMode(null);
+    };
+
+    // handleEditSPKItem function
+    const handleEditSPKItem = (item: SPKItem) => {
+        setFormDataTable({
+            category: item.kategoriCode,
+            serviceCode: item.kode,
+            jumlah: item.jumlah.toString(),
+            tipe: item.tipe || "vakum",
+            harga: item.harga,
+            promo: item.promo,
+            promoCode: item.promoCode || "",
+            promoType: item.promoType || "",
+        });
+
+        setEditMode(item.id);
+        setOpenDialog(true);
+    };
+
+    // handleAddSPKItem function (update - tanpa total calculation)
+    const handleAddSPKItem = () => {
+        // Validasi form
+        if (!formDataTable.category || !formDataTable.serviceCode || !formDataTable.jumlah) {
+            toast({
+                title: "Peringatan",
+                description: "Harap lengkapi semua field yang wajib diisi",
+                variant: "destructive",
+            });
+            return;
+        }
+
+        const quantity = parseInt(formDataTable.jumlah);
+        const totalHargaSebelumPromo = formDataTable.harga * quantity;
+
+        // Validasi: promo tidak boleh lebih besar dari total harga item
+        if (formDataTable.promo > totalHargaSebelumPromo) {
+            toast({
+                title: "Peringatan",
+                description: "Promo tidak boleh lebih besar dari total harga item",
+                variant: "destructive",
+            });
+            return;
+        }
+
+        if (editMode) {
+            // Mode edit - update existing item
+            const selectedService = services.find(service => service.serviceCode === formDataTable.serviceCode);
+
+            setSPKItems(prev => prev.map(item =>
+                item.id === editMode
+                    ? {
+                        ...item,
+                        kode: formDataTable.serviceCode,
+                        layanan: selectedService?.serviceName || formDataTable.serviceCode,
+                        kategori: catLayananMapping[formDataTable.category] || formDataTable.category,
+                        kategoriCode: formDataTable.category,
+                        jumlah: quantity,
+                        satuan: selectedService?.unit || "PCS",
+                        harga: formDataTable.harga,
+                        promo: formDataTable.promo,
+                        tipe: formDataTable.tipe,
+                        promoCode: formDataTable.promoCode,
+                        promoType: formDataTable.promoType
+                    }
+                    : item
+            ));
+
+            toast({
+                title: "Berhasil",
+                description: "Item SPK berhasil diperbarui",
+                variant: "default",
+            });
+        } else {
+            // Mode tambah - add new item
+            const newId = Date.now().toString();
+            const selectedService = services.find(service => service.serviceCode === formDataTable.serviceCode);
+
+            const newItem: SPKItem = {
+                id: newId,
+                kode: formDataTable.serviceCode,
+                layanan: selectedService?.serviceName || formDataTable.serviceCode,
+                kategori: catLayananMapping[formDataTable.category] || formDataTable.category,
+                kategoriCode: formDataTable.category,
+                jumlah: quantity,
+                satuan: selectedService?.unit || "PCS",
+                harga: formDataTable.harga,
+                promo: formDataTable.promo,
+                tipe: formDataTable.tipe,
+                promoCode: formDataTable.promoCode,
+                promoType: formDataTable.promoType
+            };
+
+            setSPKItems(prev => [...prev, newItem]);
+
+            toast({
+                title: "Berhasil",
+                description: "Item SPK berhasil ditambahkan",
+                variant: "default",
+            });
+        }
+
+        resetFormDialog();
+        setOpenDialog(false);
     };
 
     return (
@@ -493,16 +889,27 @@ export default function NewSPK() {
                                     <div className="col-span-1 space-y-4">
                                         <div className="flex items-center space-x-4">
                                             <Label className="w-[40%] font-semibold">Petugas Cleaning</Label>
-                                            <MultiSelect />
+                                            <MultiSelect
+                                                staffList={cleaningStaffList}
+                                                selected={formData.cleaningStaff}
+                                                onSelectionChange={handleCleaningStaffChange}
+                                                placeholder="Pilih petugas cleaning"
+                                                loading={loadingCleaningStaff}
+                                            />
                                         </div>
 
                                         <div className="flex items-center space-x-4">
                                             <Label className="w-[40%] font-semibold">Tanggal Transaksi</Label>
-                                            <Input
-                                                type="date"
-                                                id="trxDate"
-                                                value={formData.trxDate}
-                                                onChange={(e) => handleChange("trxDate", e.target.value)}
+                                            <DatePicker
+                                                value={formData.trxDate ? new Date(formData.trxDate) : null}
+                                                onChange={(date) => {
+                                                    if (date) {
+                                                        setFormData(prev => ({
+                                                            ...prev,
+                                                            trxDate: date
+                                                        }));
+                                                    }
+                                                }}
                                             />
                                         </div>
                                     </div>
@@ -510,7 +917,13 @@ export default function NewSPK() {
                                     <div className="col-span-1 space-y-4">
                                         <div className="flex items-center space-x-4">
                                             <Label className="w-[40%] font-semibold">Petugas Blower</Label>
-                                            <MultiSelect />
+                                            <MultiSelect
+                                                staffList={blowerStaffList}
+                                                selected={formData.blowerStaff}
+                                                onSelectionChange={handleBlowerStaffChange}
+                                                placeholder="Pilih petugas blower"
+                                                loading={loadingBlowerStaff}
+                                            />
                                         </div>
                                     </div>
                                 </div>
@@ -525,43 +938,66 @@ export default function NewSPK() {
                                         className="pl-2 pr-4"
                                         iconPosition="left"
                                         variant="default"
-                                        onClick={() => setOpenDialog(true)}
+                                        onClick={() => {
+                                            resetFormDialog();
+                                            setOpenDialog(true);
+                                        }}
                                     >
                                         Tambah
                                     </Button>
                                 </div>
                                 <SPKTableDetail
-                                    data={DataDummySPK}
+                                    data={spkItems}
                                     columns={DataHeaderSPKDetail}
                                     currentPage={1}
                                     limit={10}
                                     fetchData={() => console.log("Fetching data...")}
+                                    onDelete={handleDeleteSPKItem}
+                                    onEdit={handleEditSPKItem}
                                 />
                             </div>
 
-                            <div className="grid grid-cols-2 gap-20 mt-5">
+                            {/* Summary Section - Moved to bottom */}
+                            <div className="grid grid-cols-2 gap-20 mt-8 border-t pt-6">
                                 <div className="col-span-1"></div>
                                 <div className="col-span-1 space-y-4">
                                     <div className="flex items-center space-x-4">
                                         <Label className="w-[40%] font-semibold flex items-center gap-1">
-                                            Total harga <PiWarningCircleFill />
+                                            Total Harga
+                                            {totals.isInvalidTotal && (
+                                                <div className="relative group">
+                                                    <AlertTriangle className="h-4 w-4 text-red-500" />
+                                                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
+                                                        Total pengurangan tidak boleh lebih besar dari total harga
+                                                    </div>
+                                                </div>
+                                            )}
                                         </Label>
-                                        <Input className="text-right" disabled value={formatRupiah(transaction.totalPrice)} />
+                                        <Input
+                                            className={`text-right ${totals.isInvalidTotal ? 'border-red-500 bg-red-50' : ''}`}
+                                            disabled
+                                            value={formatRupiah(totals.totalPrice)}
+                                        />
                                     </div>
 
                                     <div className="flex items-center space-x-4">
-                                        <Label className="w-[40%] font-semibold">Promo</Label>
-                                        <Input className="text-right" disabled value={formatRupiah(transaction.promoPrice)} />
+                                        <Label className="w-[40%] font-semibold">Total Promo</Label>
+                                        <Input className="text-right" disabled value={formatRupiah(totals.totalPromo)} />
                                     </div>
 
                                     <div className="flex items-center space-x-4">
-                                        <Label className="w-[40%] font-semibold">Diskon</Label>
-                                        <Input className="text-right" disabled value={formatRupiah(transaction.discountPrice)} />
+                                        <Label className="w-[40%] font-semibold">Diskon Manual</Label>
+                                        <RupiahInput
+                                            placeholder="Rp. 0"
+                                            value={manualDiscount}
+                                            onValueChange={setManualDiscount}
+                                            className="text-right"
+                                        />
                                     </div>
 
                                     <div className="flex items-center justify-between mt-5 px-3 py-2 bg-neutral-200 rounded-lg">
                                         <Label className="w-[50%] font-bold text-2xl">Total Akhir</Label>
-                                        <Label className="text-right font-bold text-2xl">{formatRupiah(transaction.finalPrice)}</Label>
+                                        <Label className="text-right font-bold text-2xl">{formatRupiah(totals.finalPrice)}</Label>
                                     </div>
                                 </div>
                             </div>
@@ -570,12 +1006,16 @@ export default function NewSPK() {
                                 <Button onClick={() => router.back()} variant="outline2">
                                     Kembali
                                 </Button>
-                                <Button type="submit" variant="main">
+                                <Button
+                                    type="submit"
+                                    variant="main"
+                                    onClick={handleSubmit}
+                                    disabled={totals.isInvalidTotal}
+                                >
                                     Simpan
                                 </Button>
-                                <Button className="hidden" onClick={() => router.back()} variant="destructive">
-                                    Batalkan
-                                </Button>
+
+
                             </div>
                         </div>
                     </TabsContent>
@@ -593,21 +1033,26 @@ export default function NewSPK() {
             {/* Input Table Dialog */}
             <DialogWrapper
                 open={openDialog}
-                onOpenChange={setOpenDialog}
+                onOpenChange={(open) => {
+                    setOpenDialog(open);
+                    if (!open) {
+                        resetFormDialog();
+                    }
+                }}
                 headItem={
                     <>
-                        <Header label="Tambah SPK Baru" />
+                        <Header label={editMode ? "Edit SPK Item" : "Tambah SPK Baru"} />
                     </>
                 }
             >
                 <div className="mx-2">
-                    <form className="space-y-4" onSubmit={handleSubmit}>
+                    <div className="space-y-4">
                         <div className="flex items-center space-x-4">
                             <Label htmlFor="category" className="w-1/4">
                                 Kategori
                             </Label>
                             <Select
-                                onValueChange={(value) => handleSelectChangeTable("category", value)}
+                                onValueChange={(value) => handleChangeTable("category", value)}
                                 value={formDataTable.category}
                                 disabled={loadingParams}
                             >
@@ -638,23 +1083,36 @@ export default function NewSPK() {
                                 Layanan
                             </Label>
                             <Select
-                                // onValueChange={(value) => handleSelectChange("serviceCode", value)}
-                                disabled={loadingParams}
+                                onValueChange={(value) => handleChangeTable("serviceCode", value)}
+                                value={formDataTable.serviceCode}
+                                disabled={loadingServices || !formDataTable.category || formDataTable.category === ""}
                             >
                                 <SelectTrigger className="w-full">
-                                    <SelectValue placeholder="Pilih Layanan" />
+                                    <SelectValue
+                                        placeholder={
+                                            !formDataTable.category
+                                                ? "Pilih kategori terlebih dahulu"
+                                                : loadingServices
+                                                    ? "Loading..."
+                                                    : "Pilih Layanan"
+                                        }
+                                    />
                                 </SelectTrigger>
                                 <SelectContent className="z-[999]">
                                     <SelectGroup>
-                                        <SelectLabel>Satuan</SelectLabel>
-                                        {loadingParams ? (
+                                        <SelectLabel>Layanan</SelectLabel>
+                                        {loadingServices ? (
                                             <SelectItem value="loading" disabled>
                                                 Loading...
                                             </SelectItem>
+                                        ) : services.length === 0 ? (
+                                            <SelectItem value="no-data" disabled>
+                                                Tidak ada layanan untuk kategori ini
+                                            </SelectItem>
                                         ) : (
-                                            Object.keys(unitLayananMapping).map((key) => (
-                                                <SelectItem key={key} value={key}>
-                                                    {unitLayananMapping[key]}
+                                            services.map((service) => (
+                                                <SelectItem key={service.serviceCode} value={service.serviceCode}>
+                                                    {service.serviceName}
                                                 </SelectItem>
                                             ))
                                         )}
@@ -664,15 +1122,20 @@ export default function NewSPK() {
                         </div>
 
                         <div className="flex items-center space-x-4">
-                            <Label htmlFor="code" className="w-1/4 font-semibold">Jumlah</Label>
-                            <Input placeholder="Masukkan Jumlah" type="number" id="code" value={formDataTable.code} onChange={handleChangeTable} />
+                            <Label htmlFor="jumlah" className="w-1/4 font-semibold">Jumlah</Label>
+                            <Input
+                                placeholder="Masukkan Jumlah"
+                                type="number"
+                                value={formDataTable.jumlah}
+                                onChange={(e) => handleChangeTable("jumlah", e.target.value)}
+                            />
                         </div>
 
-                        {/* Tampilkan RadioGroup dan disable jika kategori bukan GENERAL atau BLOWER */}
                         <div className="flex items-center space-x-4">
                             <Label htmlFor="tipe" className="w-[20%] font-semibold">Tipe</Label>
                             <RadioGroup
-                                defaultValue="option-one"
+                                value={formDataTable.tipe}
+                                onValueChange={(value) => handleChangeTable("tipe", value)}
                                 className="flex items-center gap-5"
                                 disabled={!(formDataTable.category === "GENERAL" || formDataTable.category === "BLOWER")}
                             >
@@ -688,45 +1151,70 @@ export default function NewSPK() {
                         </div>
 
                         <div className="flex items-center space-x-4">
-                            <Label htmlFor="amount" className="w-1/4 font-semibold">Harga</Label>
+                            <Label htmlFor="harga" className="w-1/4 font-semibold">Harga</Label>
                             <RupiahInput
                                 placeholder="Rp. 0"
-                                onValueChange={(value) => console.log("Nilai angka:", value)}
+                                value={formDataTable.harga}
+                                onValueChange={(value) => handleChangeTable("harga", value)}
                             />
                         </div>
 
                         <div className="flex items-center space-x-4">
                             <Label htmlFor="promo" className="w-1/4 font-semibold">Promo</Label>
-                            <RupiahInput
-                                placeholder="Rp. 0"
-                                onValueChange={(value) => console.log("Nilai angka:", value)}
-                            />
+                            <div className="flex items-center space-x-2 w-full">
+                                <div className="relative flex-1">
+                                    <Input
+                                        value={formatRupiah(formDataTable.promo)}
+                                        className="bg-muted/50 cursor-not-allowed text-right"
+                                        readOnly
+                                        placeholder="Rp. 0"
+                                    />
+                                    {loadingPromo && (
+                                        <div className="absolute inset-0 bg-background/50 flex items-center justify-center rounded-md">
+                                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                                        </div>
+                                    )}
+                                </div>
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={handleCheckPromo}
+                                    disabled={loadingPromo || !formDataTable.serviceCode || !formDataTable.jumlah}
+                                    className="px-3 py-1 h-10 whitespace-nowrap"
+                                >
+                                    Cek Promo
+                                </Button>
+                            </div>
                         </div>
 
                         <div className="flex items-center space-x-4">
-                            <Label htmlFor="code" className="w-1/4 font-bold text-lg">Total</Label>
-                            <RupiahInput
-                                placeholder="Rp. 0"
-                                className="!border-0 !text-lg"
-                                onValueChange={(value) => console.log("Nilai angka:", value)}
+                            <Label htmlFor="subtotal" className="w-1/4 font-bold text-lg">Subtotal</Label>
+                            <Input
+                                value={formatRupiah(
+                                    (Number(formDataTable.harga) || 0) - (Number(formDataTable.promo) || 0)
+                                )}
+                                className="!border-0 !text-lg font-bold text-right"
+                                readOnly
                             />
                         </div>
-                    </form>
+                    </div>
                 </div>
                 <div className="flex justify-end gap-2 mt-4">
                     <Button
                         variant="outline2"
-                        onClick={() => setOpenDialog(false)}
+                        onClick={() => {
+                            setOpenDialog(false);
+                            resetFormDialog();
+                        }}
                     >
                         Kembali
                     </Button>
                     <Button
                         variant="main"
-                        onClick={() => {
-                            setOpenDialog(false);
-                        }}
+                        onClick={handleAddSPKItem}
                     >
-                        Tambah
+                        {editMode ? "Perbarui" : "Tambah"}
                     </Button>
                 </div>
             </DialogWrapper>
