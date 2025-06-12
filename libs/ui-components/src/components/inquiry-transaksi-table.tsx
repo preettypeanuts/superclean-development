@@ -1,11 +1,9 @@
 import Link from "next/link";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from "./ui/table";
 import { Button } from "./ui/button";
-import { useToast } from "libs/ui-components/src/hooks/use-toast";
 import { PiNewspaperFill } from "react-icons/pi";
 import { formatRupiah } from "libs/utils/formatRupiah";
 import { formatDate } from "libs/utils/formatDate";
-import { TrxStatus } from "../../../shared/src/data/system";
 
 interface TableHeader {
   key: string;
@@ -20,9 +18,12 @@ interface InquiryTransaksi {
   address: string;
   city: string;
   branchId: string;
-  finalPrice: number;
+  finalPrice: string; // API mengembalikan string, bukan number
   trxDate: string;
   status: number;
+  customerId?: string;
+  createdBy?: string;
+  createdAt?: string;
 }
 
 interface DataTableProps {
@@ -40,15 +41,18 @@ export const InquiryTransaksiTable: React.FC<DataTableProps> = ({
   limit,
   fetchData,
 }) => {
-  const { toast } = useToast();
 
   const statusLabels: Record<number, string> = {
-    [TrxStatus.PAYMENT]: "Menunggu Bayar",
-    [TrxStatus.PAID]: "Sudah Bayar",
-    [TrxStatus.SETTLED]: "Selesai",
+    0: "Draft",
+    1: "Pending", 
+    3: "Menunggu Bayar",
+    4: "Sudah Bayar",
+    5: "Selesai",
   };
 
   const statusColors: Record<string, string> = {
+    "Draft": "bg-gray-500 text-gray-600 dark:bg-gray-600 dark:text-gray-100",
+    "Pending": "bg-yellow-500 text-yellow-600 dark:bg-yellow-600 dark:text-yellow-100",
     "Menunggu Bayar": "bg-orange-500 text-orange-600 dark:bg-orange-600 dark:text-orange-100",
     "Sudah Bayar": "bg-blue-500 text-blue-600 dark:bg-blue-600 dark:text-blue-100",
     "Selesai": "bg-green-500 text-green-600 dark:bg-green-600 dark:text-green-100",
@@ -76,11 +80,12 @@ export const InquiryTransaksiTable: React.FC<DataTableProps> = ({
           >
             {columns.map((header) => {
               const value = item[header.key as keyof InquiryTransaksi];
+              
               if (header.key === "menu") {
                 return (
                   <TableCell key="menu">
                     <div className="flex gap-2">
-                      <Link href={`/transaksi/inqury-transaksi/detail/${item.trxNumber}`}>
+                      <Link href={`/transaksi/inquiry-transaksi/detail/${item.trxNumber}`}>
                         <Button
                           size="icon"
                           variant="main"
@@ -98,7 +103,9 @@ export const InquiryTransaksiTable: React.FC<DataTableProps> = ({
               }
 
               if (header.key === "finalPrice") {
-                return <TableCell key="finalPrice">{formatRupiah(Number(value))}</TableCell>;
+                // Konversi string ke number untuk formatting
+                const price = typeof value === 'string' ? parseInt(value) : Number(value);
+                return <TableCell key="finalPrice">{formatRupiah(price)}</TableCell>;
               }
 
               if (header.key === "trxDate") {
@@ -106,11 +113,13 @@ export const InquiryTransaksiTable: React.FC<DataTableProps> = ({
               }
 
               if (header.key === "status") {
-                const label = statusLabels[item.status] ?? item.status;
+                const label = statusLabels[item.status] ?? `Status ${item.status}`;
+                const colorClass = statusColors[label] ?? "bg-gray-500 text-gray-600";
+                
                 return (
                   <TableCell key="status">
-                    <div className={`badge bg-opacity-20 rounded-md !font-medium border-0 truncate ${statusColors[label]}`}>
-                      <div className={`mr-2 rounded-full w-[6px] h-[6px] dark:brightness-50 ${statusColors[label]}`} />
+                    <div className={`badge bg-opacity-20 rounded-md !font-medium border-0 truncate ${colorClass}`}>
+                      <div className={`mr-2 rounded-full w-[6px] h-[6px] dark:brightness-50 ${colorClass}`} />
                       {label}
                     </div>
                   </TableCell>
@@ -118,18 +127,25 @@ export const InquiryTransaksiTable: React.FC<DataTableProps> = ({
               }
 
               if (header.key === "trxNumber") {
-                const label = statusLabels[item.status] ?? item.status;
+                const label = statusLabels[item.status] ?? `Status ${item.status}`;
+                const colorClass = statusColors[label] ?? "bg-gray-500 text-gray-600";
+                
                 return (
                   <TableCell key={`trxNumber-${item.id}`}>
                     <div className="flex items-center">
-                      <div className={`mr-2 rounded-full w-[6px] h-[6px] ${statusColors[label]}`} />
+                      <div className={`mr-2 rounded-full w-[6px] h-[6px] ${colorClass}`} />
                       <p>{item.trxNumber}</p>
                     </div>
                   </TableCell>
                 );
               }
 
-              return <TableCell key={header.key}>{String(value)}</TableCell>;
+              // Handle fields that might be undefined
+              return (
+                <TableCell key={header.key}>
+                  {value !== undefined && value !== null ? String(value) : "-"}
+                </TableCell>
+              );
             })}
           </TableRow>
         ))}
