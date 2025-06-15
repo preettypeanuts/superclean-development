@@ -16659,11 +16659,6 @@
       },
       {
         "source": "admin-app",
-        "target": "npm:xlsx",
-        "type": "static"
-      },
-      {
-        "source": "admin-app",
         "target": "npm:next-themes",
         "type": "static"
       },
@@ -41035,5 +41030,5 @@
   },
   "version": "6.0",
   "errors": [],
-  "computedAt": 1750014056515
+  "computedAt": 1750014403250
 }

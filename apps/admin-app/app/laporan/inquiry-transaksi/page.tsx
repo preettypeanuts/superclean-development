@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import { useState, useEffect } from "react";
 import { InquiryTransaksiTable } from "@ui-components/components/inquiry-transaksi-table";
@@ -17,7 +18,6 @@ import { PiExportFill } from "react-icons/pi";
 import { apiClient } from "@shared/utils/apiClient";
 import { formatDateAPI } from "@shared/utils/formatDate";
 import { useParameterStore } from "@shared/utils/useParameterStore";
-import * as XLSX from 'xlsx';
 
 const columns = [
   { key: "id", label: "#" },

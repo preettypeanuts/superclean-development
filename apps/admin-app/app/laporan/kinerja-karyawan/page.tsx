@@ -1,7 +1,6 @@
 "use client";
-import Link from "next/link";
 import KaryawanSelect from "@ui-components/components/karyawan-select";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { DatePicker } from "@ui-components/components/date-picker";
 import { Wrapper } from "@shared/components/Wrapper";
 import { Button } from "@ui-components/components/ui/button";
@@ -18,7 +17,6 @@ import { formatDateAPI } from "@shared/utils/formatDate";
 
 export default function KinerjaKaryawanPage() {
   const [reportType, setReportType] = useState<"ringkasan" | "detail">("ringkasan");
-  const [searchInput, setSearchInput] = useState("");
 
   const { roleMapping, branchMapping } = useParameterStore();
 
@@ -46,18 +44,24 @@ export default function KinerjaKaryawanPage() {
   const [selectedKaryawanName, setSelectedKaryawanName] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
 
+  interface Karyawan {
+    id: string;
+    username: string;
+    fullname: string;
+  }
+
   // Get username from karyawan list
   const getKaryawanUsername = async (karyawanId: string) => {
     if (!karyawanId) return null;
     
     try {
-      let url = `/user/page?page=1&limit=999`;
+      const url = `/user/page?page=1&limit=999`;
       
       const result = await apiClient(url);
       
       if (result.status === "success" && result.data) {
         const karyawanList = result.data[0] || [];
-        const karyawan = karyawanList.find((k: any) => k.id === karyawanId);
+        const karyawan = karyawanList.find((k: Karyawan) => k.id === karyawanId);
         
         if (karyawan) {
           return {
@@ -100,15 +104,16 @@ export default function KinerjaKaryawanPage() {
           setErrorMessage("Gagal mengambil data PDF. Silakan coba lagi.");
         }
       }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error("Error fetching PDF:", error);
       setPdfData("");
       setShowDetail(false);
       
       // Handle error responses
-      if (error.response?.data?.statusCode === 500) {
+      if (error?.response?.data?.statusCode === 500) {
         setErrorMessage(error.response.data.message || "Tidak ada transaksi yang ditemukan dengan filter yang diberikan.");
-      } else if (error.message?.includes("500") || error.message?.includes("Tidak ada transaksi")) {
+      } else if (error?.message?.includes("500") || error?.message?.includes("Tidak ada transaksi")) {
         setErrorMessage("Tidak ada transaksi yang ditemukan dengan filter yang diberikan.");
       } else {
         setErrorMessage("Terjadi kesalahan saat mengambil data. Silakan coba lagi.");
