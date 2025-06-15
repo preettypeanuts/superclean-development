@@ -13,7 +13,7 @@ const ProtectedRoutes = ({ children }: { children: React.ReactNode }) => {
 
     const validateToken = async (): Promise<boolean> => {
         const token = localStorage.getItem("access_token");
-        
+
         if (!token) {
             return false;
         }
@@ -54,7 +54,7 @@ const ProtectedRoutes = ({ children }: { children: React.ReactNode }) => {
 
             // Untuk protected routes, validasi token
             const isValid = await validateToken();
-            
+
             if (isValid) {
                 setIsAuthenticated(true);
                 setIsLoaded(true);
@@ -98,26 +98,26 @@ const ProtectedRoutes = ({ children }: { children: React.ReactNode }) => {
     }, [pathname, router]);
 
     // Listen untuk perubahan token di tab yang sama
-    useEffect(() => {
-        const handleLocalStorageChange = () => {
-            const token = localStorage.getItem("access_token");
-            if (!token && !PUBLIC_ROUTES.includes(pathname)) {
-                setIsAuthenticated(false);
-                router.push("/login");
-            }
-        };
+    // useEffect(() => {
+    //     const handleLocalStorageChange = () => {
+    //         const token = localStorage.getItem("access_token");
+    //         if (!token && !PUBLIC_ROUTES.includes(pathname)) {
+    //             setIsAuthenticated(false);
+    //             router.push("/login");
+    //         }
+    //     };
 
-        // Polling sederhana untuk detect perubahan localStorage di tab yang sama
-        const interval = setInterval(() => {
-            const currentToken = localStorage.getItem("access_token");
-            if (!currentToken && isAuthenticated && !PUBLIC_ROUTES.includes(pathname)) {
-                setIsAuthenticated(false);
-                router.push("/login");
-            }
-        }, 1000);
+    // Polling sederhana untuk detect perubahan localStorage di tab yang sama
+    //     const interval = setInterval(() => {
+    //         const currentToken = localStorage.getItem("access_token");
+    //         if (!currentToken && isAuthenticated && !PUBLIC_ROUTES.includes(pathname)) {
+    //             setIsAuthenticated(false);
+    //             router.push("/login");
+    //         }
+    //     }, 1000);
 
-        return () => clearInterval(interval);
-    }, [isAuthenticated, pathname, router]);
+    //     return () => clearInterval(interval);
+    // }, [isAuthenticated, pathname, router]);
 
     // Tampilkan loading atau konten
     if (!isLoaded) {
