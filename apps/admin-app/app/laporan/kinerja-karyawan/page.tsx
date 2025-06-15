@@ -11,25 +11,36 @@ import { GroupFilter } from "@ui-components/components/group-filter";
 import { SelectFilter } from "@ui-components/components/select-filter";
 import { FaFileExcel, FaFilePdf } from "react-icons/fa6";
 import { RadioGroup, RadioGroupItem } from "@ui-components/components/ui/radio-group";
+import { useParameterStore } from "@shared/utils/useParameterStore";
 
 export default function KinerjaKaryawanPage() {
+  const [reportType, setReportType] = useState<"ringkasan" | "detail">("ringkasan");
   const [searchInput, setSearchInput] = useState("");
+
+  const { roleMapping, branchMapping } = useParameterStore();
+
+  console.log('======role==============================');
+  console.log(roleMapping);
+  console.log('====================================');
 
   // filter aktif
   const [statusFilter, setStatusFilter] = useState<number>(0);
   const [branchFilter, setBranchFilter] = useState<string>("");
+  const [roleFilter, setRoleFilter] = useState<string>("");
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
 
   // filter sementara
   const [tempStatus, setTempStatus] = useState<number>(0);
   const [tempBranch, setTempBranch] = useState<string>("");
+  const [tempRole, setTempRole] = useState<string>("");
   const [tempStartDate, setTempStartDate] = useState<Date>();
   const [tempEndDate, setTempEndDate] = useState<Date>();
 
   const handleApplyFilters = () => {
     setStatusFilter(tempStatus);
     setBranchFilter(tempBranch);
+    setRoleFilter(tempRole);
     setStartDate(tempStartDate);
     setEndDate(tempEndDate);
   };
@@ -37,6 +48,7 @@ export default function KinerjaKaryawanPage() {
   const handleResetFilters = () => {
     setTempStatus(0);
     setTempBranch("");
+    setTempRole("");
     setTempStartDate(undefined);
     setTempEndDate(undefined);
   };
@@ -44,9 +56,18 @@ export default function KinerjaKaryawanPage() {
   const handleCancelFilters = () => {
     setTempStatus(statusFilter);
     setTempBranch(branchFilter);
+    setTempRole(roleFilter);
     setTempStartDate(startDate);
     setTempEndDate(endDate);
   };
+
+  // Convert roleMapping object to array format for SelectFilter
+  const roleOptions = roleMapping
+    ? Object.entries(roleMapping).map(([value, label]) => ({
+      label: label,
+      value: value
+    }))
+    : [];
 
   return (
     <>
@@ -57,9 +78,10 @@ export default function KinerjaKaryawanPage() {
             <div className="flex items-center gap-2">
               <div className="relative">
                 <div className="flex items-center space-x-4 min-w-[200px]">
+
                   <RadioGroup
-                    // value={pelanggan.customerType}
-                    // onValueChange={(value) => handleSelectChange("customerType", value)}
+                    value={reportType}
+                    onValueChange={(value) => setReportType(value as "ringkasan" | "detail")}
                     className="flex items-center gap-5"
                   >
                     <div className="flex items-center space-x-2">
@@ -89,23 +111,36 @@ export default function KinerjaKaryawanPage() {
                 onCancel={handleCancelFilters}
               >
                 <SelectFilter
-                  label="Status Transaksi"
-                  id="status"
-                  placeholder="Pilih Status"
-                  value={tempStatus}
-                  optionsNumber={[
-                    { label: "Menunggu Bayar", value: 3 },
-                    { label: "Sudah Bayar", value: 4 },
-                    { label: "Selesai", value: 5 },
-                  ]}
-                  onChange={setTempStatus}
+                  label="Nama Karyawan"
+                  id="userName"
+                  placeholder="Pilih Karyawan"
+                  value={tempRole}
+                  optionsString={Object.entries(roleMapping).map(([value, label]) => ({
+                    value,
+                    label,
+                  }))}
+                  onChange={setTempRole}
+                />
+                <SelectFilter
+                  label="Akses Pengguna"
+                  id="role"
+                  placeholder="Pilih Role"
+                  value={tempRole}
+                  optionsString={Object.entries(roleMapping).map(([value, label]) => ({
+                    value,
+                    label,
+                  }))}
+                  onChange={setTempRole}
                 />
                 <SelectFilter
                   label="Cabang"
                   id="branch"
                   placeholder="Pilih Cabang"
-                  value=""
-                  optionsString={[]}
+                  value={tempBranch}
+                  optionsString={Object.entries(branchMapping).map(([value, label]) => ({
+                    value,
+                    label,
+                  }))}
                   onChange={setTempBranch}
                 />
                 <div className="flex items-center space-x-4">
