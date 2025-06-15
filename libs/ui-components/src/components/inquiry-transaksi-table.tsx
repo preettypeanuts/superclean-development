@@ -2,8 +2,9 @@ import Link from "next/link";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from "./ui/table";
 import { Button } from "./ui/button";
 import { PiNewspaperFill } from "react-icons/pi";
-import { formatRupiah } from "libs/utils/formatRupiah";
-import { formatDate } from "libs/utils/formatDate";
+import { formatRupiah } from "../../../utils/formatRupiah";
+import { formatDate } from "../../../utils/formatDate";
+
 
 interface TableHeader {
   key: string;
@@ -43,20 +44,29 @@ export const InquiryTransaksiTable: React.FC<DataTableProps> = ({
 }) => {
 
   const statusLabels: Record<number, string> = {
-    0: "Draft",
-    1: "Pending", 
+    0: "Baru",
+    1: "Pending",
     3: "Menunggu Bayar",
     4: "Sudah Bayar",
     5: "Selesai",
   };
 
-  const statusColors: Record<string, string> = {
-    "Draft": "bg-gray-500 text-gray-600 dark:bg-gray-600 dark:text-gray-100",
-    "Pending": "bg-yellow-500 text-yellow-600 dark:bg-yellow-600 dark:text-yellow-100",
-    "Menunggu Bayar": "bg-orange-500 text-orange-600 dark:bg-orange-600 dark:text-orange-100",
-    "Sudah Bayar": "bg-blue-500 text-blue-600 dark:bg-blue-600 dark:text-blue-100",
-    "Selesai": "bg-green-500 text-green-600 dark:bg-green-600 dark:text-green-100",
+  const statusClasses: Record<string, string> = {
+    "Baru": "bg-secondaryColor/20 text-secondaryColorDark dark:bg-secondaryColorDark/20 dark:text-secondaryColor",
+    "Pending": "bg-yellow-100 text-yellow-800 dark:bg-yellow-600/20 dark:text-yellow-100",
+    "Menunggu Bayar": "bg-orange-100 text-orange-800 dark:bg-orange-600/20 dark:text-orange-100",
+    "Sudah Bayar": "bg-blue-100 text-blue-800 dark:bg-blue-600/20 dark:text-blue-100",
+    "Selesai": "bg-green-100 text-green-800 dark:bg-green-600/20 dark:text-green-100",
   };
+
+  const indicatorClasses: Record<string, string> = {
+    "Baru": "bg-secondaryColorDark dark:bg-secondaryColor",
+    "Pending": "bg-yellow-500 dark:bg-yellow-400",
+    "Menunggu Bayar": "bg-orange-500 dark:bg-orange-400",
+    "Sudah Bayar": "bg-blue-500 dark:bg-blue-400",
+    "Selesai": "bg-green-500 dark:bg-green-400",
+  };
+
 
   return (
     <Table>
@@ -80,7 +90,7 @@ export const InquiryTransaksiTable: React.FC<DataTableProps> = ({
           >
             {columns.map((header) => {
               const value = item[header.key as keyof InquiryTransaksi];
-              
+
               if (header.key === "menu") {
                 return (
                   <TableCell key="menu">
@@ -114,12 +124,13 @@ export const InquiryTransaksiTable: React.FC<DataTableProps> = ({
 
               if (header.key === "status") {
                 const label = statusLabels[item.status] ?? `Status ${item.status}`;
-                const colorClass = statusColors[label] ?? "bg-gray-500 text-gray-600";
-                
+                const badgeClass = statusClasses[label] ?? "bg-gray-200 text-gray-700";
+                const dotClass = indicatorClasses[label] ?? "bg-gray-500";
+
                 return (
                   <TableCell key="status">
-                    <div className={`badge bg-opacity-20 rounded-md !font-medium border-0 truncate ${colorClass}`}>
-                      <div className={`mr-2 rounded-full w-[6px] h-[6px] dark:brightness-50 ${colorClass}`} />
+                    <div className={`flex items-center gap-2 px-2 py-1 rounded-md text-sm font-medium w-fit truncate ${badgeClass}`}>
+                      <div className={`w-[6px] h-[6px] rounded-full aspect-square ${dotClass}`} />
                       {label}
                     </div>
                   </TableCell>
@@ -128,12 +139,12 @@ export const InquiryTransaksiTable: React.FC<DataTableProps> = ({
 
               if (header.key === "trxNumber") {
                 const label = statusLabels[item.status] ?? `Status ${item.status}`;
-                const colorClass = statusColors[label] ?? "bg-gray-500 text-gray-600";
-                
+                const dotClass = indicatorClasses[label] ?? "bg-gray-500";
+
                 return (
                   <TableCell key={`trxNumber-${item.id}`}>
-                    <div className="flex items-center">
-                      <div className={`mr-2 rounded-full w-[6px] h-[6px] ${colorClass}`} />
+                    <div className="flex items-center gap-2">
+                      <div className={`w-[6px] h-[6px] rounded-full aspect-square ${dotClass}`} />
                       <p>{item.trxNumber}</p>
                     </div>
                   </TableCell>

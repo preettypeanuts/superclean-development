@@ -1,5 +1,5 @@
 "use client";
-import { useState, useCallback, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { InquiryTransaksiTable } from "@ui-components/components/inquiry-transaksi-table";
 import { DatePicker } from "@ui-components/components/date-picker";
 import { Wrapper } from "@shared/components/Wrapper";
@@ -14,9 +14,10 @@ import { IoClose } from "react-icons/io5";
 import { GroupFilter } from "@ui-components/components/group-filter";
 import { SelectFilter } from "@ui-components/components/select-filter";
 import { PiExportFill } from "react-icons/pi";
-import { apiClient } from "libs/utils/apiClient";
-import { formatDateAPI } from "libs/utils/formatDate";
-import { useParameterStore } from "libs/utils/useParameterStore";
+import { apiClient } from "@shared/utils/apiClient";
+import { formatDateAPI } from "@shared/utils/formatDate";
+import { useParameterStore } from "@shared/utils/useParameterStore";
+import * as XLSX from 'xlsx';
 
 const columns = [
   { key: "id", label: "#" },
@@ -103,81 +104,59 @@ export default function InquiryTransaksiPage() {
     }
   };
 
-  const handleExportData = async () => {
-    setIsExporting(true);
-    try {
-      let url = `/transaction/page?search=${searchQuery}&page=1&limit=999999`;
-      if (statusFilter) url += `&status=${statusFilter}`;
-      if (branchFilter) url += `&branchId=${branchFilter}`;
-      if (startDate) url += `&startDate=${formatDateAPI(startDate)}`;
-      if (endDate) url += `&endDate=${formatDateAPI(endDate)}`;
+const handleExportData = async () => {
+  setIsExporting(true);
+  try {
+    let url = `/report/inquiry?search=${searchQuery}`;
+    if (statusFilter) url += `&status=${statusFilter}`;
+    if (branchFilter) url += `&branchId=${branchFilter}`;
+    if (startDate) url += `&startDate=${formatDateAPI(startDate)}`;
+    if (endDate) url += `&endDate=${formatDateAPI(endDate)}`;
 
-      const result = await apiClient(url);
-      const exportData = result.data[0] || [];
-
-      // Status labels untuk export
-      const statusLabels: Record<number, string> = {
-        0: "Draft",
-        1: "Pending",
-        3: "Menunggu Bayar",
-        4: "Sudah Bayar",
-        5: "Selesai",
-      };
-
-      // Convert to CSV format
-      const csvHeader = [
-        'No',
-        'No Transaksi',
-        'Nama Pelanggan',
-        'No. WhatsApp',
-        'Alamat',
-        'Kota',
-        'Cabang',
-        'Nominal',
-        'Tanggal Transaksi',
-        'Status',
-        'Dibuat Oleh',
-        'Tanggal Dibuat'
-      ].join(',');
-
-      const csvRows = exportData.map((item: TransactionData, index: number) => [
-        index + 1,
-        item.trxNumber,
-        `"${item.customerName}"`,
-        item.noWhatsapp,
-        `"${item.address}"`,
-        item.city,
-        branchMapping[item.branchId] || item.branchId,
-        item.finalPrice,
-        new Date(item.trxDate).toLocaleDateString('id-ID'),
-        statusLabels[item.status] || `Status ${item.status}`,
-        item.createdBy || '',
-        item.createdAt ? new Date(item.createdAt).toLocaleDateString('id-ID') : ''
-      ].join(','));
-
-      const csvContent = [csvHeader, ...csvRows].join('\n');
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-
-      // Create download link
-      const url2 = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url2;
-
+    const result = await apiClient(url);
+    
+    // Check if response contains base64 data
+    if (result.status === "success" && result.data) {
+      // Decode base64 data
+      const base64Data = result.data;
+      const binaryString = atob(base64Data);
+      const bytes = new Uint8Array(binaryString.length);
+      
+      for (let i = 0; i < binaryString.length; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+      }
+      
+      // Create blob from binary data
+      const blob = new Blob([bytes], { 
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
+      });
+      
       // Generate filename dengan timestamp
       const timestamp = new Date().toISOString().split('T')[0];
-      link.setAttribute('download', `inquiry_transaksi_${timestamp}.csv`);
-
+      const filename = `inquiry_transaksi_${timestamp}.xlsx`;
+      
+      // Create download link and trigger download
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.download = filename;
       document.body.appendChild(link);
       link.click();
-      link.remove();
-      window.URL.revokeObjectURL(url2);
-
-    } catch (error) {
-      console.error("Error exporting data:", error);
-    } finally {
-      setIsExporting(false);
+      
+      // Cleanup
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(downloadUrl);
+      
+    } else {
+      console.error("No data received from server");
     }
-  };
+
+  } catch (error) {
+    console.error("Error exporting data:", error);
+  } finally {
+    setIsExporting(false);
+  }
+};
 
   useEffect(() => {
     fetchInquiryTransaksi();

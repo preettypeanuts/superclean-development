@@ -1,5 +1,4 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
-import { formatRupiah } from "libs/utils/formatRupiah";
 
 interface TableHeader {
     key: string;

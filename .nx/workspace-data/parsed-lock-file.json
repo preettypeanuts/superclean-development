@@ -6282,6 +6282,15 @@
         "hash": "sha512-4B/qKCfeE/ODUaAUpSwfzazo5x29WD4r3vXiWsB7I2mSDAihwEqKO+g8GELZUQSSAo5e1XTYh3ZVfLyxBc12nA=="
       }
     },
+    "npm:adler-32": {
+      "type": "npm",
+      "name": "npm:adler-32",
+      "data": {
+        "version": "1.3.1",
+        "packageName": "adler-32",
+        "hash": "sha512-ynZ4w/nUUv5rrsR8UUGoe1VC9hZj6V5hU9Qw1HlMDJGEJw5S7TfTErWTjMys6M7vr0YWcPqs3qAr4ss0nDfP+A=="
+      }
+    },
     "npm:adm-zip": {
       "type": "npm",
       "name": "npm:adm-zip",
@@ -7380,6 +7389,15 @@
         "hash": "sha512-4tYFyifaFfGacoiObjJegolkwSU4xQNGbVgUiNYVUxbQ2x2lUsFvY4hVgVzGiIe6WLOPqycWXA40l+PWsxthUw=="
       }
     },
+    "npm:cfb": {
+      "type": "npm",
+      "name": "npm:cfb",
+      "data": {
+        "version": "1.2.2",
+        "packageName": "cfb",
+        "hash": "sha512-KfdUZsSOw19/ObEWasvBP/Ac4reZvAGauZhs6S/gqNhXhI7cKwvlH7ulj+dOEYnca4bm4SGo8C1bTAQvnTjgQA=="
+      }
+    },
     "npm:char-regex": {
       "type": "npm",
       "name": "npm:char-regex",
@@ -7576,6 +7594,15 @@
         "version": "12.0.0",
         "packageName": "code-block-writer",
         "hash": "sha512-q4dMFMlXtKR3XNBHyMHt/3pwYNA69EDk00lloMOaaUMKPUXBw6lpXtbu3MMVG6/uOihGnRDOlkyqsONEUj60+w=="
+      }
+    },
+    "npm:codepage": {
+      "type": "npm",
+      "name": "npm:codepage",
+      "data": {
+        "version": "1.15.0",
+        "packageName": "codepage",
+        "hash": "sha512-3g6NUTPd/YtuuGrhMnOMRjFc+LJw/bnMp3+0r/Wcz3IXUuCosKRJvMphm5+Q+bvTVGcJJuRvVLuYba+WojaFaA=="
       }
     },
     "npm:collect-v8-coverage": {
@@ -7864,6 +7891,15 @@
         "version": "2.0.1",
         "packageName": "corser",
         "hash": "sha512-utCYNzRSQIZNPIcGZdQc92UVJYAhtGAteCFg0yRaFm8f0P+CPtyGyHXJcGXnffjCybUCEx3FQ2G7U3/o9eIkVQ=="
+      }
+    },
+    "npm:crc-32": {
+      "type": "npm",
+      "name": "npm:crc-32",
+      "data": {
+        "version": "1.2.2",
+        "packageName": "crc-32",
+        "hash": "sha512-ROmzCKrTnOwybPcJApAA6WBWij23HVfGVNKqqrZpuyZOHqK2CwHSvpGuyt/UNNvaIjEd8X5IFGp4Mh+Ie1IHJQ=="
       }
     },
     "npm:create-jest": {
@@ -10114,6 +10150,15 @@
         "version": "0.2.0",
         "packageName": "forwarded",
         "hash": "sha512-buRG0fpBtRHSTCOASe6hD258tEubFoRLb4ZNA6NxMVHNw2gOcwHo9wyablzMzOA5z9xA9L1KNjk/Nt6MT9aYow=="
+      }
+    },
+    "npm:frac": {
+      "type": "npm",
+      "name": "npm:frac",
+      "data": {
+        "version": "1.1.2",
+        "packageName": "frac",
+        "hash": "sha512-w/XBfkibaTl3YDqASwfDUqkna4Z2p9cFSr1aHDt0WoMTECnRfBOv2WArlZILlqgWlmdIlALXGpM2AOhEk5W3IA=="
       }
     },
     "npm:fraction.js": {
@@ -14796,6 +14841,15 @@
         "hash": "sha512-D9cPgkvLlV3t3IzL0D0YLvGA9Ahk4PcvVwUbN0dSGr1aP0Nrt4AEnTUbuGvquEC0mA64Gqt1fzirlRs5ibXx8g=="
       }
     },
+    "npm:ssf": {
+      "type": "npm",
+      "name": "npm:ssf",
+      "data": {
+        "version": "0.11.2",
+        "packageName": "ssf",
+        "hash": "sha512-+idbmIXoYET47hH+d7dfm2epdOMUDjqcB4648sTZ+t2JwoyBFL/insLfB/racrDmsKB3diwsDA696pZMieAC5g=="
+      }
+    },
     "npm:sshpk": {
       "type": "npm",
       "name": "npm:sshpk",
@@ -15975,6 +16029,24 @@
         "hash": "sha512-CC1bOL87PIWSBhDcTrdeLo6eGT7mCFtrg0uIJtqJUFyK+eJnzl8A1niH56uu7KMa5XFrtiV+AQuHO3n7DsHnLQ=="
       }
     },
+    "npm:wmf": {
+      "type": "npm",
+      "name": "npm:wmf",
+      "data": {
+        "version": "1.0.2",
+        "packageName": "wmf",
+        "hash": "sha512-/p9K7bEh0Dj6WbXg4JG0xvLQmIadrner1bi45VMJTfnbVHsc7yIajZyoSoK60/dtVBs12Fm6WkUI5/3WAVsNMw=="
+      }
+    },
+    "npm:word": {
+      "type": "npm",
+      "name": "npm:word",
+      "data": {
+        "version": "0.3.0",
+        "packageName": "word",
+        "hash": "sha512-OELeY0Q61OXpdUfTp+oweA/vtLVg5VDOXh+3he3PNzLGG/y0oylSOC1xRVj0+l4vQ3tj/bB1HVHv1ocXkQceFA=="
+      }
+    },
     "npm:word-wrap": {
       "type": "npm",
       "name": "npm:word-wrap",
@@ -16018,6 +16090,15 @@
         "version": "8.18.0",
         "packageName": "ws",
         "hash": "sha512-8VbfWfHLbbwu3+N6OKsOMpBdT4kXPDDB9cJk2bJ6mh9ucxdlnNvH1e+roYkKmN9Nxw2yjz7VzeO9oOz2zJ04Pw=="
+      }
+    },
+    "npm:xlsx": {
+      "type": "npm",
+      "name": "npm:xlsx",
+      "data": {
+        "version": "0.18.5",
+        "packageName": "xlsx",
+        "hash": "sha512-dmg3LCjBPHZnQp5/F/+nnTa+miPJxUXB6vtk42YjBBKayDNagxGEeIdWApkYPOf3Z3pm3k62Knjzp7lMeTEtFQ=="
       }
     },
     "npm:xml-name-validator": {
@@ -28516,6 +28597,16 @@
       "type": "static"
     },
     {
+      "source": "npm:cfb",
+      "target": "npm:adler-32",
+      "type": "static"
+    },
+    {
+      "source": "npm:cfb",
+      "target": "npm:crc-32",
+      "type": "static"
+    },
+    {
       "source": "npm:chalk",
       "target": "npm:ansi-styles",
       "type": "static"
@@ -38781,6 +38872,11 @@
       "type": "static"
     },
     {
+      "source": "npm:ssf",
+      "target": "npm:frac",
+      "type": "static"
+    },
+    {
       "source": "npm:sshpk",
       "target": "npm:asn1",
       "type": "static"
@@ -40918,6 +41014,41 @@
     {
       "source": "npm:write-file-atomic",
       "target": "npm:signal-exit",
+      "type": "static"
+    },
+    {
+      "source": "npm:xlsx",
+      "target": "npm:adler-32",
+      "type": "static"
+    },
+    {
+      "source": "npm:xlsx",
+      "target": "npm:cfb",
+      "type": "static"
+    },
+    {
+      "source": "npm:xlsx",
+      "target": "npm:codepage",
+      "type": "static"
+    },
+    {
+      "source": "npm:xlsx",
+      "target": "npm:crc-32",
+      "type": "static"
+    },
+    {
+      "source": "npm:xlsx",
+      "target": "npm:ssf",
+      "type": "static"
+    },
+    {
+      "source": "npm:xlsx",
+      "target": "npm:wmf",
+      "type": "static"
+    },
+    {
+      "source": "npm:xlsx",
+      "target": "npm:word",
       "type": "static"
     },
     {
