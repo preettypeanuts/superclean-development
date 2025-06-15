@@ -6,8 +6,8 @@ import { Button } from "./ui/button"
 import { Command, CommandItem, CommandList } from "./ui/command"
 import { CommandInput } from "cmdk"
 import { Label } from "./ui/label"
-import { apiClient } from "libs/utils/apiClient"
-import { useParameterStore } from "@shared/utils/useParameterStore"
+import { apiClient } from "../../../utils/apiClient"
+import { useParameterStore } from "../../../utils/useParameterStore"
 
 interface Karyawan {
     id: string;
@@ -117,9 +117,10 @@ export default function KaryawanSelect({
     }
     const processedKaryawan = dataKaryawan.map((item) => ({
         ...item,
-        roleId: roleMapping[item.roleId] || "Tidak Diketahui",
-        cabang: branchMapping[item.branchId] || "Tidak Diketahui",
+        roleId: roleMapping[item.roleId ?? ""] || "Tidak Diketahui",
+        cabang: branchMapping[item.branchId ?? ""] || "Tidak Diketahui",
     }));
+    
     const selectedKaryawan = getSelectedKaryawan();
 
     return (

@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
+import KaryawanSelect from "@ui-components/components/karyawan-select";
+import { useState, useEffect } from "react";
 import { DatePicker } from "@ui-components/components/date-picker";
 import { Wrapper } from "@shared/components/Wrapper";
 import { Button } from "@ui-components/components/ui/button";
@@ -9,10 +10,11 @@ import { Label } from "@ui-components/components/ui/label";
 import { IoClose } from "react-icons/io5";
 import { GroupFilter } from "@ui-components/components/group-filter";
 import { SelectFilter } from "@ui-components/components/select-filter";
-import KaryawanSelect from "@ui-components/components/karyawan-select";
 import { FaFileExcel, FaFilePdf } from "react-icons/fa6";
 import { RadioGroup, RadioGroupItem } from "@ui-components/components/ui/radio-group";
 import { useParameterStore } from "@shared/utils/useParameterStore";
+import { apiClient } from "@shared/utils/apiClient";
+import { formatDateAPI } from "@shared/utils/formatDate";
 
 export default function KinerjaKaryawanPage() {
   const [reportType, setReportType] = useState<"ringkasan" | "detail">("ringkasan");
@@ -36,13 +38,119 @@ export default function KinerjaKaryawanPage() {
   const [tempStartDate, setTempStartDate] = useState<Date>();
   const [tempEndDate, setTempEndDate] = useState<Date>();
 
-  const handleApplyFilters = () => {
+  // PDF Detail state
+  const [pdfData, setPdfData] = useState<string>("");
+  const [isLoadingDetail, setIsLoadingDetail] = useState(false);
+  const [showDetail, setShowDetail] = useState(false);
+  const [selectedKaryawanUsername, setSelectedKaryawanUsername] = useState<string>("");
+  const [selectedKaryawanName, setSelectedKaryawanName] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState<string>("");
+
+  // Get username from karyawan list
+  const getKaryawanUsername = async (karyawanId: string) => {
+    if (!karyawanId) return null;
+    
+    try {
+      let url = `/user/page?page=1&limit=999`;
+      
+      const result = await apiClient(url);
+      
+      if (result.status === "success" && result.data) {
+        const karyawanList = result.data[0] || [];
+        const karyawan = karyawanList.find((k: any) => k.id === karyawanId);
+        
+        if (karyawan) {
+          return {
+            username: karyawan.username,
+            fullname: karyawan.fullname
+          };
+        }
+      }
+      return null;
+    } catch (error) {
+      console.error("Error fetching karyawan username:", error);
+      return null;
+    }
+  };
+
+  // Fetch PDF detail
+  const fetchPDFDetail = async (username: string, startDate: Date, endDate: Date) => {
+    setIsLoadingDetail(true);
+    setErrorMessage(""); // Reset error message
+    
+    try {
+      const url = `/report/kinerja/detail?username=${username}&type=pdf&startDate=${formatDateAPI(startDate)}&endDate=${formatDateAPI(endDate)}`;
+      console.log("Fetching PDF:", url);
+      
+      const result = await apiClient(url);
+      
+      if (result.status === "success" && result.data) {
+        setPdfData(result.data);
+        setShowDetail(true);
+        console.log("PDF berhasil dimuat");
+      } else {
+        console.error("Gagal mengambil data PDF", result);
+        setPdfData("");
+        setShowDetail(false);
+        
+        // Handle specific error cases
+        if (result.statusCode === 500 && result.message) {
+          setErrorMessage(result.message);
+        } else {
+          setErrorMessage("Gagal mengambil data PDF. Silakan coba lagi.");
+        }
+      }
+    } catch (error: any) {
+      console.error("Error fetching PDF:", error);
+      setPdfData("");
+      setShowDetail(false);
+      
+      // Handle error responses
+      if (error.response?.data?.statusCode === 500) {
+        setErrorMessage(error.response.data.message || "Tidak ada transaksi yang ditemukan dengan filter yang diberikan.");
+      } else if (error.message?.includes("500") || error.message?.includes("Tidak ada transaksi")) {
+        setErrorMessage("Tidak ada transaksi yang ditemukan dengan filter yang diberikan.");
+      } else {
+        setErrorMessage("Terjadi kesalahan saat mengambil data. Silakan coba lagi.");
+      }
+    } finally {
+      setIsLoadingDetail(false);
+    }
+  };
+
+  const handleApplyFilters = async () => {
     setStatusFilter(tempStatus);
     setBranchFilter(tempBranch === "all" ? "" : tempBranch);
     setRoleFilter(tempRole === "all" ? "" : tempRole);
     setSelectedKaryawan(tempSelectedKaryawan);
     setStartDate(tempStartDate);
     setEndDate(tempEndDate);
+
+    // Reset error message at the start
+    setErrorMessage("");
+
+    // Jika mode detail dan semua data lengkap, fetch PDF
+    if (reportType === "detail" && tempSelectedKaryawan && tempStartDate && tempEndDate) {
+      console.log("Mencari username untuk karyawan ID:", tempSelectedKaryawan);
+      
+      const karyawanData = await getKaryawanUsername(tempSelectedKaryawan);
+      
+      if (karyawanData && karyawanData.username) {
+        console.log("Username ditemukan:", karyawanData.username);
+        setSelectedKaryawanUsername(karyawanData.username);
+        setSelectedKaryawanName(karyawanData.fullname);
+        await fetchPDFDetail(karyawanData.username, tempStartDate, tempEndDate);
+      } else {
+        console.error("Username tidak ditemukan untuk karyawan ID:", tempSelectedKaryawan);
+        setErrorMessage("Gagal mengambil data karyawan. Silakan coba lagi.");
+      }
+    } else {
+      // Reset jika kondisi tidak terpenuhi
+      setPdfData("");
+      setShowDetail(false);
+      setSelectedKaryawanUsername("");
+      setSelectedKaryawanName("");
+    }
   };
 
   const handleResetFilters = () => {
@@ -52,6 +160,14 @@ export default function KinerjaKaryawanPage() {
     setTempSelectedKaryawan("");
     setTempStartDate(undefined);
     setTempEndDate(undefined);
+    
+    // Reset PDF detail
+    setSelectedKaryawan("");
+    setPdfData("");
+    setShowDetail(false);
+    setSelectedKaryawanUsername("");
+    setSelectedKaryawanName("");
+    setErrorMessage("");
   };
 
   const handleCancelFilters = () => {
@@ -67,19 +183,87 @@ export default function KinerjaKaryawanPage() {
   const handleReportTypeChange = (value: "ringkasan" | "detail") => {
     setReportType(value);
     if (value === "ringkasan") {
-      // Reset karyawan selection when switching to ringkasan
       setSelectedKaryawan("");
       setTempSelectedKaryawan("");
+      setPdfData("");
+      setShowDetail(false);
+      setSelectedKaryawanUsername("");
+      setSelectedKaryawanName("");
+      setErrorMessage("");
     }
   };
 
-  // Convert roleMapping object to array format for SelectFilter
-  const roleOptions = roleMapping
-    ? Object.entries(roleMapping).map(([value, label]) => ({
-      label: label,
-      value: value
-    }))
-    : [];
+  const handleExportPDF = async () => {
+    if (selectedKaryawanUsername && startDate && endDate) {
+      try {
+        const url = `/report/kinerja/detail?username=${selectedKaryawanUsername}&type=pdf&startDate=${formatDateAPI(startDate)}&endDate=${formatDateAPI(endDate)}`;
+        const result = await apiClient(url);
+        
+        if (result.status === "success" && result.data) {
+          const base64Data = result.data;
+          const binaryString = atob(base64Data);
+          const bytes = new Uint8Array(binaryString.length);
+          
+          for (let i = 0; i < binaryString.length; i++) {
+            bytes[i] = binaryString.charCodeAt(i);
+          }
+          
+          const blob = new Blob([bytes], { type: 'application/pdf' });
+          const timestamp = new Date().toISOString().split('T')[0];
+          const filename = `kinerja_${selectedKaryawanUsername}_${timestamp}.pdf`;
+          
+          const downloadUrl = window.URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = downloadUrl;
+          link.download = filename;
+          document.body.appendChild(link);
+          link.click();
+          
+          document.body.removeChild(link);
+          window.URL.revokeObjectURL(downloadUrl);
+        }
+      } catch (error) {
+        console.error("Error exporting PDF:", error);
+      }
+    }
+  };
+
+  const handleExportExcel = async () => {
+    if (selectedKaryawanUsername && startDate && endDate) {
+      try {
+        const url = `/report/kinerja/detail?username=${selectedKaryawanUsername}&type=excel&startDate=${formatDateAPI(startDate)}&endDate=${formatDateAPI(endDate)}`;
+        const result = await apiClient(url);
+        
+        if (result.status === "success" && result.data) {
+          const base64Data = result.data;
+          const binaryString = atob(base64Data);
+          const bytes = new Uint8Array(binaryString.length);
+          
+          for (let i = 0; i < binaryString.length; i++) {
+            bytes[i] = binaryString.charCodeAt(i);
+          }
+          
+          const blob = new Blob([bytes], { 
+            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
+          });
+          const timestamp = new Date().toISOString().split('T')[0];
+          const filename = `kinerja_${selectedKaryawanUsername}_${timestamp}.xlsx`;
+          
+          const downloadUrl = window.URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = downloadUrl;
+          link.download = filename;
+          document.body.appendChild(link);
+          link.click();
+          
+          document.body.removeChild(link);
+          window.URL.revokeObjectURL(downloadUrl);
+        }
+      } catch (error) {
+        console.error("Error exporting Excel:", error);
+      }
+    }
+  };
 
   return (
     <>
@@ -105,15 +289,6 @@ export default function KinerjaKaryawanPage() {
                     </div>
                   </RadioGroup>
                 </div>
-                {searchInput && (
-                  <button
-                    type="button"
-                    onClick={() => setSearchInput("")}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-700"
-                  >
-                    <IoClose size={16} />
-                  </button>
-                )}
               </div>
 
               <GroupFilter
@@ -127,7 +302,7 @@ export default function KinerjaKaryawanPage() {
                     label="Pilih Karyawan"
                     value={tempSelectedKaryawan}
                     onChange={setTempSelectedKaryawan}
-                    statusFilter={tempStatus || 1} // Default ke status aktif jika tidak ada filter
+                    statusFilter={tempStatus || 1}
                     branchFilter={tempBranch === "all" ? "" : tempBranch}
                     roleFilter={tempRole === "all" ? "" : tempRole}
                     className="mb-4"
@@ -170,24 +345,9 @@ export default function KinerjaKaryawanPage() {
                     />
                   </>
                 )}
-                {/* 
-                <SelectFilter
-                  label="Status"
-                  id="status"
-                  placeholder="Pilih Status"
-                  value={tempStatus}
-                  optionsNumber={[
-                    { label: "Semua Status", value: 0 },
-                    { label: "Aktif", value: 1 },
-                    { label: "Tidak Aktif", value: 2 },
-                  ]}
-                  onChange={setTempStatus}
-                /> */}
-
-
 
                 <div className="flex items-center space-x-4">
-                  <Label className={`w-1/2 font-semibold capitalize`}>
+                  <Label className="w-1/2 font-semibold capitalize">
                     Tanggal awal
                   </Label>
                   <DatePicker
@@ -198,7 +358,7 @@ export default function KinerjaKaryawanPage() {
                 </div>
 
                 <div className="flex items-center space-x-4">
-                  <Label className={`w-1/2 font-semibold capitalize`}>
+                  <Label className="w-1/2 font-semibold capitalize">
                     Tanggal akhir
                   </Label>
                   <DatePicker
@@ -209,32 +369,122 @@ export default function KinerjaKaryawanPage() {
                 </div>
               </GroupFilter>
 
-              <Button variant="main">Cari</Button>
+              <Button variant="main" onClick={handleApplyFilters}>Cari</Button>
             </div>
+            
             <div className="space-x-2">
-              <Link href="#">
-                <Button type="submit" variant={"main"}>
-                  <FaFilePdf />
-                  Ekspor PDF
-                </Button>
-              </Link>
-              <Link href="#">
-                <Button type="submit">
-                  <FaFileExcel size={16} />
-                  Ekspor Data Excel
-                </Button>
-              </Link>
+              <Button 
+                type="button" 
+                variant="main"
+                onClick={handleExportPDF}
+                disabled={reportType === "detail" && (!selectedKaryawanUsername || !startDate || !endDate)}
+              >
+                <FaFilePdf />
+                Ekspor PDF
+              </Button>
+              <Button 
+                type="button"
+                onClick={handleExportExcel}
+                disabled={reportType === "detail" && (!selectedKaryawanUsername || !startDate || !endDate)}
+              >
+                <FaFileExcel size={16} />
+                Ekspor Data Excel
+              </Button>
             </div>
           </div>
 
-          <div className="text-center text-muted-foreground text-sm py-7 my-3 border-y">
-            {reportType === "ringkasan"
-              ? "Saat ini belum ada data ringkasan yang dapat ditampilkan"
-              : selectedKaryawan
-                ? `Saat ini belum ada data detail untuk karyawan terpilih yang dapat ditampilkan`
-                : "Pilih karyawan untuk melihat laporan detail"
-            }
-          </div>
+          {/* PDF Display Section - hanya untuk mode detail */}
+          {reportType === "detail" && selectedKaryawan && selectedKaryawanName && (
+            <div className="border rounded-lg p-4 bg-gray-50">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold">
+                  Detail Kinerja: {selectedKaryawanName}
+                  {startDate && endDate && (
+                    <span className="text-sm font-normal text-gray-600 ml-2">
+                      ({formatDateAPI(startDate)} - {formatDateAPI(endDate)})
+                    </span>
+                  )}
+                </h3>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setSelectedKaryawan("");
+                    setTempSelectedKaryawan("");
+                    setShowDetail(false);
+                    setPdfData("");
+                    setSelectedKaryawanUsername("");
+                    setSelectedKaryawanName("");
+                    setErrorMessage("");
+                  }}
+                >
+                  <IoClose size={16} />
+                  Tutup
+                </Button>
+              </div>
+              
+              {isLoadingDetail ? (
+                <div className="flex items-center justify-center h-40">
+                  <div className="text-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
+                    <p className="text-gray-600">Memuat detail kinerja...</p>
+                  </div>
+                </div>
+              ) : showDetail && pdfData ? (
+                <div className="w-full h-[700px] border rounded bg-white">
+                  <iframe
+                    src={`data:application/pdf;base64,${pdfData}`}
+                    width="100%"
+                    height="100%"
+                    style={{ border: 'none' }}
+                    title={`Detail Kinerja ${selectedKaryawanName}`}
+                  />
+                </div>
+              ) : errorMessage ? (
+                <div className="flex items-center justify-center h-40">
+                  <div className="text-center max-w-md">
+                    <div className="text-orange-600 bg-orange-50 px-4 py-3 rounded-lg">
+                      <p className="font-medium text-orange-800 mb-1">📊 Data Tidak Tersedia</p>
+                      <p className="text-sm text-orange-700">{errorMessage}</p>
+                      <p className="text-xs text-orange-600 mt-2">
+                        Silakan coba dengan rentang tanggal yang berbeda atau pastikan karyawan memiliki transaksi pada periode tersebut.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ) : selectedKaryawan && !startDate ? (
+                <div className="flex items-center justify-center h-40">
+                  <p className="text-amber-600 bg-amber-50 px-4 py-2 rounded">
+                    ⚠️ Silakan pilih tanggal awal untuk melihat detail kinerja
+                  </p>
+                </div>
+              ) : selectedKaryawan && !endDate ? (
+                <div className="flex items-center justify-center h-40">
+                  <p className="text-amber-600 bg-amber-50 px-4 py-2 rounded">
+                    ⚠️ Silakan pilih tanggal akhir untuk melihat detail kinerja
+                  </p>
+                </div>
+              ) : (
+                <div className="flex items-center justify-center h-40">
+                  <p className="text-red-600 bg-red-50 px-4 py-2 rounded">
+                    ❌ Gagal memuat detail kinerja. Silakan coba lagi.
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Default Content */}
+          {!showDetail && (
+            <div className="text-center text-muted-foreground text-sm py-7 my-3 border-y">
+              {reportType === "ringkasan"
+                ? "API Ringkasan belum ready - silakan gunakan mode Detail"
+                : selectedKaryawan
+                  ? `Silakan klik tombol "Cari" untuk melihat detail kinerja`
+                  : "Pilih karyawan dan tanggal, lalu klik 'Cari' untuk melihat laporan detail"
+              }
+            </div>
+          )}
         </div>
       </Wrapper>
     </>

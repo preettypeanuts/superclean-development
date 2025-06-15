@@ -399,3 +399,264 @@ Node.js v22.11.0
 [NX v21.0.3 Daemon Server] - 2025-06-15T09:20:24.737Z - [WATCHER]: Stopping the watcher for /Users/mra.fly/Documents/Projects/superclean-workspace (sources)
 [NX v21.0.3 Daemon Server] - 2025-06-15T09:20:24.738Z - [WATCHER]: Stopping the watcher for /Users/mra.fly/Documents/Projects/superclean-workspace (outputs)
 [NX v21.0.3 Daemon Server] - 2025-06-15T09:20:24.741Z - Server stopped because: "10800000ms of inactivity"
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:02.304Z - Started listening on: /var/folders/z6/4_69c17n7116zlqjnt9l_mhh0000gn/T/707d4982765518ebc196/d.sock
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:02.312Z - [WATCHER]: Subscribed to changes within: /Users/mra.fly/Documents/Projects/superclean-workspace (native)
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:02.313Z - Established a connection. Number of open connections: 1
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:02.313Z - Established a connection. Number of open connections: 2
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:02.314Z - Closed a connection. Number of open connections: 1
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:02.315Z - [REQUEST]: Client Request for Project Graph Received
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:02.319Z - Time taken for 'loadSpecifiedNxPlugins' 0.7058329999999984ms
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:02.454Z - Time taken for 'Load Nx Plugin: /Users/mra.fly/Documents/Projects/superclean-workspace/node_modules/@nx/next/node_modules/nx/src/plugins/package-json' 138.505042ms
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:02.457Z - Time taken for 'Load Nx Plugin: /Users/mra.fly/Documents/Projects/superclean-workspace/node_modules/@nx/next/node_modules/nx/src/plugins/project-json/build-nodes/project-json' 140.834708ms
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:02.463Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:02.463Z - [REQUEST]: 
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:02.463Z - [REQUEST]: 
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:02.467Z - Time taken for 'loadDefaultNxPlugins' 147.34483400000002ms
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:02.498Z - Time taken for 'build-project-configs' 16.31733399999996ms
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:02.657Z - [SYNC]: collect registered sync generators
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:02.657Z - [REQUEST]: Responding to the client. project-graph
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:02.657Z - Time taken for 'total for creating and serializing project graph' 341.876875ms
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:02.659Z - Done responding to the client project-graph
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:02.659Z - Handled REQUEST_PROJECT_GRAPH. Handling time: 342. Response time: 2.
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:02.803Z - [REQUEST]: Client Request for Project Graph Received
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:02.803Z - [REQUEST]: Responding to the client. project-graph
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:02.803Z - Time taken for 'total for creating and serializing project graph' 0.17637500000000728ms
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:02.805Z - Done responding to the client project-graph
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:02.805Z - Handled REQUEST_PROJECT_GRAPH. Handling time: 0. Response time: 2.
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:04.001Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:04.065Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:04.155Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:04.223Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:04.711Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:04.878Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:05.072Z - [REQUEST]: Client Request for Project Graph Received
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:05.072Z - [REQUEST]: Responding to the client. project-graph
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:05.072Z - Time taken for 'total for creating and serializing project graph' 0.15441599999985556ms
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:05.079Z - Done responding to the client project-graph
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:05.079Z - Handled REQUEST_PROJECT_GRAPH. Handling time: 0. Response time: 7.
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:05.097Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:08.063Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:08.130Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:08.183Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:10.824Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:11.063Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:11.305Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:11.399Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:12.091Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:12.153Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:12.354Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:12.839Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:13.421Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:13.749Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:15.132Z - [WATCHER]: apps/admin-app/app/laporan/kinerja-karyawan/page.tsx was modified
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:15.136Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:15.242Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:15.243Z - [REQUEST]: apps/admin-app/app/laporan/kinerja-karyawan/page.tsx
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:15.243Z - [REQUEST]: 
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:15.259Z - Time taken for 'hash changed files from watcher' 2.856583999999202ms
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:15.459Z - Time taken for 'build-project-configs' 195.9612500000003ms
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:15.559Z - [SYNC]: collect registered sync generators
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:15.560Z - [SYNC]: project graph hash is the same, not collecting task sync generators
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:15.560Z - [SYNC]: nx.json hash is the same, not collecting global sync generators
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:15.560Z - Time taken for 'total execution time for createProjectGraph()' 91.16241699999955ms
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:15.681Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:15.806Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:15.967Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:16.071Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:16.618Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:17.375Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:19.814Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:19.949Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:20.220Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:20.387Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:20.579Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:24.804Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:27.161Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:27.728Z - [WATCHER]: apps/admin-app/app/laporan/kinerja-karyawan/page.tsx was modified
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:27.737Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:27.988Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:27.988Z - [REQUEST]: apps/admin-app/app/laporan/kinerja-karyawan/page.tsx
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:27.988Z - [REQUEST]: 
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:28.106Z - Time taken for 'hash changed files from watcher' 30.14729200000147ms
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:28.440Z - Time taken for 'build-project-configs' 337.38279200000034ms
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:28.638Z - [SYNC]: collect registered sync generators
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:28.638Z - [SYNC]: project graph hash is the same, not collecting task sync generators
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:28.638Z - [SYNC]: nx.json hash is the same, not collecting global sync generators
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:28.638Z - Time taken for 'total execution time for createProjectGraph()' 224.42725000000064ms
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:30.226Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:30.280Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:30.859Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:31.099Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:31.482Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:31.543Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:39:36.480Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:40:31.814Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:40:31.895Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:40:31.961Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:40:32.145Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:40:32.247Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:40:32.355Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:40:33.400Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:40:33.484Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:40:34.906Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:40:51.167Z - [WATCHER]: apps/admin-app/app/laporan/kinerja-karyawan/page.tsx was modified
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:40:51.169Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:40:51.579Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:40:51.683Z - [REQUEST]: apps/admin-app/app/laporan/kinerja-karyawan/page.tsx
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:40:51.684Z - [REQUEST]: 
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:40:51.712Z - Time taken for 'hash changed files from watcher' 7.516999999992549ms
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:40:51.957Z - Time taken for 'build-project-configs' 233.0407089999935ms
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:40:52.259Z - [SYNC]: collect registered sync generators
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:40:52.260Z - [SYNC]: project graph hash is the same, not collecting task sync generators
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:40:52.260Z - [SYNC]: nx.json hash is the same, not collecting global sync generators
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:40:52.260Z - Time taken for 'total execution time for createProjectGraph()' 181.8784169999999ms
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:40:52.813Z - [WATCHER]: apps/admin-app/app/laporan/kinerja-karyawan/page.tsx was modified
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:40:52.814Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:40:53.146Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:40:53.626Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:40:53.627Z - [REQUEST]: apps/admin-app/app/laporan/kinerja-karyawan/page.tsx
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:40:53.627Z - [REQUEST]: 
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:40:53.637Z - Time taken for 'hash changed files from watcher' 2.2354579999955604ms
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:40:53.702Z - Time taken for 'build-project-configs' 64.52483300000313ms
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:40:53.815Z - [SYNC]: collect registered sync generators
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:40:53.816Z - [SYNC]: project graph hash is the same, not collecting task sync generators
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:40:53.816Z - [SYNC]: nx.json hash is the same, not collecting global sync generators
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:40:53.816Z - Time taken for 'total execution time for createProjectGraph()' 97.21749999999884ms
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:40:54.944Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:40:55.866Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:41:05.097Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:41:55.097Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:41:55.472Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:41:55.963Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:41:56.070Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:41:56.134Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:41:56.198Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:41:56.263Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:41:56.484Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:41:57.301Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:44:09.536Z - [WATCHER]: apps/admin-app/app/laporan/kinerja-karyawan/page.tsx was modified
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:44:09.539Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:44:11.147Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:44:11.148Z - [REQUEST]: apps/admin-app/app/laporan/kinerja-karyawan/page.tsx
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:44:11.148Z - [REQUEST]: 
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:44:11.164Z - Time taken for 'hash changed files from watcher' 4.619125000026543ms
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:44:11.352Z - Time taken for 'build-project-configs' 174.86241600004723ms
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:44:11.623Z - [SYNC]: collect registered sync generators
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:44:11.624Z - [SYNC]: project graph hash is the same, not collecting task sync generators
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:44:11.624Z - [SYNC]: nx.json hash is the same, not collecting global sync generators
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:44:11.624Z - Time taken for 'total execution time for createProjectGraph()' 130.08129100000951ms
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:44:11.640Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:44:11.646Z - [WATCHER]: apps/admin-app/app/laporan/kinerja-karyawan/page.tsx was modified
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:44:12.348Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:44:13.873Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:44:13.894Z - [WATCHER]: apps/admin-app/app/laporan/kinerja-karyawan/page.tsx was modified
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:44:13.991Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:44:14.051Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:44:14.855Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:44:14.855Z - [REQUEST]: apps/admin-app/app/laporan/kinerja-karyawan/page.tsx
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:44:14.855Z - [REQUEST]: 
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:44:14.861Z - Time taken for 'hash changed files from watcher' 0.45883399999001995ms
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:44:14.887Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:44:14.908Z - Time taken for 'build-project-configs' 45.2716660000151ms
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:44:14.981Z - [SYNC]: collect registered sync generators
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:44:14.981Z - [SYNC]: project graph hash is the same, not collecting task sync generators
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:44:14.981Z - [SYNC]: nx.json hash is the same, not collecting global sync generators
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:44:14.982Z - Time taken for 'total execution time for createProjectGraph()' 66.73429200000828ms
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:44:15.598Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:44:15.678Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:44:17.475Z - [WATCHER]: apps/admin-app/app/laporan/kinerja-karyawan/page.tsx was modified
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:44:17.835Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:44:17.895Z - [WATCHER]: apps/admin-app/app/laporan/kinerja-karyawan/page.tsx was modified
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:44:17.895Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:44:18.994Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:44:20.478Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:44:21.383Z - [WATCHER]: apps/admin-app/app/laporan/kinerja-karyawan/page.tsx was modified
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:44:21.385Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:44:22.160Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:44:22.770Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:44:22.848Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:44:24.239Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:44:24.240Z - [REQUEST]: apps/admin-app/app/laporan/kinerja-karyawan/page.tsx
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:44:24.240Z - [REQUEST]: 
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:44:24.265Z - Time taken for 'hash changed files from watcher' 0.4474589999881573ms
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:44:24.368Z - Time taken for 'build-project-configs' 108.10245800000848ms
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:44:24.437Z - [SYNC]: collect registered sync generators
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:44:24.437Z - [SYNC]: project graph hash is the same, not collecting task sync generators
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:44:24.437Z - [SYNC]: nx.json hash is the same, not collecting global sync generators
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:44:24.437Z - Time taken for 'total execution time for createProjectGraph()' 72.7200839999714ms
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:44:27.102Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:44:42.337Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:44:42.611Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:44:45.737Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:45:42.506Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:45:42.566Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:45:42.834Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:45:42.907Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:45:43.370Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:45:44.851Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:47:14.164Z - [WATCHER]: apps/admin-app/app/laporan/kinerja-karyawan/page.tsx was modified
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:47:14.166Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:47:15.989Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:47:17.199Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:47:19.077Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:47:19.393Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:47:20.576Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:47:20.576Z - [REQUEST]: apps/admin-app/app/laporan/kinerja-karyawan/page.tsx
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:47:20.577Z - [REQUEST]: 
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:47:20.590Z - Time taken for 'hash changed files from watcher' 6.01195800001733ms
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:47:20.758Z - Time taken for 'build-project-configs' 152.29249999998137ms
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:47:20.856Z - [SYNC]: collect registered sync generators
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:47:20.857Z - [SYNC]: project graph hash is the same, not collecting task sync generators
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:47:20.857Z - [SYNC]: nx.json hash is the same, not collecting global sync generators
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:47:20.858Z - Time taken for 'total execution time for createProjectGraph()' 97.31462499999907ms
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:47:24.287Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:48:19.203Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:48:19.258Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:48:19.495Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:48:19.590Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:48:19.644Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:48:19.812Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:48:20.935Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:54:30.129Z - [WATCHER]: apps/admin-app/app/laporan/kinerja-karyawan/page.tsx was modified
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:54:30.171Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:54:32.480Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:54:34.332Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:54:35.012Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:54:36.602Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:54:36.602Z - [REQUEST]: apps/admin-app/app/laporan/kinerja-karyawan/page.tsx
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:54:36.603Z - [REQUEST]: 
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:54:36.690Z - Time taken for 'hash changed files from watcher' 20.858708999934606ms
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:54:37.162Z - Time taken for 'build-project-configs' 453.79924999992363ms
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:54:37.600Z - [SYNC]: collect registered sync generators
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:54:37.601Z - [SYNC]: project graph hash is the same, not collecting task sync generators
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:54:37.601Z - [SYNC]: nx.json hash is the same, not collecting global sync generators
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:54:37.601Z - Time taken for 'total execution time for createProjectGraph()' 220.34574999997858ms
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:54:37.977Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:54:38.803Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:54:44.336Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:55:38.724Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:55:40.144Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:55:40.244Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:55:40.351Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:55:40.456Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T18:55:43.330Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T19:00:49.413Z - [WATCHER]: apps/admin-app/app/laporan/kinerja-karyawan/page.tsx was modified
+[NX v21.0.3 Daemon Server] - 2025-06-15T19:00:49.441Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T19:00:50.810Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T19:00:52.087Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T19:00:55.846Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX v21.0.3 Daemon Server] - 2025-06-15T19:00:55.847Z - [REQUEST]: apps/admin-app/app/laporan/kinerja-karyawan/page.tsx
+[NX v21.0.3 Daemon Server] - 2025-06-15T19:00:55.847Z - [REQUEST]: 
+[NX v21.0.3 Daemon Server] - 2025-06-15T19:00:55.859Z - Time taken for 'hash changed files from watcher' 2.4089579998981208ms
+[NX v21.0.3 Daemon Server] - 2025-06-15T19:00:56.130Z - Time taken for 'build-project-configs' 265.16512500005774ms
+[NX v21.0.3 Daemon Server] - 2025-06-15T19:00:56.534Z - [SYNC]: collect registered sync generators
+[NX v21.0.3 Daemon Server] - 2025-06-15T19:00:56.536Z - [SYNC]: project graph hash is the same, not collecting task sync generators
+[NX v21.0.3 Daemon Server] - 2025-06-15T19:00:56.537Z - [SYNC]: nx.json hash is the same, not collecting global sync generators
+[NX v21.0.3 Daemon Server] - 2025-06-15T19:00:56.537Z - Time taken for 'total execution time for createProjectGraph()' 351.9142499999143ms
+[NX v21.0.3 Daemon Server] - 2025-06-15T19:01:10.204Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T19:01:50.971Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T19:01:51.068Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T19:01:51.142Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T19:01:52.212Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T19:01:52.281Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-06-15T19:01:53.807Z - [WATCHER]: Processing file changes in outputs

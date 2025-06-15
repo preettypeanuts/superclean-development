@@ -34,88 +34,20 @@
   "fileMap": {
     "nonProjectFiles": [
       {
-        "file": "libs/utils/useCustomerInfoByWhatsapp.tsx",
-        "hash": "10801234735775489226"
+        "file": "package.json",
+        "hash": "13725977362029763070"
       },
       {
-        "file": "tsconfig.json",
-        "hash": "12396942299428161250"
-      },
-      {
-        "file": ".prettierrc",
-        "hash": "16267754514737964994"
-      },
-      {
-        "file": "libs/utils/useUserProfile.tsx",
-        "hash": "3926109448529587588"
-      },
-      {
-        "file": "tailwind.config.js",
-        "hash": "9859630345318236931"
+        "file": "Superclean.drawio",
+        "hash": "5242338139829531214"
       },
       {
         "file": "jest.preset.js",
         "hash": "9430166341120122740"
       },
       {
-        "file": "README.md",
-        "hash": "11619592405829086661"
-      },
-      {
-        "file": "vercel.json",
-        "hash": "13757879466007396965"
-      },
-      {
-        "file": ".eslintrc.json",
-        "hash": "18315524891129148814"
-      },
-      {
-        "file": "components.json",
-        "hash": "4280279583905880420"
-      },
-      {
-        "file": "nx.json",
-        "hash": "1192325811798520629"
-      },
-      {
-        "file": "libs/utils/useCustomerData.tsx",
-        "hash": "4960465118637807795"
-      },
-      {
-        "file": ".gitignore",
-        "hash": "12695448599876154607"
-      },
-      {
-        "file": "libs/utils/useLocationData.tsx",
-        "hash": "11837542131548020222"
-      },
-      {
-        "file": "libs/utils/formatRupiah.tsx",
-        "hash": "17759985828843987555"
-      },
-      {
-        "file": "libs/utils/apiClient.ts",
-        "hash": "4809011576491692557"
-      },
-      {
-        "file": ".prettierignore",
-        "hash": "8865097869854018350"
-      },
-      {
-        "file": ".env.local",
-        "hash": "3740600725829722770"
-      },
-      {
-        "file": ".editorconfig",
-        "hash": "5443105041930014821"
-      },
-      {
-        "file": "tsconfig.base.json",
-        "hash": "9986903419117766011"
-      },
-      {
-        "file": ".eslintignore",
-        "hash": "7663861978715868291"
+        "file": ".prettierrc",
+        "hash": "16267754514737964994"
       },
       {
         "file": "package-lock.json",
@@ -126,474 +58,162 @@
         "hash": "3227525177406307032"
       },
       {
-        "file": "libs/utils/useParameterStore.tsx",
-        "hash": "6101636196122675572"
+        "file": ".env.local",
+        "hash": "3740600725829722770"
       },
       {
-        "file": "Superclean.drawio",
-        "hash": "5242338139829531214"
+        "file": ".editorconfig",
+        "hash": "5443105041930014821"
+      },
+      {
+        "file": "README.md",
+        "hash": "11619592405829086661"
+      },
+      {
+        "file": ".eslintrc.json",
+        "hash": "18315524891129148814"
+      },
+      {
+        "file": "libs/utils/formatRupiah.tsx",
+        "hash": "17759985828843987555"
+      },
+      {
+        "file": "vercel.json",
+        "hash": "13757879466007396965"
+      },
+      {
+        "file": "libs/utils/useCustomerInfoByWhatsapp.tsx",
+        "hash": "10801234735775489226"
+      },
+      {
+        "file": "tsconfig.base.json",
+        "hash": "9986903419117766011"
+      },
+      {
+        "file": "tailwind.config.js",
+        "hash": "9859630345318236931"
+      },
+      {
+        "file": "libs/utils/useUserProfile.tsx",
+        "hash": "3926109448529587588"
+      },
+      {
+        "file": ".gitignore",
+        "hash": "12695448599876154607"
+      },
+      {
+        "file": ".prettierignore",
+        "hash": "8865097869854018350"
       },
       {
         "file": "libs/utils/slugify.tsx",
         "hash": "13337896778678670331"
       },
       {
-        "file": "postcss.config.js",
-        "hash": "17192229984174384003"
+        "file": "libs/utils/apiClient.ts",
+        "hash": "4809011576491692557"
+      },
+      {
+        "file": "tsconfig.json",
+        "hash": "12396942299428161250"
       },
       {
         "file": "jest.config.ts",
         "hash": "12333515226966617182"
       },
       {
-        "file": "package.json",
-        "hash": "13725977362029763070"
+        "file": "libs/utils/useLocationData.tsx",
+        "hash": "11837542131548020222"
+      },
+      {
+        "file": "libs/utils/useParameterStore.tsx",
+        "hash": "6101636196122675572"
+      },
+      {
+        "file": "libs/utils/useCustomerData.tsx",
+        "hash": "4960465118637807795"
+      },
+      {
+        "file": "components.json",
+        "hash": "4280279583905880420"
       },
       {
         "file": "libs/utils/formatDate.ts",
         "hash": "16710930586852225179"
+      },
+      {
+        "file": "nx.json",
+        "hash": "1192325811798520629"
+      },
+      {
+        "file": ".eslintignore",
+        "hash": "7663861978715868291"
+      },
+      {
+        "file": "postcss.config.js",
+        "hash": "17192229984174384003"
       }
     ],
     "projectFileMap": {
-      "ui-components": [
+      "mitra-app": [
         {
-          "file": "libs/ui-components/.eslintrc.json",
-          "hash": "11012487992710232822"
+          "file": "apps/mitra-app/.eslintrc.json",
+          "hash": "1322966927938926602"
         },
         {
-          "file": "libs/ui-components/project.json",
-          "hash": "94812234662784192"
-        },
-        {
-          "file": "libs/ui-components/src/components/bar-chart.tsx",
-          "hash": "3441244841508053111",
+          "file": "apps/mitra-app/app/layout.tsx",
+          "hash": "3987918873231028403",
           "deps": [
-            "npm:lucide-react",
-            "npm:recharts"
-          ]
-        },
-        {
-          "file": "libs/ui-components/src/components/date-picker-range.tsx",
-          "hash": "9422986068789675286",
-          "deps": [
-            "npm:react",
-            "npm:date-fns",
-            "npm:lucide-react",
-            "npm:react-day-picker"
-          ]
-        },
-        {
-          "file": "libs/ui-components/src/components/date-picker.tsx",
-          "hash": "12330423335717764630",
-          "deps": [
-            "npm:react",
-            "npm:lucide-react"
-          ]
-        },
-        {
-          "file": "libs/ui-components/src/components/delete-dialog.tsx",
-          "hash": "17603549728495742120",
-          "deps": [
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "libs/ui-components/src/components/dialog-wrapper.tsx",
-          "hash": "9966294012966120218",
-          "deps": [
-            "npm:react"
-          ]
-        },
-        {
-          "file": "libs/ui-components/src/components/discount-table.tsx",
-          "hash": "11283670775880861335",
-          "deps": [
-            "npm:next",
-            "npm:react-icons",
-            "npm:react"
-          ]
-        },
-        {
-          "file": "libs/ui-components/src/components/dropdown-table.tsx",
-          "hash": "15849136382906996067",
-          "deps": [
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "libs/ui-components/src/components/filter-branch.tsx",
-          "hash": "4078413532544039058",
-          "deps": [
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "libs/ui-components/src/components/filter-category-layanan.tsx",
-          "hash": "18141346993924438283",
-          "deps": [
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "libs/ui-components/src/components/filter-status.tsx",
-          "hash": "6166083594724561037",
-          "deps": [
-            "npm:react",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "libs/ui-components/src/components/group-filter.tsx",
-          "hash": "12115393283054127187",
-          "deps": [
-            "npm:react",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "libs/ui-components/src/components/inquiry-transaksi-table.tsx",
-          "hash": "16607486123309002669",
-          "deps": [
-            "npm:next",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "libs/ui-components/src/components/karyawan-table.tsx",
-          "hash": "13130974817034102102",
-          "deps": [
-            "npm:next",
-            "npm:react-icons",
-            "npm:react"
-          ]
-        },
-        {
-          "file": "libs/ui-components/src/components/layanan-table.tsx",
-          "hash": "10064477505306317208",
-          "deps": [
-            "npm:next",
-            "npm:react-icons",
-            "npm:react"
-          ]
-        },
-        {
-          "file": "libs/ui-components/src/components/line-chart.tsx",
-          "hash": "18018812003840992044",
-          "deps": [
-            "npm:react",
-            "npm:recharts"
-          ]
-        },
-        {
-          "file": "libs/ui-components/src/components/multi-select.tsx",
-          "hash": "791040703115473941",
-          "deps": [
-            "npm:react",
-            "npm:lucide-react",
-            "npm:cmdk",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "libs/ui-components/src/components/pagination-number.tsx",
-          "hash": "7022434253437707270",
-          "deps": [
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "libs/ui-components/src/components/pembayaran-table-detail.tsx",
-          "hash": "2389931689837232937"
-        },
-        {
-          "file": "libs/ui-components/src/components/pembayaran-table.tsx",
-          "hash": "13996964940759055997",
-          "deps": [
-            "npm:next",
-            "npm:react-icons",
-            "shared"
-          ]
-        },
-        {
-          "file": "libs/ui-components/src/components/pie-chart.tsx",
-          "hash": "9116388488712107609",
-          "deps": [
-            "npm:react",
-            "npm:lucide-react",
-            "npm:recharts"
-          ]
-        },
-        {
-          "file": "libs/ui-components/src/components/radial-chart.tsx",
-          "hash": "18025335514180266721",
-          "deps": [
-            "npm:lucide-react",
-            "npm:recharts"
-          ]
-        },
-        {
-          "file": "libs/ui-components/src/components/rupiah-input.tsx",
-          "hash": "5570142250882897702",
-          "deps": [
-            "npm:react"
-          ]
-        },
-        {
-          "file": "libs/ui-components/src/components/save-dialog.tsx",
-          "hash": "14239102162774960354",
-          "deps": [
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "libs/ui-components/src/components/select-data.tsx",
-          "hash": "16288536961374243597"
-        },
-        {
-          "file": "libs/ui-components/src/components/select-filter.tsx",
-          "hash": "13135444359823468680"
-        },
-        {
-          "file": "libs/ui-components/src/components/spk-table-detail.tsx",
-          "hash": "14748337609618274353",
-          "deps": [
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "libs/ui-components/src/components/spk-table.tsx",
-          "hash": "91171090228218401",
-          "deps": [
-            "npm:next",
-            "npm:react-icons",
             "shared",
-            "npm:react"
+            "npm:next-themes"
           ]
         },
         {
-          "file": "libs/ui-components/src/components/table-pelanggan.tsx",
-          "hash": "11077249601407105255",
+          "file": "apps/mitra-app/app/page.tsx",
+          "hash": "11120343933449808126"
+        },
+        {
+          "file": "apps/mitra-app/app/register/page.tsx",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/mitra-app/index.d.ts",
+          "hash": "5498222895072842432"
+        },
+        {
+          "file": "apps/mitra-app/jest.config.ts",
+          "hash": "4933756946131926746"
+        },
+        {
+          "file": "apps/mitra-app/next-env.d.ts",
+          "hash": "13904763933831424769"
+        },
+        {
+          "file": "apps/mitra-app/next.config.js",
+          "hash": "4640182932892698362",
           "deps": [
-            "npm:react-icons",
-            "npm:next",
-            "npm:react"
+            "npm:@nx/next"
           ]
         },
         {
-          "file": "libs/ui-components/src/components/ui/alert-dialog.tsx",
-          "hash": "2747934949683759793",
-          "deps": [
-            "npm:react",
-            "npm:@radix-ui/react-alert-dialog"
-          ]
+          "file": "apps/mitra-app/project.json",
+          "hash": "15468575244545874128"
         },
         {
-          "file": "libs/ui-components/src/components/ui/badge.tsx",
-          "hash": "18411170304989773220",
-          "deps": [
-            "npm:react",
-            "npm:class-variance-authority"
-          ]
+          "file": "apps/mitra-app/public/.gitkeep",
+          "hash": "3244421341483603138"
         },
         {
-          "file": "libs/ui-components/src/components/ui/breadcrumb.tsx",
-          "hash": "17459242521594044717",
-          "deps": [
-            "npm:react",
-            "npm:@radix-ui/react-slot",
-            "npm:lucide-react"
-          ]
+          "file": "apps/mitra-app/public/favicon.ico",
+          "hash": "9303420814833116677"
         },
         {
-          "file": "libs/ui-components/src/components/ui/button.tsx",
-          "hash": "3632642237036089906",
-          "deps": [
-            "npm:react",
-            "npm:@radix-ui/react-slot",
-            "npm:class-variance-authority"
-          ]
+          "file": "apps/mitra-app/tsconfig.json",
+          "hash": "11191117430603330035"
         },
         {
-          "file": "libs/ui-components/src/components/ui/calendar.tsx",
-          "hash": "14077502982819413035",
-          "deps": [
-            "npm:react",
-            "npm:lucide-react",
-            "npm:react-day-picker"
-          ]
-        },
-        {
-          "file": "libs/ui-components/src/components/ui/card.tsx",
-          "hash": "13689506749422176989",
-          "deps": [
-            "npm:react"
-          ]
-        },
-        {
-          "file": "libs/ui-components/src/components/ui/chart.tsx",
-          "hash": "13994953912227382740",
-          "deps": [
-            "npm:react",
-            "npm:recharts"
-          ]
-        },
-        {
-          "file": "libs/ui-components/src/components/ui/checkbox.tsx",
-          "hash": "10821367740131040450",
-          "deps": [
-            "npm:react",
-            "npm:@radix-ui/react-checkbox",
-            "npm:lucide-react"
-          ]
-        },
-        {
-          "file": "libs/ui-components/src/components/ui/command.tsx",
-          "hash": "7406407884104022655",
-          "deps": [
-            "npm:react",
-            "npm:@radix-ui/react-dialog",
-            "npm:cmdk",
-            "npm:lucide-react"
-          ]
-        },
-        {
-          "file": "libs/ui-components/src/components/ui/dialog.tsx",
-          "hash": "15370606110383417136",
-          "deps": [
-            "npm:react",
-            "npm:@radix-ui/react-dialog",
-            "npm:lucide-react"
-          ]
-        },
-        {
-          "file": "libs/ui-components/src/components/ui/dropdown-menu.tsx",
-          "hash": "903683965623464756",
-          "deps": [
-            "npm:react",
-            "npm:@radix-ui/react-dropdown-menu",
-            "npm:@radix-ui/react-icons"
-          ]
-        },
-        {
-          "file": "libs/ui-components/src/components/ui/input.tsx",
-          "hash": "1891555747999385985",
-          "deps": [
-            "npm:react"
-          ]
-        },
-        {
-          "file": "libs/ui-components/src/components/ui/label.tsx",
-          "hash": "12666733437744481144",
-          "deps": [
-            "npm:react",
-            "npm:@radix-ui/react-label",
-            "npm:class-variance-authority"
-          ]
-        },
-        {
-          "file": "libs/ui-components/src/components/ui/pagination.tsx",
-          "hash": "1998701975256204868",
-          "deps": [
-            "npm:react",
-            "npm:lucide-react"
-          ]
-        },
-        {
-          "file": "libs/ui-components/src/components/ui/popover.tsx",
-          "hash": "815994797170024344",
-          "deps": [
-            "npm:react",
-            "npm:@radix-ui/react-popover"
-          ]
-        },
-        {
-          "file": "libs/ui-components/src/components/ui/progress.tsx",
-          "hash": "15875930140037178632",
-          "deps": [
-            "npm:react",
-            "npm:@radix-ui/react-progress"
-          ]
-        },
-        {
-          "file": "libs/ui-components/src/components/ui/radio-group.tsx",
-          "hash": "14850370673069189588",
-          "deps": [
-            "npm:react",
-            "npm:@radix-ui/react-radio-group",
-            "npm:lucide-react"
-          ]
-        },
-        {
-          "file": "libs/ui-components/src/components/ui/select.tsx",
-          "hash": "10898572752731958522",
-          "deps": [
-            "npm:react",
-            "npm:@radix-ui/react-select",
-            "npm:lucide-react"
-          ]
-        },
-        {
-          "file": "libs/ui-components/src/components/ui/table.tsx",
-          "hash": "7488182945835831592",
-          "deps": [
-            "npm:react"
-          ]
-        },
-        {
-          "file": "libs/ui-components/src/components/ui/tabs.tsx",
-          "hash": "13937283100382977174",
-          "deps": [
-            "npm:react",
-            "npm:@radix-ui/react-tabs"
-          ]
-        },
-        {
-          "file": "libs/ui-components/src/components/ui/textarea.tsx",
-          "hash": "2028185028267332936",
-          "deps": [
-            "npm:react"
-          ]
-        },
-        {
-          "file": "libs/ui-components/src/components/ui/toast.tsx",
-          "hash": "4926735394606070881",
-          "deps": [
-            "npm:react",
-            "npm:@radix-ui/react-toast",
-            "npm:class-variance-authority",
-            "npm:lucide-react"
-          ]
-        },
-        {
-          "file": "libs/ui-components/src/components/ui/toaster.tsx",
-          "hash": "471731706079889075"
-        },
-        {
-          "file": "libs/ui-components/src/hooks/use-toast.ts",
-          "hash": "8565745016292564737",
-          "deps": [
-            "npm:react"
-          ]
-        },
-        {
-          "file": "libs/ui-components/src/index.ts",
-          "hash": "1970197588290919"
-        },
-        {
-          "file": "libs/ui-components/src/utils.ts",
-          "hash": "3674859796430424025",
-          "deps": [
-            "npm:clsx",
-            "npm:tailwind-merge"
-          ]
-        },
-        {
-          "file": "libs/ui-components/tsconfig.json",
-          "hash": "5951345546809026492"
-        },
-        {
-          "file": "libs/ui-components/tsconfig.lib.json",
-          "hash": "13346013761036945219"
+          "file": "apps/mitra-app/tsconfig.spec.json",
+          "hash": "6922413205408300107"
         }
       ],
       "admin-app": [
@@ -624,7 +244,7 @@
         },
         {
           "file": "apps/admin-app/app/laporan/inquiry-transaksi/page.tsx",
-          "hash": "806932668258837465",
+          "hash": "11306899230188329572",
           "deps": [
             "npm:react",
             "ui-components",
@@ -636,11 +256,11 @@
         },
         {
           "file": "apps/admin-app/app/laporan/kinerja-karyawan/page.tsx",
-          "hash": "681957341878791305",
+          "hash": "3668780337918729080",
           "deps": [
             "npm:next",
-            "npm:react",
             "ui-components",
+            "npm:react",
             "shared",
             "npm:react-icons"
           ]
@@ -971,67 +591,6 @@
           "hash": "6922413205408300107"
         }
       ],
-      "mitra-app": [
-        {
-          "file": "apps/mitra-app/.eslintrc.json",
-          "hash": "1322966927938926602"
-        },
-        {
-          "file": "apps/mitra-app/app/layout.tsx",
-          "hash": "3987918873231028403",
-          "deps": [
-            "shared",
-            "npm:next-themes"
-          ]
-        },
-        {
-          "file": "apps/mitra-app/app/page.tsx",
-          "hash": "11120343933449808126"
-        },
-        {
-          "file": "apps/mitra-app/app/register/page.tsx",
-          "hash": "3244421341483603138"
-        },
-        {
-          "file": "apps/mitra-app/index.d.ts",
-          "hash": "5498222895072842432"
-        },
-        {
-          "file": "apps/mitra-app/jest.config.ts",
-          "hash": "4933756946131926746"
-        },
-        {
-          "file": "apps/mitra-app/next-env.d.ts",
-          "hash": "13904763933831424769"
-        },
-        {
-          "file": "apps/mitra-app/next.config.js",
-          "hash": "4640182932892698362",
-          "deps": [
-            "npm:@nx/next"
-          ]
-        },
-        {
-          "file": "apps/mitra-app/project.json",
-          "hash": "15468575244545874128"
-        },
-        {
-          "file": "apps/mitra-app/public/.gitkeep",
-          "hash": "3244421341483603138"
-        },
-        {
-          "file": "apps/mitra-app/public/favicon.ico",
-          "hash": "9303420814833116677"
-        },
-        {
-          "file": "apps/mitra-app/tsconfig.json",
-          "hash": "11191117430603330035"
-        },
-        {
-          "file": "apps/mitra-app/tsconfig.spec.json",
-          "hash": "6922413205408300107"
-        }
-      ],
       "shared": [
         {
           "file": "libs/shared/.eslintrc.json",
@@ -1187,6 +746,456 @@
         {
           "file": "libs/shared/tsconfig.lib.json",
           "hash": "5575421938664506599"
+        }
+      ],
+      "ui-components": [
+        {
+          "file": "libs/ui-components/.eslintrc.json",
+          "hash": "11012487992710232822"
+        },
+        {
+          "file": "libs/ui-components/project.json",
+          "hash": "94812234662784192"
+        },
+        {
+          "file": "libs/ui-components/src/components/bar-chart.tsx",
+          "hash": "3441244841508053111",
+          "deps": [
+            "npm:lucide-react",
+            "npm:recharts"
+          ]
+        },
+        {
+          "file": "libs/ui-components/src/components/date-picker-range.tsx",
+          "hash": "9422986068789675286",
+          "deps": [
+            "npm:react",
+            "npm:date-fns",
+            "npm:lucide-react",
+            "npm:react-day-picker"
+          ]
+        },
+        {
+          "file": "libs/ui-components/src/components/date-picker.tsx",
+          "hash": "12330423335717764630",
+          "deps": [
+            "npm:react",
+            "npm:lucide-react"
+          ]
+        },
+        {
+          "file": "libs/ui-components/src/components/delete-dialog.tsx",
+          "hash": "17603549728495742120",
+          "deps": [
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "libs/ui-components/src/components/dialog-wrapper.tsx",
+          "hash": "9966294012966120218",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "libs/ui-components/src/components/discount-table.tsx",
+          "hash": "11283670775880861335",
+          "deps": [
+            "npm:next",
+            "npm:react-icons",
+            "npm:react"
+          ]
+        },
+        {
+          "file": "libs/ui-components/src/components/dropdown-table.tsx",
+          "hash": "15849136382906996067",
+          "deps": [
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "libs/ui-components/src/components/filter-branch.tsx",
+          "hash": "4078413532544039058",
+          "deps": [
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "libs/ui-components/src/components/filter-category-layanan.tsx",
+          "hash": "18141346993924438283",
+          "deps": [
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "libs/ui-components/src/components/filter-status.tsx",
+          "hash": "6166083594724561037",
+          "deps": [
+            "npm:react",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "libs/ui-components/src/components/group-filter.tsx",
+          "hash": "12115393283054127187",
+          "deps": [
+            "npm:react",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "libs/ui-components/src/components/inquiry-transaksi-table.tsx",
+          "hash": "18129162123446403770",
+          "deps": [
+            "npm:next",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "libs/ui-components/src/components/karyawan-select.tsx",
+          "hash": "13766585634295968874",
+          "deps": [
+            "npm:react",
+            "npm:lucide-react",
+            "npm:cmdk"
+          ]
+        },
+        {
+          "file": "libs/ui-components/src/components/karyawan-table.tsx",
+          "hash": "13130974817034102102",
+          "deps": [
+            "npm:next",
+            "npm:react-icons",
+            "npm:react"
+          ]
+        },
+        {
+          "file": "libs/ui-components/src/components/layanan-table.tsx",
+          "hash": "10064477505306317208",
+          "deps": [
+            "npm:next",
+            "npm:react-icons",
+            "npm:react"
+          ]
+        },
+        {
+          "file": "libs/ui-components/src/components/line-chart.tsx",
+          "hash": "18018812003840992044",
+          "deps": [
+            "npm:react",
+            "npm:recharts"
+          ]
+        },
+        {
+          "file": "libs/ui-components/src/components/multi-select.tsx",
+          "hash": "791040703115473941",
+          "deps": [
+            "npm:react",
+            "npm:lucide-react",
+            "npm:cmdk",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "libs/ui-components/src/components/pagination-number.tsx",
+          "hash": "7022434253437707270",
+          "deps": [
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "libs/ui-components/src/components/pembayaran-table-detail.tsx",
+          "hash": "4720525670324385378"
+        },
+        {
+          "file": "libs/ui-components/src/components/pembayaran-table.tsx",
+          "hash": "13996964940759055997",
+          "deps": [
+            "npm:next",
+            "npm:react-icons",
+            "shared"
+          ]
+        },
+        {
+          "file": "libs/ui-components/src/components/pie-chart.tsx",
+          "hash": "9116388488712107609",
+          "deps": [
+            "npm:react",
+            "npm:lucide-react",
+            "npm:recharts"
+          ]
+        },
+        {
+          "file": "libs/ui-components/src/components/radial-chart.tsx",
+          "hash": "18025335514180266721",
+          "deps": [
+            "npm:lucide-react",
+            "npm:recharts"
+          ]
+        },
+        {
+          "file": "libs/ui-components/src/components/rupiah-input.tsx",
+          "hash": "5570142250882897702",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "libs/ui-components/src/components/save-dialog.tsx",
+          "hash": "14239102162774960354",
+          "deps": [
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "libs/ui-components/src/components/select-data.tsx",
+          "hash": "16288536961374243597"
+        },
+        {
+          "file": "libs/ui-components/src/components/select-filter.tsx",
+          "hash": "13135444359823468680"
+        },
+        {
+          "file": "libs/ui-components/src/components/spk-table-detail.tsx",
+          "hash": "14748337609618274353",
+          "deps": [
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "libs/ui-components/src/components/spk-table.tsx",
+          "hash": "91171090228218401",
+          "deps": [
+            "npm:next",
+            "npm:react-icons",
+            "shared",
+            "npm:react"
+          ]
+        },
+        {
+          "file": "libs/ui-components/src/components/table-pelanggan.tsx",
+          "hash": "11077249601407105255",
+          "deps": [
+            "npm:react-icons",
+            "npm:next",
+            "npm:react"
+          ]
+        },
+        {
+          "file": "libs/ui-components/src/components/ui/alert-dialog.tsx",
+          "hash": "2747934949683759793",
+          "deps": [
+            "npm:react",
+            "npm:@radix-ui/react-alert-dialog"
+          ]
+        },
+        {
+          "file": "libs/ui-components/src/components/ui/badge.tsx",
+          "hash": "18411170304989773220",
+          "deps": [
+            "npm:react",
+            "npm:class-variance-authority"
+          ]
+        },
+        {
+          "file": "libs/ui-components/src/components/ui/breadcrumb.tsx",
+          "hash": "17459242521594044717",
+          "deps": [
+            "npm:react",
+            "npm:@radix-ui/react-slot",
+            "npm:lucide-react"
+          ]
+        },
+        {
+          "file": "libs/ui-components/src/components/ui/button.tsx",
+          "hash": "3632642237036089906",
+          "deps": [
+            "npm:react",
+            "npm:@radix-ui/react-slot",
+            "npm:class-variance-authority"
+          ]
+        },
+        {
+          "file": "libs/ui-components/src/components/ui/calendar.tsx",
+          "hash": "14077502982819413035",
+          "deps": [
+            "npm:react",
+            "npm:lucide-react",
+            "npm:react-day-picker"
+          ]
+        },
+        {
+          "file": "libs/ui-components/src/components/ui/card.tsx",
+          "hash": "13689506749422176989",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "libs/ui-components/src/components/ui/chart.tsx",
+          "hash": "13994953912227382740",
+          "deps": [
+            "npm:react",
+            "npm:recharts"
+          ]
+        },
+        {
+          "file": "libs/ui-components/src/components/ui/checkbox.tsx",
+          "hash": "10821367740131040450",
+          "deps": [
+            "npm:react",
+            "npm:@radix-ui/react-checkbox",
+            "npm:lucide-react"
+          ]
+        },
+        {
+          "file": "libs/ui-components/src/components/ui/command.tsx",
+          "hash": "7406407884104022655",
+          "deps": [
+            "npm:react",
+            "npm:@radix-ui/react-dialog",
+            "npm:cmdk",
+            "npm:lucide-react"
+          ]
+        },
+        {
+          "file": "libs/ui-components/src/components/ui/dialog.tsx",
+          "hash": "15370606110383417136",
+          "deps": [
+            "npm:react",
+            "npm:@radix-ui/react-dialog",
+            "npm:lucide-react"
+          ]
+        },
+        {
+          "file": "libs/ui-components/src/components/ui/dropdown-menu.tsx",
+          "hash": "903683965623464756",
+          "deps": [
+            "npm:react",
+            "npm:@radix-ui/react-dropdown-menu",
+            "npm:@radix-ui/react-icons"
+          ]
+        },
+        {
+          "file": "libs/ui-components/src/components/ui/input.tsx",
+          "hash": "1891555747999385985",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "libs/ui-components/src/components/ui/label.tsx",
+          "hash": "12666733437744481144",
+          "deps": [
+            "npm:react",
+            "npm:@radix-ui/react-label",
+            "npm:class-variance-authority"
+          ]
+        },
+        {
+          "file": "libs/ui-components/src/components/ui/pagination.tsx",
+          "hash": "1998701975256204868",
+          "deps": [
+            "npm:react",
+            "npm:lucide-react"
+          ]
+        },
+        {
+          "file": "libs/ui-components/src/components/ui/popover.tsx",
+          "hash": "815994797170024344",
+          "deps": [
+            "npm:react",
+            "npm:@radix-ui/react-popover"
+          ]
+        },
+        {
+          "file": "libs/ui-components/src/components/ui/progress.tsx",
+          "hash": "15875930140037178632",
+          "deps": [
+            "npm:react",
+            "npm:@radix-ui/react-progress"
+          ]
+        },
+        {
+          "file": "libs/ui-components/src/components/ui/radio-group.tsx",
+          "hash": "14850370673069189588",
+          "deps": [
+            "npm:react",
+            "npm:@radix-ui/react-radio-group",
+            "npm:lucide-react"
+          ]
+        },
+        {
+          "file": "libs/ui-components/src/components/ui/select.tsx",
+          "hash": "10898572752731958522",
+          "deps": [
+            "npm:react",
+            "npm:@radix-ui/react-select",
+            "npm:lucide-react"
+          ]
+        },
+        {
+          "file": "libs/ui-components/src/components/ui/table.tsx",
+          "hash": "7488182945835831592",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "libs/ui-components/src/components/ui/tabs.tsx",
+          "hash": "13937283100382977174",
+          "deps": [
+            "npm:react",
+            "npm:@radix-ui/react-tabs"
+          ]
+        },
+        {
+          "file": "libs/ui-components/src/components/ui/textarea.tsx",
+          "hash": "2028185028267332936",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "libs/ui-components/src/components/ui/toast.tsx",
+          "hash": "4926735394606070881",
+          "deps": [
+            "npm:react",
+            "npm:@radix-ui/react-toast",
+            "npm:class-variance-authority",
+            "npm:lucide-react"
+          ]
+        },
+        {
+          "file": "libs/ui-components/src/components/ui/toaster.tsx",
+          "hash": "471731706079889075"
+        },
+        {
+          "file": "libs/ui-components/src/hooks/use-toast.ts",
+          "hash": "8565745016292564737",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "libs/ui-components/src/index.ts",
+          "hash": "1970197588290919"
+        },
+        {
+          "file": "libs/ui-components/src/utils.ts",
+          "hash": "3674859796430424025",
+          "deps": [
+            "npm:clsx",
+            "npm:tailwind-merge"
+          ]
+        },
+        {
+          "file": "libs/ui-components/tsconfig.json",
+          "hash": "5951345546809026492"
+        },
+        {
+          "file": "libs/ui-components/tsconfig.lib.json",
+          "hash": "13346013761036945219"
         }
       ]
     }
