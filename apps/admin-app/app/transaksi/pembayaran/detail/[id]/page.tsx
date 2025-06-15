@@ -8,152 +8,193 @@ import { Label } from "libs/ui-components/src/components/ui/label";
 import { Button } from "libs/ui-components/src/components/ui/button";
 import { Input } from "libs/ui-components/src/components/ui/input";
 import { Textarea } from "libs/ui-components/src/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectGroup } from "libs/ui-components/src/components/ui/select";
 import { useLocationData } from "libs/utils/useLocationData";
 import { api } from "libs/utils/apiClient";
 import { TbArrowBack } from "react-icons/tb";
 import { formatDate } from "libs/utils/formatDate";
 import { formatRupiah } from "libs/utils/formatRupiah";
-import { SPKTableDetail } from "libs/ui-components/src/components/spk-table-detail";
-import { LuPlus, LuSave } from "react-icons/lu";
+import { PembayaranTableDetail } from "libs/ui-components/src/components/pembayaran-table-detail";
 import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
+
+interface TransactionDetail {
+    serviceCategory: string;
+    serviceCode: string;
+    serviceType: number;
+    servicePrice: number;
+    quantity: number;
+    promoCode: string;
+    promoType: string;
+    promoAmount: number;
+}
 
 interface Transaction {
     id: string;
     trxNumber: string;
-    noWhatsapp: string;
+    customerId: string;
     branchId: string;
-    address: string;
-    province: string;
-    city: string;
-    district: string;
-    subDistrict: string;
     totalPrice: number;
     discountPrice: number;
     promoPrice: number;
     finalPrice: number;
     trxDate: string;
     status: number;
+    details: TransactionDetail[];
 }
 
+interface Customer {
+    id: string;
+    name: string;
+    noWhatsapp: string;
+    address: string;
+    province: string;
+    city: string;
+    district: string;
+    subDistrict: string;
+}
 
-
-const DataHeaderSPKDetail = [
+const HeaderPembayaran = [
     { key: "id", label: "#" },
-    { key: "kode", label: "kode" },
-    { key: "layanan", label: "layanan" },
-    { key: "kategori", label: "kategori" },
-    { key: "jumlah", label: "jumlah" },
-    { key: "satuan", label: "satuan" },
-    { key: "harga", label: "harga" },
-    { key: "promo", label: "promo" },
-    { key: "menu", label: "Aksi" }
+    { key: "serviceCode", label: "Kode Layanan" },
+    { key: "serviceCategory", label: "Kategori" },
+    { key: "serviceType", label: "Jenis Layanan" },
+    { key: "quantity", label: "Jumlah" },
+    { key: "servicePrice", label: "Harga" },
+    { key: "promoCode", label: "Kode Promo" },
+    { key: "promoAmount", label: "Diskon Promo" }
 ];
 
-const DataDummySPK = [
-    {
-        id: "1",
-        kode: "SPK001",
-        layanan: "Cuci Kering",
-        kategori: "Pakaian",
-        jumlah: 5,
-        satuan: "Kg",
-        harga: 25000,
-        promo: 0,
-        createdBy: "Admin",
-        createdAt: "2023-01-01T10:00:00Z",
-    },
-    {
-        id: "2",
-        kode: "SPK002",
-        layanan: "Setrika",
-        kategori: "Pakaian",
-        jumlah: 3,
-        satuan: "Kg",
-        harga: 15000,
-        promo: 2000,
-        createdBy: "Admin",
-        createdAt: "2023-01-02T11:00:00Z",
-    },
-];
+// Mapping untuk status
+const statusMapping = {
+    0: "Baru",
+    1: "Dikonfirmasi", 
+    2: "Dalam Proses",
+    3: "Selesai",
+    4: "Dibatalkan",
+    5: "Menunggu Pembayaran"
+};
 
+// Mapping untuk service type
+const serviceTypeMapping = {
+    1: "Regular",
+    2: "Express", 
+    3: "Premium"
+};
 
 export default function PembayaranDetail() {
     const pathname = usePathname();
     const router = useRouter();
-    const id = pathname.split("/").pop();
+    const trxNumber = pathname.split("/").pop();
+    
     const [transaction, setTransaction] = useState<Transaction | null>(null);
+    const [customer, setCustomer] = useState<Customer | null>(null);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
-    const { provinces, cities, districts, subDistricts, loading: locationLoading } = useLocationData(
-        transaction?.province,
-        transaction?.city,
-        transaction?.district
+    // State untuk menyimpan display names dari location codes
+    const [locationLabels, setLocationLabels] = useState({
+        provinceName: "",
+        cityName: "",
+        districtName: "",
+        subDistrictName: ""
+    });
+
+    // Hook untuk mengambil data lokasi berdasarkan customer yang dipilih
+    const { provinces, cities, districts, subDistricts } = useLocationData(
+        customer?.province,
+        customer?.city,
+        customer?.district
     );
 
-    // Tambah state untuk handle selected ID
-    const [selectedProvince, setSelectedProvince] = useState<string>("");
-    const [selectedCity, setSelectedCity] = useState<string>("");
-    const [selectedDistrict, setSelectedDistrict] = useState<string>("");
+    // Effect untuk mengambil label lokasi berdasarkan customer yang dipilih
+    useEffect(() => {
+        if (customer) {
+            const getLocationLabel = (items: any[], code: string) => {
+                const item = items.find(item => item.paramKey === code);
+                return item ? item.paramValue : code;
+            };
+
+            setLocationLabels({
+                provinceName: getLocationLabel(provinces, customer.province),
+                cityName: getLocationLabel(cities, customer.city),
+                districtName: getLocationLabel(districts, customer.district),
+                subDistrictName: getLocationLabel(subDistricts, customer.subDistrict)
+            });
+        } else {
+            setLocationLabels({
+                provinceName: "",
+                cityName: "",
+                districtName: "",
+                subDistrictName: ""
+            });
+        }
+    }, [customer, provinces, cities, districts, subDistricts]);
 
     useEffect(() => {
-        const fetchTransaction = async () => {
+        const fetchTransactionData = async () => {
             try {
-                const result = await api.get(`/transaction/${id}`);
-                setTransaction(result.data);
-
-                // Sekaligus set default selected
-                setSelectedProvince(result.data.province);
-                setSelectedCity(result.data.city);
-                setSelectedDistrict(result.data.district);
+                setLoading(true);
+                setError(null);
+                
+                // Fetch transaction data
+                const transactionResult = await api.get(`/transaction/${trxNumber}`);
+                
+                if (transactionResult.status === "success") {
+                    setTransaction(transactionResult.data);
+                    
+                    // Fetch customer data using customerId
+                    if (transactionResult.data.customerId) {
+                        try {
+                            const customerResult = await api.get(`/customer/${transactionResult.data.customerId}`);
+                            if (customerResult.status === "success") {
+                                setCustomer(customerResult.data);
+                            }
+                        } catch (customerError) {
+                            console.warn("Customer data not found or error:", customerError);
+                            // Continue without customer data
+                        }
+                    }
+                } else {
+                    setError("Data transaksi tidak ditemukan");
+                }
             } catch (error) {
                 console.error("Gagal mengambil data transaksi:", error);
+                setError("Gagal mengambil data transaksi");
             } finally {
                 setLoading(false);
             }
         };
-        if (id) {
-            fetchTransaction();
+
+        if (trxNumber) {
+            fetchTransactionData();
         }
-    }, [id]);
+    }, [trxNumber]);
 
-    // Handle cascading select
-    const handleProvinceChange = (value: string) => {
-        setSelectedProvince(value);
-        setSelectedCity("");
-        setSelectedDistrict("");
-        setTransaction((prev) => prev ? { ...prev, province: value, city: "", district: "", subDistrict: "" } : null);
-    };
-
-    const handleCityChange = (value: string) => {
-        setSelectedCity(value);
-        setSelectedDistrict("");
-        setTransaction((prev) => prev ? { ...prev, city: value, district: "", subDistrict: "" } : null);
-    };
-
-    const handleDistrictChange = (value: string) => {
-        setSelectedDistrict(value);
-        setTransaction((prev) => prev ? { ...prev, district: value, subDistrict: "" } : null);
-    };
-
-    const handleSubDistrictChange = (value: string) => {
-        setTransaction((prev) => prev ? { ...prev, subDistrict: value } : null);
-    };
+    // Transform transaction details for table
+    const transformedDetails = transaction?.details?.map((detail, index) => ({
+        id: (index + 1).toString(),
+        serviceCode: detail.serviceCode,
+        serviceCategory: detail.serviceCategory,
+        serviceType: serviceTypeMapping[detail.serviceType as keyof typeof serviceTypeMapping] || "Unknown",
+        quantity: detail.quantity,
+        servicePrice: formatRupiah(detail.servicePrice),
+        promoCode: detail.promoCode || "-",
+        promoAmount: detail.promoAmount ? formatRupiah(detail.promoAmount) : "-",
+    })) || [];
 
     if (loading) {
         return (
             <Wrapper>
-                <Header label="Loading Detail SPK..." />
+                <Header label="Loading Detail Pembayaran..." />
                 <p className="text-center py-8">Memuat data...</p>
             </Wrapper>
         );
     }
 
-    if (!transaction) {
+    if (error || !transaction) {
         return (
             <Wrapper>
-                <Header label="Detail SPK" />
-                <p className="text-center text-red-500 py-8">Data tidak ditemukan!</p>
+                <Header label="Detail Pembayaran" />
+                <p className="text-center text-red-500 py-8">{error || "Data tidak ditemukan!"}</p>
                 <div className="flex justify-center mt-4">
                     <Button onClick={() => router.back()} variant="outline">
                         <TbArrowBack />
@@ -166,115 +207,97 @@ export default function PembayaranDetail() {
 
     return (
         <>
-            <Breadcrumbs label={`Detail Pembayaran`} />
+            <Breadcrumbs label={`Detail Pembayaran - ${transaction.trxNumber}`} />
             <Wrapper className="relative">
                 <div className="flex flex-col gap-4">
                     <div className="grid grid-cols-2 gap-20">
                         {/* Kolom Kiri */}
                         <div className="col-span-1 space-y-4">
                             <div className="flex items-center space-x-4">
-                                <Label className="w-[20%] font-semibold">No Transaksi</Label>
-                                <Input disabled value={transaction.trxNumber} />
+                                <Label className="w-[40%] font-semibold">No Transaksi</Label>
+                                <Input 
+                                    disabled 
+                                    value={transaction.trxNumber}
+                                    className="bg-muted/50 cursor-not-allowed"
+                                />
                             </div>
 
                             <div className="flex items-center space-x-4">
-                                <Label className="w-[20%] font-semibold">No Whatsapp</Label>
-                                <Input value={transaction.noWhatsapp} />
+                                <Label className="w-[40%] font-semibold">No WhatsApp</Label>
+                                <Input 
+                                    value={customer?.noWhatsapp || ""} 
+                                    readOnly
+                                    className="bg-muted/50 cursor-not-allowed"
+                                    placeholder="No WhatsApp tidak tersedia"
+                                />
                             </div>
 
                             <div className="flex items-center space-x-4">
-                                <Label className="w-[20%] font-semibold">Alamat</Label>
+                                <Label className="w-[40%] font-semibold">Nama Customer</Label>
+                                <Input 
+                                    value={customer?.name || ""} 
+                                    readOnly
+                                    className="bg-muted/50 cursor-not-allowed"
+                                    placeholder="Nama customer tidak tersedia"
+                                />
+                            </div>
+
+                            <div className="flex items-center space-x-4">
+                                <Label className="w-[40%] font-semibold">Alamat</Label>
                                 <Textarea
-                                    className="resize-none"
-                                    value={transaction.address}
+                                    className="resize-none bg-muted/50 cursor-not-allowed"
+                                    value={customer?.address || ""}
+                                    readOnly
                                     rows={4}
+                                    placeholder="Alamat tidak tersedia"
                                 />
                             </div>
                         </div>
 
                         {/* Kolom Kanan */}
                         <div className="col-span-1 space-y-4">
-                            {/* Provinsi */}
+                            {/* Provinsi - View Only */}
                             <div className="flex items-center space-x-4">
-                                <Label className="w-[20%] font-semibold">Provinsi</Label>
-                                <Select
-                                    value={selectedProvince}
-                                    onValueChange={handleProvinceChange}
-                                >
-                                    <SelectTrigger className="w-full">
-                                        <SelectValue placeholder="Pilih Provinsi" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectGroup>
-                                            {provinces.map((prov) => (
-                                                <SelectItem key={prov.id} value={prov.paramKey}>{prov.paramValue}</SelectItem>
-                                            ))}
-                                        </SelectGroup>
-                                    </SelectContent>
-                                </Select>
+                                <Label className="w-[40%] font-semibold">Provinsi</Label>
+                                <Input
+                                    value={locationLabels.provinceName}
+                                    placeholder="Provinsi tidak tersedia"
+                                    readOnly
+                                    className="bg-muted/50 cursor-not-allowed"
+                                />
                             </div>
 
-                            {/* Kota/Kabupaten */}
+                            {/* Kab/Kota - View Only */}
                             <div className="flex items-center space-x-4">
-                                <Label className="w-[20%] font-semibold">Kab/Kota</Label>
-                                <Select
-                                    disabled={!selectedProvince}
-                                    value={selectedCity}
-                                    onValueChange={handleCityChange}
-                                >
-                                    <SelectTrigger className="w-full">
-                                        <SelectValue placeholder="Pilih Kota/Kabupaten" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectGroup>
-                                            {cities.map((city) => (
-                                                <SelectItem key={city.id} value={city.paramKey}>{city.paramValue}</SelectItem>
-                                            ))}
-                                        </SelectGroup>
-                                    </SelectContent>
-                                </Select>
+                                <Label className="w-[40%] font-semibold">Kab/Kota</Label>
+                                <Input
+                                    value={locationLabels.cityName}
+                                    placeholder="Kota/Kabupaten tidak tersedia"
+                                    readOnly
+                                    className="bg-muted/50 cursor-not-allowed"
+                                />
                             </div>
 
-                            {/* Kecamatan */}
+                            {/* Kecamatan - View Only */}
                             <div className="flex items-center space-x-4">
-                                <Label className="w-[20%] font-semibold">Kecamatan</Label>
-                                <Select
-                                    disabled={!selectedCity}
-                                    value={selectedDistrict}
-                                    onValueChange={handleDistrictChange}
-                                >
-                                    <SelectTrigger className="w-full">
-                                        <SelectValue placeholder="Pilih Kecamatan" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectGroup>
-                                            {districts.map((district) => (
-                                                <SelectItem key={district.id} value={district.paramKey}>{district.paramValue}</SelectItem>
-                                            ))}
-                                        </SelectGroup>
-                                    </SelectContent>
-                                </Select>
+                                <Label className="w-[40%] font-semibold">Kecamatan</Label>
+                                <Input
+                                    value={locationLabels.districtName}
+                                    placeholder="Kecamatan tidak tersedia"
+                                    readOnly
+                                    className="bg-muted/50 cursor-not-allowed"
+                                />
                             </div>
 
-                            {/* Kelurahan */}
+                            {/* Kelurahan - View Only */}
                             <div className="flex items-center space-x-4">
-                                <Label className="w-[20%] font-semibold">Kelurahan</Label>
-                                <Select
-                                    disabled={!selectedDistrict}
-                                    value={transaction.subDistrict}
-                                    onValueChange={handleSubDistrictChange}
-                                >
-                                    <SelectTrigger className="w-full">
-                                        <SelectValue placeholder="Pilih Kelurahan" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectGroup>
-                                            {subDistricts.map((sub) => (
-                                                <SelectItem key={sub.id} value={sub.paramKey}>{sub.paramValue}</SelectItem>
-                                            ))}
-                                        </SelectGroup>
-                                    </SelectContent>
-                                </Select>
+                                <Label className="w-[40%] font-semibold">Kelurahan</Label>
+                                <Input
+                                    value={locationLabels.subDistrictName}
+                                    placeholder="Kelurahan tidak tersedia"
+                                    readOnly
+                                    className="bg-muted/50 cursor-not-allowed"
+                                />
                             </div>
                         </div>
                     </div>
@@ -286,65 +309,54 @@ export default function PembayaranDetail() {
                         {/* Kolom Kiri */}
                         <div className="col-span-1 space-y-4">
                             <div className="flex items-center space-x-4">
-                                <Label className="w-[20%] font-semibold">Petugas Cleaning</Label>
-                                <Input disabled value={transaction.trxNumber} />
+                                <Label className="w-[40%] font-semibold">Branch ID</Label>
+                                <Input 
+                                    disabled 
+                                    value={transaction.branchId}
+                                    className="bg-muted/50 cursor-not-allowed"
+                                />
                             </div>
 
                             <div className="flex items-center space-x-4">
-                                <Label className="w-[20%] font-semibold">Tanggal Transaksi</Label>
-                                <Input value={formatDate(transaction.trxDate)} />
+                                <Label className="w-[40%] font-semibold">Tanggal Transaksi</Label>
+                                <Input 
+                                    disabled 
+                                    value={formatDate(transaction.trxDate)}
+                                    className="bg-muted/50 cursor-not-allowed"
+                                />
                             </div>
-
                         </div>
 
                         {/* Kolom Kanan */}
                         <div className="col-span-1 space-y-4">
                             <div className="flex items-center space-x-4">
-                                <Label className="w-[20%] font-semibold">Petugas Blower</Label>
-                                <Input disabled value={transaction.trxNumber} />
+                                <Label className="w-[40%] font-semibold">Customer ID</Label>
+                                <Input 
+                                    disabled 
+                                    value={transaction.customerId}
+                                    className="bg-muted/50 cursor-not-allowed"
+                                />
                             </div>
 
                             <div className="flex items-center space-x-4">
-                                <Label className="w-[20%] font-semibold">Status</Label>
-                                <Select
-                                    value={String(transaction.status)}
-                                    onValueChange={(value) =>
-                                        setTransaction((prev) =>
-                                            prev ? { ...prev, status: parseInt(value) } : null
-                                        )
-                                    }
-                                    disabled
-                                >
-                                    <SelectTrigger className="w-full">
-                                        <SelectValue placeholder="Pilih Status" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectGroup>
-                                            <SelectItem value="0">Baru</SelectItem>
-                                            <SelectItem value="1">Proses</SelectItem>
-                                            <SelectItem value="2">Batal</SelectItem>
-                                        </SelectGroup>
-                                    </SelectContent>
-                                </Select>
+                                <Label className="w-[40%] font-semibold">Status</Label>
+                                <Input
+                                    value={statusMapping[transaction.status as keyof typeof statusMapping] || "Unknown"}
+                                    readOnly
+                                    className="bg-muted/50 cursor-not-allowed"
+                                />
                             </div>
                         </div>
                     </div>
 
+                    {/* Detail Transaksi Table */}
                     <div className="mt-5 space-y-3">
-                        <div className="flex justify-end">
-                            <Button
-                                icon={<LuPlus size={16} />}
-                                className="pl-2 pr-4"
-                                iconPosition="left"
-                                variant="default"
-                                type="submit"
-                            >
-                                Tambah
-                            </Button>
+                        <div className="flex justify-between items-center">
+                            <h3 className="text-lg font-semibold">Detail Layanan</h3>
                         </div>
-                        <SPKTableDetail
-                            data={DataDummySPK}
-                            columns={DataHeaderSPKDetail}
+                        <PembayaranTableDetail
+                            data={transformedDetails}
+                            columns={HeaderPembayaran}
                             currentPage={1}
                             limit={10}
                             fetchData={() => {
@@ -353,51 +365,54 @@ export default function PembayaranDetail() {
                         />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-20 mt-5">
-                        {/* Kolom Kiri */}
+                    {/* Summary Pricing */}
+                    <div className="grid grid-cols-2 gap-20 mt-8 border-t pt-6">
+                        {/* Kolom Kiri - Kosong */}
+                        <div className="col-span-1"></div>
+
+                        {/* Kolom Kanan - Summary */}
                         <div className="col-span-1 space-y-4">
-
-                        </div>
-
-                        {/* Kolom Kanan */}
-                        <div className="col-span-1 space-y-4">
                             <div className="flex items-center space-x-4">
-                                <Label className="w-[20%] font-semibold">Total harga</Label>
-                                <Input disabled value={transaction.totalPrice} />
+                                <Label className="w-[40%] font-semibold">Total Harga</Label>
+                                <Input 
+                                    disabled 
+                                    value={formatRupiah(transaction.totalPrice)}
+                                    className="text-right bg-muted/50 cursor-not-allowed"
+                                />
                             </div>
 
                             <div className="flex items-center space-x-4">
-                                <Label className="w-[20%] font-semibold">Promo</Label>
-                                <Input disabled value={transaction.promoPrice} />
+                                <Label className="w-[40%] font-semibold">Total Promo</Label>
+                                <Input 
+                                    disabled 
+                                    value={formatRupiah(transaction.promoPrice)}
+                                    className="text-right bg-muted/50 cursor-not-allowed"
+                                />
                             </div>
 
                             <div className="flex items-center space-x-4">
-                                <Label className="w-[20%] font-semibold">Diskon</Label>
-                                <Input value={transaction.discountPrice} />
+                                <Label className="w-[40%] font-semibold">Diskon Manual</Label>
+                                <Input 
+                                    disabled
+                                    value={formatRupiah(transaction.discountPrice)}
+                                    className="text-right bg-muted/50 cursor-not-allowed"
+                                />
                             </div>
 
-                            <div className="flex items-center justify-between pt-5">
+                            <div className="flex items-center justify-between mt-5 px-3 py-2 bg-neutral-200 rounded-lg">
                                 <Label className="w-[50%] font-bold text-2xl">Total Akhir</Label>
-                                <Label className="text-right font-bold text-2xl">{formatRupiah(transaction.finalPrice)}</Label>
+                                <Label className="text-right font-bold text-2xl">
+                                    {formatRupiah(transaction.finalPrice)}
+                                </Label>
                             </div>
                         </div>
                     </div>
 
-                    {/* Tombol Kembali */}
-                    <div className="flex justify-end mt-6 gap-3">
-                        <Button onClick={() => router.back()} variant="secondary">
+                    {/* Action Buttons */}
+                    <div className="flex justify-end mt-6 gap-2">
+                        <Button onClick={() => router.back()} variant="outline2">
                             <TbArrowBack />
                             Kembali
-                        </Button>
-                        <Button
-                            type="button"
-                            variant="submit"
-                        //   onClick={() => setShowConfirmDialog(true)}
-                        //    disabled={updating}
-                        >
-                            <LuSave />
-                            Simpan
-                            {/* {updating ? "Menyimpan..." : "Simpan"} */}
                         </Button>
                     </div>
                 </div>

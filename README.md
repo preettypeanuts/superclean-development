@@ -3,14 +3,24 @@
 This repository contains a Progressive Web Application (PWA) built using **Nx**, **Next.js**, **Tailwind CSS**, and **Shadcn UI**.
 
 ## Table of Contents
-- [Project Overview](#project-overview)
-- [Technologies](#technologies)
-- [Features](#features)
-- [Setup](#setup)
-- [Folder Structure](#folder-structure)
-- [Development](#development)
-- [Deployment](#deployment)
-- [Contributing](#contributing)
+- [Frontend Portal Workspace](#frontend-portal-workspace)
+  - [Table of Contents](#table-of-contents)
+  - [Project Overview](#project-overview)
+  - [Technologies](#technologies)
+  - [Features](#features)
+  - [Setup](#setup)
+    - [1. Clone the repository](#1-clone-the-repository)
+    - [2. Install dependencies](#2-install-dependencies)
+    - [3. Run the development server](#3-run-the-development-server)
+    - [4. Add new application](#4-add-new-application)
+    - [5. Add new page for application](#5-add-new-page-for-application)
+  - [Folder Structure](#folder-structure)
+  - [Development](#development)
+    - [Running](#running)
+    - [Building the Application](#building-the-application)
+    - [Linting \& Formatting](#linting--formatting)
+  - [Deployment](#deployment)
+  - [Contributing](#contributing)
 
 ## Project Overview
 
@@ -139,6 +149,7 @@ To build the production-ready application:
 
 ```bash
 npm run build:all
+npm run build:admin-app 
 ```
 
 ### Linting & Formatting

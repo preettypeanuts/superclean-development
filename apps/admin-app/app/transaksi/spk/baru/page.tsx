@@ -906,7 +906,7 @@ export default function NewSPK() {
                                                     if (date) {
                                                         setFormData(prev => ({
                                                             ...prev,
-                                                            trxDate: date
+                                                            trxDate: formatDateInput(date.toISOString())
                                                         }));
                                                     }
                                                 }}

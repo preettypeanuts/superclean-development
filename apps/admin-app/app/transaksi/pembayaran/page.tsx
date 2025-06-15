@@ -1,492 +1,279 @@
 "use client";
-
+import Link from "next/link";
 import { useEffect, useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
-import { Wrapper } from "@shared/components/Wrapper";
-import { Header } from "@shared/components/Header";
-import { Label } from "libs/ui-components/src/components/ui/label";
-import { Button } from "libs/ui-components/src/components/ui/button";
+import { PembayaranTable } from "libs/ui-components/src/components/pembayaran-table";
+import { DatePicker } from "libs/ui-components/src/components/date-picker";
+import { Wrapper } from "libs/shared/src/components/Wrapper";
 import { Input } from "libs/ui-components/src/components/ui/input";
-import { Textarea } from "libs/ui-components/src/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectGroup } from "libs/ui-components/src/components/ui/select";
-import { useLocationData } from "libs/utils/useLocationData";
-import { api } from "libs/utils/apiClient";
-import { TbArrowBack } from "react-icons/tb";
-import { formatDate } from "libs/utils/formatDate";
-import { formatRupiah } from "libs/utils/formatRupiah";
-import { SPKTableDetail } from "libs/ui-components/src/components/spk-table-detail";
-import { LuPlus, LuSave } from "react-icons/lu";
+import { Button } from "libs/ui-components/src/components/ui/button";
+import { LuPlus } from "react-icons/lu";
+import { Search } from "lucide-react";
+import { SelectData } from "libs/ui-components/src/components/select-data";
+import { PaginationNumber } from "libs/ui-components/src/components/pagination-number";
+import { Label } from "@ui-components/components/ui/label";
+import { IoClose } from "react-icons/io5";
+import { apiClient } from "libs/utils/apiClient";
+import { formatDateAPI } from "libs/utils/formatDate";
+import { useParameterStore } from "libs/utils/useParameterStore";
+import { GroupFilter } from "@ui-components/components/group-filter";
+import { SelectFilter } from "libs/ui-components/src/components/select-filter"
 import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
 
-interface TransactionDetail {
-    serviceCategory: string;
-    serviceCode: string;
-    serviceType: number;
-    servicePrice: number;
-    quantity: number;
-    promoCode?: string;
-    promoType?: string;
-    promoAmount?: number;
-}
+const DataHeaderSettlement = [
+  { key: "id", label: "#" },
+  { key: "trxNumber", label: "No Transaksi" },
+  { key: "customerName", label: "Nama Pelanggan" },
+  { key: "noWhatsapp", label: "No. Whatsapp" },
+  { key: "branchId", label: "Cabang" },
+  { key: "finalPrice", label: "Nominal" },
+  { key: "trxDate", label: "Tanggal Transaksi" },
+  { key: "status", label: "Status" },
+  { key: "menu", label: "Aksi" },
+];
 
-interface Transaction {
+const SettlementStatus = [
+  { label: "Draft", value: 0 },
+  { label: "Pending", value: 1 },
+  { label: "Batal", value: 2 },
+  { label: "Menunggu Bayar", value: 3 },
+  { label: "Sudah Bayar", value: 4 },
+  { label: "Selesai", value: 5 },
+];
+
+export default function SettlementPage() {
+  interface SettlementData {
     id: string;
     trxNumber: string;
+    noWhatsapp: string;
     customerId: string;
+    customerName: string;
     branchId: string;
-    totalPrice: number;
-    discountPrice: number;
-    promoPrice: number;
     finalPrice: number;
     trxDate: string;
     status: number;
-    details: TransactionDetail[];
-}
-
-interface Customer {
-    id: string;
-    customerName: string;
-    noWhatsapp: string;
+    createdBy: string;
+    createdAt: string;
+    city: string;
     address: string;
     province: string;
-    city: string;
     district: string;
     subDistrict: string;
-}
+  }
 
-const DataHeaderSPKDetail = [
-    { key: "id", label: "#" },
-    { key: "serviceCode", label: "Kode" },
-    { key: "serviceCategory", label: "Layanan" },
-    { key: "serviceType", label: "Kategori" },
-    { key: "quantity", label: "Jumlah" },
-    { key: "satuan", label: "Satuan" },
-    { key: "servicePrice", label: "Harga" },
-    { key: "promoAmount", label: "Promo" },
-    { key: "menu", label: "Aksi" }
-];
+  const [dataSettlement, setDataSettlement] = useState<SettlementData[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalData, setTotalData] = useState(0);
+  const [limit, setLimit] = useState(10);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchInput, setSearchInput] = useState("");
 
-// Status mapping
-const statusLabels: Record<number, string> = {
-    0: "Draft",
-    1: "Pending",
-    3: "Menunggu Bayar",
-    4: "Sudah Bayar",
-    5: "Selesai",
-};
+  // filter aktif
+  const [statusFilter, setStatusFilter] = useState<number>(0);
+  const [branchFilter, setBranchFilter] = useState<string>("");
+  const [startDate, setStartDate] = useState<Date>();
+  const [endDate, setEndDate] = useState<Date>();
 
-export default function PembayaranDetail() {
-    const pathname = usePathname();
-    const router = useRouter();
-    const trxNumber = pathname.split("/").pop();
-    
-    const [transaction, setTransaction] = useState<Transaction | null>(null);
-    const [customer, setCustomer] = useState<Customer | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [updating, setUpdating] = useState(false);
+  // filter sementara
+  const [tempStatus, setTempStatus] = useState<number>(0);
+  const [tempBranch, setTempBranch] = useState<string>("");
+  const [tempStartDate, setTempStartDate] = useState<Date>();
+  const [tempEndDate, setTempEndDate] = useState<Date>();
 
-    const { provinces, cities, districts, subDistricts, loading: locationLoading } = useLocationData(
-        customer?.province,
-        customer?.city,
-        customer?.district
-    );
+  const { branchMapping, loading: loadingParams } = useParameterStore();
 
-    // State untuk handle selected ID
-    const [selectedProvince, setSelectedProvince] = useState<string>("");
-    const [selectedCity, setSelectedCity] = useState<string>("");
-    const [selectedDistrict, setSelectedDistrict] = useState<string>("");
+  const totalPages = Math.max(1, Math.ceil(totalData / limit));
 
-    useEffect(() => {
-        const fetchTransactionDetail = async () => {
-            setLoading(true);
-            try {
-                // Fetch transaction detail
-                const transactionResult = await api.get(`/transaction/${trxNumber}`);
-                
-                if (transactionResult.data.status === "success") {
-                    const transactionData = transactionResult.data.data;
-                    setTransaction(transactionData);
+  const fetchSettlement = async () => {
+    setLoading(true);
+    try {
+      let url = `/transaction/page/settlement?search=${searchQuery}&page=${currentPage}&limit=${limit}`;
+      if (statusFilter) url += `&status=${statusFilter}`;
+      if (branchFilter) url += `&branchId=${branchFilter}`;
+      if (startDate) url += `&startDate=${formatDateAPI(startDate)}`;
+      if (endDate) url += `&endDate=${formatDateAPI(endDate)}`;
 
-                    // Fetch customer detail menggunakan customerId
-                    if (transactionData.customerId) {
-                        try {
-                            const customerResult = await api.get(`/customer/${transactionData.customerId}`);
-                            if (customerResult.data.status === "success") {
-                                const customerData = customerResult.data.data;
-                                setCustomer(customerData);
-                                
-                                // Set default selected untuk location
-                                setSelectedProvince(customerData.province || "");
-                                setSelectedCity(customerData.city || "");
-                                setSelectedDistrict(customerData.district || "");
-                            }
-                        } catch (customerError) {
-                            console.error("Gagal mengambil data customer:", customerError);
-                        }
-                    }
-                }
-            } catch (error) {
-                console.error("Gagal mengambil data transaksi:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        if (trxNumber) {
-            fetchTransactionDetail();
-        }
-    }, [trxNumber]);
-
-    // Handle cascading select
-    const handleProvinceChange = (value: string) => {
-        setSelectedProvince(value);
-        setSelectedCity("");
-        setSelectedDistrict("");
-        setCustomer((prev) => prev ? { ...prev, province: value, city: "", district: "", subDistrict: "" } : null);
-    };
-
-    const handleCityChange = (value: string) => {
-        setSelectedCity(value);
-        setSelectedDistrict("");
-        setCustomer((prev) => prev ? { ...prev, city: value, district: "", subDistrict: "" } : null);
-    };
-
-    const handleDistrictChange = (value: string) => {
-        setSelectedDistrict(value);
-        setCustomer((prev) => prev ? { ...prev, district: value, subDistrict: "" } : null);
-    };
-
-    const handleSubDistrictChange = (value: string) => {
-        setCustomer((prev) => prev ? { ...prev, subDistrict: value } : null);
-    };
-
-    // Handle input changes
-    const handleCustomerChange = (field: keyof Customer, value: string) => {
-        setCustomer((prev) => prev ? { ...prev, [field]: value } : null);
-    };
-
-    const handleTransactionChange = (field: keyof Transaction, value: any) => {
-        setTransaction((prev) => prev ? { ...prev, [field]: value } : null);
-    };
-
-    // Save function
-    const handleSave = async () => {
-        if (!transaction || !customer) return;
-
-        setUpdating(true);
-        try {
-            // Update customer
-            await api.put(`/customer/${customer.id}`, customer);
-            
-            // Update transaction
-            await api.put(`/transaction/${transaction.id}`, {
-                ...transaction,
-                customerId: customer.id
-            });
-
-            // Refresh data
-            // window.location.reload(); // atau bisa fetch ulang data
-            
-        } catch (error) {
-            console.error("Gagal menyimpan data:", error);
-        } finally {
-            setUpdating(false);
-        }
-    };
-
-    // Process details untuk table
-    const processedDetails = transaction?.details?.map((item, index) => ({
-        id: (index + 1).toString(),
-        serviceCode: item.serviceCode,
-        serviceCategory: item.serviceCategory,
-        serviceType: item.serviceType === 1 ? "Satuan" : "Paket", // Assumsi mapping
-        quantity: item.quantity,
-        satuan: "Pcs", // Default satuan, bisa disesuaikan
-        servicePrice: item.servicePrice,
-        promoAmount: item.promoAmount || 0,
-    })) || [];
-
-    if (loading) {
-        return (
-            <Wrapper>
-                <Header label="Loading Detail Pembayaran..." />
-                <p className="text-center py-8">Memuat data...</p>
-            </Wrapper>
-        );
+      const result = await apiClient(url);
+      setDataSettlement(result.data[0] || []);
+      setTotalData(result.data[1] || 0);
+    } catch (err) {
+      console.error("Error fetching settlement data:", err);
+    } finally {
+      setLoading(false);
     }
+  };
 
-    if (!transaction || !customer) {
-        return (
-            <Wrapper>
-                <Header label="Detail Pembayaran" />
-                <p className="text-center text-red-500 py-8">Data tidak ditemukan!</p>
-                <div className="flex justify-center mt-4">
-                    <Button onClick={() => router.back()} variant="outline">
-                        <TbArrowBack />
-                        Kembali
-                    </Button>
+  useEffect(() => {
+    fetchSettlement();
+  }, [searchQuery, statusFilter, branchFilter, currentPage, limit, startDate, endDate]);
+
+  const handleSearch = () => {
+    setSearchQuery(searchInput);
+    setCurrentPage(1);
+  };
+
+  const resetSearch = () => {
+    setSearchInput("");
+    setSearchQuery("");
+    setCurrentPage(1);
+  };
+
+  const handleApplyFilters = () => {
+    setStatusFilter(tempStatus);
+    setBranchFilter(tempBranch);
+    setStartDate(tempStartDate);
+    setEndDate(tempEndDate);
+    setCurrentPage(1);
+  };
+
+  const handleResetFilters = () => {
+    setTempStatus(0);
+    setTempBranch("");
+    setTempStartDate(undefined);
+    setTempEndDate(undefined);
+  };
+
+  const handleCancelFilters = () => {
+    setTempStatus(statusFilter);
+    setTempBranch(branchFilter);
+    setTempStartDate(startDate);
+    setTempEndDate(endDate);
+  };
+
+  const processedSettlement = dataSettlement.map((item) => ({
+    ...item,
+    branchId: branchMapping[item.branchId] || "Tidak Diketahui",
+  }));
+
+  return (
+    <>
+      <Breadcrumbs label="Daftar Pembayaran" count={totalData} />
+      <Wrapper>
+        <div className="space-y-4">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <div className="relative">
+                <Input
+                  type="text"
+                  placeholder="Cari No Transaksi, Nama, No. Whatsapp"
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
+                  onKeyDown={(i) => {
+                    if (i.key === "Enter") handleSearch();
+                  }}
+                  className="w-[30lvw]"
+                  icon={<Search size={16} />}
+                />
+                {searchInput && (
+                  <button
+                    type="button"
+                    onClick={resetSearch}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-700"
+                  >
+                    <IoClose size={16} />
+                  </button>
+                )}
+              </div>
+
+              <GroupFilter
+                className="space-y-2"
+                onApply={handleApplyFilters}
+                onReset={handleResetFilters}
+                onCancel={handleCancelFilters}
+              >
+                <SelectFilter
+                  label="Cabang"
+                  id="branch"
+                  placeholder="Pilih Cabang"
+                  value={tempBranch}
+                  optionsString={Object.entries(branchMapping).map(([value, label]) => ({
+                    value,
+                    label,
+                  }))}
+                  onChange={setTempBranch}
+                />
+                <SelectFilter
+                  label="Status Transaksi"
+                  id="status"
+                  placeholder="Pilih Status Transaksi"
+                  value={tempStatus}
+                  optionsNumber={SettlementStatus}
+                  onChange={setTempStatus}
+                />
+                <div className="flex items-center space-x-4">
+                  <Label className={`w-1/2 font-semibold capitalize`}>
+                    Tanggal awal
+                  </Label>
+
+                  <DatePicker
+                    label="DD/MM/YYYY"
+                    value={tempStartDate}
+                    onChange={(date) => setTempStartDate(date)}
+                  />
                 </div>
-            </Wrapper>
-        );
-    }
-
-    return (
-        <>
-            <Breadcrumbs label={`Detail Pembayaran - ${transaction.trxNumber}`} />
-            <Wrapper className="relative">
-                <div className="flex flex-col gap-4">
-                    <div className="grid grid-cols-2 gap-20">
-                        {/* Kolom Kiri */}
-                        <div className="col-span-1 space-y-4">
-                            <div className="flex items-center space-x-4">
-                                <Label className="w-[20%] font-semibold">No Transaksi</Label>
-                                <Input disabled value={transaction.trxNumber} />
-                            </div>
-
-                            <div className="flex items-center space-x-4">
-                                <Label className="w-[20%] font-semibold">Nama Pelanggan</Label>
-                                <Input 
-                                    value={customer.customerName}
-                                    onChange={(e) => handleCustomerChange('customerName', e.target.value)}
-                                />
-                            </div>
-
-                            <div className="flex items-center space-x-4">
-                                <Label className="w-[20%] font-semibold">No Whatsapp</Label>
-                                <Input 
-                                    value={customer.noWhatsapp}
-                                    onChange={(e) => handleCustomerChange('noWhatsapp', e.target.value)}
-                                />
-                            </div>
-
-                            <div className="flex items-center space-x-4">
-                                <Label className="w-[20%] font-semibold">Alamat</Label>
-                                <Textarea
-                                    className="resize-none"
-                                    value={customer.address}
-                                    onChange={(e) => handleCustomerChange('address', e.target.value)}
-                                    rows={4}
-                                />
-                            </div>
-                        </div>
-
-                        {/* Kolom Kanan */}
-                        <div className="col-span-1 space-y-4">
-                            {/* Provinsi */}
-                            <div className="flex items-center space-x-4">
-                                <Label className="w-[20%] font-semibold">Provinsi</Label>
-                                <Select
-                                    value={selectedProvince}
-                                    onValueChange={handleProvinceChange}
-                                >
-                                    <SelectTrigger className="w-full">
-                                        <SelectValue placeholder="Pilih Provinsi" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectGroup>
-                                            {provinces.map((prov) => (
-                                                <SelectItem key={prov.id} value={prov.paramKey}>{prov.paramValue}</SelectItem>
-                                            ))}
-                                        </SelectGroup>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-
-                            {/* Kota/Kabupaten */}
-                            <div className="flex items-center space-x-4">
-                                <Label className="w-[20%] font-semibold">Kab/Kota</Label>
-                                <Select
-                                    disabled={!selectedProvince}
-                                    value={selectedCity}
-                                    onValueChange={handleCityChange}
-                                >
-                                    <SelectTrigger className="w-full">
-                                        <SelectValue placeholder="Pilih Kota/Kabupaten" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectGroup>
-                                            {cities.map((city) => (
-                                                <SelectItem key={city.id} value={city.paramKey}>{city.paramValue}</SelectItem>
-                                            ))}
-                                        </SelectGroup>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-
-                            {/* Kecamatan */}
-                            <div className="flex items-center space-x-4">
-                                <Label className="w-[20%] font-semibold">Kecamatan</Label>
-                                <Select
-                                    disabled={!selectedCity}
-                                    value={selectedDistrict}
-                                    onValueChange={handleDistrictChange}
-                                >
-                                    <SelectTrigger className="w-full">
-                                        <SelectValue placeholder="Pilih Kecamatan" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectGroup>
-                                            {districts.map((district) => (
-                                                <SelectItem key={district.id} value={district.paramKey}>{district.paramValue}</SelectItem>
-                                            ))}
-                                        </SelectGroup>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-
-                            {/* Kelurahan */}
-                            <div className="flex items-center space-x-4">
-                                <Label className="w-[20%] font-semibold">Kelurahan</Label>
-                                <Select
-                                    disabled={!selectedDistrict}
-                                    value={customer.subDistrict}
-                                    onValueChange={handleSubDistrictChange}
-                                >
-                                    <SelectTrigger className="w-full">
-                                        <SelectValue placeholder="Pilih Kelurahan" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectGroup>
-                                            {subDistricts.map((sub) => (
-                                                <SelectItem key={sub.id} value={sub.paramKey}>{sub.paramValue}</SelectItem>
-                                            ))}
-                                        </SelectGroup>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Divider */}
-                    <div className="w-full border-t my-7"></div>
-
-                    <div className="grid grid-cols-2 gap-20">
-                        {/* Kolom Kiri */}
-                        <div className="col-span-1 space-y-4">
-                            <div className="flex items-center space-x-4">
-                                <Label className="w-[20%] font-semibold">Petugas Cleaning</Label>
-                                <Input placeholder="Belum ditentukan" />
-                            </div>
-
-                            <div className="flex items-center space-x-4">
-                                <Label className="w-[20%] font-semibold">Tanggal Transaksi</Label>
-                                <Input disabled value={formatDate(transaction.trxDate)} />
-                            </div>
-                        </div>
-
-                        {/* Kolom Kanan */}
-                        <div className="col-span-1 space-y-4">
-                            <div className="flex items-center space-x-4">
-                                <Label className="w-[20%] font-semibold">Petugas Blower</Label>
-                                <Input placeholder="Belum ditentukan" />
-                            </div>
-
-                            <div className="flex items-center space-x-4">
-                                <Label className="w-[20%] font-semibold">Status</Label>
-                                <Select
-                                    value={String(transaction.status)}
-                                    onValueChange={(value) => handleTransactionChange('status', parseInt(value))}
-                                >
-                                    <SelectTrigger className="w-full">
-                                        <SelectValue placeholder="Pilih Status" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectGroup>
-                                            <SelectItem value="0">Draft</SelectItem>
-                                            <SelectItem value="1">Pending</SelectItem>
-                                            <SelectItem value="3">Menunggu Bayar</SelectItem>
-                                            <SelectItem value="4">Sudah Bayar</SelectItem>
-                                            <SelectItem value="5">Selesai</SelectItem>
-                                        </SelectGroup>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="mt-5 space-y-3">
-                        <div className="flex justify-end">
-                            <Button
-                                icon={<LuPlus size={16} />}
-                                className="pl-2 pr-4"
-                                iconPosition="left"
-                                variant="default"
-                                type="button"
-                            >
-                                Tambah Layanan
-                            </Button>
-                        </div>
-                        
-                        <SPKTableDetail
-                            data={processedDetails}
-                            columns={DataHeaderSPKDetail}
-                            currentPage={1}
-                            limit={10}
-                            fetchData={() => {
-                                console.log("Fetching detail data...");
-                            }}
-                        />
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-20 mt-5">
-                        {/* Kolom Kiri */}
-                        <div className="col-span-1 space-y-4">
-                            {/* Kosong untuk layout */}
-                        </div>
-
-                        {/* Kolom Kanan */}
-                        <div className="col-span-1 space-y-4">
-                            <div className="flex items-center space-x-4">
-                                <Label className="w-[20%] font-semibold">Total Harga</Label>
-                                <Input disabled value={formatRupiah(transaction.totalPrice)} />
-                            </div>
-
-                            <div className="flex items-center space-x-4">
-                                <Label className="w-[20%] font-semibold">Promo</Label>
-                                <Input disabled value={formatRupiah(transaction.promoPrice)} />
-                            </div>
-
-                            <div className="flex items-center space-x-4">
-                                <Label className="w-[20%] font-semibold">Diskon</Label>
-                                <Input 
-                                    value={transaction.discountPrice}
-                                    onChange={(e) => {
-                                        const discount = parseInt(e.target.value) || 0;
-                                        handleTransactionChange('discountPrice', discount);
-                                        // Recalculate final price
-                                        const newFinalPrice = transaction.totalPrice - transaction.promoPrice - discount;
-                                        handleTransactionChange('finalPrice', newFinalPrice);
-                                    }}
-                                />
-                            </div>
-
-                            <div className="flex items-center justify-between pt-5">
-                                <Label className="w-[50%] font-bold text-2xl">Total Akhir</Label>
-                                <Label className="text-right font-bold text-2xl">
-                                    {formatRupiah(transaction.finalPrice)}
-                                </Label>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Tombol Aksi */}
-                    <div className="flex justify-end mt-6 gap-3">
-                        <Button onClick={() => router.back()} variant="secondary">
-                            <TbArrowBack />
-                            Kembali
-                        </Button>
-                        <Button
-                            type="button"
-                            variant="submit"
-                            onClick={handleSave}
-                            disabled={updating}
-                        >
-                            <LuSave />
-                            {updating ? "Menyimpan..." : "Simpan"}
-                        </Button>
-                    </div>
+                <div className="flex items-center space-x-4">
+                  <Label className={`w-1/2 font-semibold capitalize`}>
+                    Tanggal akhir
+                  </Label>
+                  <DatePicker
+                    label="DD/MM/YYYY"
+                    value={tempEndDate}
+                    onChange={(date) => setTempEndDate(date)}
+                  />
                 </div>
-            </Wrapper>
-        </>
-    );
+              </GroupFilter>
+
+              <Button variant="main" onClick={handleSearch}>
+                Cari
+              </Button>
+            </div>
+
+            <Link href="pembayaran/baru">
+              <Button type="submit" icon={<LuPlus size={16} />}>
+                Tambah
+              </Button>
+            </Link>
+          </div>
+
+          {loading || loadingParams ? (
+            <p className="text-center py-4">Memuat data...</p>
+          ) : dataSettlement.length === 0 ? (
+            <p className="text-center py-4">
+              Data pembayaran dengan pencarian <span className="font-bold">{searchInput}</span> tidak ditemukan.
+            </p>
+          ) : (
+            <PembayaranTable
+              data={processedSettlement}
+              columns={DataHeaderSettlement}
+              key={`${currentPage}-${limit}`}
+              currentPage={currentPage}
+              limit={limit}
+              fetchData={() => { }}
+            />
+          )}
+        </div>
+
+        <div className="flex items-center justify-between mt-4">
+          {totalData > 10 ? (
+            <SelectData
+              label="Data Per Halaman"
+              totalData={totalData}
+              currentLimit={limit}
+              onLimitChange={(limit: string) => setLimit(Number(limit))}
+            />
+          ) : (
+            <Label className="text-xs">
+              Semua data telah ditampilkan ({totalData})
+            </Label>
+          )}
+
+          <PaginationNumber
+            totalPages={totalPages}
+            currentPage={currentPage}
+            onPageChange={(page) => setCurrentPage(page)}
+          />
+        </div>
+      </Wrapper>
+    </>
+  );
 }
