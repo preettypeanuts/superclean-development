@@ -8,137 +8,220 @@ import { Label } from "libs/ui-components/src/components/ui/label";
 import { Button } from "libs/ui-components/src/components/ui/button";
 import { Input } from "libs/ui-components/src/components/ui/input";
 import { Textarea } from "libs/ui-components/src/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectGroup } from "libs/ui-components/src/components/ui/select";
-import { useLocationData } from "libs/utils/useLocationData";
 import { api } from "libs/utils/apiClient";
 import { TbArrowBack } from "react-icons/tb";
 import { formatDate, formatDateInput } from "libs/utils/formatDate";
 import { formatRupiah } from "libs/utils/formatRupiah";
 import { SPKTableDetail } from "libs/ui-components/src/components/spk-table-detail";
-import { LuPlus, LuSave } from "react-icons/lu";
 import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@ui-components/components/ui/tabs";
-import MultiSelect from "libs/ui-components/src/components/multi-select"
-import { PiWarningCircleFill, PiWarningCircleLight } from "react-icons/pi";
+import { PiWarningCircleFill } from "react-icons/pi";
 
+// Updated Transaction interface
 interface Transaction {
     id: string;
     trxNumber: string;
-    noWhatsapp: string;
+    customerId: string;
     branchId: string;
-    address: string;
-    province: string;
-    city: string;
-    district: string;
-    subDistrict: string;
     totalPrice: number;
     discountPrice: number;
     promoPrice: number;
     finalPrice: number;
     trxDate: string;
     status: number;
+    assigns: string[]; // Array of user IDs for cleaning staff
+    blowers: string[]; // Array of user IDs for blower staff
+    details: TransactionDetail[];
+}
+
+// Customer interface
+interface Customer {
+    id: string;
+    fullname: string;
+    noWhatsapp: string;
+    address: string;
+    province: string;
+    city: string;
+    district: string;
+    subDistrict: string;
+}
+
+// Transaction Detail interface
+interface TransactionDetail {
+    id: string;
+    trxNumber: string;
+    serviceCategory: string;
+    serviceCode: string;
+    serviceType: number;
+    quantity: number;
+    promoCode: string;
+    servicePrice: number;
+    totalPrice: number;
+    promoPrice: number;
+    isPl: number;
+}
+
+// Staff interface
+interface Staff {
+    id: string;
+    fullname: string;
+    username: string;
+}
+
+// Location interface
+interface LocationData {
+    id: string;
+    paramKey: string;
+    paramValue: string;
 }
 
 const DataHeaderSPKDetail = [
-    { key: "id", label: "#" },
-    { key: "kode", label: "kode" },
-    { key: "layanan", label: "layanan" },
-    { key: "kategori", label: "kategori" },
-    { key: "jumlah", label: "jumlah" },
-    { key: "satuan", label: "satuan" },
-    { key: "harga", label: "harga" },
-    { key: "promo", label: "promo" },
-    { key: "menu", label: "Aksi" }
+    { key: "no", label: "#" },
+    { key: "serviceCode", label: "Kode Service" },
+    { key: "serviceName", label: "Layanan" },
+    { key: "serviceCategory", label: "Kategori" },
+    { key: "quantity", label: "Jumlah" },
+    { key: "unit", label: "Satuan" },
+    { key: "servicePrice", label: "Harga Satuan" },
+    { key: "totalPrice", label: "Total Harga" },
+    { key: "promoPrice", label: "Promo" }
 ];
-
-const DataDummySPK = [
-    {
-        id: "1",
-        kode: "SPK001",
-        layanan: "Cuci Kering",
-        kategori: "Pakaian",
-        jumlah: 5,
-        satuan: "Kg",
-        harga: 25000,
-        promo: 0,
-        createdBy: "Admin",
-        createdAt: "2023-01-01T10:00:00Z",
-    },
-    {
-        id: "2",
-        kode: "SPK002",
-        layanan: "Setrika",
-        kategori: "Pakaian",
-        jumlah: 3,
-        satuan: "Kg",
-        harga: 15000,
-        promo: 2000,
-        createdBy: "Admin",
-        createdAt: "2023-01-02T11:00:00Z",
-    },
-];
-
 
 export default function TransactionDetail() {
     const pathname = usePathname();
     const router = useRouter();
     const id = pathname.split("/").pop();
+    
+    // States
     const [transaction, setTransaction] = useState<Transaction | null>(null);
+    const [customer, setCustomer] = useState<Customer | null>(null);
+    const [cleaningStaff, setCleaningStaff] = useState<Staff[]>([]);
+    const [blowerStaff, setBlowerStaff] = useState<Staff[]>([]);
     const [loading, setLoading] = useState(true);
+    const [locationLabels, setLocationLabels] = useState({
+        provinceName: "",
+        cityName: "",
+        districtName: "",
+        subDistrictName: ""
+    });
 
-    const { provinces, cities, districts, subDistricts, loading: locationLoading } = useLocationData(
-        transaction?.province,
-        transaction?.city,
-        transaction?.district
-    );
+    console.log('=========transaction===========================');
+    console.log(transaction);
+    console.log('====================================');
 
-    // Tambah state untuk handle selected ID
-    const [selectedProvince, setSelectedProvince] = useState<string>("");
-    const [selectedCity, setSelectedCity] = useState<string>("");
-    const [selectedDistrict, setSelectedDistrict] = useState<string>("");
-
+    // Fetch transaction data
     useEffect(() => {
         const fetchTransaction = async () => {
             try {
-                const result = await api.get(`/transaction/${id}`);
-                setTransaction(result.data);
+                const result = await api.get(`/transaction/detail?trxNumber=${id}`);
+                const transactionData = result.data;
+                setTransaction(transactionData);
 
-                // Sekaligus set default selected
-                setSelectedProvince(result.data.province);
-                setSelectedCity(result.data.city);
-                setSelectedDistrict(result.data.district);
+                // Fetch customer data
+                if (transactionData.customerId) {
+                    await fetchCustomerData(transactionData.customerId);
+                }
+
+                // Fetch staff data
+                if (transactionData.assigns && transactionData.assigns.length > 0) {
+                    await fetchStaffData(transactionData.assigns, setCleaningStaff);
+                }
+
+                if (transactionData.blowers && transactionData.blowers.length > 0) {
+                    await fetchStaffData(transactionData.blowers, setBlowerStaff);
+                }
+
             } catch (error) {
                 console.error("Gagal mengambil data transaksi:", error);
             } finally {
                 setLoading(false);
             }
         };
+
         if (id) {
             fetchTransaction();
         }
     }, [id]);
 
-    // Handle cascading select
-    const handleProvinceChange = (value: string) => {
-        setSelectedProvince(value);
-        setSelectedCity("");
-        setSelectedDistrict("");
-        setTransaction((prev) => prev ? { ...prev, province: value, city: "", district: "", subDistrict: "" } : null);
+    // Fetch customer data
+    const fetchCustomerData = async (customerId: string) => {
+        try {
+            const result = await api.get(`/customer/detail?id=${customerId}`);
+            const customerData = result.data;
+            setCustomer(customerData);
+
+            // Fetch location labels
+            await fetchLocationLabels(customerData);
+        } catch (error) {
+            console.error("Gagal mengambil data customer:", error);
+        }
     };
 
-    const handleCityChange = (value: string) => {
-        setSelectedCity(value);
-        setSelectedDistrict("");
-        setTransaction((prev) => prev ? { ...prev, city: value, district: "", subDistrict: "" } : null);
+    // Fetch staff data
+    const fetchStaffData = async (staffIds: string[], setStaffState: Function) => {
+        try {
+            const staffPromises = staffIds.map(id => api.get(`/user/detail?id=${id}`));
+            const staffResults = await Promise.all(staffPromises);
+            const staffData = staffResults.map(result => result.data);
+            setStaffState(staffData);
+        } catch (error) {
+            console.error("Gagal mengambil data staff:", error);
+            setStaffState([]);
+        }
     };
 
-    const handleDistrictChange = (value: string) => {
-        setSelectedDistrict(value);
-        setTransaction((prev) => prev ? { ...prev, district: value, subDistrict: "" } : null);
+    // Fetch location labels
+    const fetchLocationLabels = async (customerData: Customer) => {
+        try {
+            const [provinceRes, cityRes, districtRes, subDistrictRes] = await Promise.all([
+                api.get(`/params/province`),
+                api.get(`/params/city?province=${customerData.province}`),
+                api.get(`/params/district?city=${customerData.city}`),
+                api.get(`/params/subdistrict?district=${customerData.district}`)
+            ]);
+
+            const findLabel = (items: LocationData[], code: string) => {
+                const item = items.find(item => item.paramKey === code);
+                return item ? item.paramValue : code;
+            };
+
+            setLocationLabels({
+                provinceName: findLabel(provinceRes.data || [], customerData.province),
+                cityName: findLabel(cityRes.data || [], customerData.city),
+                districtName: findLabel(districtRes.data || [], customerData.district),
+                subDistrictName: findLabel(subDistrictRes.data || [], customerData.subDistrict)
+            });
+        } catch (error) {
+            console.error("Gagal mengambil data lokasi:", error);
+        }
     };
 
-    const handleSubDistrictChange = (value: string) => {
-        setTransaction((prev) => prev ? { ...prev, subDistrict: value } : null);
+    // Get status label
+    const getStatusLabel = (status: number) => {
+        switch (status) {
+            case 0: return "Baru";
+            case 1: return "Proses";
+            case 2: return "Selesai";
+            case 3: return "Batal";
+            default: return "Unknown";
+        }
+    };
+
+    // Format transaction details for table
+    const formatDetailsForTable = (details: TransactionDetail[]) => {
+        return details.map((detail, index) => ({
+            no: index + 1,
+            kode: detail.serviceCode,
+            layanan: detail.serviceCode,
+            kategori: detail.serviceCategory,
+            kategoriCode: detail.serviceCategory,
+            jumlah: detail.quantity,
+            satuan: "PCS",
+            harga: detail.servicePrice,
+            totalHarga: detail.totalPrice,
+            promo: detail.promoPrice,
+            id: detail.id
+        }));
     };
 
     if (loading) {
@@ -167,24 +250,19 @@ export default function TransactionDetail() {
 
     return (
         <>
-            <Breadcrumbs label={`Ubah SPK`} />
+            <Breadcrumbs label={`Detail SPK - ${transaction.trxNumber}`} />
             <Wrapper>
                 <Tabs defaultValue="detail" className="-mt-2">
                     <TabsList>
-                        <TabsTrigger value="detail" >
-                            Detail
-                        </TabsTrigger>
-                        <TabsTrigger value="riwayat">
-                            Riwayat
-                        </TabsTrigger>
-                        <TabsTrigger value="foto">
-                            Foto
-                        </TabsTrigger>
+                        <TabsTrigger value="detail">Detail</TabsTrigger>
+                        <TabsTrigger value="riwayat">Riwayat</TabsTrigger>
+                        <TabsTrigger value="foto">Foto</TabsTrigger>
                     </TabsList>
                     <div className="w-full border-t my-3 -mx-10"></div>
 
                     <TabsContent value="detail">
                         <div className="flex flex-col gap-4">
+                            {/* GROUP 1 - DATA CLIENT */}
                             <div className="grid grid-cols-2 gap-20">
                                 {/* Kolom Kiri */}
                                 <div className="col-span-1 space-y-4">
@@ -195,27 +273,20 @@ export default function TransactionDetail() {
 
                                     <div className="flex items-center space-x-4">
                                         <Label className="w-[40%] font-semibold">No Whatsapp</Label>
-                                        <div className="w-full flex items-center focus-within:ring-1 focus-within:ring-ring rounded-lg">
-                                            <Input value={transaction.noWhatsapp} className="rounded-r-none border-r-0 focus-visible:ring-0" />
-                                            <Button
-                                                className="rounded-l-none"
-                                                variant={"main"}
-                                            >
-                                                Cari
-                                            </Button>
-                                        </div>
+                                        <Input disabled value={customer?.noWhatsapp || "-"} />
                                     </div>
 
                                     <div className="flex items-center space-x-4">
                                         <Label className="w-[40%] font-semibold">Nama Pelanggan</Label>
-                                        <Input value={""} />
+                                        <Input disabled value={customer?.fullname || "-"} />
                                     </div>
 
                                     <div className="flex items-center space-x-4">
                                         <Label className="w-[40%] font-semibold">Alamat</Label>
                                         <Textarea
+                                            disabled
                                             className="resize-none"
-                                            value={transaction.address}
+                                            value={customer?.address || "-"}
                                             rows={4}
                                         />
                                     </div>
@@ -225,98 +296,27 @@ export default function TransactionDetail() {
                                 <div className="col-span-1 space-y-4">
                                     <div className="flex items-center space-x-4">
                                         <Label className="w-[40%] font-semibold">Status</Label>
-                                        <Input
-                                            value={
-                                                transaction.status === 0
-                                                    ? "Baru"
-                                                    : transaction.status === 1
-                                                        ? "Proses"
-                                                        : "Batal"
-                                            }
-                                            disabled
-                                        />
+                                        <Input disabled value={getStatusLabel(transaction.status)} />
                                     </div>
-                                    {/* Provinsi */}
+
                                     <div className="flex items-center space-x-4">
                                         <Label className="w-[40%] font-semibold">Provinsi</Label>
-                                        <Select
-                                            value={selectedProvince}
-                                            onValueChange={handleProvinceChange}
-                                        >
-                                            <SelectTrigger className="w-full">
-                                                <SelectValue placeholder="Pilih Provinsi" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectGroup>
-                                                    {provinces.map((prov) => (
-                                                        <SelectItem key={prov.id} value={prov.paramKey}>{prov.paramValue}</SelectItem>
-                                                    ))}
-                                                </SelectGroup>
-                                            </SelectContent>
-                                        </Select>
+                                        <Input disabled value={locationLabels.provinceName || "-"} />
                                     </div>
 
-                                    {/* Kota/Kabupaten */}
                                     <div className="flex items-center space-x-4">
                                         <Label className="w-[40%] font-semibold">Kab/Kota</Label>
-                                        <Select
-                                            disabled={!selectedProvince}
-                                            value={selectedCity}
-                                            onValueChange={handleCityChange}
-                                        >
-                                            <SelectTrigger className="w-full">
-                                                <SelectValue placeholder="Pilih Kota/Kabupaten" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectGroup>
-                                                    {cities.map((city) => (
-                                                        <SelectItem key={city.id} value={city.paramKey}>{city.paramValue}</SelectItem>
-                                                    ))}
-                                                </SelectGroup>
-                                            </SelectContent>
-                                        </Select>
+                                        <Input disabled value={locationLabels.cityName || "-"} />
                                     </div>
 
-                                    {/* Kecamatan */}
                                     <div className="flex items-center space-x-4">
                                         <Label className="w-[40%] font-semibold">Kecamatan</Label>
-                                        <Select
-                                            disabled={!selectedCity}
-                                            value={selectedDistrict}
-                                            onValueChange={handleDistrictChange}
-                                        >
-                                            <SelectTrigger className="w-full">
-                                                <SelectValue placeholder="Pilih Kecamatan" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectGroup>
-                                                    {districts.map((district) => (
-                                                        <SelectItem key={district.id} value={district.paramKey}>{district.paramValue}</SelectItem>
-                                                    ))}
-                                                </SelectGroup>
-                                            </SelectContent>
-                                        </Select>
+                                        <Input disabled value={locationLabels.districtName || "-"} />
                                     </div>
 
-                                    {/* Kelurahan */}
                                     <div className="flex items-center space-x-4">
                                         <Label className="w-[40%] font-semibold">Kelurahan</Label>
-                                        <Select
-                                            disabled={!selectedDistrict}
-                                            value={transaction.subDistrict}
-                                            onValueChange={handleSubDistrictChange}
-                                        >
-                                            <SelectTrigger className="w-full">
-                                                <SelectValue placeholder="Pilih Kelurahan" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectGroup>
-                                                    {subDistricts.map((sub) => (
-                                                        <SelectItem key={sub.id} value={sub.paramKey}>{sub.paramValue}</SelectItem>
-                                                    ))}
-                                                </SelectGroup>
-                                            </SelectContent>
-                                        </Select>
+                                        <Input disabled value={locationLabels.subDistrictName || "-"} />
                                     </div>
                                 </div>
                             </div>
@@ -324,21 +324,23 @@ export default function TransactionDetail() {
                             {/* Divider */}
                             <div className="w-full border-t my-7"></div>
 
+                            {/* GROUP 2 - DATA PETUGAS */}
                             <div className="grid grid-cols-2 gap-20">
                                 {/* Kolom Kiri */}
                                 <div className="col-span-1 space-y-4">
                                     <div className="flex items-center space-x-4">
                                         <Label className="w-[40%] font-semibold">Petugas Cleaning</Label>
-                                        <MultiSelect
-                                        // selected={cleaningStaff}
-                                        // setSelected={setCleaningStaff}
-                                        // options={allStaff}
+                                        <Textarea
+                                            disabled
+                                            className="resize-none"
+                                            value={cleaningStaff.map(staff => staff.fullname).join(", ") || "-"}
+                                            rows={2}
                                         />
                                     </div>
 
                                     <div className="flex items-center space-x-4">
                                         <Label className="w-[40%] font-semibold">Tanggal Transaksi</Label>
-                                        <Input type="date" value={formatDateInput(transaction.trxDate)} />
+                                        <Input disabled value={formatDate(transaction.trxDate)} />
                                     </div>
                                 </div>
 
@@ -346,10 +348,11 @@ export default function TransactionDetail() {
                                 <div className="col-span-1 space-y-4">
                                     <div className="flex items-center space-x-4">
                                         <Label className="w-[40%] font-semibold">Petugas Blower</Label>
-                                        <MultiSelect
-                                        // selected={blowerStaff}
-                                        // setSelected={setBlowerStaff}
-                                        // options={allStaff}
+                                        <Textarea
+                                            disabled
+                                            className="resize-none"
+                                            value={blowerStaff.map(staff => staff.fullname).join(", ") || "-"}
+                                            rows={2}
                                         />
                                     </div>
                                 </div>
@@ -358,21 +361,13 @@ export default function TransactionDetail() {
                             {/* Divider */}
                             <div className="w-full border-t mt-7"></div>
 
-
+                            {/* GROUP 3 - TABLE DETAIL */}
                             <div className="mt-5 space-y-3">
-                                <div className="flex justify-end">
-                                    <Button
-                                        icon={<LuPlus size={16} />}
-                                        className="pl-2 pr-4"
-                                        iconPosition="left"
-                                        variant="default"
-                                        type="submit"
-                                    >
-                                        Tambah
-                                    </Button>
+                                <div className="flex justify-between items-center">
+                                    <h3 className="text-lg font-semibold">Detail Layanan</h3>
                                 </div>
                                 <SPKTableDetail
-                                    data={DataDummySPK}
+                                    data={formatDetailsForTable(transaction.details || [])}
                                     columns={DataHeaderSPKDetail}
                                     currentPage={1}
                                     limit={10}
@@ -382,6 +377,7 @@ export default function TransactionDetail() {
                                 />
                             </div>
 
+                            {/* SUMMARY SECTION */}
                             <div className="grid grid-cols-2 gap-20 mt-5">
                                 {/* Kolom Kiri */}
                                 <div className="col-span-1 space-y-4"></div>
@@ -389,21 +385,18 @@ export default function TransactionDetail() {
                                 {/* Kolom Kanan */}
                                 <div className="col-span-1 space-y-4">
                                     <div className="flex items-center space-x-4">
-                                        <Label className="w-[40%] font-semibold flex items-center gap-1">
-                                            Total harga
-                                            <PiWarningCircleFill />
-                                        </Label>
+                                        <Label className="w-[40%] font-semibold">Total Harga</Label>
                                         <Input className="text-right" disabled value={formatRupiah(transaction.totalPrice)} />
                                     </div>
 
                                     <div className="flex items-center space-x-4">
-                                        <Label className="w-[40%] font-semibold">Promo</Label>
+                                        <Label className="w-[40%] font-semibold">Total Promo</Label>
                                         <Input className="text-right" disabled value={formatRupiah(transaction.promoPrice)} />
                                     </div>
 
                                     <div className="flex items-center space-x-4">
                                         <Label className="w-[40%] font-semibold">Diskon</Label>
-                                        <Input className="text-right" value={formatRupiah(transaction.discountPrice)} />
+                                        <Input className="text-right" disabled value={formatRupiah(transaction.discountPrice)} />
                                     </div>
 
                                     <div className="flex items-center justify-between mt-5 px-3 py-2 bg-neutral-200 rounded-lg">
@@ -414,34 +407,27 @@ export default function TransactionDetail() {
                             </div>
 
                             {/* Tombol Kembali */}
-                            <div className="flex justify-end mt-6 gap-2">
+                            <div className="flex justify-start mt-6 gap-2">
                                 <Button onClick={() => router.back()} variant="outline2">
+                                    <TbArrowBack className="mr-2" />
                                     Kembali
-                                </Button>
-                                <Button
-                                    type="button"
-                                    variant="main"
-                                //   onClick={() => setShowConfirmDialog(true)}
-                                //    disabled={updating}
-                                >
-                                    Simpan
-                                    {/* {updating ? "Menyimpan..." : "Simpan"} */}
-                                </Button>
-                                <Button onClick={() => router.back()} variant="destructive">
-                                    Batalkan
                                 </Button>
                             </div>
                         </div>
                     </TabsContent>
+                    
                     <TabsContent value="riwayat">
-                        Coming Soon
+                        <div className="text-center py-8 text-muted-foreground">
+                            Coming Soon - Riwayat Transaksi
+                        </div>
                     </TabsContent>
+                    
                     <TabsContent value="foto">
-                        Coming Soon
+                        <div className="text-center py-8 text-muted-foreground">
+                            Coming Soon - Foto Transaksi
+                        </div>
                     </TabsContent>
                 </Tabs>
-
-
             </Wrapper>
         </>
     );
