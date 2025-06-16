@@ -110,8 +110,8 @@ export default function TransactionDetail() {
     const { history, loading: historyLoading, error: historyError, refetch: refetchHistory } = useTransactionHistory(id);
 
 
-    console.log('=========transaction===========================');
-    console.log(id);
+    console.log('=========hiss===========================');
+    console.log(history);
     console.log('====================================');
 
     // Fetch transaction data

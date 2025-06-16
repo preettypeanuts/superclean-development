@@ -594,6 +594,10 @@ export default function NewSPK() {
     // Hook untuk service lookup berdasarkan kategori yang dipilih
     const { services, loading: loadingServices } = useServiceLookup(formDataTable.category);
 
+    console.log('===========service=========================');
+    console.log(services);
+    console.log('====================================');
+
     // Updated handleChangeTable function untuk handle promo fetching
     const handleChangeTable = async (field: string, value: any) => {
         setFormDataTable(prev => {
@@ -1118,6 +1122,7 @@ export default function NewSPK() {
                                         )}
                                     </SelectGroup>
                                 </SelectContent>
+                                
                             </Select>
                         </div>
 
@@ -1175,7 +1180,7 @@ export default function NewSPK() {
                                         </div>
                                     )}
                                 </div>
-                                <Button
+                                {/* <Button
                                     type="button"
                                     variant="outline"
                                     size="sm"
@@ -1184,7 +1189,7 @@ export default function NewSPK() {
                                     className="px-3 py-1 h-10 whitespace-nowrap"
                                 >
                                     Cek Promo
-                                </Button>
+                                </Button> */}
                             </div>
                         </div>
 
