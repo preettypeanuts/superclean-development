@@ -16,6 +16,7 @@ import { SPKTableDetail } from "libs/ui-components/src/components/spk-table-deta
 import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@ui-components/components/ui/tabs";
 import { PiWarningCircleFill } from "react-icons/pi";
+import { useTransactionHistory } from "libs/utils/useTransactionHistory";
 
 // Updated Transaction interface
 interface Transaction {
@@ -105,8 +106,12 @@ export default function TransactionDetail() {
         subDistrictName: ""
     });
 
+    // Use transaction history hook
+    const { history, loading: historyLoading, error: historyError, refetch: refetchHistory } = useTransactionHistory(id);
+
+
     console.log('=========transaction===========================');
-    console.log(transaction);
+    console.log(id);
     console.log('====================================');
 
     // Fetch transaction data
@@ -224,6 +229,19 @@ export default function TransactionDetail() {
         }));
     };
 
+    // Format date with time
+    const formatDateTime = (dateString: string) => {
+        const date = new Date(dateString);
+        return date.toLocaleString('id-ID', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+        });
+    };
+
     if (loading) {
         return (
             <Wrapper>
@@ -250,7 +268,7 @@ export default function TransactionDetail() {
 
     return (
         <>
-            <Breadcrumbs label={`Detail SPK - ${transaction.trxNumber}`} />
+            <Breadcrumbs label={`Ubah SPK`} />
             <Wrapper>
                 <Tabs defaultValue="detail" className="-mt-2">
                     <TabsList>
@@ -417,8 +435,83 @@ export default function TransactionDetail() {
                     </TabsContent>
                     
                     <TabsContent value="riwayat">
-                        <div className="text-center py-8 text-muted-foreground">
-                            Coming Soon - Riwayat Transaksi
+                        <div className="space-y-4">
+                            <div className="flex justify-between items-center">
+                                <h3 className="text-lg font-semibold">Riwayat Transaksi</h3>
+                                <Button 
+                                    onClick={() => refetchHistory()}
+                                    variant="outline"
+                                    size="sm"
+                                    disabled={historyLoading}
+                                >
+                                    {historyLoading ? "Loading..." : "Refresh"}
+                                </Button>
+                            </div>
+
+                            {historyLoading && (
+                                <div className="text-center py-8 text-muted-foreground">
+                                    <div className="flex items-center justify-center">
+                                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mr-2"></div>
+                                        Memuat riwayat...
+                                    </div>
+                                </div>
+                            )}
+
+                            {historyError && (
+                                <div className="text-center py-8">
+                                    <div className="flex items-center justify-center text-red-500 mb-2">
+                                        <PiWarningCircleFill className="mr-2" />
+                                        Error memuat riwayat
+                                    </div>
+                                    <p className="text-sm text-muted-foreground">{historyError}</p>
+                                    <Button 
+                                        onClick={() => refetchHistory()}
+                                        variant="outline"
+                                        size="sm"
+                                        className="mt-2"
+                                    >
+                                        Coba Lagi
+                                    </Button>
+                                </div>
+                            )}
+
+                            {!historyLoading && !historyError && history.length === 0 && (
+                                <div className="text-center py-8 text-muted-foreground">
+                                    <PiWarningCircleFill className="mx-auto mb-2 text-2xl" />
+                                    <p>Belum ada riwayat untuk transaksi ini</p>
+                                </div>
+                            )}
+
+                            {!historyLoading && !historyError && history.length > 0 && (
+                                <div className="space-y-4">
+                                    {history.map((item, index) => (
+                                        <div 
+                                            key={item.id} 
+                                            className="border rounded-lg p-4 bg-white hover:bg-gray-50 transition-colors"
+                                        >
+                                            <div className="flex justify-between items-start mb-2">
+                                                <div className="flex items-center">
+                                                    <div className="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-semibold mr-3">
+                                                        {index + 1}
+                                                    </div>
+                                                    <div>
+                                                        <p className="font-medium text-gray-900">
+                                                            {item.trxNumber}
+                                                        </p>
+                                                        <p className="text-sm text-gray-500">
+                                                            {formatDateTime(item.logDate)}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div 
+                                                className="text-sm text-gray-700 ml-11"
+                                                dangerouslySetInnerHTML={{ __html: item.notes }}
+                                            />
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     </TabsContent>
                     
