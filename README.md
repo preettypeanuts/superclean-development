@@ -150,6 +150,10 @@ To build the production-ready application:
 ```bash
 npm run build:all
 npm run build:admin-app 
+
+npx nx build admin-app
+npx nx build mitra-app
+
 ```
 
 ### Linting & Formatting

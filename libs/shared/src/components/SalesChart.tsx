@@ -92,9 +92,10 @@ export function SalesChart() {
       setLoading(true);
       setError(null);
       
-      const response = await api.get<MonthlySummaryResponse>(`/transaction/summary/monthly?year=${currentYear}`);
+      const response = await api.get(`/transaction/summary/monthly?year=${currentYear}`);
+      const result = response as MonthlySummaryResponse;
       
-      if (response.status === "success" && response.data[0]) {
+      if (result.status === "success" && result.data[0]) {
         const transformedData = transformApiData(response.data[0]);
         setSalesData(transformedData);
       } else {
