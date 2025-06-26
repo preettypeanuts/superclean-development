@@ -8,6 +8,7 @@ import { FaClipboardCheck, FaClipboardList } from "react-icons/fa";
 import { FaPersonRunning, FaMoneyBillTransfer } from "react-icons/fa6";
 import { BirthdayReminder } from "@shared/components/BirthdayReminder";
 import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { api } from "libs/utils/apiClient";
 
 // Interface untuk API response

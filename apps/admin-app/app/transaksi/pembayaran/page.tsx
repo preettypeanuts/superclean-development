@@ -228,11 +228,11 @@ export default function SettlementPage() {
               </Button>
             </div>
 
-            <Link href="pembayaran/baru">
+            {/* <Link href="pembayaran/baru">
               <Button type="submit" icon={<LuPlus size={16} />}>
                 Tambah
               </Button>
-            </Link>
+            </Link> */}
           </div>
 
           {loading || loadingParams ? (

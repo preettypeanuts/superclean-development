@@ -65,7 +65,7 @@ export default function MultiSelect({
                     </div>
 
                     {/* Fixed gradient overlay */}
-                    <div className="absolute right-0 top-0 bottom-0 bg-gradient-to-l from-white to-transparent w-[85px] pointer-events-none z-10"></div>
+                    <div className="absolute right-0 top-0 bottom-0 bg-gradient-to-l from-white dark:from-black to-transparent w-[85px] pointer-events-none z-10"></div>
 
                     {/* Fixed arrow icon */}
                     <div className="absolute right-2 top-1/2 -translate-y-1/2 z-20 pointer-events-none">

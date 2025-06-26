@@ -11,7 +11,7 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem, SelectGr
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "libs/ui-components/src/components/ui/tabs";
 import { useToast } from "libs/ui-components/src/hooks/use-toast";
 import { api } from "libs/utils/apiClient";
-import { useLocationData } from "libs/utils/useLocationData";
+import { useLocationData } from "@shared/utils/useLocationData";
 import { PiWarningCircleFill } from "react-icons/pi";
 import { LuPlus } from "react-icons/lu";
 import MultiSelect from "libs/ui-components/src/components/multi-select";
@@ -999,7 +999,7 @@ export default function NewSPK() {
                                         />
                                     </div>
 
-                                    <div className="flex items-center justify-between mt-5 px-3 py-2 bg-neutral-200 rounded-lg">
+                                    <div className="flex items-center justify-between mt-5 px-3 py-2 bg-neutral-20 dark:bg-darkColor rounded-lg">
                                         <Label className="w-[50%] font-bold text-2xl">Total Akhir</Label>
                                         <Label className="text-right font-bold text-2xl">{formatRupiah(totals.finalPrice)}</Label>
                                     </div>

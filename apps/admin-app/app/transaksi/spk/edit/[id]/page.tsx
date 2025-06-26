@@ -17,6 +17,7 @@ import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@ui-components/components/ui/tabs";
 import { PiWarningCircleFill } from "react-icons/pi";
 import { useTransactionHistory } from "libs/utils/useTransactionHistory";
+import { useTransactionDetail } from "libs/utils/useTransactionDetail";
 
 // Updated Transaction interface
 interface Transaction {
@@ -92,7 +93,7 @@ export default function TransactionDetail() {
     const pathname = usePathname();
     const router = useRouter();
     const id = pathname.split("/").pop();
-    
+
     // States
     const [transaction, setTransaction] = useState<Transaction | null>(null);
     const [customer, setCustomer] = useState<Customer | null>(null);
@@ -105,13 +106,15 @@ export default function TransactionDetail() {
         districtName: "",
         subDistrictName: ""
     });
+    // Tetap sama seperti sebelumnya
+    const { data, error, refetch } = useTransactionDetail("SPK/004/2506/25112320");
+
 
     // Use transaction history hook
     const { history, loading: historyLoading, error: historyError, refetch: refetchHistory } = useTransactionHistory(id);
 
-
     console.log('=========hiss===========================');
-    console.log(history);
+    console.log(data);
     console.log('====================================');
 
     // Fetch transaction data
@@ -417,7 +420,7 @@ export default function TransactionDetail() {
                                         <Input className="text-right" disabled value={formatRupiah(transaction.discountPrice)} />
                                     </div>
 
-                                    <div className="flex items-center justify-between mt-5 px-3 py-2 bg-neutral-200 rounded-lg">
+                                    <div className="flex items-center justify-between mt-5 px-3 py-2 bg-neutral-200 dark:bg-darkColor rounded-lg">
                                         <Label className="w-[50%] font-bold text-2xl">Total Akhir</Label>
                                         <Label className="text-right font-bold text-2xl">{formatRupiah(transaction.finalPrice)}</Label>
                                     </div>
@@ -433,12 +436,12 @@ export default function TransactionDetail() {
                             </div>
                         </div>
                     </TabsContent>
-                    
+
                     <TabsContent value="riwayat">
                         <div className="space-y-4">
                             <div className="flex justify-between items-center">
                                 <h3 className="text-lg font-semibold">Riwayat Transaksi</h3>
-                                <Button 
+                                <Button
                                     onClick={() => refetchHistory()}
                                     variant="outline"
                                     size="sm"
@@ -464,7 +467,7 @@ export default function TransactionDetail() {
                                         Error memuat riwayat
                                     </div>
                                     <p className="text-sm text-muted-foreground">{historyError}</p>
-                                    <Button 
+                                    <Button
                                         onClick={() => refetchHistory()}
                                         variant="outline"
                                         size="sm"
@@ -485,8 +488,8 @@ export default function TransactionDetail() {
                             {!historyLoading && !historyError && history.length > 0 && (
                                 <div className="space-y-4">
                                     {history.map((item, index) => (
-                                        <div 
-                                            key={item.id} 
+                                        <div
+                                            key={item.id}
                                             className="border rounded-lg p-4 bg-white hover:bg-gray-50 transition-colors"
                                         >
                                             <div className="flex justify-between items-start mb-2">
@@ -504,7 +507,7 @@ export default function TransactionDetail() {
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div 
+                                            <div
                                                 className="text-sm text-gray-700 ml-11"
                                                 dangerouslySetInnerHTML={{ __html: item.notes }}
                                             />
@@ -514,7 +517,7 @@ export default function TransactionDetail() {
                             )}
                         </div>
                     </TabsContent>
-                    
+
                     <TabsContent value="foto">
                         <div className="text-center py-8 text-muted-foreground">
                             Coming Soon - Foto Transaksi
