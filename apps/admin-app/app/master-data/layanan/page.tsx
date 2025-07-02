@@ -42,7 +42,13 @@ interface Service {
 export default function LayananPage() {
   const [dataLayanan, setDataLayanan] = useState<Service[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [currentPage, setCurrentPage] = useState<{
+    page: number,
+    reset: boolean
+  }>({
+    page: 1,
+    reset: false
+  });
   const [totalData, setTotalData] = useState<number>(0);
   const [limit, setLimit] = useState<number>(10);
   const [searchQuery, setSearchQuery] = useState("");
@@ -56,7 +62,7 @@ export default function LayananPage() {
   const [tempCatFilter, setTempCatFilter] = useState<string>("");
 
   const fetchLayanan = async (reset: boolean = false) => {
-    let page = currentPage;
+    let page = currentPage.page;
     let search = searchQuery;
     let status = statusFilter;
     let cat = catFilter;
@@ -67,7 +73,10 @@ export default function LayananPage() {
       status = tempStatusFilter
       cat = tempCatFilter
 
-      setCurrentPage(page)
+      setCurrentPage({
+        page: page,
+        reset: true
+      })
       setSearchQuery(search)
       setStatusFilter(status)
       setCatFilter(cat)
@@ -97,6 +106,7 @@ export default function LayananPage() {
   };
 
   useEffect(() => {
+    if (currentPage.reset) return;
     fetchLayanan();
   }, [
     // searchQuery,
@@ -181,16 +191,16 @@ export default function LayananPage() {
             <p className="text-center py-4">Memuat data...</p>
           ) : dataLayanan.length === 0 ?
             (<p className="text-center py-4">Tidak ada data layanan yang tersedia.</p>
-          ) : (
-            <TableLayanan
-              data={dataLayanan}
-              columns={DataHeaderLayanan}
-              key={`${currentPage}-${limit}`}
-              currentPage={currentPage}
-              limit={limit}
-              fetchData={fetchLayanan}
-            />
-          )}
+              ) : (
+                <TableLayanan
+                  data={dataLayanan}
+                  columns={DataHeaderLayanan}
+                  key={`${currentPage}-${limit}`}
+                currentPage={currentPage.page}
+                limit={limit}
+                fetchData={fetchLayanan}
+              />
+            )}
         </div>
 
         <div className="flex items-center justify-between mt-4">
@@ -207,8 +217,8 @@ export default function LayananPage() {
 
           <PaginationNumber
             totalPages={totalPages}
-            currentPage={currentPage}
-            onPageChange={(page) => setCurrentPage(page)}
+            currentPage={currentPage.page}
+            onPageChange={(page) => setCurrentPage({ page, reset: false })}
           />
         </div>
       </Wrapper>
