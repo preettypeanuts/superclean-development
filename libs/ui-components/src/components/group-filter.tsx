@@ -20,6 +20,7 @@ type GroupFilterProps = {
   onApply?: () => void;
   onReset?: () => void;
   onCancel?: () => void;
+  hideButtons?: boolean;
 };
 
 export function GroupFilter({
@@ -33,6 +34,7 @@ export function GroupFilter({
   onApply,
   onReset,
   onCancel,
+  hideButtons = false
 }: GroupFilterProps) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -66,14 +68,14 @@ export function GroupFilter({
           >
             Hapus Semua Filter
           </button>
-          <div className="space-x-2">
+          {!hideButtons && (<div className="space-x-2">
             <Button type="button" variant="outline2" onClick={handleCancel}>
               Batal
             </Button>
             <Button type="submit" variant="main" onClick={handleApply}>
               Terapkan
             </Button>
-          </div>
+          </div>)}
         </div>
       </PopoverContent>
     </Popover>

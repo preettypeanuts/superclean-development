@@ -186,6 +186,7 @@ export default function KaryawanPage() {
                 onApply={handleApplyFilter}
                 onReset={handleResetFilter}
                 onCancel={handleCancelFilter}
+                hideButtons
               >
                 <SelectFilter
                   label="Cabang"
