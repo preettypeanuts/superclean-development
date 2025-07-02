@@ -90,9 +90,9 @@ export const TableKaryawan: React.FC<DataTableProps> = ({ data, columns, current
                 </TableRow>
             </TableHeader>
             <TableBody>
-                {data.map((mitra, rowIndex) => (
-                    <TableRow
-                        key={mitra.branchId}
+                {data.map((mitra, rowIndex) => {
+                  return <TableRow
+                        key={mitra.id}
                         className={rowIndex % 2 === 0 ? "" : "bg-neutral-300/20 dark:bg-neutral-500/20"}
                     >
                         {columns.map((header) => (
@@ -143,7 +143,7 @@ export const TableKaryawan: React.FC<DataTableProps> = ({ data, columns, current
                             </TableCell>
                         ))}
                     </TableRow>
-                ))}
+                })}
             </TableBody>
 
             {/* Delete Confirmation Dialog */}
