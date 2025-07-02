@@ -49,16 +49,21 @@ export default function PelangganPage() {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalData, setTotalData] = useState<number>(0);
   const [limit, setLimit] = useState<number>(10);
-  const [searchQuery, setSearchQuery] = useState("");
   const [searchInput, setSearchInput] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("");
 
   const totalPages = Math.max(1, Math.ceil(totalData / limit));
 
-  const fetchPelanggan = async () => {
+  const fetchPelanggan = async (resetPagination: boolean = false) => {
+    let page = currentPage
+    if (resetPagination) {
+      page = 1;
+      setCurrentPage(1)
+    }
+
     setLoading(true);
     try {
-      let url = `/customer/page?search=${searchQuery}&page=${currentPage}&limit=${limit}`;
+      let url = `/customer/page?search=${searchInput}&page=${page}&limit=${limit}`;
       if (statusFilter !== "") {
         url += `&status=${statusFilter}`;
       }
@@ -75,17 +80,17 @@ export default function PelangganPage() {
 
   useEffect(() => {
     fetchPelanggan();
-  }, [searchQuery, statusFilter, currentPage, limit]);
+  }, [
+    currentPage,
+    limit
+  ]);
 
   const handleSearch = () => {
-    setSearchQuery(searchInput);
-    setCurrentPage(1);
+    fetchPelanggan(true);
   };
 
   const resetSearch = () => {
     setSearchInput("");
-    setSearchQuery("");
-    setCurrentPage(1);
   };
 
   const selectedProvince = [...new Set(dataPelanggan.map((item) => item.province).filter(Boolean))];
@@ -166,9 +171,7 @@ export default function PelangganPage() {
           {loading ? (
             <p className="text-center py-4">Memuat data...</p>
           ) : dataPelanggan.length === 0 ? (
-            <p className="text-center py-4">
-              Pelanggan dengan nama <span className="font-bold">{searchInput}</span> tidak ditemukan.
-            </p>
+              <p className="text-center py-4"> Data karyawan tidak ditemukan.</p>
           ) : (
             <TablePelanggan
               key={`${currentPage}-${limit}`}
