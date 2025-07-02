@@ -46,23 +46,43 @@ export default function LayananPage() {
   const [totalData, setTotalData] = useState<number>(0);
   const [limit, setLimit] = useState<number>(10);
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchInput, setSearchInput] = useState(""); // Input Sementara
   const [statusFilter, setStatusFilter] = useState<string>("");
   const [catFilter, setCatFilter] = useState<string>("");
 
   const totalPages = Math.max(1, Math.ceil(totalData / limit));
 
-  const fetchLayanan = async () => {
+  const [tempSearchQuery, setTempSearchQuery] = useState("");
+  const [tempStatusFilter, setTempStatusFilter] = useState<string>("");
+  const [tempCatFilter, setTempCatFilter] = useState<string>("");
+
+  const fetchLayanan = async (reset: boolean = false) => {
+    let page = currentPage;
+    let search = searchQuery;
+    let status = statusFilter;
+    let cat = catFilter;
+
+    if (reset) {
+      page = 1;
+      search = tempSearchQuery
+      status = tempStatusFilter
+      cat = tempCatFilter
+
+      setCurrentPage(page)
+      setSearchQuery(search)
+      setStatusFilter(status)
+      setCatFilter(cat)
+    }
+
     setLoading(true);
     try {
-      let url = `/service/page?search=${searchQuery}&page=${currentPage}&limit=${limit}`;
+      let url = `/service/page?search=${search}&page=${page}&limit=${limit}`;
 
-      if (statusFilter !== "") {
-        url += `&status=${statusFilter}`;
+      if (status !== "") {
+        url += `&status=${status}`;
       }
 
-      if (catFilter !== "") {
-        url += `&category=${catFilter}`;
+      if (cat !== "") {
+        url += `&category=${cat}`;
       }
 
       const result = await apiClient(url);
@@ -78,17 +98,24 @@ export default function LayananPage() {
 
   useEffect(() => {
     fetchLayanan();
-  }, [searchQuery, statusFilter, catFilter, currentPage, limit]);
+  }, [
+    // searchQuery,
+    // statusFilter,
+    // catFilter,
+    currentPage,
+    limit
+  ]);
 
   const handleSearch = () => {
-    setSearchQuery(searchInput);
-    setCurrentPage(1);
+    fetchLayanan(true)
+    // setSearchQuery(searchInput);
+    // setCurrentPage(1);
   };
 
   const resetSearch = () => {
-    setSearchInput("");
+    setTempSearchQuery("");
     setSearchQuery("");
-    setCurrentPage(1);
+    // setCurrentPage(1);
   };
 
   return (
@@ -102,8 +129,8 @@ export default function LayananPage() {
                 <Input
                   type="text"
                   placeholder="Cari Kode Layanan, Nama Layanan"
-                  value={searchInput}
-                  onChange={(e) => setSearchInput(e.target.value)}
+                  value={tempSearchQuery}
+                  onChange={(e) => setTempSearchQuery(e.target.value)}
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       handleSearch();
@@ -112,7 +139,7 @@ export default function LayananPage() {
                   className="w-[30lvw]"
                   icon={<Search size={16} />}
                 />
-                {searchInput && (
+                {tempSearchQuery && (
                   <button
                     type="button"
                     onClick={resetSearch}
@@ -124,13 +151,13 @@ export default function LayananPage() {
               </div>
 
               <FilterCategoryLayanan
-                catFilter={catFilter}
-                setcatFilter={setCatFilter}
+                catFilter={tempCatFilter}
+                setcatFilter={setTempCatFilter}
               />
               <FilterStatus
                 placeholder="Status"
-                value={statusFilter}
-                onChange={setStatusFilter}
+                value={tempStatusFilter}
+                onChange={setTempStatusFilter}
               />
               <Button
                 variant="main"
@@ -152,14 +179,8 @@ export default function LayananPage() {
 
           {loading ? (
             <p className="text-center py-4">Memuat data...</p>
-          ) : dataLayanan.length === 0 ? (
-            searchQuery ? (
-              <p className="text-center py-4">
-                Layanan dengan nama <span className="font-bold">{searchQuery}</span> tidak ditemukan.
-              </p>
-            ) : (
-              <p className="text-center py-4">Tidak ada data layanan yang tersedia.</p>
-            )
+          ) : dataLayanan.length === 0 ?
+            (<p className="text-center py-4">Tidak ada data layanan yang tersedia.</p>
           ) : (
             <TableLayanan
               data={dataLayanan}
