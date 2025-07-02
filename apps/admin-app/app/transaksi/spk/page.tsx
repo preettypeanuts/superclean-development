@@ -167,10 +167,10 @@ export default function SPKPage() {
   };
 
   const handleCancelFilters = () => {
-    setTempStatus(statusFilter);
-    setTempBranch(branchFilter);
-    setTempStartDate(startDate);
-    setTempEndDate(endDate);
+    // setTempStatus(statusFilter);
+    // setTempBranch(branchFilter);
+    // setTempStartDate(startDate);
+    // setTempEndDate(endDate);
   };
 
   const processedSPK = dataSPK.map((item) => ({
@@ -210,9 +210,9 @@ export default function SPKPage() {
 
               <GroupFilter
                 className="space-y-2"
-                onApply={handleApplyFilters}
+                // onApply={handleApplyFilters}
                 onReset={handleResetFilters}
-                onCancel={handleCancelFilters}
+                // onCancel={handleCancelFilters}
                 hideButtons
               >
                 <SelectFilter
