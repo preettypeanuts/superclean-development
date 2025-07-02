@@ -62,11 +62,18 @@ export default function SettlementPage() {
 
   const [dataSettlement, setDataSettlement] = useState<SettlementData[]>([]);
   const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState<{
+    page: number,
+    reset: boolean
+  }>({
+    page: 1,
+    reset: false
+  });
   const [totalData, setTotalData] = useState(0);
   const [limit, setLimit] = useState(10);
+
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchInput, setSearchInput] = useState("");
+  const [tempSearchQuery, setTempSearchQuery] = useState("");
 
   // filter aktif
   const [statusFilter, setStatusFilter] = useState<number>(0);
@@ -84,14 +91,40 @@ export default function SettlementPage() {
 
   const totalPages = Math.max(1, Math.ceil(totalData / limit));
 
-  const fetchSettlement = async () => {
+  const fetchSettlement = async (reset: boolean = false) => {
+    let page = currentPage.page;
+    let search = searchQuery;
+    let status = statusFilter;
+    let branch = branchFilter;
+    let start = startDate;
+    let end = endDate;
+
+    if (reset) {
+      page = 1;
+      search = tempSearchQuery;
+      status = tempStatus;
+      branch = tempBranch;
+      start = tempStartDate;
+      end = tempEndDate;
+
+      setCurrentPage({
+        page: page,
+        reset: true
+      })
+      setSearchQuery(tempSearchQuery)
+      setStatusFilter(tempStatus)
+      setBranchFilter(tempBranch)
+      setStartDate(tempStartDate)
+      setEndDate(tempEndDate)
+    }
+
     setLoading(true);
     try {
-      let url = `/transaction/page/settlement?search=${searchQuery}&page=${currentPage}&limit=${limit}`;
-      if (statusFilter) url += `&status=${statusFilter}`;
-      if (branchFilter) url += `&branchId=${branchFilter}`;
-      if (startDate) url += `&startDate=${formatDateAPI(startDate)}`;
-      if (endDate) url += `&endDate=${formatDateAPI(endDate)}`;
+      let url = `/transaction/page/settlement?search=${search}&page=${page}&limit=${limit}`;
+      if (status) url += `&status=${status}`;
+      if (branch) url += `&branchId=${branch}`;
+      if (start) url += `&startDate=${formatDateAPI(start)}`;
+      if (end) url += `&endDate=${formatDateAPI(end)}`;
 
       const result = await apiClient(url);
       setDataSettlement(result.data[0] || []);
@@ -104,26 +137,36 @@ export default function SettlementPage() {
   };
 
   useEffect(() => {
+    if (currentPage.reset) return;
     fetchSettlement();
-  }, [searchQuery, statusFilter, branchFilter, currentPage, limit, startDate, endDate]);
+  }, [
+    // searchQuery,
+    // statusFilter,
+    // branchFilter,
+    currentPage,
+    limit,
+    // startDate,
+    // endDate
+  ]);
 
   const handleSearch = () => {
-    setSearchQuery(searchInput);
-    setCurrentPage(1);
+    fetchSettlement(true)
+    // setSearchQuery(searchInput);
+    // setCurrentPage(1);
   };
 
   const resetSearch = () => {
-    setSearchInput("");
+    setTempSearchQuery("");
     setSearchQuery("");
-    setCurrentPage(1);
+    // setCurrentPage(1);
   };
 
   const handleApplyFilters = () => {
-    setStatusFilter(tempStatus);
-    setBranchFilter(tempBranch);
-    setStartDate(tempStartDate);
-    setEndDate(tempEndDate);
-    setCurrentPage(1);
+    // setStatusFilter(tempStatus);
+    // setBranchFilter(tempBranch);
+    // setStartDate(tempStartDate);
+    // setEndDate(tempEndDate);
+    // setCurrentPage(1);
   };
 
   const handleResetFilters = () => {
@@ -134,10 +177,10 @@ export default function SettlementPage() {
   };
 
   const handleCancelFilters = () => {
-    setTempStatus(statusFilter);
-    setTempBranch(branchFilter);
-    setTempStartDate(startDate);
-    setTempEndDate(endDate);
+    // setTempStatus(statusFilter);
+    // setTempBranch(branchFilter);
+    // setTempStartDate(startDate);
+    // setTempEndDate(endDate);
   };
 
   const processedSettlement = dataSettlement.map((item) => ({
@@ -156,15 +199,15 @@ export default function SettlementPage() {
                 <Input
                   type="text"
                   placeholder="Cari No Transaksi, Nama, No. Whatsapp"
-                  value={searchInput}
-                  onChange={(e) => setSearchInput(e.target.value)}
+                  value={tempSearchQuery}
+                  onChange={(e) => setTempSearchQuery(e.target.value)}
                   onKeyDown={(i) => {
                     if (i.key === "Enter") handleSearch();
                   }}
                   className="w-[30lvw]"
                   icon={<Search size={16} />}
                 />
-                {searchInput && (
+                {tempSearchQuery && (
                   <button
                     type="button"
                     onClick={resetSearch}
@@ -180,6 +223,7 @@ export default function SettlementPage() {
                 onApply={handleApplyFilters}
                 onReset={handleResetFilters}
                 onCancel={handleCancelFilters}
+                hideButtons
               >
                 <SelectFilter
                   label="Cabang"
@@ -239,14 +283,14 @@ export default function SettlementPage() {
             <p className="text-center py-4">Memuat data...</p>
           ) : dataSettlement.length === 0 ? (
             <p className="text-center py-4">
-              Data pembayaran dengan pencarian <span className="font-bold">{searchInput}</span> tidak ditemukan.
+                Data pembayaran tidak ditemukan.
             </p>
           ) : (
             <PembayaranTable
               data={processedSettlement}
               columns={DataHeaderSettlement}
               key={`${currentPage}-${limit}`}
-              currentPage={currentPage}
+                  currentPage={currentPage.page}
               limit={limit}
               fetchData={() => { }}
             />
@@ -269,8 +313,8 @@ export default function SettlementPage() {
 
           <PaginationNumber
             totalPages={totalPages}
-            currentPage={currentPage}
-            onPageChange={(page) => setCurrentPage(page)}
+            currentPage={currentPage.page}
+            onPageChange={(page) => setCurrentPage({ page, reset: false })}
           />
         </div>
       </Wrapper>
