@@ -70,11 +70,17 @@ export default function InquiryTransaksiPage() {
   const [dataTransaksi, setDataTransaksi] = useState<TransactionData[]>([]);
   const [loading, setLoading] = useState(true);
   const [isExporting, setIsExporting] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState<{
+    page: number,
+    reset: boolean
+  }>({
+    page: 1,
+    reset: false
+  });
   const [totalData, setTotalData] = useState(0);
   const [limit, setLimit] = useState(10);
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchInput, setSearchInput] = useState("");
+  const [tempSearchQuery, setTempSearchQuery] = useState("");
 
   // Filter aktif
   const [statusFilter, setStatusFilter] = useState<number>(0);
@@ -99,14 +105,40 @@ export default function InquiryTransaksiPage() {
 
   const totalPages = Math.max(1, Math.ceil(totalData / limit));
 
-  const fetchInquiryTransaksi = async () => {
+  const fetchInquiryTransaksi = async (reset: boolean = false) => {
+    let page = currentPage.page;
+    let search = searchQuery;
+    let status = statusFilter;
+    let branch = branchFilter;
+    let start = startDate;
+    let end = endDate;
+
+    if (reset) {
+      page = 1;
+      search = tempSearchQuery;
+      status = tempStatus;
+      branch = tempBranch;
+      start = tempStartDate;
+      end = tempEndDate;
+
+      setCurrentPage({
+        page: page,
+        reset: true
+      })
+      setSearchQuery(tempSearchQuery)
+      setStatusFilter(tempStatus)
+      setBranchFilter(tempBranch)
+      setStartDate(tempStartDate)
+      setEndDate(tempEndDate)
+    }
+
     setLoading(true);
     try {
-      let url = `/transaction/page?search=${searchQuery}&page=${currentPage}&limit=${limit}`;
-      if (statusFilter) url += `&status=${statusFilter}`;
-      if (branchFilter) url += `&branchId=${branchFilter}`;
-      if (startDate) url += `&startDate=${formatDateAPI(startDate)}`;
-      if (endDate) url += `&endDate=${formatDateAPI(endDate)}`;
+      let url = `/transaction/page?search=${search}&page=${page}&limit=${limit}`;
+      if (status) url += `&status=${status}`;
+      if (branch) url += `&branchId=${branch}`;
+      if (start) url += `&startDate=${formatDateAPI(start)}`;
+      if (end) url += `&endDate=${formatDateAPI(end)}`;
 
       const result = await apiClient(url);
       setDataTransaksi(result.data[0] || []);
@@ -123,19 +155,19 @@ export default function InquiryTransaksiPage() {
   const fetchEmployeeDetail = async (username: string, startDateParam?: Date, endDateParam?: Date) => {
     const effectiveStartDate = startDateParam || startDate;
     const effectiveEndDate = endDateParam || endDate;
-    
+
     if (!username || !effectiveStartDate || !effectiveEndDate) {
       console.log("Missing parameters:", { username, effectiveStartDate, effectiveEndDate });
       return;
     }
-    
+
     setIsLoadingDetail(true);
     try {
       const url = `https://murafly.my.id/report/kinerja/detail?username=${username}&type=pdf&startDate=${formatDateAPI(effectiveStartDate)}&endDate=${formatDateAPI(effectiveEndDate)}`;
       console.log("Fetching employee detail:", url);
-      
+
       const result = await apiClient(url);
-      
+
       if (result.status === "success" && result.data) {
         setPdfData(result.data);
         setShowDetail(true);
@@ -164,33 +196,33 @@ export default function InquiryTransaksiPage() {
       if (endDate) url += `&endDate=${formatDateAPI(endDate)}`;
 
       const result = await apiClient(url);
-      
+
       if (result.status === "success" && result.data) {
         const base64Data = result.data;
         const binaryString = atob(base64Data);
         const bytes = new Uint8Array(binaryString.length);
-        
+
         for (let i = 0; i < binaryString.length; i++) {
           bytes[i] = binaryString.charCodeAt(i);
         }
-        
-        const blob = new Blob([bytes], { 
-          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
+
+        const blob = new Blob([bytes], {
+          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         });
-        
+
         const timestamp = new Date().toISOString().split('T')[0];
         const filename = `inquiry_transaksi_${timestamp}.xlsx`;
-        
+
         const downloadUrl = window.URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = downloadUrl;
         link.download = filename;
         document.body.appendChild(link);
         link.click();
-        
+
         document.body.removeChild(link);
         window.URL.revokeObjectURL(downloadUrl);
-        
+
       } else {
         console.error("No data received from server");
       }
@@ -203,8 +235,17 @@ export default function InquiryTransaksiPage() {
   };
 
   useEffect(() => {
+    if (currentPage.reset) return;
     fetchInquiryTransaksi();
-  }, [searchQuery, statusFilter, branchFilter, currentPage, limit, startDate, endDate]);
+  }, [
+    // searchQuery,
+    // statusFilter,
+    // branchFilter,
+    currentPage,
+    limit,
+    // startDate,
+    // endDate
+  ]);
 
   useEffect(() => {
     // Hanya fetch jika data berubah dari useEffect, bukan dari handleApplyFilters
@@ -213,7 +254,7 @@ export default function InquiryTransaksiPage() {
       const timeoutId = setTimeout(() => {
         fetchEmployeeDetail(selectedEmployee);
       }, 100);
-      
+
       return () => clearTimeout(timeoutId);
     } else {
       // Reset detail jika salah satu parameter hilang
@@ -223,24 +264,25 @@ export default function InquiryTransaksiPage() {
   }, [selectedEmployee, startDate, endDate]);
 
   const handleSearch = () => {
-    setSearchQuery(searchInput);
-    setCurrentPage(1);
+    fetchInquiryTransaksi(true)
+    // setSearchQuery(searchInput);
+    // setCurrentPage(1);
   };
 
   const resetSearch = () => {
-    setSearchInput("");
+    setTempSearchQuery("");
     setSearchQuery("");
-    setCurrentPage(1);
+    // setCurrentPage(1);
   };
 
   const handleApplyFilters = () => {
-    setStatusFilter(tempStatus);
-    setBranchFilter(tempBranch);
-    setStartDate(tempStartDate);
-    setEndDate(tempEndDate);
-    setSelectedEmployee(tempSelectedEmployee);
-    setCurrentPage(1);
-    
+    // setStatusFilter(tempStatus);
+    // setBranchFilter(tempBranch);
+    // setStartDate(tempStartDate);
+    // setEndDate(tempEndDate);
+    // setSelectedEmployee(tempSelectedEmployee);
+    // setCurrentPage(1);
+
     // Langsung fetch detail jika karyawan dan tanggal sudah dipilih
     if (tempSelectedEmployee && tempStartDate && tempEndDate) {
       console.log("Fetching detail for:", tempSelectedEmployee);
@@ -262,7 +304,7 @@ export default function InquiryTransaksiPage() {
     setTempStartDate(undefined);
     setTempEndDate(undefined);
     setTempSelectedEmployee("");
-    
+
     // Reset juga state aktif untuk detail
     setSelectedEmployee("");
     setPdfData("");
@@ -270,11 +312,11 @@ export default function InquiryTransaksiPage() {
   };
 
   const handleCancelFilters = () => {
-    setTempStatus(statusFilter);
-    setTempBranch(branchFilter);
-    setTempStartDate(startDate);
-    setTempEndDate(endDate);
-    setTempSelectedEmployee(selectedEmployee);
+    // setTempStatus(statusFilter);
+    // setTempBranch(branchFilter);
+    // setTempStartDate(startDate);
+    // setTempEndDate(endDate);
+    // setTempSelectedEmployee(selectedEmployee);
   };
 
   const processedTransaksi = dataTransaksi.map((item) => ({
@@ -293,15 +335,15 @@ export default function InquiryTransaksiPage() {
                 <Input
                   type="text"
                   placeholder="No Transaksi, Nama Pelanggan, No. Whatsapp"
-                  value={searchInput}
-                  onChange={(e) => setSearchInput(e.target.value)}
+                  value={tempSearchQuery}
+                  onChange={(e) => setTempSearchQuery(e.target.value)}
                   onKeyDown={(e) => {
                     if (e.key === "Enter") handleSearch();
                   }}
                   className="w-[30lvw]"
                   icon={<Search size={16} />}
                 />
-                {searchInput && (
+                {tempSearchQuery && (
                   <button
                     type="button"
                     onClick={resetSearch}
@@ -317,6 +359,7 @@ export default function InquiryTransaksiPage() {
                 onApply={handleApplyFilters}
                 onReset={handleResetFilters}
                 onCancel={handleCancelFilters}
+                hideButtons
               >
                 <SelectFilter
                   label="Cabang"
@@ -404,7 +447,7 @@ export default function InquiryTransaksiPage() {
                   Tutup
                 </Button>
               </div>
-              
+
               {isLoadingDetail ? (
                 <div className="flex items-center justify-center h-40">
                   <div className="text-center">
@@ -448,14 +491,14 @@ export default function InquiryTransaksiPage() {
             <p className="text-center py-4">Memuat data...</p>
           ) : dataTransaksi.length === 0 ? (
             <p className="text-center py-4">
-              Transaksi dengan kata kunci <span className="font-bold">{searchInput}</span> tidak ditemukan.
+                Transaksi tidak ditemukan.
             </p>
           ) : (
             <InquiryTransaksiTable
               data={processedTransaksi}
               columns={columns}
               key={`${currentPage}-${limit}`}
-              currentPage={currentPage}
+                  currentPage={currentPage.page}
               limit={limit}
               fetchData={fetchInquiryTransaksi}
             />
@@ -478,8 +521,8 @@ export default function InquiryTransaksiPage() {
 
           <PaginationNumber
             totalPages={totalPages}
-            currentPage={currentPage}
-            onPageChange={(page) => setCurrentPage(page)}
+            currentPage={currentPage.page}
+            onPageChange={(page) => setCurrentPage({ page, reset: false })}
           />
         </div>
       </Wrapper>
