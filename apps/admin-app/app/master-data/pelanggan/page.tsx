@@ -131,9 +131,9 @@ export default function PelangganPage() {
                   value={searchInput}
                   onChange={(e) => setSearchInput(e.target.value)}
                   onKeyDown={(i) => {
-                    if (i.key === "Enter") {
-                      handleSearch();
-                    }
+                    // if (i.key === "Enter") {
+                    //   handleSearch();
+                    // }
                   }}
                   className="w-[30lvw]"
                   icon={<Search size={16} />}
@@ -171,7 +171,7 @@ export default function PelangganPage() {
           {loading ? (
             <p className="text-center py-4">Memuat data...</p>
           ) : dataPelanggan.length === 0 ? (
-              <p className="text-center py-4"> Data karyawan tidak ditemukan.</p>
+              <p className="text-center py-4"> Data pelanggan tidak ditemukan.</p>
           ) : (
             <TablePelanggan
               key={`${currentPage}-${limit}`}

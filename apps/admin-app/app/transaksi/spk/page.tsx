@@ -192,7 +192,7 @@ export default function SPKPage() {
                   value={tempSearchQuery}
                   onChange={(e) => setTempSearchQuery(e.target.value)}
                   onKeyDown={(i) => {
-                    if (i.key === "Enter") handleSearch();
+                    // if (i.key === "Enter") handleSearch();
                   }}
                   className="w-[30lvw]"
                   icon={<Search size={16} />}
@@ -274,7 +274,7 @@ export default function SPKPage() {
             <p className="text-center py-4">Memuat data...</p>
           ) : dataSPK.length === 0 ? (
             <p className="text-center py-4">
-                SPK dengan nama <span className="font-bold">{tempSearchQuery}</span> tidak ditemukan.
+                SPK tidak ditemukan.
             </p>
           ) : (
             <SPKTable

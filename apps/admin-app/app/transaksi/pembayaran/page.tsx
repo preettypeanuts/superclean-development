@@ -202,7 +202,7 @@ export default function SettlementPage() {
                   value={tempSearchQuery}
                   onChange={(e) => setTempSearchQuery(e.target.value)}
                   onKeyDown={(i) => {
-                    if (i.key === "Enter") handleSearch();
+                    // if (i.key === "Enter") handleSearch();
                   }}
                   className="w-[30lvw]"
                   icon={<Search size={16} />}

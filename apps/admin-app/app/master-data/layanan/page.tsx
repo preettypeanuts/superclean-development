@@ -142,9 +142,9 @@ export default function LayananPage() {
                   value={tempSearchQuery}
                   onChange={(e) => setTempSearchQuery(e.target.value)}
                   onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      handleSearch();
-                    }
+                    // if (e.key === "Enter") {
+                    //   handleSearch();
+                    // }
                   }}
                   className="w-[30lvw]"
                   icon={<Search size={16} />}

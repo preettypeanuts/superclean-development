@@ -109,9 +109,9 @@ export default function PromoPage() {
                   value={tempSearchQuery}
                   onChange={(e) => setTempSearchQuery(e.target.value)}
                   onKeyDown={(i) => {
-                    if (i.key === "Enter") {
-                      handleSearch();
-                    }
+                    // if (i.key === "Enter") {
+                    //   handleSearch();
+                    // }
                   }}
                   className="w-[30lvw]"
                   icon={<Search size={16} />}
@@ -138,10 +138,8 @@ export default function PromoPage() {
 
           {loading ? (
             <p className="text-center py-4">Memuat data...</p>
-          ) : dataPromo.length === 0 && tempSearchQuery !== "" ? (
-            <p className="text-center py-4">Promo tidak ditemukan.</p>
           ) : dataPromo.length === 0 ? (
-            <p className="text-center py-4">Gagal memuat data.</p>
+            <p className="text-center py-4">Promo tidak ditemukan.</p>
           ) : (
             <DiscountTable
               data={dataPromo}

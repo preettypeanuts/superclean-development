@@ -337,9 +337,9 @@ export default function InquiryTransaksiPage() {
                   placeholder="No Transaksi, Nama Pelanggan, No. Whatsapp"
                   value={tempSearchQuery}
                   onChange={(e) => setTempSearchQuery(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") handleSearch();
-                  }}
+                  // onKeyDown={(e) => {
+                  //   if (e.key === "Enter") handleSearch();
+                  // }}
                   className="w-[30lvw]"
                   icon={<Search size={16} />}
                 />
