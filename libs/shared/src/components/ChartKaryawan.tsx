@@ -1,4 +1,5 @@
 "use client"
+import { useEffect, useMemo, useState } from "react";
 import {
     Card,
     CardContent,
@@ -8,6 +9,7 @@ import {
     CardTitle,
 } from "../../../ui-components/src/components/ui/card";
 import { Progress } from "../../../ui-components/src/components/ui/progress";
+import { apiClient } from "../../../utils/apiClient";
 
 // Target pendapatan per karyawan (5 juta)
 const TARGET_PENDAPATAN = 5000000;
@@ -63,14 +65,62 @@ const processChartData = (data: { name: string, value: number, branch: string }[
 const formatRupiah = (value: number) =>
     new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR" }).format(value);
 
+
+interface AppsettingsData {
+  paramKey: string
+  paramValue: string
+}
+const TARGET_BRANCH_PARAMKEY = "TARGET_BRANCH";
+const TARGET_KANTOR_PUSAT_PARAMKEY = "TARGET_HO"
+
 export function ChartKaryawan() {
-    const chartData = processChartData(rawData);
+  const chartData = processChartData(rawData);
+
+  const [targetPusat, setTargetPusat] = useState<number>(TARGET_KANTOR_PUSAT);
+  const [targetCabang, setTargetCabang] = useState<number>(TARGET_KANTOR_CABANG);
+
+  const fetchAppsettings = async () => {
+    try {
+      let url = `/parameter/app-settings`;
+      const result = await apiClient(url);
+      const data = result?.data || [] as AppsettingsData[]
+
+      data.forEach((parameter: AppsettingsData) => {
+        if (parameter.paramKey == TARGET_BRANCH_PARAMKEY) {
+          const newTargetBranchValue = Number(parameter.paramValue)
+          setTargetCabang(newTargetBranchValue)
+        }
+
+        if (parameter.paramKey == TARGET_KANTOR_PUSAT_PARAMKEY) {
+          const newTargetPusatValue = Number(parameter.paramValue)
+          setTargetPusat(newTargetPusatValue)
+        }
+      });
+    }
+    catch (err) {
+      console.error("Error fetching app settings data:", err);
+    } finally {
+      // setLoading(false);
+    }
+  }
 
     // Mapping target per branch
-    const branchTargetMap: Record<string, number> = {
-        "Kantor Pusat": TARGET_KANTOR_PUSAT,
-        "Kantor Cabang": TARGET_KANTOR_CABANG,
-    };
+  // const branchTargetMap: Record<string, number> = {
+  //   "Kantor Pusat": TARGET_KANTOR_PUSAT,
+  //   "Kantor Cabang": TARGET_KANTOR_CABANG,
+  // };
+
+  const branchTargetMap: Record<string, number> = useMemo(() => {
+    return {
+      "Kantor Pusat": targetPusat,
+      "Kantor Cabang": targetCabang,
+    }
+  }, [targetPusat, targetCabang])
+
+  useEffect(() => {
+    fetchAppsettings();
+  }, [])
+
     return (
         <Card className="flex flex-col h-full relative">
             <div className="absolute top-0 gradient-blur-to-b h-[20%] bg-gradient-to-b from-white/50 via-white/30 dark:from-black/50 dark:via-black/30 to-transparent z-20 rounded-t-3xl"></div>
