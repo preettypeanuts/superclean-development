@@ -42,27 +42,56 @@ interface Service {
 export default function LayananPage() {
   const [dataLayanan, setDataLayanan] = useState<Service[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [currentPage, setCurrentPage] = useState<{
+    page: number,
+    reset: boolean
+  }>({
+    page: 1,
+    reset: false
+  });
   const [totalData, setTotalData] = useState<number>(0);
   const [limit, setLimit] = useState<number>(10);
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchInput, setSearchInput] = useState(""); // Input Sementara
   const [statusFilter, setStatusFilter] = useState<string>("");
   const [catFilter, setCatFilter] = useState<string>("");
 
   const totalPages = Math.max(1, Math.ceil(totalData / limit));
 
-  const fetchLayanan = async () => {
+  const [tempSearchQuery, setTempSearchQuery] = useState("");
+  const [tempStatusFilter, setTempStatusFilter] = useState<string>("");
+  const [tempCatFilter, setTempCatFilter] = useState<string>("");
+
+  const fetchLayanan = async (reset: boolean = false) => {
+    let page = currentPage.page;
+    let search = searchQuery;
+    let status = statusFilter;
+    let cat = catFilter;
+
+    if (reset) {
+      page = 1;
+      search = tempSearchQuery
+      status = tempStatusFilter
+      cat = tempCatFilter
+
+      setCurrentPage({
+        page: page,
+        reset: true
+      })
+      setSearchQuery(search)
+      setStatusFilter(status)
+      setCatFilter(cat)
+    }
+
     setLoading(true);
     try {
-      let url = `/service/page?search=${searchQuery}&page=${currentPage}&limit=${limit}`;
+      let url = `/service/page?search=${search}&page=${page}&limit=${limit}`;
 
-      if (statusFilter !== "") {
-        url += `&status=${statusFilter}`;
+      if (status !== "") {
+        url += `&status=${status}`;
       }
 
-      if (catFilter !== "") {
-        url += `&category=${catFilter}`;
+      if (cat !== "") {
+        url += `&category=${cat}`;
       }
 
       const result = await apiClient(url);
@@ -77,18 +106,26 @@ export default function LayananPage() {
   };
 
   useEffect(() => {
+    if (currentPage.reset) return;
     fetchLayanan();
-  }, [searchQuery, statusFilter, catFilter, currentPage, limit]);
+  }, [
+    // searchQuery,
+    // statusFilter,
+    // catFilter,
+    currentPage,
+    limit
+  ]);
 
   const handleSearch = () => {
-    setSearchQuery(searchInput);
-    setCurrentPage(1);
+    fetchLayanan(true)
+    // setSearchQuery(searchInput);
+    // setCurrentPage(1);
   };
 
   const resetSearch = () => {
-    setSearchInput("");
+    setTempSearchQuery("");
     setSearchQuery("");
-    setCurrentPage(1);
+    // setCurrentPage(1);
   };
 
   return (
@@ -102,17 +139,17 @@ export default function LayananPage() {
                 <Input
                   type="text"
                   placeholder="Cari Kode Layanan, Nama Layanan"
-                  value={searchInput}
-                  onChange={(e) => setSearchInput(e.target.value)}
+                  value={tempSearchQuery}
+                  onChange={(e) => setTempSearchQuery(e.target.value)}
                   onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      handleSearch();
-                    }
+                    // if (e.key === "Enter") {
+                    //   handleSearch();
+                    // }
                   }}
                   className="w-[30lvw]"
                   icon={<Search size={16} />}
                 />
-                {searchInput && (
+                {tempSearchQuery && (
                   <button
                     type="button"
                     onClick={resetSearch}
@@ -124,13 +161,13 @@ export default function LayananPage() {
               </div>
 
               <FilterCategoryLayanan
-                catFilter={catFilter}
-                setcatFilter={setCatFilter}
+                catFilter={tempCatFilter}
+                setcatFilter={setTempCatFilter}
               />
               <FilterStatus
                 placeholder="Status"
-                value={statusFilter}
-                onChange={setStatusFilter}
+                value={tempStatusFilter}
+                onChange={setTempStatusFilter}
               />
               <Button
                 variant="main"
@@ -152,24 +189,18 @@ export default function LayananPage() {
 
           {loading ? (
             <p className="text-center py-4">Memuat data...</p>
-          ) : dataLayanan.length === 0 ? (
-            searchQuery ? (
-              <p className="text-center py-4">
-                Layanan dengan nama <span className="font-bold">{searchQuery}</span> tidak ditemukan.
-              </p>
-            ) : (
-              <p className="text-center py-4">Tidak ada data layanan yang tersedia.</p>
-            )
-          ) : (
-            <TableLayanan
-              data={dataLayanan}
-              columns={DataHeaderLayanan}
-              key={`${currentPage}-${limit}`}
-              currentPage={currentPage}
-              limit={limit}
-              fetchData={fetchLayanan}
-            />
-          )}
+          ) : dataLayanan.length === 0 ?
+            (<p className="text-center py-4">Tidak ada data layanan yang tersedia.</p>
+              ) : (
+                <TableLayanan
+                  data={dataLayanan}
+                  columns={DataHeaderLayanan}
+                  key={`${currentPage}-${limit}`}
+                currentPage={currentPage.page}
+                limit={limit}
+                fetchData={fetchLayanan}
+              />
+            )}
         </div>
 
         <div className="flex items-center justify-between mt-4">
@@ -186,8 +217,8 @@ export default function LayananPage() {
 
           <PaginationNumber
             totalPages={totalPages}
-            currentPage={currentPage}
-            onPageChange={(page) => setCurrentPage(page)}
+            currentPage={currentPage.page}
+            onPageChange={(page) => setCurrentPage({ page, reset: false })}
           />
         </div>
       </Wrapper>

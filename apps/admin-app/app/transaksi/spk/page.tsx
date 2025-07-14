@@ -53,11 +53,17 @@ export default function SPKPage() {
 
   const [dataSPK, setDataSPK] = useState<SPKData[]>([]);
   const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState<{
+    page: number,
+    reset: boolean
+  }>({
+    page: 1,
+    reset: false
+  });
   const [totalData, setTotalData] = useState(0);
   const [limit, setLimit] = useState(10);
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchInput, setSearchInput] = useState("");
+  const [tempSearchQuery, setTempSearchQuery] = useState("");
 
   // filter aktif
   const [statusFilter, setStatusFilter] = useState<number>(0);
@@ -75,14 +81,40 @@ export default function SPKPage() {
 
   const totalPages = Math.max(1, Math.ceil(totalData / limit));
 
-  const fetchSPK = async () => {
+  const fetchSPK = async (reset: boolean = false) => {
+    let page = currentPage.page;
+    let search = searchQuery;
+    let status = statusFilter;
+    let branch = branchFilter;
+    let start = startDate;
+    let end = endDate;
+
+    if (reset) {
+      page = 1;
+      search = tempSearchQuery;
+      status = tempStatus;
+      branch = tempBranch;
+      start = tempStartDate;
+      end = tempEndDate;
+
+      setCurrentPage({
+        page: page,
+        reset: true
+      })
+      setSearchQuery(tempSearchQuery)
+      setStatusFilter(tempStatus)
+      setBranchFilter(tempBranch)
+      setStartDate(tempStartDate)
+      setEndDate(tempEndDate)
+    }
+
     setLoading(true);
     try {
-      let url = `/transaction/page/spk?search=${searchQuery}&page=${currentPage}&limit=${limit}`;
-      if (statusFilter) url += `&status=${statusFilter}`;
-      if (branchFilter) url += `&branchId=${branchFilter}`;
-      if (startDate) url += `&startDate=${formatDateAPI(startDate)}`;
-      if (endDate) url += `&endDate=${formatDateAPI(endDate)}`;
+      let url = `/transaction/page/spk?search=${search}&page=${page}&limit=${limit}`;
+      if (status) url += `&status=${status}`;
+      if (branch) url += `&branchId=${branch}`;
+      if (start) url += `&startDate=${formatDateAPI(start)}`;
+      if (end) url += `&endDate=${formatDateAPI(end)}`;
 
       const result = await apiClient(url);
       setDataSPK(result.data[0] || []);
@@ -95,26 +127,36 @@ export default function SPKPage() {
   };
 
   useEffect(() => {
+    if (currentPage.reset) return; // handle on manual search if reset is true
     fetchSPK();
-  }, [searchQuery, statusFilter, branchFilter, currentPage, limit, startDate, endDate]);
+  }, [
+    // searchQuery,
+    // statusFilter,
+    // branchFilter,
+    currentPage,
+    limit,
+    // startDate,
+    // endDate
+  ]);
 
   const handleSearch = () => {
-    setSearchQuery(searchInput);
-    setCurrentPage(1);
+    fetchSPK(true)
+    // setSearchQuery(tempSearchQuery);
+    // setCurrentPage(1);
   };
 
   const resetSearch = () => {
-    setSearchInput("");
+    setTempSearchQuery("");
     setSearchQuery("");
-    setCurrentPage(1);
+    // setCurrentPage(1);
   };
 
   const handleApplyFilters = () => {
-    setStatusFilter(tempStatus);
-    setBranchFilter(tempBranch);
-    setStartDate(tempStartDate);
-    setEndDate(tempEndDate);
-    setCurrentPage(1);
+    // setStatusFilter(tempStatus);
+    // setBranchFilter(tempBranch);
+    // setStartDate(tempStartDate);
+    // setEndDate(tempEndDate);
+    // setCurrentPage(1);
   };
 
   const handleResetFilters = () => {
@@ -125,10 +167,10 @@ export default function SPKPage() {
   };
 
   const handleCancelFilters = () => {
-    setTempStatus(statusFilter);
-    setTempBranch(branchFilter);
-    setTempStartDate(startDate);
-    setTempEndDate(endDate);
+    // setTempStatus(statusFilter);
+    // setTempBranch(branchFilter);
+    // setTempStartDate(startDate);
+    // setTempEndDate(endDate);
   };
 
   const processedSPK = dataSPK.map((item) => ({
@@ -147,15 +189,15 @@ export default function SPKPage() {
                 <Input
                   type="text"
                   placeholder="Cari No Transaksi, Naman No. Whatsapp"
-                  value={searchInput}
-                  onChange={(e) => setSearchInput(e.target.value)}
+                  value={tempSearchQuery}
+                  onChange={(e) => setTempSearchQuery(e.target.value)}
                   onKeyDown={(i) => {
-                    if (i.key === "Enter") handleSearch();
+                    // if (i.key === "Enter") handleSearch();
                   }}
                   className="w-[30lvw]"
                   icon={<Search size={16} />}
                 />
-                {searchInput && (
+                {tempSearchQuery && (
                   <button
                     type="button"
                     onClick={resetSearch}
@@ -168,9 +210,10 @@ export default function SPKPage() {
 
               <GroupFilter
                 className="space-y-2"
-                onApply={handleApplyFilters}
+                // onApply={handleApplyFilters}
                 onReset={handleResetFilters}
-                onCancel={handleCancelFilters}
+                // onCancel={handleCancelFilters}
+                hideButtons
               >
                 <SelectFilter
                   label="Cabang"
@@ -231,14 +274,14 @@ export default function SPKPage() {
             <p className="text-center py-4">Memuat data...</p>
           ) : dataSPK.length === 0 ? (
             <p className="text-center py-4">
-              SPK dengan nama <span className="font-bold">{searchInput}</span> tidak ditemukan.
+                SPK tidak ditemukan.
             </p>
           ) : (
             <SPKTable
               data={processedSPK}
               columns={DataHeaderSPK}
               key={`${currentPage}-${limit}`}
-              currentPage={currentPage}
+                  currentPage={currentPage.page}
               limit={limit}
               fetchData={() => { }}
             />
@@ -261,8 +304,8 @@ export default function SPKPage() {
 
           <PaginationNumber
             totalPages={totalPages}
-            currentPage={currentPage}
-            onPageChange={(page) => setCurrentPage(page)}
+            currentPage={currentPage.page}
+            onPageChange={(page) => setCurrentPage({ page, reset: false })}
           />
         </div>
       </Wrapper>

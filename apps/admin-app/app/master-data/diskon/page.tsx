@@ -30,18 +30,39 @@ const DataHeaderPromo = [
 export default function PromoPage() {
   const [dataPromo, setDataPromo] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState<{
+    page: number,
+    reset: boolean
+  }>({
+    page: 1,
+    reset: false
+  });
   const [totalData, setTotalData] = useState(0);
   const [limit, setLimit] = useState(10);
+
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchInput, setSearchInput] = useState("");
+  const [tempSearchQuery, setTempSearchQuery] = useState("");
 
   const totalPages = Math.max(1, Math.ceil(totalData / limit));
 
-  const fetchPromo = async () => {
+  const fetchPromo = async (reset: boolean = false) => {
+    let page = currentPage.page;
+    let search = searchQuery;
+
+    if (reset) {
+      page = 1;
+      search = tempSearchQuery
+
+      setCurrentPage({
+        page: page,
+        reset: true
+      })
+      setSearchQuery(search)
+    }
+
     setLoading(true);
     try {
-      let url = `/promo/page?search=${searchQuery}&page=${currentPage}&limit=${limit}`;
+      let url = `/promo/page?search=${search}&page=${page}&limit=${limit}`;
 
       const result = await apiClient(url);
       setDataPromo(result.data[0] || []);
@@ -54,18 +75,24 @@ export default function PromoPage() {
   };
 
   useEffect(() => {
+    if (currentPage.reset) return; // handle on manual search if reset is true
     fetchPromo();
-  }, [searchQuery, currentPage, limit]);
+  }, [
+    // searchQuery,
+    currentPage,
+    limit
+  ]);
 
   const handleSearch = () => {
-    setSearchQuery(searchInput);
-    setCurrentPage(1);
+    fetchPromo(true);
+    // setSearchQuery(tempSearchQuery);
+    // setCurrentPage(1);
   };
 
   const resetSearch = () => {
-    setSearchInput("");
+    setTempSearchQuery("");
     setSearchQuery("");
-    setCurrentPage(1);
+    // setCurrentPage(1);
   };
 
   return (
@@ -79,17 +106,17 @@ export default function PromoPage() {
                 <Input
                   type="text"
                   placeholder="Cari Kode Promo, Nama Promo"
-                  value={searchInput}
-                  onChange={(e) => setSearchInput(e.target.value)}
+                  value={tempSearchQuery}
+                  onChange={(e) => setTempSearchQuery(e.target.value)}
                   onKeyDown={(i) => {
-                    if (i.key === "Enter") {
-                      handleSearch();
-                    }
+                    // if (i.key === "Enter") {
+                    //   handleSearch();
+                    // }
                   }}
                   className="w-[30lvw]"
                   icon={<Search size={16} />}
                 />
-                {searchInput && (
+                {tempSearchQuery && (
                   <button
                     type="button"
                     onClick={resetSearch}
@@ -111,16 +138,14 @@ export default function PromoPage() {
 
           {loading ? (
             <p className="text-center py-4">Memuat data...</p>
-          ) : dataPromo.length === 0 && searchInput !== "" ? (
-            <p className="text-center py-4">Promo dengan nama <span className="font-bold">{searchInput}</span> tidak ditemukan.</p>
           ) : dataPromo.length === 0 ? (
-            <p className="text-center py-4">Gagal memuat data.</p>
+            <p className="text-center py-4">Promo tidak ditemukan.</p>
           ) : (
             <DiscountTable
               data={dataPromo}
               columns={DataHeaderPromo}
               key={`${currentPage}-${limit}`}
-              currentPage={currentPage}
+                    currentPage={currentPage.page}
               limit={limit}
               fetchData={fetchPromo} // Pass the fetchPromo function to the table
             />
@@ -133,7 +158,7 @@ export default function PromoPage() {
           ) : (
             <Label className="text-xs">Semua data telah ditampilkan ({totalData})</Label>
           )}
-          <PaginationNumber totalPages={totalPages} currentPage={currentPage} onPageChange={(page) => setCurrentPage(page)} />
+          <PaginationNumber totalPages={totalPages} currentPage={currentPage.page} onPageChange={(page) => setCurrentPage({ page, reset: false })} />
         </div>
       </Wrapper>
     </>

@@ -125,7 +125,7 @@ export const PembayaranTable: React.FC<DataTableProps> = ({
               if (header.key === "trxNumber") {
                 const label = statusLabels[item.status] ?? item.status;
                 return (
-                  <TableCell key="customerName">
+                  <TableCell key="trxNumber-customerName">
                     <div className="flex items-center">
                       <div className={`mr-2 rounded-full w-[6px] h-[6px] ${statusColors[label]}`} />
                       <p>{item.trxNumber}</p>

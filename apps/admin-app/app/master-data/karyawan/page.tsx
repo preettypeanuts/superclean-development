@@ -62,9 +62,9 @@ export default function KaryawanPage() {
 
   // Filter sementara
   const [searchInput, setSearchInput] = useState("");
-  const [tempBranchFilter, setTempBranchFilter] = useState<string>("");
-  const [tempRoleFilter, setTempRoleFilter] = useState<string>("");
-  const [tempStatusFilter, setTempStatusFilter] = useState<number>(0);
+  // const [tempBranchFilter, setTempBranchFilter] = useState<string>("");
+  // const [tempRoleFilter, setTempRoleFilter] = useState<string>("");
+  // const [tempStatusFilter, setTempStatusFilter] = useState<number>(0);
 
 
   const totalPages = Math.max(1, Math.ceil(totalData / limit));
@@ -81,29 +81,39 @@ export default function KaryawanPage() {
   }));
 
   const handleApplyFilter = () => {
-    setBranchFilter(tempBranchFilter);
-    setRoleFilter(tempRoleFilter);
-    setStatusFilter(tempStatusFilter);
-    setCurrentPage(1);
+    // setBranchFilter(tempBranchFilter);
+    // setRoleFilter(tempRoleFilter);
+    // setStatusFilter(tempStatusFilter);
+    // setCurrentPage(1);
   };
 
   const handleResetFilter = () => {
-    setTempBranchFilter("");
-    setTempRoleFilter("");
-    setTempStatusFilter(0);
+    setBranchFilter("");
+    setRoleFilter("");
+    setStatusFilter(0);
+
+    // setTempBranchFilter("");
+    // setTempRoleFilter("");
+    // setTempStatusFilter(0);
   };
 
   const handleCancelFilter = () => {
-    setTempBranchFilter(branchFilter);
-    setTempRoleFilter(roleFilter);
-    setTempStatusFilter(statusFilter);
+    // setTempBranchFilter(branchFilter);
+    // setTempRoleFilter(roleFilter);
+    // setTempStatusFilter(statusFilter);
   };
 
 
-  const fetchKaryawan = async () => {
+  const fetchKaryawan = async (resetPagination: boolean = false) => {
+    let page = currentPage
+    if (resetPagination) {
+      page = 1;
+      setCurrentPage(1)
+    }
+
     setLoading(true);
     try {
-      let url = `/user/page?search=${searchQuery}&page=${currentPage}&limit=${limit}`;
+      let url = `/user/page?search=${searchInput}&page=${page}&limit=${limit}`;
 
       if (statusFilter !== 0) {
         url += `&status=${statusFilter}`;
@@ -130,17 +140,17 @@ export default function KaryawanPage() {
   // Fetch data hanya saat query/filters berubah
   useEffect(() => {
     fetchKaryawan();
-  }, [searchQuery, statusFilter, currentPage, limit, branchFilter, roleFilter]);
+  }, [
+    currentPage,
+    limit,
+  ]);
 
   const handleSearch = () => {
-    setSearchQuery(searchInput);
-    setCurrentPage(1);
+    fetchKaryawan(true);
   };
 
   const resetSearch = () => {
     setSearchInput("");
-    setSearchQuery("");
-    setCurrentPage(1);
   };
 
   // Proses Data Karyawan (Mapping roleId dan branchId)
@@ -163,11 +173,6 @@ export default function KaryawanPage() {
                   placeholder="Cari nama karyawan..."
                   value={searchInput}
                   onChange={(e) => setSearchInput(e.target.value)}
-                  onKeyDown={(i) => {
-                    if (i.key === "Enter") {
-                      handleSearch();
-                    }
-                  }}
                   className="w-[30lvw]"
                   icon={<Search size={16} />}
                 />
@@ -186,30 +191,31 @@ export default function KaryawanPage() {
                 onApply={handleApplyFilter}
                 onReset={handleResetFilter}
                 onCancel={handleCancelFilter}
+                hideButtons
               >
                 <SelectFilter
                   label="Cabang"
                   id="cabang"
                   placeholder="Pilih Cabang"
-                  value={tempBranchFilter}
+                  value={branchFilter}
                   optionsString={branchOptions}
-                  onChange={setTempBranchFilter}
+                  onChange={setBranchFilter}
                 />
                 <SelectFilter
                   label="Akses Pengguna"
                   id="akses"
                   placeholder="Pilih Akses Pengguna"
-                  value={tempRoleFilter}
+                  value={roleFilter}
                   optionsString={roleOptions}
-                  onChange={setTempRoleFilter}
+                  onChange={setRoleFilter}
                 />
                 <SelectFilter
                   label="Status"
                   id="status"
                   placeholder="Pilih Status"
-                  value={tempStatusFilter}
+                  value={statusFilter}
                   optionsNumber={options}
-                  onChange={setTempStatusFilter}
+                  onChange={setStatusFilter}
                 />
               </GroupFilter>
               <Button variant="main" onClick={handleSearch}>Cari</Button>
@@ -224,7 +230,7 @@ export default function KaryawanPage() {
           {loading || loadingParams ? (
             <p className="text-center py-4">Memuat data...</p>
           ) : processedKaryawan.length === 0 ? (
-            <p className="text-center py-4">Karyawan dengan nama <span className="font-bold">{searchInput}</span>  tidak ditemukan.</p>
+            <p className="text-center py-4">Data karyawan tidak ditemukan.</p>
           ) : (
             <TableKaryawan
               data={processedKaryawan}
