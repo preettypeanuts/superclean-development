@@ -56,6 +56,15 @@ const processChartData = (data: MonthTargetData[], targetPusat: number, targetCa
   }).sort((a, b) => b.target - a.target);
 };
 
+
+const getInitials = (name: string) => {
+  return name
+    .split(" ")
+    .map((word) => word[0]?.toUpperCase())
+    .join("")
+    .slice(0, 2);
+};
+
 // Format angka ke Rupiah
 const formatRupiah = (value: number) =>
   new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR" }).format(value);
@@ -147,11 +156,11 @@ export function ChartKaryawan() {
 
   return (
     <Card className="flex flex-col h-full relative">
-      <div className="absolute top-0 gradient-blur-to-b h-[20%] bg-gradient-to-b from-white/50 via-white/30 dark:from-black/50 dark:via-black/30 to-transparent z-20 rounded-t-3xl"></div>
+      <div className="absolute top-0 gradient-blur-to-b h-[25%] bg-gradient-to-b from-white/50 via-white/30 dark:from-black/50 dark:via-black/30 to-transparent z-20 rounded-t-3xl"></div>
 
       <CardHeader className="z-30 absolute top-0 w-full">
-        <CardTitle>Ringkasan Target Teknisi</CardTitle>
-        <CardDescription>
+        <CardTitle className="text-[18px] font-bold">Ringkasan Target Teknisi</CardTitle>
+        <CardDescription className="text-[16px]">
           Total Pendapatan: {formatRupiah(chartData.reduce((total, item) => total + item.target, 0))}
         </CardDescription>
       </CardHeader>
@@ -166,23 +175,30 @@ export function ChartKaryawan() {
         ).map(([branch, employees]) => {
           const targetBranch = branchTargetMap[branch] ?? 0;
           return (
-            <div key={branch} className="mb-5">
+            <div key={branch} className="mb-5 mt-1">
               <h2 className="font-semibold mb-2">
                 {branch} <span className="text-sm font-normal text-muted-foreground">– {formatRupiah(targetBranch)}</span>
               </h2>
               <div className="space-y-2">
                 {employees.map((el, idx) => (
-                  <div key={idx} className={` ${el.fill} rounded-md bg-opacity-20 px-3 pt-1 py-2`}>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <span className="rounded-full text-md font-semibold">{idx + 1}.</span>
-                        <h3 className="text-lg font-semibold">{el.fullname}</h3>
+                  <div className="">
+                    <div key={idx} className={`${el.fill} flex items-center gap-4 rounded-t-md bg-opacity-50 px-3 py-3`}>
+                      <div className="w-190 h-9 aspect-square flex items-center justify-center rounded-full bg-white text-gray-800 font-semibold border border-darkColor dark:border-lightColor">
+                        {getInitials(el.fullname)}
                       </div>
-                      <span className="text-sm font-medium">{formatRupiah(el.target)}</span>
+                      <div className="flex flex-col w-full">
+                        <h3 className="text-lg font-semibold">{el.fullname}</h3>
+                        <div className="flex items-center justify-between w-full">
+                          <p className="text-sm font-medium">
+                            {branch}
+                          </p>
+                          <span className="text-sm font-bold">{formatRupiah(el.target)}</span>
+                        </div>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2 dark:border rounded-md">
-                      <Progress value={parseFloat(el.percentage)} className="h-5 shadow-secondaryShadow" indicatorClassName={`${el.fill} !rounded-l-md`} />
-                      <div className="text-[11px] font-bold text-neutral-500 dark:text-neutral-200 px-[5px] py-[4px] min-w-[45px] flex items-center justify-center h-full rounded-md">
+                    <div className={`${el.fill} rounded-b-md px-3 py-1.5 bg-opacity-15 flex items-center gap-1 dark:border`}>
+                      <Progress value={parseFloat(el.percentage)} className="h-5" indicatorClassName={`${el.fill} !rounded-l-md`} />
+                      <div className="text-[13px] font-medium text-neutral-800 dark:text-neutral-200 px-[5px] py-[4px] min-w-[35px] flex items-center justify-center h-full rounded-md">
                         {el.percentage}%
                       </div>
                     </div>
