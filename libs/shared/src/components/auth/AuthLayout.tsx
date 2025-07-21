@@ -113,7 +113,7 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({ headline, tagline, bgIma
                                     required
                                     value={username}
                                     onChange={(e) => serUsername(e.target.value)}
-                                    placeholder="Masukkan username anda"
+                                    placeholder="Masukkan Username Anda"
                                     className="input bg-white dark:bg-black placeholder:text-neutral-400 dark:placeholder:text-neutral-600 w-full rounded-lg placeholder:text-sm"
                                 />
                             </label>
@@ -128,13 +128,13 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({ headline, tagline, bgIma
                                     required
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    placeholder="Masukkan password anda"
+                                    placeholder="Masukkan Password Anda"
                                     name="password"
                                 />
                                 <button
                                     type="button"
                                     onClick={() => toggleVisibility("password")}
-                                    className="text-xl text-neutral-200 dark:text-neutral-500"
+                                    className="text-xl text-[#B4B4B4]"
                                 >
                                     {visibleInputs["password"] ? <IoMdEyeOff /> : <IoMdEye />}
                                 </button>
