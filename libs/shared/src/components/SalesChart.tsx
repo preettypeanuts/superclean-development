@@ -121,13 +121,13 @@ export function SalesChart() {
   return (
     <Card className="flex flex-col h-full w-full overflow-hidden">
       <CardHeader className="flex-shrink-0 pb-2">
-        <CardTitle className="flex items-center justify-between text-lg">
+        <CardTitle className="text-[18px] flex items-center justify-between text-lg">
           Statistik Profit Bulanan
           {loading && (
             <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>
           )}
         </CardTitle>
-        <CardDescription className="text-sm">
+        <CardDescription className="text-[16px]">
           Melacak profit lunas dan belum lunas dalam setahun
         </CardDescription>
       </CardHeader>
