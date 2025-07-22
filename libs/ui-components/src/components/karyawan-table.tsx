@@ -18,6 +18,7 @@ interface Karyawan {
     id: string;
     createdAt: string;
     createdBy: string;
+    joinDate: string;
     username: string;
     fullname: string;
     noWhatsapp: string;
@@ -36,6 +37,7 @@ interface DataTableProps {
 }
 
 export const TableKaryawan: React.FC<DataTableProps> = ({ data, columns, currentPage, limit, fetchData }) => {
+    console.log(data);
     const { toast } = useToast(); // Initialize toast
     const roleColors: Record<string, string> = {
         "Super Admin": "bg-white border-blue-600 text-blue-600 dark:bg-black dark:border-blue-300 dark:text-blue-300",
@@ -143,7 +145,7 @@ export const TableKaryawan: React.FC<DataTableProps> = ({ data, columns, current
                                     ) : header.key === "id" ? (
                                         <p>{(currentPage - 1) * limit + rowIndex + 1}</p>
                                     ) : header.key === "createdAt" ? (
-                                        <p>{mitra.createdAt ? formatDate(mitra.createdAt) : "-"}</p>
+                                        <p>{mitra.createdAt ? formatDate(mitra.joinDate) : "-"}</p>
                                     ) : header.key === "birthDate" ? (
                                         <p>{mitra.birthDate ? formatDate(mitra.birthDate) : "-"}</p>
                                     ) : header.key === "noWhatsapp" ? (
