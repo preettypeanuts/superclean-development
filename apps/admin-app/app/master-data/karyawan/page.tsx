@@ -34,6 +34,7 @@ interface Karyawan {
   id: string;
   createdAt: string;
   createdBy: string;
+  joinDate: string;
   username: string;
   fullname: string;
   noWhatsapp: string;

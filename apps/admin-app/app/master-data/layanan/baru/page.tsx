@@ -27,6 +27,7 @@ export default function NewLayanan() {
   const { toast } = useToast();
   const router = useRouter();
   const { unitLayananMapping, catLayananMapping, loading: loadingParams } = useCategoryStore();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState({
     code: "",
@@ -56,8 +57,142 @@ export default function NewLayanan() {
     }
   };
 
+  // Fungsi untuk validasi form
+  const validateForm = (): string | null => {
+    if (!formData.code.trim()) {
+      return "Kode layanan harus diisi";
+    }
+    if (!formData.name.trim()) {
+      return "Nama layanan harus diisi";
+    }
+    if (!formData.category) {
+      return "Kategori harus dipilih";
+    }
+    if (!formData.unit) {
+      return "Satuan harus dipilih";
+    }
+    // Validasi harga untuk kategori tertentu
+    if (formData.category !== "GENERAL" && formData.category !== "BLOWER") {
+      if (unformatRupiah(formData.vacuumPrice) <= 0) {
+        return "Harga vacuum harus lebih dari 0";
+      }
+    }
+    if (unformatRupiah(formData.cleanPrice) <= 0) {
+      return "Harga cuci harus lebih dari 0";
+    }
+    return null;
+  };
+
+  // Fungsi untuk menghandle error berdasarkan tipe
+  const handleApiError = (error: any) => {
+    console.error("API Error:", error);
+
+    let errorMessage = "Terjadi kesalahan saat menambahkan layanan.";
+    let errorTitle = "Gagal";
+
+    // Handle error berdasarkan response status
+    if (error.response) {
+      const status = error.response.status;
+      const responseData = error.response.data;
+
+      switch (status) {
+        case 400:
+          errorTitle = "Data Tidak Valid";
+          if (responseData?.message) {
+            errorMessage = responseData.message;
+          } else {
+            errorMessage = "Data yang dikirim tidak valid. Silakan periksa kembali.";
+          }
+          break;
+
+        case 409:
+          errorTitle = "Data Sudah Ada";
+          errorMessage = "Data layanan dengan kode ini sudah terdaftar.";
+          break;
+
+        case 422:
+          errorTitle = "Validasi Gagal";
+          if (responseData?.errors) {
+            const errors = Object.values(responseData.errors).flat();
+            errorMessage = errors.join(", ");
+          } else {
+            errorMessage = "Data tidak memenuhi syarat validasi.";
+          }
+          break;
+
+        case 500:
+          errorTitle = "Server Error";
+          // Handle specific database errors
+          if (error.message && error.message.includes("Duplicate entry")) {
+            if (error.message.includes("code") || error.message.includes("Unique_Code")) {
+              errorTitle = "Kode Layanan Sudah Terdaftar";
+              errorMessage = "Kode layanan yang Anda masukkan sudah terdaftar di sistem. Silakan gunakan kode lain.";
+            } else {
+              errorTitle = "Data Sudah Ada";
+              errorMessage = "Data yang Anda masukkan sudah ada di sistem.";
+            }
+          } else if (responseData?.message) {
+            errorMessage = responseData.message;
+          } else {
+            errorMessage = "Terjadi kesalahan pada server. Silakan coba lagi nanti.";
+          }
+          break;
+
+        case 503:
+          errorTitle = "Layanan Tidak Tersedia";
+          errorMessage = "Layanan sedang tidak tersedia. Silakan coba lagi nanti.";
+          break;
+
+        default:
+          if (responseData?.message) {
+            errorMessage = responseData.message;
+          }
+          break;
+      }
+    } else if (error.request) {
+      // Network error
+      errorTitle = "Koneksi Bermasalah";
+      errorMessage = "Tidak dapat terhubung ke server. Periksa koneksi internet Anda.";
+    } else if (error.message) {
+      // Handle specific error messages
+      if (error.message.includes("Duplicate entry")) {
+        if (error.message.includes("code") || error.message.includes("Unique_Code")) {
+          errorTitle = "Kode Layanan Sudah Terdaftar";
+          errorMessage = "Kode layanan yang Anda masukkan sudah terdaftar di sistem. Silakan gunakan kode lain.";
+        } else {
+          errorTitle = "Data Sudah Ada";
+          errorMessage = "Data yang Anda masukkan sudah ada di sistem.";
+        }
+      } else if (error.message.includes("timeout")) {
+        errorTitle = "Timeout";
+        errorMessage = "Permintaan memakan waktu terlalu lama. Silakan coba lagi.";
+      } else {
+        errorMessage = error.message;
+      }
+    }
+
+    toast({
+      title: errorTitle,
+      description: errorMessage,
+      variant: "destructive",
+    });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validasi form sebelum submit
+    const validationError = validateForm();
+    if (validationError) {
+      toast({
+        title: "Validasi Gagal",
+        description: validationError,
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
 
     const payload = {
       code: formData.code,
@@ -69,7 +204,7 @@ export default function NewLayanan() {
       status: Number(formData.status),
     };
 
-    console.log("Payload yang dikirim:", JSON.stringify(payload, null, 2)); // Cek di console
+    console.log("Payload yang dikirim:", JSON.stringify(payload, null, 2));
 
     try {
       await api.post("/service", payload);
@@ -81,14 +216,11 @@ export default function NewLayanan() {
       router.push("/master-data/layanan");
     } catch (error: any) {
       console.error("Error response:", error.response?.data || error.message);
-      toast({
-        title: "Gagal",
-        description: "Terjadi kesalahan saat menambahkan layanan.",
-        variant: "destructive",
-      });
+      handleApiError(error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
-
 
   return (
     <>
@@ -104,6 +236,7 @@ export default function NewLayanan() {
               id="code"
               value={formData.code}
               onChange={handleChange}
+              disabled={isSubmitting}
             />
           </div>
           <div className="flex items-center space-x-4">
@@ -115,6 +248,7 @@ export default function NewLayanan() {
               id="name"
               value={formData.name}
               onChange={handleChange}
+              disabled={isSubmitting}
             />
           </div>
           <div className="flex items-center space-x-4">
@@ -124,7 +258,7 @@ export default function NewLayanan() {
             <Select
               onValueChange={(value) => handleSelectChange("category", value)}
               value={formData.category}
-              disabled={loadingParams}
+              disabled={loadingParams || isSubmitting}
             >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Pilih kategori layanan" />
@@ -154,7 +288,7 @@ export default function NewLayanan() {
             <Select
               onValueChange={(value) => handleSelectChange("unit", value)}
               value={formData.unit}
-              disabled={loadingParams}
+              disabled={loadingParams || isSubmitting}
             >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Pilih satuan layanan" />
@@ -178,8 +312,6 @@ export default function NewLayanan() {
             </Select>
           </div>
 
-
-
           <div className="flex items-center space-x-4">
             <Label htmlFor="vacuumPrice" className="w-1/4 font-semibold">
               Harga Vacuum
@@ -188,7 +320,7 @@ export default function NewLayanan() {
               className="text-right"
               type="text"
               id="vacuumPrice"
-              disabled={formData.category === "GENERAL" || formData.category === "BLOWER"}
+              disabled={formData.category === "GENERAL" || formData.category === "BLOWER" || isSubmitting}
               value={formatRupiah(formData.vacuumPrice)}
               onChange={handleChange}
             />
@@ -204,6 +336,7 @@ export default function NewLayanan() {
               id="cleanPrice"
               value={formatRupiah(formData.cleanPrice)}
               onChange={handleChange}
+              disabled={isSubmitting}
             />
           </div>
 
@@ -213,19 +346,37 @@ export default function NewLayanan() {
               <Checkbox
                 checked={formData.status === 1}
                 onCheckedChange={(checked) => handleSelectChange("status", checked ? 1 : 0)}
+                disabled={isSubmitting}
               />
               <Label>{formData.status === 1 ? "Aktif" : "Tidak Aktif"}</Label>
             </div>
           </div>
           <div className="space-x-2 flex justify-end w-full">
-            <Button type="button" variant="outline2" onClick={() => router.back()}>
+            <Button 
+              type="button" 
+              variant="outline2" 
+              onClick={() => router.back()}
+              disabled={isSubmitting}
+            >
+              <TbArrowBack className="w-4 h-4 mr-2" />
               Kembali
             </Button>
             <Button
               type="submit"
               variant="main"
+              disabled={isSubmitting}
             >
-              Simpan
+              {isSubmitting ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  Menyimpan...
+                </>
+              ) : (
+                <>
+                  <LuSave className="w-4 h-4 mr-2" />
+                  Simpan
+                </>
+              )}
             </Button>
           </div>
         </form>
