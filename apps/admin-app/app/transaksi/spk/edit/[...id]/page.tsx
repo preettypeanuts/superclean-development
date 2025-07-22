@@ -46,7 +46,7 @@ interface Transaction {
     status: number;
     assigns: string[]; // Array of user IDs for cleaning staff
     blowers: string[]; // Array of user IDs for blower staff
-    details: TransactionDetail[];
+    details: TransactionItem[];
 }
 
 // Customer interface
@@ -62,7 +62,7 @@ interface Customer {
 }
 
 // Transaction Detail interface
-interface TransactionDetail {
+interface TransactionItem {
     id: string;
     trxNumber: string;
     serviceCategory: string;
@@ -74,6 +74,22 @@ interface TransactionDetail {
     totalPrice: number;
     promoPrice: number;
     isPl: number;
+    service: TransactionItemService;
+}
+
+interface TransactionItemService {
+    id: string;
+    code: string;
+    name: string;
+    category: string;
+    unit: string;
+    vacuumPrice: number;
+    cleanPrice: number;
+    status: number;
+    createdAt: string;
+    createdBy: string;
+    updatedAt: string;
+    updatedBy: string;
 }
 
 // Staff interface
@@ -289,19 +305,19 @@ export default function TransactionDetail() {
     }, [transaction]);
 
     // Format transaction details for table
-    const formatDetailsForTable = (details: TransactionDetail[]) => {
+    const formatDetailsForTable = (details: TransactionItem[]) => {
         return details.map((detail, index) => ({
             no: index + 1,
             kode: detail.serviceCode,
-            layanan: "",
+            layanan: detail.service.name,
             kategori: detail.serviceCategory,
             kategoriCode: detail.serviceCategory,
             jumlah: detail.quantity,
-            satuan: "", // todo: unit
+            satuan: detail.service.unit || "PCS",
             harga: detail.servicePrice,
             totalHarga: detail.totalPrice,
             promo: detail.promoPrice,
-            id: detail.id
+            id: detail.id,
         }));
     };
 
