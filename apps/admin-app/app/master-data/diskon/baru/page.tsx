@@ -85,10 +85,16 @@ export default function NewDiscount() {
         if (!formData.code.trim()) {
             newErrors.code = "Kode promo wajib diisi";
             isValid = false;
+        } else if (formData.code.length < 3) {
+            newErrors.code = "Kode promo minimal 3 karakter";
+            isValid = false;
         }
 
         if (!formData.name.trim()) {
             newErrors.name = "Nama promo wajib diisi";
+            isValid = false;
+        } else if (formData.name.length < 3) {
+            newErrors.name = "Nama promo minimal 3 karakter";
             isValid = false;
         }
 
@@ -183,15 +189,33 @@ export default function NewDiscount() {
             
             // Handle different types of API errors
             let errorMessage = "Terjadi kesalahan saat menambahkan promo.";
+            let shouldHighlightCodeField = false;
             
-            if (error.response?.data?.message) {
+            // Check for specific error messages
+            const errorMsg = error.response?.data?.message || error.message || "";
+            
+            if (errorMsg.includes("already exists") || errorMsg.includes("sudah ada") || errorMsg.includes("duplicate")) {
+                errorMessage = `Kode promo "${formData.code}" sudah digunakan. Silakan gunakan kode yang berbeda.`;
+                shouldHighlightCodeField = true;
+            } else if (error.response?.data?.message) {
                 errorMessage = error.response.data.message;
             } else if (error.response?.status === 400) {
                 errorMessage = "Data yang dikirim tidak valid. Mohon periksa kembali.";
             } else if (error.response?.status === 409) {
-                errorMessage = "Kode promo sudah digunakan. Gunakan kode yang berbeda.";
+                errorMessage = `Kode promo "${formData.code}" sudah digunakan. Silakan gunakan kode yang berbeda.`;
+                shouldHighlightCodeField = true;
+            } else if (error.response?.status === 422) {
+                errorMessage = "Data tidak dapat diproses. Periksa format data yang diinput.";
             } else if (error.response?.status >= 500) {
                 errorMessage = "Server sedang mengalami gangguan. Coba lagi nanti.";
+            }
+            
+            // Highlight the code field if it's a duplicate error
+            if (shouldHighlightCodeField) {
+                setErrors(prevErrors => ({
+                    ...prevErrors,
+                    code: `Kode promo "${formData.code}" sudah digunakan`
+                }));
             }
             
             toast({
@@ -236,7 +260,7 @@ export default function NewDiscount() {
 
                     {/* Tipe Promo */}
                     <div className="flex items-center space-x-4">
-                        <Label htmlFor="promoType" className="w-[25%] font-semibold">Tipe Potongan</Label>
+                        <Label htmlFor="promoType" className="w-[20%] font-semibold">Tipe Potongan</Label>
                         <div className="w-full">
                             <RadioGroup
                                 value={formData.promoType || "Nominal"}
