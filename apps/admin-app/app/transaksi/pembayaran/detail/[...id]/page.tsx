@@ -203,6 +203,29 @@ export default function PembayaranDetail() {
     promoAmount: detail.promoAmount ? formatRupiah(detail.promoAmount) : "-",
   })) || [];
 
+  const calculateTotals = () => {
+    const totalPrice = transaction?.details.reduce((sum, item) => sum + item.servicePrice * item.quantity, 0) || 0;
+    const totalPromo = transaction?.details.reduce((sum, item) => sum + item.promoAmount, 0) || 0;
+
+    const manualDiscount = transaction?.discountPrice || 0;
+
+    const finalPrice = totalPrice - totalPromo - manualDiscount;
+
+    // Validasi: total pengurangan tidak boleh lebih besar dari total harga
+    const totalReductions = totalPromo;
+    const isInvalidTotal = totalReductions > totalPrice;
+
+    return {
+      totalPrice,
+      totalPromo,
+      totalReductions,
+      finalPrice,
+      isInvalidTotal
+    };
+  };
+
+  const totals = calculateTotals();
+
   if (loading) {
     return (
       <Wrapper>
@@ -278,6 +301,15 @@ export default function PembayaranDetail() {
 
             {/* Kolom Kanan */}
             <div className="col-span-1 space-y-4">
+              <div className="flex items-center space-x-4">
+                <Label className="w-[40%] font-semibold">Status</Label>
+                <Input
+                  value={statusMapping[transaction.status as keyof typeof statusMapping] || "Unknown"}
+                  readOnly
+                  className="bg-muted/50 cursor-not-allowed"
+                />
+              </div>
+
               {/* Provinsi - View Only */}
               <div className="flex items-center space-x-4">
                 <Label className="w-[40%] font-semibold">Provinsi</Label>
@@ -359,15 +391,6 @@ export default function PembayaranDetail() {
                   className="bg-muted/50 cursor-not-allowed"
                 />
               </div>
-
-              <div className="flex items-center space-x-4">
-                <Label className="w-[40%] font-semibold">Status</Label>
-                <Input
-                  value={statusMapping[transaction.status as keyof typeof statusMapping] || "Unknown"}
-                  readOnly
-                  className="bg-muted/50 cursor-not-allowed"
-                />
-              </div>
             </div>
           </div>
 
@@ -398,7 +421,7 @@ export default function PembayaranDetail() {
                 <Label className="w-[40%] font-semibold">Total Harga</Label>
                 <Input
                   disabled
-                  value={formatRupiah(transaction.totalPrice)}
+                  value={formatRupiah(totals.totalPrice)}
                   className="text-right bg-muted/50 cursor-not-allowed"
                 />
               </div>
@@ -407,7 +430,7 @@ export default function PembayaranDetail() {
                 <Label className="w-[40%] font-semibold">Total Promo</Label>
                 <Input
                   disabled
-                  value={formatRupiah(transaction.promoPrice)}
+                  value={formatRupiah(totals.totalPromo)}
                   className="text-right bg-muted/50 cursor-not-allowed"
                 />
               </div>
@@ -424,7 +447,7 @@ export default function PembayaranDetail() {
               <div className="flex items-center justify-between mt-5 px-3 py-2 bg-neutral-200 rounded-lg">
                 <Label className="w-[50%] font-bold text-2xl">Total Akhir</Label>
                 <Label className="text-right font-bold text-2xl">
-                  {formatRupiah(transaction.finalPrice)}
+                  {formatRupiah(totals.finalPrice)}
                 </Label>
               </div>
             </div>
