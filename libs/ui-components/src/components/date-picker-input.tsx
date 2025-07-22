@@ -16,6 +16,7 @@ interface DatePickerInputProps {
   timeValue?: string;
   onTimeChange?: (time: string) => void;
   placeholder?: string;
+  className: string;
 }
 
 // Helper function to format date for display (DD/MM/YYYY)
@@ -40,6 +41,7 @@ function isValidDate(date: Date | undefined) {
 
 export function DatePickerInput({ 
   label, 
+  className,
   value, 
   onChange, 
   showTimeInput = false,
@@ -171,7 +173,7 @@ export function DatePickerInput({
             value={displayValue}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
-            className="bg-background pr-10"
+            className={`${className} bg-background pr-10`}
           />
           <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
