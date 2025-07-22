@@ -27,6 +27,10 @@ import { RadioGroup, RadioGroupItem } from "@ui-components/components/ui/radio-g
 import { DialogWrapper } from "libs/ui-components/src/components/dialog-wrapper";
 import { useCategoryStore, useServiceLookup } from "@shared/utils/useCategoryStore";
 import { useToast } from "@ui-components/hooks/use-toast";
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTrigger } from "@ui-components/components/ui/dialog";
+import { IoMdTrash } from "react-icons/io";
+import { DialogTitle } from "@radix-ui/react-dialog";
+
 
 // Updated Transaction interface
 interface Transaction {
@@ -86,18 +90,7 @@ interface LocationData {
     paramValue: string;
 }
 
-const DataHeaderSPKDetail = [
-    { key: "no", label: "#" },
-    { key: "kode", label: "Kode Service" },
-    { key: "layanan", label: "Layanan" },
-    { key: "kategori", label: "Kategori" },
-    { key: "jumlah", label: "Jumlah" },
-    { key: "satuan", label: "Satuan" },
-    { key: "harga", label: "Harga Satuan" },
-    { key: "totalHarga", label: "Total Harga" },
-    { key: "promo", label: "Promo" },
-    { key: "menu", label: "Actions" }
-];
+
 
 export default function TransactionDetail() {
     const pathname = usePathname();
@@ -114,9 +107,6 @@ export default function TransactionDetail() {
 
     const [cleaningStaffList, setCleaningStaffList] = useState<any[]>([]);
     const [blowerStaffList, setBlowerStaffList] = useState<any[]>([]);
-    const [loadingCleaningStaff, setLoadingCleaningStaff] = useState(false);
-    const [loadingBlowerStaff, setLoadingBlowerStaff] = useState(false);
-
 
     const [loading, setLoading] = useState(true);
     const [locationLabels, setLocationLabels] = useState({
@@ -129,10 +119,6 @@ export default function TransactionDetail() {
     const [spkItems, setSPKItems] = useState<SPKItem[]>([]);
     const [manualDiscount, setManualDiscount] = useState<number>(0);
     const [loadingPromo, setLoadingPromo] = useState(false);
-
-    console.log(spkItems);
-
-
 
     // State untuk form dialog
     const [openDialog, setOpenDialog] = useState(false);
@@ -150,7 +136,6 @@ export default function TransactionDetail() {
         promoCode: "",
         promoType: "",
     });
-
 
     // Use transaction history hook
     const { history, loading: historyLoading, error: historyError, refetch: refetchHistory } = useTransactionHistory(id);
@@ -274,11 +259,34 @@ export default function TransactionDetail() {
         switch (status) {
             case 0: return "Baru";
             case 1: return "Proses";
-            case 2: return "Selesai";
-            case 3: return "Batal";
+            case 2: return "Batal";
             default: return "Unknown";
         }
     };
+
+    const IS_NEW = transaction?.status === 0;
+    const IS_PROCESSED = transaction?.status === 1;
+    const IS_CANCELLED = transaction?.status === 2;
+
+    const DataHeaderSPKDetail = useMemo(() => {
+        const columns = [
+            { key: "no", label: "#" },
+            { key: "kode", label: "Kode Service" },
+            { key: "layanan", label: "Layanan" },
+            { key: "kategori", label: "Kategori" },
+            { key: "jumlah", label: "Jumlah" },
+            { key: "satuan", label: "Satuan" },
+            { key: "harga", label: "Harga Satuan" },
+            { key: "totalHarga", label: "Total Harga" },
+            { key: "promo", label: "Promo" },
+        ];
+
+        if (!IS_CANCELLED) {
+            columns.push({ key: "menu", label: "Actions" });
+        }
+
+        return columns;
+    }, [transaction]);
 
     // Format transaction details for table
     const formatDetailsForTable = (details: TransactionDetail[]) => {
@@ -565,7 +573,7 @@ export default function TransactionDetail() {
         });
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleUpdate = async (e: React.FormEvent) => {
         e.preventDefault();
 
         // Validasi dasar
@@ -642,6 +650,54 @@ export default function TransactionDetail() {
         }
     };
 
+    const handleProses = async () => {
+        try {
+            await api.put(`/transaction/${transaction?.id}/status`, {
+                status: 1,
+            })
+
+            router.back();
+
+            toast({
+                title: "Berhasil",
+                description: "SPK berhasil diproses!",
+                variant: "default",
+            });
+
+        } catch (error: any) {
+            console.error("Error response:", error.response?.data || error.message);
+            toast({
+                title: "Gagal",
+                description: "Terjadi kesalahan saat memproses SPK.",
+                variant: "destructive",
+            });
+
+        }
+    }
+
+    const handleCancel = async () => {
+        try {
+            await api.put(`/transaction/${transaction?.id}/status`, {
+                status: 2,
+            });
+
+            router.back();
+
+            toast({
+                title: "Berhasil",
+                description: "SPK berhasil dibatalkan!",
+                variant: "default",
+            });
+        } catch (error: any) {
+            console.error("Error response:", error.response?.data || error.message);
+            toast({
+                title: "Gagal",
+                description: "Terjadi kesalahan saat membatalkan SPK.",
+                variant: "destructive",
+            });
+        }
+    }
+
     if (loading) {
         return (
             <Wrapper>
@@ -682,7 +738,7 @@ export default function TransactionDetail() {
                         <div className="flex flex-col gap-4">
                             {/* GROUP 1 - DATA CLIENT */}
                             <form
-                                onSubmit={handleSubmit}
+                                onSubmit={handleUpdate}
                             >
                                 <div className="grid grid-cols-2 gap-20">
                                     {/* Kolom Kiri */}
@@ -803,20 +859,22 @@ export default function TransactionDetail() {
                                     <h3 className="text-lg font-semibold">Detail Layanan</h3>
                                 </div>
 
-                                <div className="flex justify-end">
-                                    <Button
-                                        icon={<LuPlus size={16} />}
-                                        className="pl-2 pr-4"
-                                        iconPosition="left"
-                                        variant="default"
-                                        onClick={() => {
-                                            resetFormDialog();
-                                            setOpenDialog(true);
-                                        }}
-                                    >
-                                        Tambah
-                                    </Button>
-                                </div>
+                                {!IS_CANCELLED && (
+                                    <div className="flex justify-end">
+                                        <Button
+                                            icon={<LuPlus size={16} />}
+                                            className="pl-2 pr-4"
+                                            iconPosition="left"
+                                            variant="default"
+                                            onClick={() => {
+                                                resetFormDialog();
+                                                setOpenDialog(true);
+                                            }}
+                                        >
+                                            Tambah
+                                        </Button>
+                                    </div>
+                                )}
                                 <SPKTableDetail
                                     data={spkItems}
                                     columns={DataHeaderSPKDetail}
@@ -852,27 +910,29 @@ export default function TransactionDetail() {
                                         <Input className="text-right" disabled value={formatRupiah(transaction.discountPrice)} />
                                     </div>
 
-                                    <div className="flex items-center space-x-4">
-                                        <Label className="w-[40%] font-semibold">Diskon Manual</Label>
-                                        <RupiahInput
-                                            placeholder="Rp. 0"
-                                            value={formatRupiah(manualDiscount)}
-                                            onValueChange={(e) => {
-                                                if (e > transaction.finalPrice) {
-                                                    toast({
-                                                        title: "Peringatan",
-                                                        description: "Diskon manual tidak boleh lebih besar dari total akhir",
-                                                        variant: "destructive",
-                                                    });
+                                    {!IS_CANCELLED && (
+                                        <div className="flex items-center space-x-4">
+                                            <Label className="w-[40%] font-semibold">Diskon Manual</Label>
+                                            <RupiahInput
+                                                placeholder="Rp. 0"
+                                                value={formatRupiah(manualDiscount)}
+                                                onValueChange={(e) => {
+                                                    if (e > transaction.finalPrice) {
+                                                        toast({
+                                                            title: "Peringatan",
+                                                            description: "Diskon manual tidak boleh lebih besar dari total akhir",
+                                                            variant: "destructive",
+                                                        });
 
-                                                    setManualDiscount(transaction.finalPrice);
-                                                } else {
-                                                    setManualDiscount(e);
-                                                }
-                                            }}
-                                            className="text-right"
-                                        />
-                                    </div>
+                                                        setManualDiscount(transaction.finalPrice);
+                                                    } else {
+                                                        setManualDiscount(e);
+                                                    }
+                                                }}
+                                                className="text-right"
+                                            />
+                                        </div>
+                                    )}
 
                                     <div className="flex items-center justify-between mt-5 px-3 py-2 bg-neutral-200 dark:bg-darkColor rounded-lg">
                                         <Label className="w-[50%] font-bold text-2xl">Total Akhir</Label>
@@ -889,31 +949,68 @@ export default function TransactionDetail() {
                                         Kembali
                                     </Button>
 
-                                    <Button onClick={() => router.back()} variant="destructive">
-                                        Batalkan
-                                    </Button>
+                                    {!IS_CANCELLED && (
+                                        <Dialog>
+                                            <DialogTrigger asChild>
+                                                <Button
+                                                    variant="destructive"
+                                                >
+                                                    Batalkan
+                                                </Button>
+                                            </DialogTrigger>
+                                            <DialogContent>
+                                                <DialogHeader className="flex items-center justify-center">
+                                                    <div className="text-5xl text-destructive bg-destructive-foreground/10 rounded-full p-2 w-fit mb-4">
+                                                        <IoMdTrash />
+                                                    </div>
+                                                    <DialogTitle>Kamu yakin membatalkan SPK?</DialogTitle>
+                                                    <DialogDescription className="text-center">
+                                                        Data akan terhapus permanen dan tidak dapat dikembalikan.
+                                                    </DialogDescription>
+                                                </DialogHeader>
+                                                <div className="flex gap-2">
+                                                    <DialogClose asChild>
+                                                        <Button variant="secondary" className="w-full">
+                                                            Batal
+                                                        </Button>
+                                                    </DialogClose>
+                                                    <DialogClose asChild>
+                                                        <Button
+                                                            variant="destructive"
+                                                            className="w-full"
+                                                            onClick={handleCancel}
+                                                        >
+                                                            Hapus
+                                                        </Button>
+                                                    </DialogClose>
+                                                </div>
+                                            </DialogContent>
+                                        </Dialog>
+                                    )}
                                 </div>
 
                                 <div className="flex justify-end mt-6 gap-2">
-                                    <Button
-                                        type="submit"
-                                        variant="main"
-                                        onClick={handleSubmit}
-                                        disabled={totals.isInvalidTotal}
-                                    >
-                                        Update Data
-                                    </Button>
-
-                                    {transaction.status === 0 && (
+                                    {!IS_CANCELLED && (
                                         <Button
-                                        type="submit"
-                                        variant="main"
-                                        onClick={handleSubmit}
-                                        disabled={totals.isInvalidTotal}
-                                    >
+                                            type="submit"
+                                            variant="main"
+                                            onClick={handleUpdate}
+                                            disabled={totals.isInvalidTotal}
+                                        >
+                                            Update Data
+                                        </Button>
+                                    )}
+
+                                    {IS_NEW && (
+                                        <Button
+                                            type="submit"
+                                            variant="main"
+                                            onClick={handleProses}
+                                            disabled={totals.isInvalidTotal}
+                                        >
                                             Proses
                                             <TbArrowBigRightFilled className="mr-2" />
-                                    </Button>
+                                        </Button>
                                     )}
                                 </div>
                             </div>
