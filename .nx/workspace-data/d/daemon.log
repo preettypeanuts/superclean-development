@@ -2143,3 +2143,427 @@ Node.js v22.11.0
 [NX v21.0.3 Daemon Server] - 2025-07-22T09:24:57.113Z - [WATCHER]: Processing file changes in outputs
 [NX v21.0.3 Daemon Server] - 2025-07-22T09:24:57.165Z - [WATCHER]: Processing file changes in outputs
 [NX v21.0.3 Daemon Server] - 2025-07-22T09:24:58.256Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:25:57.520Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:25:57.740Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:25:58.355Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:25:59.932Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:26:00.007Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:26:00.368Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:26:02.434Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:26:03.975Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:26:10.791Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:32:04.912Z - [WATCHER]: libs/shared/src/components/ui/Sidebar.tsx was modified
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:32:04.924Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:32:06.265Z - [WATCHER]: libs/shared/src/components/ui/Sidebar.tsx was modified
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:32:07.145Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:32:07.220Z - [WATCHER]: libs/shared/src/components/ui/Sidebar.tsx was modified
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:32:07.220Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:32:10.461Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:32:11.069Z - [WATCHER]: libs/shared/src/components/ui/Sidebar.tsx was modified
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:32:11.104Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:32:11.119Z - [WATCHER]: libs/shared/src/components/ui/Sidebar.tsx was modified
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:32:11.346Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:32:11.346Z - [REQUEST]: libs/shared/src/components/ui/Sidebar.tsx
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:32:11.346Z - [REQUEST]: 
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:32:11.390Z - Time taken for 'hash changed files from watcher' 9.578917000442743ms
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:32:11.639Z - Time taken for 'build-project-configs' 235.63041699957103ms
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:32:12.384Z - [SYNC]: collect registered sync generators
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:32:12.422Z - [SYNC]: project graph hash is the same, not collecting task sync generators
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:32:12.422Z - [SYNC]: nx.json hash is the same, not collecting global sync generators
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:32:12.423Z - Time taken for 'total execution time for createProjectGraph()' 735.299834000878ms
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:32:20.422Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:32:20.568Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:32:27.896Z - [WATCHER]: libs/shared/src/components/ui/Sidebar.tsx was modified
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:32:27.900Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:32:34.324Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:32:34.326Z - [REQUEST]: libs/shared/src/components/ui/Sidebar.tsx
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:32:34.326Z - [REQUEST]: 
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:32:34.341Z - Time taken for 'hash changed files from watcher' 2.8694170005619526ms
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:32:34.519Z - Time taken for 'build-project-configs' 155.5962919993326ms
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:32:34.700Z - [SYNC]: collect registered sync generators
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:32:34.701Z - [SYNC]: project graph hash is the same, not collecting task sync generators
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:32:34.701Z - [SYNC]: nx.json hash is the same, not collecting global sync generators
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:32:34.701Z - Time taken for 'total execution time for createProjectGraph()' 193.18995899986476ms
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:32:35.111Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:32:35.165Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:32:37.402Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:32:38.287Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:32:39.077Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:32:39.461Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:32:39.545Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:32:39.620Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:32:39.682Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:32:39.735Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:33:32.928Z - [WATCHER]: libs/shared/src/components/ui/Sidebar.tsx was modified
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:33:32.936Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:33:34.383Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:33:35.805Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:33:38.383Z - [WATCHER]: libs/shared/src/components/ui/Sidebar.tsx was modified
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:33:38.390Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:33:38.402Z - [WATCHER]: libs/shared/src/components/ui/Sidebar.tsx was modified
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:33:38.402Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:33:39.172Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:33:39.342Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:33:39.342Z - [REQUEST]: libs/shared/src/components/ui/Sidebar.tsx
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:33:39.342Z - [REQUEST]: 
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:33:39.351Z - Time taken for 'hash changed files from watcher' 2.2985829999670386ms
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:33:39.552Z - Time taken for 'build-project-configs' 176.29525000043213ms
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:33:39.735Z - [SYNC]: collect registered sync generators
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:33:39.737Z - [SYNC]: project graph hash is the same, not collecting task sync generators
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:33:39.737Z - [SYNC]: nx.json hash is the same, not collecting global sync generators
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:33:39.737Z - Time taken for 'total execution time for createProjectGraph()' 153.31066600047052ms
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:33:41.060Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:33:41.361Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:33:41.633Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:33:41.730Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:33:41.784Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:33:41.841Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:33:42.293Z - [WATCHER]: libs/shared/src/components/ui/Sidebar.tsx was modified
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:33:42.883Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:33:42.944Z - [WATCHER]: libs/shared/src/components/ui/Sidebar.tsx was modified
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:33:42.945Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:33:45.060Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:33:46.040Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:33:46.134Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:33:49.333Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:33:49.343Z - [REQUEST]: libs/shared/src/components/ui/Sidebar.tsx
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:33:49.343Z - [REQUEST]: 
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:33:49.361Z - Time taken for 'hash changed files from watcher' 3.4467499991878867ms
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:33:49.750Z - Time taken for 'build-project-configs' 354.24245799984783ms
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:33:50.085Z - [SYNC]: collect registered sync generators
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:33:50.085Z - [SYNC]: project graph hash is the same, not collecting task sync generators
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:33:50.085Z - [SYNC]: nx.json hash is the same, not collecting global sync generators
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:33:50.086Z - Time taken for 'total execution time for createProjectGraph()' 340.85820800065994ms
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:33:56.344Z - [WATCHER]: libs/shared/src/components/ui/Sidebar.tsx was modified
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:33:56.511Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:34:01.257Z - [WATCHER]: libs/shared/src/components/ui/Sidebar.tsx was modified
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:34:01.276Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:34:02.938Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:34:02.940Z - [REQUEST]: libs/shared/src/components/ui/Sidebar.tsx
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:34:02.940Z - [REQUEST]: 
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:34:02.996Z - Time taken for 'hash changed files from watcher' 3.2512090001255274ms
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:34:03.488Z - Time taken for 'build-project-configs' 462.261208999902ms
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:34:03.553Z - [WATCHER]: libs/shared/src/components/ui/Sidebar.tsx was modified
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:34:03.553Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:34:03.804Z - [SYNC]: collect registered sync generators
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:34:03.805Z - [SYNC]: project graph hash is the same, not collecting task sync generators
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:34:03.805Z - [SYNC]: nx.json hash is the same, not collecting global sync generators
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:34:03.807Z - Time taken for 'total execution time for createProjectGraph()' 331.87220800016075ms
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:34:06.042Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:34:07.866Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:34:09.523Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:34:09.975Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:34:09.975Z - [REQUEST]: libs/shared/src/components/ui/Sidebar.tsx
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:34:09.975Z - [REQUEST]: 
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:34:10.007Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:34:10.011Z - Time taken for 'hash changed files from watcher' 2.251582999713719ms
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:34:10.546Z - Time taken for 'build-project-configs' 535.2154580000788ms
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:34:10.562Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:34:10.722Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:34:10.770Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:34:11.008Z - [SYNC]: collect registered sync generators
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:34:11.019Z - [SYNC]: project graph hash is the same, not collecting task sync generators
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:34:11.019Z - [SYNC]: nx.json hash is the same, not collecting global sync generators
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:34:11.020Z - Time taken for 'total execution time for createProjectGraph()' 392.91741700004786ms
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:34:11.020Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:34:27.017Z - [WATCHER]: libs/shared/src/components/ui/Sidebar.tsx was modified
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:34:27.037Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:34:30.833Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:34:33.486Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:34:33.491Z - [REQUEST]: libs/shared/src/components/ui/Sidebar.tsx
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:34:33.492Z - [REQUEST]: 
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:34:33.541Z - Time taken for 'hash changed files from watcher' 8.611124999821186ms
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:34:34.190Z - Time taken for 'build-project-configs' 636.269999999553ms
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:34:35.277Z - [SYNC]: collect registered sync generators
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:34:35.278Z - [SYNC]: project graph hash is the same, not collecting task sync generators
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:34:35.278Z - [SYNC]: nx.json hash is the same, not collecting global sync generators
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:34:35.302Z - Time taken for 'total execution time for createProjectGraph()' 1107.5453749997541ms
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:34:38.568Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:34:55.126Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:34:55.159Z - [WATCHER]: libs/shared/src/components/ui/Sidebar.tsx was modified
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:34:59.791Z - [WATCHER]: libs/shared/src/components/ui/Sidebar.tsx was modified
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:34:59.797Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:34:59.829Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:35:01.572Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:35:01.573Z - [REQUEST]: libs/shared/src/components/ui/Sidebar.tsx
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:35:01.573Z - [REQUEST]: 
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:35:01.590Z - Time taken for 'hash changed files from watcher' 3.6995409997180104ms
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:35:01.809Z - Time taken for 'build-project-configs' 204.65245799999684ms
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:35:01.969Z - [SYNC]: collect registered sync generators
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:35:01.973Z - [SYNC]: project graph hash is the same, not collecting task sync generators
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:35:01.973Z - [SYNC]: nx.json hash is the same, not collecting global sync generators
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:35:01.974Z - Time taken for 'total execution time for createProjectGraph()' 156.64583399984986ms
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:35:18.301Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:35:30.530Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:35:32.244Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:35:34.258Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:35:40.015Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:35:40.443Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:35:42.462Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:35:42.516Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:35:42.800Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:35:42.934Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:35:43.300Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:35:47.366Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:35:47.537Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:35:47.938Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:35:48.341Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:35:48.991Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:35:49.048Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:35:49.298Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:35:49.454Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:35:49.942Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:35:49.994Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:35:51.968Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:35:55.321Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:36:10.302Z - [WATCHER]: libs/shared/src/components/ui/Sidebar.tsx was modified
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:36:10.389Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:36:13.556Z - [WATCHER]: libs/shared/src/components/ui/Sidebar.tsx was modified
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:36:13.556Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:36:16.843Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:36:16.844Z - [REQUEST]: libs/shared/src/components/ui/Sidebar.tsx
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:36:16.844Z - [REQUEST]: 
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:36:16.962Z - Time taken for 'hash changed files from watcher' 13.207167000509799ms
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:36:18.716Z - Time taken for 'build-project-configs' 1523.5494999997318ms
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:36:18.928Z - [SYNC]: collect registered sync generators
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:36:18.929Z - [SYNC]: project graph hash is the same, not collecting task sync generators
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:36:18.929Z - [SYNC]: nx.json hash is the same, not collecting global sync generators
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:36:18.931Z - Time taken for 'total execution time for createProjectGraph()' 348.05879199970514ms
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:36:24.909Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:36:37.364Z - [WATCHER]: libs/shared/src/components/ui/Sidebar.tsx was modified
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:36:37.377Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:36:39.146Z - [WATCHER]: libs/shared/src/components/ui/Sidebar.tsx was modified
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:36:39.465Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:36:39.528Z - [WATCHER]: libs/shared/src/components/ui/Sidebar.tsx was modified
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:36:39.529Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:36:43.895Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:36:43.904Z - [REQUEST]: libs/shared/src/components/ui/Sidebar.tsx
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:36:43.904Z - [REQUEST]: 
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:36:44.159Z - Time taken for 'hash changed files from watcher' 59.55324999988079ms
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:36:45.344Z - Time taken for 'build-project-configs' 1039.9152499996126ms
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:36:46.489Z - [SYNC]: collect registered sync generators
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:36:46.490Z - [SYNC]: project graph hash is the same, not collecting task sync generators
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:36:46.490Z - [SYNC]: nx.json hash is the same, not collecting global sync generators
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:36:47.196Z - Time taken for 'total execution time for createProjectGraph()' 1045.7403750000522ms
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:36:47.543Z - [WATCHER]: libs/shared/src/components/ui/Sidebar.tsx was modified
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:36:47.670Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:36:47.729Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:36:47.731Z - [WATCHER]: libs/shared/src/components/ui/Sidebar.tsx was modified
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:36:50.467Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:36:50.520Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:36:50.572Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:36:50.843Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:36:52.254Z - [WATCHER]: libs/shared/src/components/ui/Sidebar.tsx was modified
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:36:52.576Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:36:52.634Z - [WATCHER]: libs/shared/src/components/ui/Sidebar.tsx was modified
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:36:52.635Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:36:54.146Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:36:54.288Z - [REQUEST]: libs/shared/src/components/ui/Sidebar.tsx
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:36:54.288Z - [REQUEST]: 
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:36:54.339Z - Time taken for 'hash changed files from watcher' 10.0725840004161ms
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:36:54.997Z - Time taken for 'build-project-configs' 629.3703330000862ms
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:36:55.333Z - [SYNC]: collect registered sync generators
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:36:55.334Z - [SYNC]: project graph hash is the same, not collecting task sync generators
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:36:55.336Z - [SYNC]: nx.json hash is the same, not collecting global sync generators
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:36:55.337Z - Time taken for 'total execution time for createProjectGraph()' 322.63716599997133ms
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:36:58.754Z - [WATCHER]: libs/shared/src/components/ui/Sidebar.tsx was modified
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:36:58.794Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:36:59.195Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:36:59.472Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:36:59.543Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:37:01.436Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:37:05.283Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:37:05.287Z - [REQUEST]: libs/shared/src/components/ui/Sidebar.tsx
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:37:05.288Z - [REQUEST]: 
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:37:05.358Z - Time taken for 'hash changed files from watcher' 55.33212499972433ms
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:37:05.647Z - Time taken for 'build-project-configs' 239.48775000032037ms
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:37:05.952Z - [SYNC]: collect registered sync generators
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:37:05.954Z - [SYNC]: project graph hash is the same, not collecting task sync generators
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:37:05.954Z - [SYNC]: nx.json hash is the same, not collecting global sync generators
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:37:05.954Z - Time taken for 'total execution time for createProjectGraph()' 321.884791999124ms
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:37:12.246Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:37:12.291Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:37:12.452Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:37:30.183Z - [WATCHER]: libs/shared/src/components/ui/Sidebar.tsx was modified
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:37:31.073Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:37:32.017Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:37:36.542Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:37:37.577Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:37:37.578Z - [REQUEST]: libs/shared/src/components/ui/Sidebar.tsx
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:37:37.578Z - [REQUEST]: 
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:37:37.721Z - Time taken for 'hash changed files from watcher' 53.93283300008625ms
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:37:39.014Z - Time taken for 'build-project-configs' 1173.0500409994274ms
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:37:39.939Z - [SYNC]: collect registered sync generators
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:37:39.943Z - [SYNC]: project graph hash is the same, not collecting task sync generators
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:37:39.944Z - [SYNC]: nx.json hash is the same, not collecting global sync generators
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:37:39.950Z - Time taken for 'total execution time for createProjectGraph()' 989.805165999569ms
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:37:41.429Z - [WATCHER]: libs/shared/src/components/ui/Sidebar.tsx was modified
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:37:42.478Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:37:42.539Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:37:42.545Z - [WATCHER]: libs/shared/src/components/ui/Sidebar.tsx was modified
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:37:43.853Z - [WATCHER]: libs/shared/src/components/ui/Sidebar.tsx was modified
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:37:44.502Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:37:44.565Z - [WATCHER]: libs/shared/src/components/ui/Sidebar.tsx was modified
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:37:44.566Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:37:47.776Z - [WATCHER]: libs/shared/src/components/ui/Sidebar.tsx was modified
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:37:47.793Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:37:48.886Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:37:48.889Z - [REQUEST]: libs/shared/src/components/ui/Sidebar.tsx
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:37:48.889Z - [REQUEST]: 
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:37:48.993Z - Time taken for 'hash changed files from watcher' 8.072958000004292ms
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:37:49.317Z - Time taken for 'build-project-configs' 309.5042920000851ms
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:37:49.574Z - [SYNC]: collect registered sync generators
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:37:49.578Z - [SYNC]: project graph hash is the same, not collecting task sync generators
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:37:49.578Z - [SYNC]: nx.json hash is the same, not collecting global sync generators
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:37:49.579Z - Time taken for 'total execution time for createProjectGraph()' 249.7398749999702ms
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:38:10.615Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:38:10.780Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:38:10.870Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:38:14.682Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:38:16.401Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:38:16.573Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:38:30.426Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:38:36.119Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:38:36.163Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:39:30.603Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:39:30.878Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:39:31.184Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:39:37.035Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:39:37.728Z - [WATCHER]: libs/shared/src/components/ui/Sidebar.tsx was modified
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:39:38.206Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:39:40.197Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:39:43.807Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:39:44.886Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:39:44.886Z - [REQUEST]: libs/shared/src/components/ui/Sidebar.tsx
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:39:44.886Z - [REQUEST]: 
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:39:45.017Z - Time taken for 'hash changed files from watcher' 29.483958000317216ms
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:39:45.810Z - Time taken for 'build-project-configs' 758.2496250001714ms
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:39:45.811Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:39:46.357Z - [SYNC]: collect registered sync generators
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:39:46.359Z - [SYNC]: project graph hash is the same, not collecting task sync generators
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:39:46.359Z - [SYNC]: nx.json hash is the same, not collecting global sync generators
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:39:46.360Z - Time taken for 'total execution time for createProjectGraph()' 548.1770830005407ms
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:40:00.774Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:40:02.587Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:40:20.964Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:40:21.533Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:40:21.586Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:40:28.644Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:40:34.402Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:40:58.269Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:40:58.411Z - [WATCHER]: libs/shared/src/components/ui/Sidebar.tsx was modified
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:41:00.000Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:41:03.804Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:41:04.021Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:41:04.975Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:41:04.980Z - [REQUEST]: libs/shared/src/components/ui/Sidebar.tsx
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:41:04.981Z - [REQUEST]: 
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:41:05.023Z - Time taken for 'hash changed files from watcher' 14.752000000327826ms
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:41:05.382Z - Time taken for 'build-project-configs' 345.1730420002714ms
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:41:05.806Z - [SYNC]: collect registered sync generators
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:41:05.808Z - [SYNC]: project graph hash is the same, not collecting task sync generators
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:41:05.808Z - [SYNC]: nx.json hash is the same, not collecting global sync generators
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:41:05.810Z - Time taken for 'total execution time for createProjectGraph()' 398.7023750003427ms
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:42:02.538Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:42:02.980Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:42:05.764Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:42:06.101Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:42:06.906Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:42:10.309Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:43:42.021Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:43:59.204Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:44:16.305Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:44:20.433Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:45:20.028Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:45:20.124Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:45:20.318Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:45:20.677Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:45:21.275Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:45:21.381Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:45:21.439Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:45:21.522Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:45:21.607Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:45:21.810Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:45:21.867Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:45:22.465Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:45:22.530Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:45:23.094Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:45:24.751Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:45:24.806Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:45:26.066Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:45:28.863Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:45:32.036Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:49:43.307Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:49:43.401Z - [WATCHER]: apps/admin-app/app/master-data/pelanggan/baru/page.tsx was modified
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:49:49.844Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:49:49.850Z - [REQUEST]: apps/admin-app/app/master-data/pelanggan/baru/page.tsx
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:49:49.850Z - [REQUEST]: 
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:49:49.974Z - Time taken for 'hash changed files from watcher' 13.946999999694526ms
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:49:50.413Z - Time taken for 'build-project-configs' 460.17845799960196ms
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:49:50.625Z - [SYNC]: collect registered sync generators
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:49:50.628Z - [SYNC]: project graph hash is the same, not collecting task sync generators
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:49:50.628Z - [SYNC]: nx.json hash is the same, not collecting global sync generators
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:49:50.629Z - Time taken for 'total execution time for createProjectGraph()' 206.1733329994604ms
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:49:53.954Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:49:57.995Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:50:55.399Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:50:55.613Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:50:56.182Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:50:57.217Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:50:57.849Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:50:58.609Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:51:00.366Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:51:01.059Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:51:01.953Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:51:02.598Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:51:02.775Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:51:05.032Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:51:05.284Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:51:05.373Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:51:05.956Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:51:06.068Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:51:06.418Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:51:06.494Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:51:06.641Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:51:06.971Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:51:07.909Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:51:09.001Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:51:12.838Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:51:19.576Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:58:10.387Z - [WATCHER]: apps/admin-app/app/master-data/pelanggan/baru/page.tsx was modified
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:58:10.399Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:58:16.869Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:58:16.876Z - [REQUEST]: apps/admin-app/app/master-data/pelanggan/baru/page.tsx
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:58:16.876Z - [REQUEST]: 
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:58:16.918Z - Time taken for 'hash changed files from watcher' 18.998999999836087ms
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:58:17.328Z - Time taken for 'build-project-configs' 374.94824999943376ms
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:58:17.736Z - [SYNC]: collect registered sync generators
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:58:17.741Z - [SYNC]: project graph hash is the same, not collecting task sync generators
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:58:17.742Z - [SYNC]: nx.json hash is the same, not collecting global sync generators
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:58:17.743Z - Time taken for 'total execution time for createProjectGraph()' 332.90708300005645ms
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:58:32.715Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:58:33.436Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:58:33.514Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:58:49.008Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:58:49.874Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:59:06.613Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:59:08.922Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:59:09.003Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:59:09.078Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:59:16.882Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:59:17.041Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:59:54.056Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:59:54.118Z - [WATCHER]: apps/admin-app/app/master-data/pelanggan/baru/page.tsx was modified
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:59:57.109Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:59:59.897Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T09:59:59.964Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T10:00:00.030Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-07-22T10:00:00.556Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX v21.0.3 Daemon Server] - 2025-07-22T10:00:00.557Z - [REQUEST]: apps/admin-app/app/master-data/pelanggan/baru/page.tsx
+[NX v21.0.3 Daemon Server] - 2025-07-22T10:00:00.557Z - [REQUEST]: 
+[NX v21.0.3 Daemon Server] - 2025-07-22T10:00:00.601Z - Time taken for 'hash changed files from watcher' 11.63616600073874ms
+[NX v21.0.3 Daemon Server] - 2025-07-22T10:00:01.597Z - Time taken for 'build-project-configs' 942.1639580000192ms
+[NX v21.0.3 Daemon Server] - 2025-07-22T10:00:02.015Z - [SYNC]: collect registered sync generators
+[NX v21.0.3 Daemon Server] - 2025-07-22T10:00:02.016Z - [SYNC]: project graph hash is the same, not collecting task sync generators
+[NX v21.0.3 Daemon Server] - 2025-07-22T10:00:02.016Z - [SYNC]: nx.json hash is the same, not collecting global sync generators
+[NX v21.0.3 Daemon Server] - 2025-07-22T10:00:02.017Z - Time taken for 'total execution time for createProjectGraph()' 417.6822920003906ms

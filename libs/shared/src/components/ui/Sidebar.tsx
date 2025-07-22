@@ -144,7 +144,7 @@ export const Sidebar = () => {
                                             {!item.subs?.length ? (
                                                 <Link
                                                     href={item.path}
-                                                    className={`capitalize py-2 px-3 rounded-lg hover:bg-mainColor/50 duration-150 flex items-center gap-2 w-full 
+                                                    className={`capitalize font-semibold py-2 px-3 rounded-lg hover:bg-mainColor/50 duration-150 flex items-center gap-2 w-full 
                                                                 ${path === item.path ? "bg-mainColor/50 dark:bg-mainColor/30" : ""} 
                                                                 ${!isExpanded ? "justify-center w-9 h-9 p-5 mx-auto" : "justify-start"}`}
                                                 >
@@ -160,7 +160,7 @@ export const Sidebar = () => {
                                                         e.preventDefault();
                                                         toggleSubmenu(item.label);
                                                     }}
-                                                    className={`${path.startsWith(item.path) && "bg-mainColor/50 dark:bg-mainColor/30"} capitalize group py-2 px-3 rounded-lg hover:bg-mainColor/50 duration-150 flex items-center gap-2 w-full 
+                                                    className={`${path.startsWith(item.path) && "bg-mainColor/50 dark:bg-mainColor/30"} font-semibold capitalize group py-2 px-3 rounded-lg hover:bg-mainColor/50 duration-150 flex items-center gap-2 w-full 
                                                               ${!isExpanded ? "justify-center w-9 h-9 p-5 mx-auto" : "justify-between"}`}
                                                 >
                                                     <div className={` flex items-center gap-2 relative`}>
@@ -173,7 +173,7 @@ export const Sidebar = () => {
 
                                                     {item.subs.length > 1 && (
                                                         <IoIosArrowDown
-                                                            className={`text-neutral-400 transition-transform duration-200 
+                                                            className={`text-darkColor dark:text-lightColor transition-transform duration-200 
                                                                         ${openSubmenus[item.label] ? "rotate-180" : ""} ${!isExpanded ? "hidden" : "block"}`}
                                                         />
                                                     )}
@@ -188,7 +188,7 @@ export const Sidebar = () => {
                                                                 href={sub.path}
                                                                 className="capitalize group ml-2 flex items-center text-sm text-neutral-600 dark:text-neutral-300 duration-150"
                                                             >
-                                                                <p className={`${path.startsWith(sub.path) && "bg-mainColor/50 dark:bg-mainColor/30"} group-hover:bg-mainColor/20 px-2 py-2 w-full rounded-lg duration-150`}>
+                                                                <p className={`${path.startsWith(sub.path) && "bg-mainColor/50 dark:bg-mainColor/30 font-semibold text-neutral-800 dark:text-neutral-100"} group-hover:bg-mainColor/20 px-2 py-2 w-full rounded-lg duration-150`}>
                                                                     {sub.name}
                                                                 </p>
                                                             </Link>
