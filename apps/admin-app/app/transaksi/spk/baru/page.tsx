@@ -27,7 +27,7 @@ import { Check, ChevronsUpDown, Cross, Plus, PlusCircle, Search, AlertTriangle }
 import { DatePicker } from "@ui-components/components/date-picker";
 
 // Interface untuk SPK Item (tanpa total)
-interface SPKItem {
+export interface SPKItem {
     id: string;
     kode: string;
     layanan: string;
@@ -43,7 +43,7 @@ interface SPKItem {
 }
 
 // Interface untuk promo response
-interface PromoResponse {
+export interface PromoResponse {
     amount: number;
     code: string;
     type: string;
@@ -553,8 +553,6 @@ export default function NewSPK() {
             }))
         };
 
-        console.log("Payload yang dikirim:", JSON.stringify(submitData, null, 2));
-
         try {
             await api.post("/transaction", submitData);
             toast({
@@ -594,9 +592,9 @@ export default function NewSPK() {
     // Hook untuk service lookup berdasarkan kategori yang dipilih
     const { services, loading: loadingServices } = useServiceLookup(formDataTable.category);
 
-    console.log('===========service=========================');
-    console.log(services);
-    console.log('====================================');
+    // console.log('===========service=========================');
+    // console.log(services);
+    // console.log('====================================');
 
     // Updated handleChangeTable function untuk handle promo fetching
     const handleChangeTable = async (field: string, value: any) => {
@@ -1018,8 +1016,6 @@ export default function NewSPK() {
                                 >
                                     Simpan
                                 </Button>
-
-
                             </div>
                         </div>
                     </TabsContent>
@@ -1122,7 +1118,7 @@ export default function NewSPK() {
                                         )}
                                     </SelectGroup>
                                 </SelectContent>
-                                
+
                             </Select>
                         </div>
 
@@ -1158,6 +1154,7 @@ export default function NewSPK() {
                         <div className="flex items-center space-x-4">
                             <Label htmlFor="harga" className="w-1/4 font-semibold">Harga</Label>
                             <RupiahInput
+                                disabled
                                 placeholder="Rp. 0"
                                 value={formDataTable.harga}
                                 onValueChange={(value) => handleChangeTable("harga", value)}

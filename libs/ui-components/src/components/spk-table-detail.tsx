@@ -44,12 +44,12 @@ interface DataTableProps {
     onEdit?: (item: SPKItem) => void;
 }
 
-export const SPKTableDetail: React.FC<DataTableProps> = ({ 
-    data, 
-    columns, 
-    fetchData, 
+export const SPKTableDetail: React.FC<DataTableProps> = ({
+    data,
+    columns,
+    fetchData,
     onDelete,
-    onEdit 
+    onEdit
 }) => {
     const { toast } = useToast();
 
@@ -60,7 +60,7 @@ export const SPKTableDetail: React.FC<DataTableProps> = ({
             console.log(`Menghapus SPK dengan ID: ${item.id}`);
             toast({
                 title: "Sukses!",
-                description: `SPK ${item.kode} berhasil dihapus.`,
+                description: `SPK ${item?.kode} berhasil dihapus.`,
                 variant: "default",
             });
             fetchData();
@@ -89,12 +89,15 @@ export const SPKTableDetail: React.FC<DataTableProps> = ({
                 return `${item.jumlah} ${item.satuan}`;
             case "harga":
             case "promo":
+            case "servicePrice":
+            case "totalPrice":
+            case "totalHarga":
                 return formatRupiah(item[columnKey as keyof SPKItem] as number);
             case "menu":
                 return (
                     <div className="w-fit flex gap-2">
-                        <Button 
-                            size="icon" 
+                        <Button
+                            size="icon"
                             variant="main"
                             onClick={() => handleEdit(item)}
                         >
@@ -161,8 +164,8 @@ export const SPKTableDetail: React.FC<DataTableProps> = ({
             <TableBody>
                 {data.length === 0 ? (
                     <TableRow>
-                        <TableCell 
-                            colSpan={columns.length} 
+                        <TableCell
+                            colSpan={columns.length}
                             className="text-center py-8 text-muted-foreground"
                         >
                             Belum ada data SPK. Klik tombol "Tambah" untuk menambahkan item.
@@ -174,18 +177,19 @@ export const SPKTableDetail: React.FC<DataTableProps> = ({
                             key={item.id}
                             className={rowIndex % 2 === 0 ? "" : "bg-neutral-300/20 dark:bg-neutral-500/20"}
                         >
-                            {columns.map((header) => (
-                                <TableCell 
-                                    key={header.key} 
-                                    className={`${header.key === "menu" ? "!w-fit" : ""} ${
-                                        header.key === "harga" || header.key === "promo" 
-                                            ? "text-right" 
+                            {columns.map((header) => {
+                                return (
+                                    <TableCell
+                                        key={header.key}
+                                        className={`${header.key === "menu" ? "!w-fit" : ""} ${header.key === "harga" || header.key === "promo"
+                                            ? "text-right"
                                             : ""
-                                    }`}
-                                >
-                                    {renderCellValue(item, header.key, rowIndex)}
-                                </TableCell>
-                            ))}
+                                            }`}
+                                    >
+                                        {renderCellValue(item, header.key, rowIndex)}
+                                    </TableCell>
+                                )
+                            })}
                         </TableRow>
                     ))
                 )}
