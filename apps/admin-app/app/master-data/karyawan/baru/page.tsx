@@ -108,7 +108,7 @@ export default function NewKaryawan() {
                             disabled={loadingParams}
                         >
                             <SelectTrigger className="w-full">
-                                <SelectValue placeholder={loadingParams ? "Memuat cabang..." : "Pilih lokasi cabang"} />
+                                <SelectValue placeholder={loadingParams ? "Memuat cabang..." : "Pilih Lokasi Cabang"} />
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectGroup>
@@ -136,7 +136,7 @@ export default function NewKaryawan() {
                             disabled={loadingParams}
                         >
                             <SelectTrigger className="w-full">
-                                <SelectValue placeholder={loadingParams ? "Memuat role..." : "Pilih akses pengguna"} />
+                                <SelectValue placeholder={loadingParams ? "Memuat role..." : "Pilih Akses Pengguna"} />
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectGroup>

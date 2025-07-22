@@ -156,7 +156,7 @@ export function ChartKaryawan() {
 
   return (
     <Card className="flex flex-col h-full relative">
-      <div className="absolute top-0 gradient-blur-to-b h-[25%] bg-gradient-to-b from-white/50 via-white/30 dark:from-black/50 dark:via-black/30 to-transparent z-20 rounded-t-3xl"></div>
+      <div className="absolute top-0 gradient-blur-to-b h-[25%] bg-gradient-to-b from-white/50 via-white/30 dark:from-black/50 dark:via-black/30 to-transparent z-20 rounded-t-md"></div>
 
       <CardHeader className="z-30 absolute top-0 w-full">
         <CardTitle className="text-[18px] font-bold">Ringkasan Target Teknisi</CardTitle>
@@ -198,7 +198,7 @@ export function ChartKaryawan() {
                     </div>
                     <div className={`${el.fill} rounded-b-md px-3 py-1.5 bg-opacity-15 flex items-center gap-1 dark:border`}>
                       <Progress value={parseFloat(el.percentage)} className="h-5" indicatorClassName={`${el.fill} !rounded-l-md`} />
-                      <div className="text-[13px] font-medium text-neutral-800 dark:text-neutral-200 px-[5px] py-[4px] min-w-[35px] flex items-center justify-center h-full rounded-md">
+                      <div className="text-[13px] font-medium text-neutral-900 dark:text-neutral-100 px-[5px] py-[4px] min-w-[35px] flex items-center justify-center h-full rounded-md">
                         {el.percentage}%
                       </div>
                     </div>

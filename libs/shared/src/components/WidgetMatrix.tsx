@@ -16,6 +16,7 @@ interface OrderStat {
   lastWeek: number | null;
   icon: JSX.Element;
   color: string;
+  redirect: string;
 }
 
 interface WidgetMatrixProps {
@@ -28,17 +29,22 @@ export const WidgetMatrix: React.FC<WidgetMatrixProps> = ({ data }) => {
       {data.map((stat, index) => {
         const trend = stat.lastWeek !== null ? getTrend(stat.value, stat.lastWeek) : { trend: "stable", color: "", icon: <FaMinus />, percentage: "0.0%" };
         return (
-          <Card key={index} className="flex flex-col justify-between gap-4 px-3 py-3">
-            <div className={`flex items-center gap-2  ${stat.color} bg-opacity-20 rounded-full pr-2`}>
-              <div className={`p-2 text-lg rounded-full ${stat.color} w-fit h-fit text-white`}>
-                {stat.icon}
+          <a
+            key={index}
+            href={stat.redirect}
+          >
+            <Card className="flex flex-col justify-between gap-4 px-3 py-3 duration-300 ease-in-out hover:scale-95 hover:shadow-custom">
+              <div className={`flex items-center gap-2  ${stat.color} bg-opacity-20 rounded-full pr-2`}>
+                <div className={`p-2 text-lg rounded-full ${stat.color} w-fit h-fit text-white`}>
+                  {stat.icon}
+                </div>
+                <h3 className="text-sm font-medium">{stat.title}</h3>
               </div>
-              <h3 className="text-sm font-medium">{stat.title}</h3>
-            </div>
-            <p className={`text-3xl font-semibold flex items-center gap-1 pb-1 pl-[2px]`}>
-              {stat.value}
-            </p>
-          </Card>
+              <p className={`text-3xl font-semibold flex items-center gap-1 pb-1 pl-[2px]`}>
+                {stat.value}
+              </p>
+            </Card>
+          </a>
         );
       })}
     </div>

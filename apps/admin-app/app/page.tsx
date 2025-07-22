@@ -54,6 +54,7 @@ export default function Dashboard() {
 
     const totalSPK = [
       {
+        redirect: "/transaksi/spk",
         title: "Total SPK",
         value: transactionData.all,
         lastWeek: null,
@@ -64,6 +65,7 @@ export default function Dashboard() {
 
     const doneOrder = [
       {
+        redirect: "/transaksi/spk",
         title: "Order Diselesaikan",
         value: transactionData.done,
         lastWeek: null,
@@ -74,7 +76,8 @@ export default function Dashboard() {
 
     const cancelOrder = [
       {
-        title: "Orderan Dibatalkan",
+        redirect: "/transaksi/spk",
+        title: "Order Dibatalkan",
         value: transactionData.cancel,
         lastWeek: null,
         icon: <TiCancel />,
@@ -84,7 +87,8 @@ export default function Dashboard() {
 
     const onGoingOrder = [
       {
-        title: "Orderan Berjalan",
+        redirect: "/transaksi/spk",
+        title: "Order Berjalan",
         value: transactionData.ongoing,
         lastWeek: null,
         icon: <FaPersonRunning />,
@@ -94,6 +98,7 @@ export default function Dashboard() {
 
     const waitPayment = [
       {
+        redirect: "/transaksi/spk",
         title: "Menunggu Pembayaran",
         value: transactionData.payment,
         lastWeek: null,

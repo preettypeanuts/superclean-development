@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { InquiryTransaksiTable } from "@ui-components/components/inquiry-transaksi-table";
 import { DatePicker } from "@ui-components/components/date-picker";
 import { Wrapper } from "@shared/components/Wrapper";
@@ -67,6 +68,9 @@ export default function InquiryTransaksiPage() {
     createdAt?: string;
   }
 
+  const searchParams = useSearchParams();
+  const searchQueryFromUrl = searchParams.get('search') || "";
+
   const [dataTransaksi, setDataTransaksi] = useState<TransactionData[]>([]);
   const [loading, setLoading] = useState(true);
   const [isExporting, setIsExporting] = useState(false);
@@ -104,6 +108,14 @@ export default function InquiryTransaksiPage() {
   const { branchMapping, loading: loadingParams } = useParameterStore();
 
   const totalPages = Math.max(1, Math.ceil(totalData / limit));
+
+  // Initialize search query from URL parameter
+  useEffect(() => {
+    if (searchQueryFromUrl) {
+      setSearchQuery(searchQueryFromUrl);
+      setTempSearchQuery(searchQueryFromUrl);
+    }
+  }, [searchQueryFromUrl]);
 
   const fetchInquiryTransaksi = async (reset: boolean = false) => {
     let page = currentPage.page;
@@ -234,18 +246,22 @@ export default function InquiryTransaksiPage() {
     }
   };
 
+  // Fetch data when component mounts or dependencies change
   useEffect(() => {
     if (currentPage.reset) return;
     fetchInquiryTransaksi();
   }, [
-    // searchQuery,
-    // statusFilter,
-    // branchFilter,
+    searchQuery, // Now we watch searchQuery to auto-fetch when it changes from URL
     currentPage,
     limit,
-    // startDate,
-    // endDate
   ]);
+
+  // Auto-fetch when search query is set from URL
+  useEffect(() => {
+    if (searchQueryFromUrl && searchQuery === searchQueryFromUrl) {
+      fetchInquiryTransaksi();
+    }
+  }, [searchQuery, searchQueryFromUrl]);
 
   useEffect(() => {
     // Hanya fetch jika data berubah dari useEffect, bukan dari handleApplyFilters
@@ -324,9 +340,15 @@ export default function InquiryTransaksiPage() {
     branchId: branchMapping[item.branchId] || "Tidak Diketahui",
   }));
 
+  // Display search info if coming from URL
+  const showSearchInfo = searchQueryFromUrl && searchQuery === searchQueryFromUrl;
+
   return (
     <>
-      <Breadcrumbs label="Inquiry Transaksi" count={totalData} />
+      <Breadcrumbs 
+        label="Inquiry Transaksi" 
+        count={totalData} 
+      />
       <Wrapper>
         <div className="space-y-4">
           <div className="flex items-center justify-between gap-2">
@@ -337,9 +359,6 @@ export default function InquiryTransaksiPage() {
                   placeholder="No Transaksi, Nama Pelanggan, No. Whatsapp"
                   value={tempSearchQuery}
                   onChange={(e) => setTempSearchQuery(e.target.value)}
-                  // onKeyDown={(e) => {
-                  //   if (e.key === "Enter") handleSearch();
-                  // }}
                   className="w-[30lvw]"
                   icon={<Search size={16} />}
                 />
@@ -498,7 +517,7 @@ export default function InquiryTransaksiPage() {
               data={processedTransaksi}
               columns={columns}
               key={`${currentPage}-${limit}`}
-                  currentPage={currentPage.page}
+              currentPage={currentPage.page}
               limit={limit}
               fetchData={fetchInquiryTransaksi}
             />

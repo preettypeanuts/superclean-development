@@ -1,5 +1,5 @@
 "use client"
-import React from 'react';
+import React, { useState } from 'react';
 import {
     Breadcrumb,
     BreadcrumbItem,
@@ -8,11 +8,12 @@ import {
     BreadcrumbPage,
     BreadcrumbSeparator,
 } from "../../../../ui-components/src/components/ui/breadcrumb"
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { Input } from '../../../../ui-components/src/components/ui/input';
 import { Search } from 'lucide-react';
 import { Button } from '../../../../ui-components/src/components/ui/button';
 import { RiNotification4Fill } from 'react-icons/ri';
+import Link from 'next/link';
 
 type HeaderProps = {
     label: string,
@@ -22,26 +23,44 @@ type HeaderProps = {
 
 export function Breadcrumbs({ label, desc, count }: HeaderProps) {
     const pathname = usePathname()
+    const router = useRouter();
+    const [searchQuery, setSearchQuery] = useState("");
+
     const noNavigation = ["/login", "/forgot-password", "/reset-password"];
 
     if (noNavigation.includes(pathname)) return null;
 
     const searchNavbar = "/";
 
+    // Fungsi untuk handle search
+    const handleSearch = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (searchQuery.trim()) {
+            // Redirect ke halaman inquiry transaksi dengan query parameter
+      router.push(`/laporan/inquiry-transaksi?search=${encodeURIComponent(searchQuery.trim())}`);
+        }
+    };
+
+    // Handle enter key down
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            handleSearch(e as any);
+        }
+    };
+
     const pathSegments = pathname.split('/').filter(Boolean);
 
-const isHiddenSegment = (segment: string) => {
-    const isLongId =
-        segment.length >= 10 &&
-        /[a-zA-Z]/.test(segment) && // ada huruf
-        /[0-9]/.test(segment);     // ada angka
+    const isHiddenSegment = (segment: string) => {
+        const isLongId =
+            segment.length >= 10 &&
+            /[a-zA-Z]/.test(segment) && // ada huruf
+            /[0-9]/.test(segment);     // ada angka
 
-    const isTrxCode = segment.startsWith("TRX-");
+        const isTrxCode = segment.startsWith("TRX-");
 
-    return isLongId || isTrxCode;
-};
-
-
+        return isLongId || isTrxCode;
+    };
 
     return (
         <div className='navbar w-auto h-[50px] !min-h-[50px] bg-white dark:bg-black shadow-mainShadow rounded-xl z-50 ml-2 mr-2 mt-2 mb-2'>
@@ -64,7 +83,6 @@ const isHiddenSegment = (segment: string) => {
                 <Breadcrumb className={`${searchNavbar.includes(pathname) ? "hidden" : "block"} px-4 py-2 w-fit capitalize`}>
                     <BreadcrumbList>
                         <div >
-
                             <BreadcrumbItem>
                                 <BreadcrumbLink href="/">Dashboard</BreadcrumbLink>
                             </BreadcrumbItem>
@@ -96,17 +114,34 @@ const isHiddenSegment = (segment: string) => {
                 </Breadcrumb>
 
                 {/* Search + Notification */}
-                <div className={`${searchNavbar.includes(pathname) ? "flex" : "hidden"} flex-none space-x-2 bg-white dark:bg-black px-0 shadow-mainShadow rounded-xl`}>
-                    <Input
-                        type="text"
-                        placeholder="Ketik untuk pencarian"
-                        className="w-[20lvw]"
-                        icon={<Search size={16} />}
-                    />
-                    <Button variant={"outline"} size={"icon"} className="relative">
-                        <RiNotification4Fill className="text-neutral-500 dark:text-neutral-300" />
-                        <div className="absolute right-[8px] top-2 w-[7px] h-[7px] border border-white dark:border-black bg-red-600 dark:bg-red-500 rounded-full"></div>
-                    </Button>
+                <div className={`${searchNavbar.includes(pathname) ? "flex" : "hidden"} flex-none items-center space-x-2 bg-white dark:bg-black px-0 shadow-mainShadow rounded-xl`}>
+                    <form onSubmit={handleSearch} className="flex items-center relative">
+                        <Input
+                            type="text"
+                            placeholder="Ketik untuk pencarian"
+                            className="w-[20lvw] pr-10"
+                            icon={<Search size={16} />}
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            onKeyDown={handleKeyDown}
+                        />
+                        {searchQuery.trim() && (
+                            <Button
+                                type="submit"
+                                size="sm"
+                                className="absolute right-1 h-8 px-3"
+                                onClick={handleSearch}
+                            >
+                                <Search size={14} />
+                            </Button>
+                        )}
+                    </form>
+                    <Link href="/pemberitahuan">
+                        <Button variant={"outline"} size={"icon"} className="relative">
+                            <RiNotification4Fill className="text-neutral-500 dark:text-neutral-300" />
+                            <div className="absolute right-[8px] top-2 w-[7px] h-[7px] border border-white dark:border-black bg-red-600 dark:bg-red-500 rounded-full"></div>
+                        </Button>
+                    </Link>
                 </div>
             </div>
         </div>
