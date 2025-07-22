@@ -152,7 +152,7 @@ export const TableKaryawan: React.FC<DataTableProps> = ({ data, columns, current
                                         <p>{displayValue(mitra.noWhatsapp)}</p>
                                     ) : header.key === "username" ? (
                                         <div className="flex items-center">
-                                            <span className={`mr-2 ${mitra.status ? "bg-green-500" : "bg-red-500"} rounded-full w-[6px] h-[6px]`}></span>
+                                            <span className={`mr-2 ${mitra.status === 1 ? "bg-green-500" : "bg-red-500"} rounded-full w-[6px] h-[6px]`}></span>
                                             <p>{displayValue(mitra.username)}</p>
                                         </div>
                                     ) : (
