@@ -117,7 +117,7 @@ export default function InquiryTransaksiPage() {
     }
   }, [searchQueryFromUrl]);
 
-  const fetchInquiryTransaksi = async (reset: boolean = false) => {
+  const fetchInquiryTransaksi = async (reset = false) => {
     let page = currentPage.page;
     let search = searchQuery;
     let status = statusFilter;
@@ -339,9 +339,6 @@ export default function InquiryTransaksiPage() {
     ...item,
     branchId: branchMapping[item.branchId] || "Tidak Diketahui",
   }));
-
-  // Display search info if coming from URL
-  const showSearchInfo = searchQueryFromUrl && searchQuery === searchQueryFromUrl;
 
   return (
     <>

@@ -18,7 +18,7 @@ import {
     SelectGroup,
     SelectLabel
 } from "libs/ui-components/src/components/ui/select";
-import { formatDateInput } from "libs/utils/formatDate";
+import { DatePickerInput } from "libs/ui-components/src/components/date-picker-input"; // Import komponen DatePickerInput
 import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
 
 export default function NewKaryawan() {
@@ -34,8 +34,8 @@ export default function NewKaryawan() {
         password: "",
         branchId: "",
         roleId: "",
-        birthDate: "", // Add joinDate to the initial state
-        joinDate: "", // Add joinDate to the initial state
+        birthDate: "", // Format: YYYY-MM-DD
+        joinDate: "", // Format: YYYY-MM-DD
         status: 1, // Default ke "Aktif" true
     });
 
@@ -46,6 +46,11 @@ export default function NewKaryawan() {
 
     const handleSelectChange = (id: string, value: string | number) => {
         setFormData({ ...formData, [id]: value });
+    };
+
+    // Handler khusus untuk DatePickerInput
+    const handleDateChange = (field: string) => (date: string) => {
+        setFormData({ ...formData, [field]: date });
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -91,15 +96,26 @@ export default function NewKaryawan() {
                         <Input placeholder="Masukkan kata sandi" type="text" id="password" value={formData.password} onChange={handleChange} />
                     </div>
 
+                    {/* Updated: Menggunakan DatePickerInput untuk Tanggal Lahir */}
                     <div className="flex items-center space-x-4">
-                        <Label htmlFor="birthDate" className="w-1/4 font-semibold">Tanggal Lahir</Label>
-                        <Input type="date" name="birthDate" id="birthDate" value={formatDateInput(formData.birthDate)} onChange={handleChange} />
+                        <Label htmlFor="password" className="w-1/4 font-semibold">Tanggal Lahir</Label>
+                        <DatePickerInput
+                            value={formData.birthDate}
+                            onChange={handleDateChange("birthDate")}
+                            placeholder="DD/MM/YYYY"
+                        />
                     </div>
 
+                    {/* Updated: Menggunakan DatePickerInput untuk Tanggal Daftar */}
                     <div className="flex items-center space-x-4">
-                        <Label htmlFor="joinDate" className="w-1/4 font-semibold">Tanggal Daftar</Label>
-                        <Input type="date" name="joinDate" id="joinDate" value={formatDateInput(formData.joinDate)} onChange={handleChange} />
+                        <Label htmlFor="password" className="w-1/4 font-semibold">Tanggal Daftar</Label>
+                        <DatePickerInput
+                            value={formData.joinDate}
+                            onChange={handleDateChange("joinDate")}
+                            placeholder="DD/MM/YYYY"
+                        />
                     </div>
+
                     <div className="flex items-center space-x-4">
                         <Label htmlFor="branchId" className="w-1/4">Cabang</Label>
                         <Select

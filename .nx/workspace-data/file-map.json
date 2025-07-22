@@ -34,561 +34,135 @@
   "fileMap": {
     "nonProjectFiles": [
       {
-        "file": "tailwind.config.js",
-        "hash": "9859630345318236931"
-      },
-      {
-        "file": ".eslintrc.json",
-        "hash": "18315524891129148814"
-      },
-      {
-        "file": ".env.local",
-        "hash": "3740600725829722770"
-      },
-      {
-        "file": "jest.config.ts",
-        "hash": "12333515226966617182"
-      },
-      {
-        "file": "components.json",
-        "hash": "4280279583905880420"
-      },
-      {
         "file": "tsconfig.json",
         "hash": "12396942299428161250"
-      },
-      {
-        "file": ".gitignore",
-        "hash": "12695448599876154607"
-      },
-      {
-        "file": "libs/utils/useCustomerData.tsx",
-        "hash": "4960465118637807795"
-      },
-      {
-        "file": "jest.preset.js",
-        "hash": "9430166341120122740"
-      },
-      {
-        "file": "package.json",
-        "hash": "13725977362029763070"
-      },
-      {
-        "file": "libs/utils/useCategoryStore.tsx",
-        "hash": "3227525177406307032"
-      },
-      {
-        "file": ".editorconfig",
-        "hash": "5443105041930014821"
-      },
-      {
-        "file": "libs/utils/useLocationData.tsx",
-        "hash": "11837542131548020222"
-      },
-      {
-        "file": "libs/utils/useParameterStore.tsx",
-        "hash": "6101636196122675572"
-      },
-      {
-        "file": "libs/utils/formatRupiah.tsx",
-        "hash": "17759985828843987555"
-      },
-      {
-        "file": "README.md",
-        "hash": "11619592405829086661"
-      },
-      {
-        "file": "libs/utils/apiClient.ts",
-        "hash": "4809011576491692557"
-      },
-      {
-        "file": "libs/utils/useCustomerInfoByWhatsapp.tsx",
-        "hash": "10801234735775489226"
-      },
-      {
-        "file": "libs/utils/slugify.tsx",
-        "hash": "13337896778678670331"
       },
       {
         "file": ".eslintignore",
         "hash": "7663861978715868291"
       },
       {
-        "file": "nx.json",
-        "hash": "1192325811798520629"
+        "file": ".env.local",
+        "hash": "3740600725829722770"
       },
       {
-        "file": "Superclean.drawio",
-        "hash": "5242338139829531214"
+        "file": "libs/utils/formatRupiah.tsx",
+        "hash": "17759985828843987555"
       },
       {
         "file": "libs/utils/useUserProfile.tsx",
         "hash": "3926109448529587588"
       },
       {
-        "file": ".prettierignore",
-        "hash": "8865097869854018350"
+        "file": "nx.json",
+        "hash": "1192325811798520629"
       },
       {
-        "file": "vercel.json",
-        "hash": "13757879466007396965"
+        "file": "libs/utils/useLocationData.tsx",
+        "hash": "11837542131548020222"
       },
       {
-        "file": "tsconfig.base.json",
-        "hash": "9986903419117766011"
-      },
-      {
-        "file": "libs/utils/formatDate.ts",
-        "hash": "16710930586852225179"
-      },
-      {
-        "file": ".prettierrc",
-        "hash": "16267754514737964994"
+        "file": "README.md",
+        "hash": "8313441868620010134"
       },
       {
         "file": "postcss.config.js",
         "hash": "17192229984174384003"
       },
       {
+        "file": "tsconfig.base.json",
+        "hash": "9986903419117766011"
+      },
+      {
+        "file": "package.json",
+        "hash": "3049782602433121365"
+      },
+      {
+        "file": "jest.config.ts",
+        "hash": "12333515226966617182"
+      },
+      {
+        "file": ".eslintrc.json",
+        "hash": "18315524891129148814"
+      },
+      {
+        "file": "libs/utils/slugify.tsx",
+        "hash": "13337896778678670331"
+      },
+      {
+        "file": ".editorconfig",
+        "hash": "5443105041930014821"
+      },
+      {
+        "file": "Superclean.drawio",
+        "hash": "5242338139829531214"
+      },
+      {
+        "file": ".gitignore",
+        "hash": "12695448599876154607"
+      },
+      {
+        "file": "libs/utils/useCustomerInfoByWhatsapp.tsx",
+        "hash": "10801234735775489226"
+      },
+      {
+        "file": "jest.preset.js",
+        "hash": "9430166341120122740"
+      },
+      {
+        "file": "tailwind.config.js",
+        "hash": "9859630345318236931"
+      },
+      {
+        "file": "libs/utils/apiClient.ts",
+        "hash": "4809011576491692557"
+      },
+      {
+        "file": "libs/utils/useTransactionHistory.tsx",
+        "hash": "7312097242897263256"
+      },
+      {
+        "file": ".prettierignore",
+        "hash": "8865097869854018350"
+      },
+      {
+        "file": "libs/utils/useTransactionDetail.tsx",
+        "hash": "9031816914721325458"
+      },
+      {
+        "file": "libs/utils/useCustomerData.tsx",
+        "hash": "4960465118637807795"
+      },
+      {
+        "file": "libs/utils/useCategoryStore.tsx",
+        "hash": "3227525177406307032"
+      },
+      {
+        "file": "libs/utils/formatDate.ts",
+        "hash": "16710930586852225179"
+      },
+      {
+        "file": "vercel.json",
+        "hash": "13757879466007396965"
+      },
+      {
+        "file": "libs/utils/useParameterStore.tsx",
+        "hash": "6101636196122675572"
+      },
+      {
+        "file": "components.json",
+        "hash": "4280279583905880420"
+      },
+      {
         "file": "package-lock.json",
-        "hash": "417720162416865210"
+        "hash": "10024525706641309253"
+      },
+      {
+        "file": ".prettierrc",
+        "hash": "16267754514737964994"
       }
     ],
     "projectFileMap": {
-      "mitra-app": [
-        {
-          "file": "apps/mitra-app/.eslintrc.json",
-          "hash": "1322966927938926602"
-        },
-        {
-          "file": "apps/mitra-app/app/layout.tsx",
-          "hash": "3987918873231028403",
-          "deps": [
-            "shared",
-            "npm:next-themes"
-          ]
-        },
-        {
-          "file": "apps/mitra-app/app/page.tsx",
-          "hash": "11120343933449808126"
-        },
-        {
-          "file": "apps/mitra-app/app/register/page.tsx",
-          "hash": "3244421341483603138"
-        },
-        {
-          "file": "apps/mitra-app/index.d.ts",
-          "hash": "5498222895072842432"
-        },
-        {
-          "file": "apps/mitra-app/jest.config.ts",
-          "hash": "4933756946131926746"
-        },
-        {
-          "file": "apps/mitra-app/next-env.d.ts",
-          "hash": "13904763933831424769"
-        },
-        {
-          "file": "apps/mitra-app/next.config.js",
-          "hash": "4640182932892698362",
-          "deps": [
-            "npm:@nx/next"
-          ]
-        },
-        {
-          "file": "apps/mitra-app/project.json",
-          "hash": "15468575244545874128"
-        },
-        {
-          "file": "apps/mitra-app/public/.gitkeep",
-          "hash": "3244421341483603138"
-        },
-        {
-          "file": "apps/mitra-app/public/favicon.ico",
-          "hash": "9303420814833116677"
-        },
-        {
-          "file": "apps/mitra-app/tsconfig.json",
-          "hash": "11191117430603330035"
-        },
-        {
-          "file": "apps/mitra-app/tsconfig.spec.json",
-          "hash": "6922413205408300107"
-        }
-      ],
-      "admin-app": [
-        {
-          "file": "apps/admin-app/.eslintrc.json",
-          "hash": "1353576970768538411"
-        },
-        {
-          "file": "apps/admin-app/app/invoice/page.tsx",
-          "hash": "5470733519321627500",
-          "deps": [
-            "npm:next",
-            "shared",
-            "ui-components",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "apps/admin-app/app/laporan/benefit-karyawan/page.tsx",
-          "hash": "7715499042631483260",
-          "deps": [
-            "npm:next",
-            "npm:react",
-            "ui-components",
-            "shared",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "apps/admin-app/app/laporan/inquiry-transaksi/page.tsx",
-          "hash": "17802198054324471355",
-          "deps": [
-            "npm:react",
-            "ui-components",
-            "shared",
-            "npm:lucide-react",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "apps/admin-app/app/laporan/kinerja-karyawan/page.tsx",
-          "hash": "12173425404056246534",
-          "deps": [
-            "ui-components",
-            "npm:react",
-            "shared",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "apps/admin-app/app/layout.tsx",
-          "hash": "16174572784301786155",
-          "deps": [
-            "npm:next",
-            "npm:next-themes",
-            "shared",
-            "ui-components"
-          ]
-        },
-        {
-          "file": "apps/admin-app/app/login/page.tsx",
-          "hash": "16337560531998747752",
-          "deps": [
-            "shared"
-          ]
-        },
-        {
-          "file": "apps/admin-app/app/master-data/diskon/baru/page.tsx",
-          "hash": "14812168526449073179",
-          "deps": [
-            "npm:react",
-            "npm:next",
-            "shared",
-            "ui-components"
-          ]
-        },
-        {
-          "file": "apps/admin-app/app/master-data/diskon/edit/[id]/page.tsx",
-          "hash": "6548557955107229256",
-          "deps": [
-            "npm:next",
-            "shared",
-            "ui-components",
-            "npm:react-icons",
-            "npm:react"
-          ]
-        },
-        {
-          "file": "apps/admin-app/app/master-data/diskon/page.tsx",
-          "hash": "8708476039237461577",
-          "deps": [
-            "npm:next",
-            "npm:react",
-            "shared",
-            "ui-components",
-            "npm:react-icons",
-            "npm:lucide-react"
-          ]
-        },
-        {
-          "file": "apps/admin-app/app/master-data/karyawan/baru/page.tsx",
-          "hash": "7906888224912526767",
-          "deps": [
-            "npm:react",
-            "shared",
-            "ui-components",
-            "npm:next"
-          ]
-        },
-        {
-          "file": "apps/admin-app/app/master-data/karyawan/edit/[id]/page.tsx",
-          "hash": "9725700176404767647",
-          "deps": [
-            "npm:react",
-            "npm:next",
-            "shared",
-            "ui-components",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "apps/admin-app/app/master-data/karyawan/page.tsx",
-          "hash": "15398252095973996713",
-          "deps": [
-            "npm:next",
-            "npm:react",
-            "ui-components",
-            "shared",
-            "npm:react-icons",
-            "npm:lucide-react"
-          ]
-        },
-        {
-          "file": "apps/admin-app/app/master-data/layanan/baru/page.tsx",
-          "hash": "17689104418001835115",
-          "deps": [
-            "npm:react",
-            "shared",
-            "ui-components",
-            "npm:react-icons",
-            "npm:next"
-          ]
-        },
-        {
-          "file": "apps/admin-app/app/master-data/layanan/edit/[id]/page.tsx",
-          "hash": "3772323990137191989",
-          "deps": [
-            "npm:react",
-            "npm:next",
-            "shared",
-            "ui-components"
-          ]
-        },
-        {
-          "file": "apps/admin-app/app/master-data/layanan/page.tsx",
-          "hash": "17589004995928927011",
-          "deps": [
-            "npm:next",
-            "npm:react",
-            "ui-components",
-            "shared",
-            "npm:react-icons",
-            "npm:lucide-react"
-          ]
-        },
-        {
-          "file": "apps/admin-app/app/master-data/pelanggan/baru/page.tsx",
-          "hash": "4126750596068197532",
-          "deps": [
-            "shared",
-            "ui-components",
-            "npm:react-icons",
-            "npm:react",
-            "npm:next"
-          ]
-        },
-        {
-          "file": "apps/admin-app/app/master-data/pelanggan/edit/[id]/page.tsx",
-          "hash": "5310636635735491966",
-          "deps": [
-            "npm:next",
-            "shared",
-            "ui-components",
-            "npm:react-icons",
-            "npm:react",
-            "npm:@radix-ui/react-dialog"
-          ]
-        },
-        {
-          "file": "apps/admin-app/app/master-data/pelanggan/page.tsx",
-          "hash": "3826156000844594595",
-          "deps": [
-            "npm:next",
-            "npm:react",
-            "shared",
-            "ui-components",
-            "npm:react-icons",
-            "npm:lucide-react"
-          ]
-        },
-        {
-          "file": "apps/admin-app/app/page.tsx",
-          "hash": "14201860175823305453",
-          "deps": [
-            "npm:react",
-            "shared",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "apps/admin-app/app/pemberitahuan/page.tsx",
-          "hash": "9819616061525016371",
-          "deps": [
-            "ui-components",
-            "shared",
-            "npm:react-icons",
-            "npm:react"
-          ]
-        },
-        {
-          "file": "apps/admin-app/app/pengaturan/page.tsx",
-          "hash": "9187426380672598578",
-          "deps": [
-            "shared",
-            "ui-components",
-            "npm:next",
-            "npm:react"
-          ]
-        },
-        {
-          "file": "apps/admin-app/app/profil/page.tsx",
-          "hash": "15577029477004930334",
-          "deps": [
-            "npm:react",
-            "ui-components",
-            "shared",
-            "npm:next"
-          ]
-        },
-        {
-          "file": "apps/admin-app/app/rating/page.tsx",
-          "hash": "15456748843118913133",
-          "deps": [
-            "shared",
-            "ui-components",
-            "npm:next",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "apps/admin-app/app/transaksi/pembayaran/detail/[id]/page.tsx",
-          "hash": "9618752426372789689",
-          "deps": [
-            "npm:react",
-            "npm:next",
-            "shared",
-            "ui-components",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "apps/admin-app/app/transaksi/pembayaran/page.tsx",
-          "hash": "4509316997965653964",
-          "deps": [
-            "npm:next",
-            "npm:react",
-            "ui-components",
-            "shared",
-            "npm:react-icons",
-            "npm:lucide-react"
-          ]
-        },
-        {
-          "file": "apps/admin-app/app/transaksi/spk/baru/page.tsx",
-          "hash": "6604298609291390809",
-          "deps": [
-            "npm:react",
-            "npm:next",
-            "shared",
-            "ui-components",
-            "npm:react-icons",
-            "npm:lucide-react"
-          ]
-        },
-        {
-          "file": "apps/admin-app/app/transaksi/spk/edit/[id]/page.tsx",
-          "hash": "1920004555855054198",
-          "deps": [
-            "npm:react",
-            "npm:next",
-            "shared",
-            "ui-components",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "apps/admin-app/app/transaksi/spk/page.tsx",
-          "hash": "7858296012350994244",
-          "deps": [
-            "npm:next",
-            "npm:react",
-            "ui-components",
-            "shared",
-            "npm:react-icons",
-            "npm:lucide-react"
-          ]
-        },
-        {
-          "file": "apps/admin-app/index.d.ts",
-          "hash": "5498222895072842432"
-        },
-        {
-          "file": "apps/admin-app/jest.config.ts",
-          "hash": "2200833653251197196"
-        },
-        {
-          "file": "apps/admin-app/next-env.d.ts",
-          "hash": "1320675027584673186"
-        },
-        {
-          "file": "apps/admin-app/next.config.js",
-          "hash": "7923829107438910761",
-          "deps": [
-            "npm:@nx/next"
-          ]
-        },
-        {
-          "file": "apps/admin-app/project.json",
-          "hash": "4479151897753700324"
-        },
-        {
-          "file": "apps/admin-app/public/.gitkeep",
-          "hash": "3244421341483603138"
-        },
-        {
-          "file": "apps/admin-app/public/assets/SC_Email.png",
-          "hash": "2127051160649697023"
-        },
-        {
-          "file": "apps/admin-app/public/assets/SC_LogoOnly.png",
-          "hash": "7804160941518454106"
-        },
-        {
-          "file": "apps/admin-app/public/assets/SC_LogoOnlyBig.png",
-          "hash": "7351871632759985105"
-        },
-        {
-          "file": "apps/admin-app/public/assets/SC_NoTagline.png",
-          "hash": "3783545966871995084"
-        },
-        {
-          "file": "apps/admin-app/public/assets/SC_Primary.png",
-          "hash": "2766383482637524824"
-        },
-        {
-          "file": "apps/admin-app/public/assets/SC_PrimaryTagline.png",
-          "hash": "8645043162018332294"
-        },
-        {
-          "file": "apps/admin-app/public/assets/qris.png",
-          "hash": "12941780059054163540"
-        },
-        {
-          "file": "apps/admin-app/public/favicon.ico",
-          "hash": "9303420814833116677"
-        },
-        {
-          "file": "apps/admin-app/tsconfig.json",
-          "hash": "3749788070931867330"
-        },
-        {
-          "file": "apps/admin-app/tsconfig.spec.json",
-          "hash": "6922413205408300107"
-        }
-      ],
       "shared": [
         {
           "file": "libs/shared/.eslintrc.json",
@@ -608,8 +182,9 @@
         },
         {
           "file": "libs/shared/src/components/ChartKaryawan.tsx",
-          "hash": "6044121996849257150",
+          "hash": "14002681282151587821",
           "deps": [
+            "npm:react",
             "ui-components"
           ]
         },
@@ -642,7 +217,7 @@
         },
         {
           "file": "libs/shared/src/components/SalesChart.tsx",
-          "hash": "561431736342441896",
+          "hash": "15427049848573661855",
           "deps": [
             "npm:react",
             "npm:recharts",
@@ -651,7 +226,7 @@
         },
         {
           "file": "libs/shared/src/components/WidgetMatrix.tsx",
-          "hash": "5803892130946875327",
+          "hash": "2550115074765596568",
           "deps": [
             "npm:react-icons",
             "ui-components"
@@ -666,7 +241,7 @@
         },
         {
           "file": "libs/shared/src/components/auth/AuthLayout.tsx",
-          "hash": "17568504205767481782",
+          "hash": "9532200850014043885",
           "deps": [
             "npm:next",
             "npm:react-icons",
@@ -675,7 +250,7 @@
         },
         {
           "file": "libs/shared/src/components/ui/Breadcrumbs.tsx",
-          "hash": "15059365565296988475",
+          "hash": "14355138103517233384",
           "deps": [
             "npm:react",
             "ui-components",
@@ -686,9 +261,10 @@
         },
         {
           "file": "libs/shared/src/components/ui/Navbar.tsx",
-          "hash": "11502431595442471516",
+          "hash": "12014667533316092998",
           "deps": [
             "npm:next",
+            "npm:react",
             "ui-components",
             "npm:lucide-react",
             "npm:react-icons"
@@ -764,6 +340,14 @@
           ]
         },
         {
+          "file": "libs/ui-components/src/components/date-picker-input.tsx",
+          "hash": "7034733073094127578",
+          "deps": [
+            "npm:react",
+            "npm:lucide-react"
+          ]
+        },
+        {
           "file": "libs/ui-components/src/components/date-picker-range.tsx",
           "hash": "9422986068789675286",
           "deps": [
@@ -835,7 +419,7 @@
         },
         {
           "file": "libs/ui-components/src/components/group-filter.tsx",
-          "hash": "12115393283054127187",
+          "hash": "4205079613719273554",
           "deps": [
             "npm:react",
             "npm:react-icons"
@@ -860,7 +444,7 @@
         },
         {
           "file": "libs/ui-components/src/components/karyawan-table.tsx",
-          "hash": "13130974817034102102",
+          "hash": "12150490805723096224",
           "deps": [
             "npm:next",
             "npm:react-icons",
@@ -886,7 +470,7 @@
         },
         {
           "file": "libs/ui-components/src/components/multi-select.tsx",
-          "hash": "791040703115473941",
+          "hash": "1181643039751633260",
           "deps": [
             "npm:react",
             "npm:lucide-react",
@@ -907,7 +491,7 @@
         },
         {
           "file": "libs/ui-components/src/components/pembayaran-table.tsx",
-          "hash": "13996964940759055997",
+          "hash": "6365856352665968005",
           "deps": [
             "npm:next",
             "npm:react-icons",
@@ -1015,7 +599,7 @@
         },
         {
           "file": "libs/ui-components/src/components/ui/calendar.tsx",
-          "hash": "14077502982819413035",
+          "hash": "16099128171648026910",
           "deps": [
             "npm:react",
             "npm:lucide-react",
@@ -1108,7 +692,7 @@
         },
         {
           "file": "libs/ui-components/src/components/ui/progress.tsx",
-          "hash": "15875930140037178632",
+          "hash": "1053262016885236870",
           "deps": [
             "npm:react",
             "npm:@radix-ui/react-progress"
@@ -1194,6 +778,452 @@
         {
           "file": "libs/ui-components/tsconfig.lib.json",
           "hash": "13346013761036945219"
+        }
+      ],
+      "admin-app": [
+        {
+          "file": "apps/admin-app/.eslintrc.json",
+          "hash": "1353576970768538411"
+        },
+        {
+          "file": "apps/admin-app/app/invoice/page.tsx",
+          "hash": "5470733519321627500",
+          "deps": [
+            "npm:next",
+            "shared",
+            "ui-components",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "apps/admin-app/app/laporan/benefit-karyawan/page.tsx",
+          "hash": "7715499042631483260",
+          "deps": [
+            "npm:next",
+            "npm:react",
+            "ui-components",
+            "shared",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "apps/admin-app/app/laporan/inquiry-transaksi/page.tsx",
+          "hash": "6184233778743046953",
+          "deps": [
+            "npm:react",
+            "npm:next",
+            "ui-components",
+            "shared",
+            "npm:lucide-react",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "apps/admin-app/app/laporan/kinerja-karyawan/page.tsx",
+          "hash": "12173425404056246534",
+          "deps": [
+            "ui-components",
+            "npm:react",
+            "shared",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "apps/admin-app/app/layout.tsx",
+          "hash": "16174572784301786155",
+          "deps": [
+            "npm:next",
+            "npm:next-themes",
+            "shared",
+            "ui-components"
+          ]
+        },
+        {
+          "file": "apps/admin-app/app/login/page.tsx",
+          "hash": "16337560531998747752",
+          "deps": [
+            "shared"
+          ]
+        },
+        {
+          "file": "apps/admin-app/app/master-data/diskon/baru/page.tsx",
+          "hash": "14812168526449073179",
+          "deps": [
+            "npm:react",
+            "npm:next",
+            "shared",
+            "ui-components"
+          ]
+        },
+        {
+          "file": "apps/admin-app/app/master-data/diskon/edit/[id]/page.tsx",
+          "hash": "6548557955107229256",
+          "deps": [
+            "npm:next",
+            "shared",
+            "ui-components",
+            "npm:react-icons",
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/admin-app/app/master-data/diskon/page.tsx",
+          "hash": "1669937971936945757",
+          "deps": [
+            "npm:next",
+            "npm:react",
+            "shared",
+            "ui-components",
+            "npm:react-icons",
+            "npm:lucide-react"
+          ]
+        },
+        {
+          "file": "apps/admin-app/app/master-data/karyawan/baru/page.tsx",
+          "hash": "407129841807486491",
+          "deps": [
+            "npm:react",
+            "shared",
+            "ui-components",
+            "npm:next"
+          ]
+        },
+        {
+          "file": "apps/admin-app/app/master-data/karyawan/edit/[id]/page.tsx",
+          "hash": "9725700176404767647",
+          "deps": [
+            "npm:react",
+            "npm:next",
+            "shared",
+            "ui-components",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "apps/admin-app/app/master-data/karyawan/page.tsx",
+          "hash": "8832900949967633595",
+          "deps": [
+            "npm:next",
+            "npm:react",
+            "ui-components",
+            "shared",
+            "npm:react-icons",
+            "npm:lucide-react"
+          ]
+        },
+        {
+          "file": "apps/admin-app/app/master-data/layanan/baru/page.tsx",
+          "hash": "17689104418001835115",
+          "deps": [
+            "npm:react",
+            "shared",
+            "ui-components",
+            "npm:react-icons",
+            "npm:next"
+          ]
+        },
+        {
+          "file": "apps/admin-app/app/master-data/layanan/edit/[id]/page.tsx",
+          "hash": "3772323990137191989",
+          "deps": [
+            "npm:react",
+            "npm:next",
+            "shared",
+            "ui-components"
+          ]
+        },
+        {
+          "file": "apps/admin-app/app/master-data/layanan/page.tsx",
+          "hash": "18167669736925084808",
+          "deps": [
+            "npm:next",
+            "npm:react",
+            "ui-components",
+            "shared",
+            "npm:react-icons",
+            "npm:lucide-react"
+          ]
+        },
+        {
+          "file": "apps/admin-app/app/master-data/pelanggan/baru/page.tsx",
+          "hash": "4126750596068197532",
+          "deps": [
+            "shared",
+            "ui-components",
+            "npm:react-icons",
+            "npm:react",
+            "npm:next"
+          ]
+        },
+        {
+          "file": "apps/admin-app/app/master-data/pelanggan/edit/[id]/page.tsx",
+          "hash": "5310636635735491966",
+          "deps": [
+            "npm:next",
+            "shared",
+            "ui-components",
+            "npm:react-icons",
+            "npm:react",
+            "npm:@radix-ui/react-dialog"
+          ]
+        },
+        {
+          "file": "apps/admin-app/app/master-data/pelanggan/page.tsx",
+          "hash": "6882800157190499422",
+          "deps": [
+            "npm:next",
+            "npm:react",
+            "shared",
+            "ui-components",
+            "npm:react-icons",
+            "npm:lucide-react"
+          ]
+        },
+        {
+          "file": "apps/admin-app/app/page.tsx",
+          "hash": "14077647833802692358",
+          "deps": [
+            "npm:react",
+            "shared",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "apps/admin-app/app/pemberitahuan/page.tsx",
+          "hash": "9819616061525016371",
+          "deps": [
+            "ui-components",
+            "shared",
+            "npm:react-icons",
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/admin-app/app/pengaturan/page.tsx",
+          "hash": "9187426380672598578",
+          "deps": [
+            "shared",
+            "ui-components",
+            "npm:next",
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/admin-app/app/profil/page.tsx",
+          "hash": "15577029477004930334",
+          "deps": [
+            "npm:react",
+            "ui-components",
+            "shared",
+            "npm:next"
+          ]
+        },
+        {
+          "file": "apps/admin-app/app/rating/page.tsx",
+          "hash": "15456748843118913133",
+          "deps": [
+            "shared",
+            "ui-components",
+            "npm:next",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "apps/admin-app/app/transaksi/pembayaran/detail/[id]/page.tsx",
+          "hash": "9618752426372789689",
+          "deps": [
+            "npm:react",
+            "npm:next",
+            "shared",
+            "ui-components",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "apps/admin-app/app/transaksi/pembayaran/page.tsx",
+          "hash": "9284868249575252559",
+          "deps": [
+            "npm:next",
+            "npm:react",
+            "ui-components",
+            "shared",
+            "npm:react-icons",
+            "npm:lucide-react"
+          ]
+        },
+        {
+          "file": "apps/admin-app/app/transaksi/spk/baru/page.tsx",
+          "hash": "7712258982685051825",
+          "deps": [
+            "npm:react",
+            "npm:next",
+            "shared",
+            "ui-components",
+            "npm:react-icons",
+            "npm:lucide-react"
+          ]
+        },
+        {
+          "file": "apps/admin-app/app/transaksi/spk/edit/[id]/page.tsx",
+          "hash": "5359346970299449836",
+          "deps": [
+            "npm:react",
+            "npm:next",
+            "shared",
+            "ui-components",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "apps/admin-app/app/transaksi/spk/page.tsx",
+          "hash": "3674033703991364030",
+          "deps": [
+            "npm:next",
+            "npm:react",
+            "ui-components",
+            "shared",
+            "npm:react-icons",
+            "npm:lucide-react"
+          ]
+        },
+        {
+          "file": "apps/admin-app/index.d.ts",
+          "hash": "5498222895072842432"
+        },
+        {
+          "file": "apps/admin-app/jest.config.ts",
+          "hash": "2200833653251197196"
+        },
+        {
+          "file": "apps/admin-app/next-env.d.ts",
+          "hash": "1320675027584673186"
+        },
+        {
+          "file": "apps/admin-app/next.config.js",
+          "hash": "7923829107438910761",
+          "deps": [
+            "npm:@nx/next"
+          ]
+        },
+        {
+          "file": "apps/admin-app/project.json",
+          "hash": "4479151897753700324"
+        },
+        {
+          "file": "apps/admin-app/public/.gitkeep",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/admin-app/public/assets/SC_Email.png",
+          "hash": "2127051160649697023"
+        },
+        {
+          "file": "apps/admin-app/public/assets/SC_LogoOnly.png",
+          "hash": "7804160941518454106"
+        },
+        {
+          "file": "apps/admin-app/public/assets/SC_LogoOnlyBig.png",
+          "hash": "7351871632759985105"
+        },
+        {
+          "file": "apps/admin-app/public/assets/SC_NoTagline.png",
+          "hash": "3783545966871995084"
+        },
+        {
+          "file": "apps/admin-app/public/assets/SC_Primary.png",
+          "hash": "2766383482637524824"
+        },
+        {
+          "file": "apps/admin-app/public/assets/SC_PrimaryTagline.png",
+          "hash": "8645043162018332294"
+        },
+        {
+          "file": "apps/admin-app/public/assets/qris.png",
+          "hash": "12941780059054163540"
+        },
+        {
+          "file": "apps/admin-app/public/favicon.ico",
+          "hash": "9303420814833116677"
+        },
+        {
+          "file": "apps/admin-app/tsconfig.json",
+          "hash": "3749788070931867330"
+        },
+        {
+          "file": "apps/admin-app/tsconfig.spec.json",
+          "hash": "6922413205408300107"
+        }
+      ],
+      "mitra-app": [
+        {
+          "file": "apps/mitra-app/.eslintrc.json",
+          "hash": "1322966927938926602"
+        },
+        {
+          "file": "apps/mitra-app/app/layout.tsx",
+          "hash": "8076453081006976236",
+          "deps": [
+            "shared",
+            "npm:next-themes",
+            "npm:next"
+          ]
+        },
+        {
+          "file": "apps/mitra-app/app/login/page.tsx",
+          "hash": "13381526888669313955",
+          "deps": [
+            "npm:next",
+            "ui-components",
+            "npm:react",
+            "npm:lucide-react"
+          ]
+        },
+        {
+          "file": "apps/mitra-app/app/page.tsx",
+          "hash": "11120343933449808126"
+        },
+        {
+          "file": "apps/mitra-app/app/register/page.tsx",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/mitra-app/index.d.ts",
+          "hash": "5498222895072842432"
+        },
+        {
+          "file": "apps/mitra-app/jest.config.ts",
+          "hash": "4933756946131926746"
+        },
+        {
+          "file": "apps/mitra-app/next-env.d.ts",
+          "hash": "1320675027584673186"
+        },
+        {
+          "file": "apps/mitra-app/next.config.js",
+          "hash": "7923829107438910761",
+          "deps": [
+            "npm:@nx/next"
+          ]
+        },
+        {
+          "file": "apps/mitra-app/project.json",
+          "hash": "15468575244545874128"
+        },
+        {
+          "file": "apps/mitra-app/public/.gitkeep",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/mitra-app/public/favicon.ico",
+          "hash": "9303420814833116677"
+        },
+        {
+          "file": "apps/mitra-app/tsconfig.json",
+          "hash": "2830803785477633619"
+        },
+        {
+          "file": "apps/mitra-app/tsconfig.spec.json",
+          "hash": "6922413205408300107"
         }
       ]
     }
