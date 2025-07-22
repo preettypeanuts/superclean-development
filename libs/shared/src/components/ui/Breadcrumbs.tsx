@@ -31,13 +31,14 @@ export function Breadcrumbs({ label, desc, count }: HeaderProps) {
     if (noNavigation.includes(pathname)) return null;
 
     const searchNavbar = "/";
+    const [start, transaction] = pathname.split('/SPK/').filter(Boolean);
 
     // Fungsi untuk handle search
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
         if (searchQuery.trim()) {
             // Redirect ke halaman inquiry transaksi dengan query parameter
-      router.push(`/laporan/inquiry-transaksi?search=${encodeURIComponent(searchQuery.trim())}`);
+            router.push(`/laporan/inquiry-transaksi?search=${encodeURIComponent(searchQuery.trim())}`);
         }
     };
 
@@ -49,7 +50,7 @@ export function Breadcrumbs({ label, desc, count }: HeaderProps) {
         }
     };
 
-    const pathSegments = pathname.split('/').filter(Boolean);
+    const pathSegments = start.split('/').filter(Boolean);
 
     const isHiddenSegment = (segment: string) => {
         const isLongId =
@@ -102,7 +103,9 @@ export function Breadcrumbs({ label, desc, count }: HeaderProps) {
                                     <BreadcrumbSeparator />
                                     <BreadcrumbItem>
                                         {isLast ? (
-                                            <BreadcrumbPage className='text-mainColor font-semibold'>{formattedSegment}</BreadcrumbPage>
+                                            <BreadcrumbPage className='text-mainColor font-semibold'>{
+                                                transaction ? `${formattedSegment} SPK/${transaction}` : formattedSegment
+                                            }</BreadcrumbPage>
                                         ) : (
                                             <BreadcrumbLink href={href}>{formattedSegment}</BreadcrumbLink>
                                         )}
