@@ -78,6 +78,14 @@ export const TableKaryawan: React.FC<DataTableProps> = ({ data, columns, current
         setIsDialogOpen(false);
     };
 
+    // Helper function to display empty values as "-"
+    const displayValue = (value: any) => {
+        if (value === null || value === undefined || value === "") {
+            return "-";
+        }
+        return value;
+    };
+
     return (
         <Table>
             <TableHeader>
@@ -90,60 +98,69 @@ export const TableKaryawan: React.FC<DataTableProps> = ({ data, columns, current
                 </TableRow>
             </TableHeader>
             <TableBody>
-                {data.map((mitra, rowIndex) => {
-                  return <TableRow
-                        key={mitra.id}
-                        className={rowIndex % 2 === 0 ? "" : "bg-neutral-300/20 dark:bg-neutral-500/20"}
-                    >
-                        {columns.map((header) => (
-                            <TableCell key={header.key} className={header.key === "menu" ? "!w-fit" : ""}>
-                                {header.key === "menu" ? (
-                                    <div className="w-fit flex gap-2">
-                                        <Link href={`/master-data/karyawan/edit/${mitra.id}`}>
-                                            <Button size="icon" variant="main">
-                                                <HiMiniPencilSquare />
-                                            </Button>
-                                        </Link>
-                                        <Button
-                                            size="icon"
-                                            variant="destructive"
-                                            onClick={() => {
-                                                setCurrentKaryawan(mitra);
-                                                setIsDialogOpen(true);
-                                            }}
-                                        >
-                                            <IoMdTrash />
-                                        </Button>
-                                    </div>
-                                ) : header.key === "status" ? (
-                                    <p className={`badge truncate dark:bg-opacity-70 rounded-md !font-medium border-0 ${mitra.status === 1 ? "bg-green-200 text-green-900 dark:bg-green-500 dark:text-green-100" : "bg-red-200 text-red-900 dark:bg-red-500 dark:text-red-100"}`}>
-                                        <span className={`mr-2 ${mitra.status === 1 ? "bg-green-500 dark:bg-green-200" : "bg-red-500 dark:bg-red-200"} rounded-full w-[6px] h-[6px]`}></span>
-                                        {mitra.status === 1 ? "Aktif" : "Tidak Aktif"}
-                                    </p>
-                                ) : header.key === "roleId" ? (
-                                    <p className={`badge truncate rounded-md !font-medium border ${roleColors[mitra.roleId] || "border-neutral-500 text-neutral-500 dark:border-neutral-300 dark:text-neutral-300 bg-white dark:bg-black"}`}>
-                                        {mitra.roleId}
-                                    </p>
-                                ) : header.key === "id" ? (
-                                    <p>{(currentPage - 1) * limit + rowIndex + 1}</p>
-                                ) : header.key === "createdAt" ? (
-                                    <p>{formatDate(mitra.createdAt)}</p>
-                                ) : header.key === "birthDate" ? (
-                                    <p>{formatDate(mitra.birthDate)}</p>
-                                ) : header.key === "noWhatsapp" ? (
-                                    <p>{mitra.noWhatsapp}</p>
-                                ) : header.key === "username" ? (
-                                    <div className="flex items-center">
-                                        <span className={`mr-2 ${mitra.status ? "bg-green-500" : "bg-red-500"} rounded-full w-[6px] h-[6px]`}></span>
-                                        <p>{mitra.username}</p>
-                                    </div>
-                                ) : (
-                                    mitra[header.key as keyof Karyawan]
-                                )}
-                            </TableCell>
-                        ))}
+                {data.length === 0 ? (
+                    // Tampilkan baris kosong jika tidak ada data
+                    <TableRow>
+                        <TableCell colSpan={columns.length} className="text-center py-8 text-muted-foreground">
+                            Tidak ada data karyawan
+                        </TableCell>
                     </TableRow>
-                })}
+                ) : (
+                    data.map((mitra, rowIndex) => {
+                        return <TableRow
+                            key={mitra.id}
+                            className={rowIndex % 2 === 0 ? "" : "bg-neutral-300/20 dark:bg-neutral-500/20"}
+                        >
+                            {columns.map((header) => (
+                                <TableCell key={header.key} className={header.key === "menu" ? "!w-fit" : ""}>
+                                    {header.key === "menu" ? (
+                                        <div className="w-fit flex gap-2">
+                                            <Link href={`/master-data/karyawan/edit/${mitra.id}`}>
+                                                <Button size="icon" variant="main">
+                                                    <HiMiniPencilSquare />
+                                                </Button>
+                                            </Link>
+                                            <Button
+                                                size="icon"
+                                                variant="destructive"
+                                                onClick={() => {
+                                                    setCurrentKaryawan(mitra);
+                                                    setIsDialogOpen(true);
+                                                }}
+                                            >
+                                                <IoMdTrash />
+                                            </Button>
+                                        </div>
+                                    ) : header.key === "status" ? (
+                                        <p className={`badge truncate dark:bg-opacity-70 rounded-md !font-medium border-0 ${mitra.status === 1 ? "bg-green-200 text-green-900 dark:bg-green-500 dark:text-green-100" : "bg-red-200 text-red-900 dark:bg-red-500 dark:text-red-100"}`}>
+                                            <span className={`mr-2 ${mitra.status === 1 ? "bg-green-500 dark:bg-green-200" : "bg-red-500 dark:bg-red-200"} rounded-full w-[6px] h-[6px]`}></span>
+                                            {mitra.status === 1 ? "Aktif" : "Tidak Aktif"}
+                                        </p>
+                                    ) : header.key === "roleId" ? (
+                                        <p className={`badge truncate rounded-md !font-medium border ${roleColors[mitra.roleId] || "border-neutral-500 text-neutral-500 dark:border-neutral-300 dark:text-neutral-300 bg-white dark:bg-black"}`}>
+                                            {displayValue(mitra.roleId)}
+                                        </p>
+                                    ) : header.key === "id" ? (
+                                        <p>{(currentPage - 1) * limit + rowIndex + 1}</p>
+                                    ) : header.key === "createdAt" ? (
+                                        <p>{mitra.createdAt ? formatDate(mitra.createdAt) : "-"}</p>
+                                    ) : header.key === "birthDate" ? (
+                                        <p>{mitra.birthDate ? formatDate(mitra.birthDate) : "-"}</p>
+                                    ) : header.key === "noWhatsapp" ? (
+                                        <p>{displayValue(mitra.noWhatsapp)}</p>
+                                    ) : header.key === "username" ? (
+                                        <div className="flex items-center">
+                                            <span className={`mr-2 ${mitra.status ? "bg-green-500" : "bg-red-500"} rounded-full w-[6px] h-[6px]`}></span>
+                                            <p>{displayValue(mitra.username)}</p>
+                                        </div>
+                                    ) : (
+                                        displayValue(mitra[header.key as keyof Karyawan])
+                                    )}
+                                </TableCell>
+                            ))}
+                        </TableRow>
+                    })
+                )}
             </TableBody>
 
             {/* Delete Confirmation Dialog */}
