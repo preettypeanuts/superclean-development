@@ -25,27 +25,146 @@ export default function NewDiscount() {
         promoType: "",
         category: "",
         serviceCode: "",
+        minItem: "1", // Set default value to "1"
+        endDate: "",
+    });
+
+    const [errors, setErrors] = useState({
+        code: "",
+        name: "",
+        amount: "",
+        promoType: "",
+        category: "",
+        serviceCode: "",
         minItem: "",
         endDate: "",
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFormData({ ...formData, [e.target.id]: e.target.value });
+        const { id, value } = e.target;
+        setFormData({ ...formData, [id]: value });
+        
+        // Clear error when user starts typing
+        if (errors[id as keyof typeof errors]) {
+            setErrors({ ...errors, [id]: "" });
+        }
+    };
+
+    // Handle minItem change with validation
+    const handleMinItemChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        
+        // Allow empty string while typing, but prevent negative values
+        if (value === "" || (parseInt(value) >= 1 && !isNaN(parseInt(value)))) {
+            setFormData({ ...formData, minItem: value });
+            
+            // Clear error when valid input
+            if (errors.minItem) {
+                setErrors({ ...errors, minItem: "" });
+            }
+        } else {
+            // Set error for invalid input
+            setErrors({ ...errors, minItem: "Minimal item harus bernilai 1 atau lebih" });
+        }
     };
 
     const handleSelectChange = (field: string, value: string) => {
         setFormData({ ...formData, [field]: value });
+        
+        // Clear error when user selects a value
+        if (errors[field as keyof typeof errors]) {
+            setErrors({ ...errors, [field]: "" });
+        }
+    };
+
+    const validateForm = () => {
+        const newErrors = { ...errors };
+        let isValid = true;
+
+        // Validate required fields
+        if (!formData.code.trim()) {
+            newErrors.code = "Kode promo wajib diisi";
+            isValid = false;
+        }
+
+        if (!formData.name.trim()) {
+            newErrors.name = "Nama promo wajib diisi";
+            isValid = false;
+        }
+
+        if (!formData.amount.trim()) {
+            newErrors.amount = "Jumlah potongan wajib diisi";
+            isValid = false;
+        } else if (formData.promoType === "Persentase" && (parseFloat(formData.amount) <= 0 || parseFloat(formData.amount) > 100)) {
+            newErrors.amount = "Persentase harus antara 1-100";
+            isValid = false;
+        } else if (formData.promoType !== "Persentase" && parseFloat(formData.amount) <= 0) {
+            newErrors.amount = "Nominal potongan harus lebih dari 0";
+            isValid = false;
+        }
+
+        if (!formData.promoType) {
+            newErrors.promoType = "Tipe potongan wajib dipilih";
+            isValid = false;
+        }
+
+        if (!formData.category) {
+            newErrors.category = "Kategori wajib dipilih";
+            isValid = false;
+        }
+
+        if (!formData.serviceCode) {
+            newErrors.serviceCode = "Layanan wajib dipilih";
+            isValid = false;
+        }
+
+        const minItemValue = parseInt(formData.minItem);
+        if (!formData.minItem.trim() || minItemValue < 1) {
+            newErrors.minItem = "Minimal item harus bernilai 1 atau lebih";
+            isValid = false;
+        }
+
+        if (!formData.endDate) {
+            newErrors.endDate = "Masa berlaku wajib diisi";
+            isValid = false;
+        } else {
+            const selectedDate = new Date(formData.endDate);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            if (selectedDate < today) {
+                newErrors.endDate = "Masa berlaku tidak boleh kurang dari hari ini";
+                isValid = false;
+            }
+        }
+
+        setErrors(newErrors);
+        return isValid;
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        
+        // Validate form before submission
+        if (!validateForm()) {
+            toast({
+                title: "Validasi Gagal",
+                description: "Mohon lengkapi semua field yang wajib diisi dengan benar",
+                variant: "destructive",
+            });
+            return;
+        }
+        
+        // Ensure minItem is at least 1 before submission
+        const minItemValue = parseInt(formData.minItem) || 1;
+        
         console.log("Data sebelum dikirim:", formData);
 
         // Konversi data sebelum dikirim ke API
         const formattedData = {
             ...formData,
             amount: Number(formData.amount) || 0, // Pastikan amount berupa number
-            minItem: Number(formData.minItem) || 0, // Pastikan minItem berupa number
+            minItem: minItemValue, // Pastikan minItem minimal 1
             endDate: formData.endDate ? `${formData.endDate}T12:00:00.000Z` : null, // Format tanggal ke ISO 8601
         };
 
@@ -59,10 +178,25 @@ export default function NewDiscount() {
                 variant: "default",
             });
             router.push("/master-data/diskon");
-        } catch (error) {
+        } catch (error: any) {
+            console.error("Error creating promo:", error);
+            
+            // Handle different types of API errors
+            let errorMessage = "Terjadi kesalahan saat menambahkan promo.";
+            
+            if (error.response?.data?.message) {
+                errorMessage = error.response.data.message;
+            } else if (error.response?.status === 400) {
+                errorMessage = "Data yang dikirim tidak valid. Mohon periksa kembali.";
+            } else if (error.response?.status === 409) {
+                errorMessage = "Kode promo sudah digunakan. Gunakan kode yang berbeda.";
+            } else if (error.response?.status >= 500) {
+                errorMessage = "Server sedang mengalami gangguan. Coba lagi nanti.";
+            }
+            
             toast({
                 title: "Gagal",
-                description: "Terjadi kesalahan saat menambahkan promo.",
+                description: errorMessage,
                 variant: "destructive",
             });
         }
@@ -75,59 +209,94 @@ export default function NewDiscount() {
                 <form className="space-y-4" onSubmit={handleSubmit}>
                     <div className="flex items-center space-x-4">
                         <Label htmlFor="code" className="w-1/4 font-semibold ">Kode Promo</Label>
-                        <Input placeholder="Masukkan Kode Promo" className="uppercase" id="code" value={formData.code} onChange={handleChange} />
+                        <div className="w-full">
+                            <Input 
+                                placeholder="Masukkan Kode Promo" 
+                                className={`uppercase ${errors.code ? 'border-red-500' : ''}`} 
+                                id="code" 
+                                value={formData.code} 
+                                onChange={handleChange} 
+                            />
+                            {errors.code && <p className="text-red-500 text-sm mt-1">{errors.code}</p>}
+                        </div>
                     </div>
                     <div className="flex items-center space-x-4">
                         <Label htmlFor="name" className="w-1/4 font-semibold">Nama Promo</Label>
-                        <Input placeholder="Masukkan Nama Promo" id="name" value={formData.name} onChange={handleChange} />
+                        <div className="w-full">
+                            <Input 
+                                placeholder="Masukkan Nama Promo" 
+                                id="name" 
+                                className={errors.name ? 'border-red-500' : ''}
+                                value={formData.name} 
+                                onChange={handleChange} 
+                            />
+                            {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+                        </div>
                     </div>
 
                     {/* Tipe Promo */}
                     <div className="flex items-center space-x-4">
-                        <Label htmlFor="promoType" className="w-[20%] font-semibold">Tipe Potongan</Label>
-                        <RadioGroup
-                            value={formData.promoType || "Nominal"}
-                            onValueChange={(value) => setFormData({ ...formData, promoType: value })}
-                            className="flex items-center gap-5"
-                        >
-                            <div className="flex items-center space-x-2">
-                                <RadioGroupItem value="Nominal" id="Nominal" />
-                                <Label className="capitalize" htmlFor="Nominal">Nominal</Label>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                                <RadioGroupItem value="Persentase" id="Persentase" />
-                                <Label className="capitalize" htmlFor="Persentase">Persentase</Label>
-                            </div>
-                        </RadioGroup>
+                        <Label htmlFor="promoType" className="w-[25%] font-semibold">Tipe Potongan</Label>
+                        <div className="w-full">
+                            <RadioGroup
+                                value={formData.promoType || "Nominal"}
+                                onValueChange={(value) => {
+                                    setFormData({ ...formData, promoType: value });
+                                    if (errors.promoType) {
+                                        setErrors({ ...errors, promoType: "" });
+                                    }
+                                }}
+                                className="flex items-center gap-5"
+                            >
+                                <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="Nominal" id="Nominal" />
+                                    <Label className="capitalize" htmlFor="Nominal">Nominal</Label>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="Persentase" id="Persentase" />
+                                    <Label className="capitalize" htmlFor="Persentase">Persentase</Label>
+                                </div>
+                            </RadioGroup>
+                            {errors.promoType && <p className="text-red-500 text-sm mt-1">{errors.promoType}</p>}
+                        </div>
                     </div>
                     {formData.promoType !== "Persentase" ? (
                         <div className="flex items-center space-x-4">
                             <Label htmlFor="amount" className="w-1/4 font-semibold">Potongan Rp</Label>
-                            <Input
-                                className="text-right"
-                                placeholder="Masukkan Potongan Harga"
-                                type="text"
-                                id="amount"
-                                value={formatRupiah(formData.amount)}
-                                onChange={(e) => {
-                                    const value = e.target.value.replace(/[^0-9]/g, "");
-                                    setFormData({ ...formData, amount: unformatRupiah(value).toString() });
-                                }}
-                            />
+                            <div className="w-full">
+                                <Input
+                                    className={`text-right ${errors.amount ? 'border-red-500' : ''}`}
+                                    placeholder="Masukkan Potongan Harga"
+                                    type="text"
+                                    id="amount"
+                                    value={formatRupiah(formData.amount)}
+                                    onChange={(e) => {
+                                        const value = e.target.value.replace(/[^0-9]/g, "");
+                                        setFormData({ ...formData, amount: unformatRupiah(value).toString() });
+                                        if (errors.amount) {
+                                            setErrors({ ...errors, amount: "" });
+                                        }
+                                    }}
+                                />
+                                {errors.amount && <p className="text-red-500 text-sm mt-1">{errors.amount}</p>}
+                            </div>
                         </div>
                     ) : (
                         <div className="flex items-center space-x-4">
                             <Label htmlFor="amount" className="w-1/4 font-semibold">Potongan %</Label>
                             <div className="relative w-full">
                                 <Input
-                                    className="text-right placeholder:text-start pr-7 no-spinner"
+                                    className={`text-right placeholder:text-start pr-7 no-spinner ${errors.amount ? 'border-red-500' : ''}`}
                                     placeholder="Masukkan Potongan Persentase"
                                     type="number"
                                     id="amount"
+                                    min="1"
+                                    max="100"
                                     value={formData.amount}
                                     onChange={handleChange}
                                 />
                                 <span className="absolute inset-y-0 right-3 flex items-center font-semibold">%</span>
+                                {errors.amount && <p className="text-red-500 text-sm mt-1">{errors.amount}</p>}
                             </div>
                         </div>
                     )}
@@ -136,70 +305,96 @@ export default function NewDiscount() {
                         <Label htmlFor="category" className="w-1/4">
                             Kategori
                         </Label>
-                        <Select
-                            onValueChange={(value) => handleSelectChange("category", value)}
-                            value={formData.category}
-                            disabled={loadingParams}
-                        >
-                            <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Pilih Kategori" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectGroup>
-                                    <SelectLabel>Kategori</SelectLabel>
-                                    {loadingParams ? (
-                                        <SelectItem value="loading" disabled>
-                                            Loading...
-                                        </SelectItem>
-                                    ) : (
-                                        Object.keys(catLayananMapping).map((key) => (
-                                            <SelectItem key={key} value={key}>
-                                                {catLayananMapping[key]}
+                        <div className="w-full">
+                            <Select
+                                onValueChange={(value) => handleSelectChange("category", value)}
+                                value={formData.category}
+                                disabled={loadingParams}
+                            >
+                                <SelectTrigger className={`w-full ${errors.category ? 'border-red-500' : ''}`}>
+                                    <SelectValue placeholder="Pilih Kategori" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        <SelectLabel>Kategori</SelectLabel>
+                                        {loadingParams ? (
+                                            <SelectItem value="loading" disabled>
+                                                Loading...
                                             </SelectItem>
-                                        ))
-                                    )}
-                                </SelectGroup>
-                            </SelectContent>
-                        </Select>
+                                        ) : (
+                                            Object.keys(catLayananMapping).map((key) => (
+                                                <SelectItem key={key} value={key}>
+                                                    {catLayananMapping[key]}
+                                                </SelectItem>
+                                            ))
+                                        )}
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
+                            {errors.category && <p className="text-red-500 text-sm mt-1">{errors.category}</p>}
+                        </div>
                     </div>
 
                     <div className="flex items-center space-x-4">
                         <Label htmlFor="unit" className="w-1/4">
                             Layanan
                         </Label>
-                        <Select
-                            onValueChange={(value) => handleSelectChange("serviceCode", value)}
-                            disabled={loadingParams}
-                        >
-                            <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Pilih Layanan" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectGroup>
-                                    <SelectLabel>Satuan</SelectLabel>
-                                    {loadingParams ? (
-                                        <SelectItem value="loading" disabled>
-                                            Loading...
-                                        </SelectItem>
-                                    ) : (
-                                        Object.keys(unitLayananMapping).map((key) => (
-                                            <SelectItem key={key} value={key}>
-                                                {unitLayananMapping[key]}
+                        <div className="w-full">
+                            <Select
+                                onValueChange={(value) => handleSelectChange("serviceCode", value)}
+                                disabled={loadingParams}
+                            >
+                                <SelectTrigger className={`w-full ${errors.serviceCode ? 'border-red-500' : ''}`}>
+                                    <SelectValue placeholder="Pilih Layanan" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        <SelectLabel>Satuan</SelectLabel>
+                                        {loadingParams ? (
+                                            <SelectItem value="loading" disabled>
+                                                Loading...
                                             </SelectItem>
-                                        ))
-                                    )}
-                                </SelectGroup>
-                            </SelectContent>
-                        </Select>
+                                        ) : (
+                                            Object.keys(unitLayananMapping).map((key) => (
+                                                <SelectItem key={key} value={key}>
+                                                    {unitLayananMapping[key]}
+                                                </SelectItem>
+                                            ))
+                                        )}
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
+                            {errors.serviceCode && <p className="text-red-500 text-sm mt-1">{errors.serviceCode}</p>}
+                        </div>
                     </div>
                     
                     <div className="flex items-center space-x-4">
                         <Label htmlFor="minItem" className="w-1/4 font-semibold">Minimal Item</Label>
-                        <Input placeholder="Masukkan Minimal Item" type="number" id="minItem" value={formData.minItem} onChange={handleChange} />
+                        <div className="w-full">
+                            <Input 
+                                placeholder="Masukkan Minimal Item" 
+                                type="number" 
+                                id="minItem" 
+                                min="1"
+                                className={errors.minItem ? 'border-red-500' : ''}
+                                value={formData.minItem} 
+                                onChange={handleMinItemChange}
+                            />
+                            {errors.minItem && <p className="text-red-500 text-sm mt-1">{errors.minItem}</p>}
+                        </div>
                     </div>
                     <div className="flex items-center space-x-4">
                         <Label htmlFor="endDate" className="w-1/4 font-semibold">Masa Berlaku</Label>
-                        <Input type="date" className="flex w-full" id="endDate" value={formData.endDate} onChange={handleChange} />
+                        <div className="w-full">
+                            <Input 
+                                type="date" 
+                                className={`flex w-full ${errors.endDate ? 'border-red-500' : ''}`} 
+                                id="endDate" 
+                                value={formData.endDate} 
+                                onChange={handleChange} 
+                            />
+                            {errors.endDate && <p className="text-red-500 text-sm mt-1">{errors.endDate}</p>}
+                        </div>
                     </div>
                     <div className="space-x-2 flex justify-end">
                         <Button type="button" variant="outline2" onClick={() => router.back()}>
