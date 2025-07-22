@@ -15,6 +15,7 @@ import { formatDate } from "libs/utils/formatDate";
 import { formatRupiah } from "libs/utils/formatRupiah";
 import { PembayaranTableDetail } from "libs/ui-components/src/components/pembayaran-table-detail";
 import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
+import { LocationData } from "apps/admin-app/app/transaksi/spk/edit/[...id]/page";
 
 interface TransactionDetail {
   serviceCategory: string;
@@ -43,7 +44,7 @@ interface Transaction {
 
 interface Customer {
   id: string;
-  name: string;
+  fullname: string;
   noWhatsapp: string;
   address: string;
   province: string;
@@ -105,20 +106,36 @@ export default function PembayaranDetail() {
     customer?.district
   );
 
-  // Effect untuk mengambil label lokasi berdasarkan customer yang dipilih
-  useEffect(() => {
+  const fetchLocationLabels = async () => {
     if (customer) {
-      const getLocationLabel = (items: any[], code: string) => {
+      const [provinceRes, cityRes, districtRes, subDistrictRes] = await Promise.all([
+        api.get(`/parameter/provinces`),
+        api.get(`/parameter/cities?province=${customer.province}`),
+        api.get(`/parameter/districts?province=${customer.province}&city=${customer.city}`),
+        api.get(`/parameter/sub-districts?province=${customer.province}&city=${customer.city}&district=${customer.district}`)
+      ]);
+
+
+      const getLocationLabel = (items: LocationData[], code: string) => {
         const item = items.find(item => item.paramKey === code);
-        return item ? item.paramValue : code;
+        return item ? item.paramValue : "Tidak Diketahui";
       };
 
       setLocationLabels({
-        provinceName: getLocationLabel(provinces, customer.province),
-        cityName: getLocationLabel(cities, customer.city),
-        districtName: getLocationLabel(districts, customer.district),
-        subDistrictName: getLocationLabel(subDistricts, customer.subDistrict)
+        provinceName: getLocationLabel(provinceRes.data, customer.province),
+        cityName: getLocationLabel(cityRes.data, customer.city),
+        districtName: getLocationLabel(districtRes.data, customer.district),
+        subDistrictName: getLocationLabel(subDistrictRes.data, customer.subDistrict)
       });
+
+      console.log("Location Labels:", {
+        provinceName: getLocationLabel(provinceRes.data, customer.province),
+        cityName: getLocationLabel(cityRes.data, customer.city),
+        districtName: getLocationLabel(districtRes.data, customer.district),
+        subDistrictName: getLocationLabel(subDistrictRes.data, customer.subDistrict)
+      }
+      );
+
     } else {
       setLocationLabels({
         provinceName: "",
@@ -127,6 +144,11 @@ export default function PembayaranDetail() {
         subDistrictName: ""
       });
     }
+  }
+
+  // Effect untuk mengambil label lokasi berdasarkan customer yang dipilih
+  useEffect(() => {
+    fetchLocationLabels();
   }, [customer, provinces, cities, districts, subDistricts]);
 
   useEffect(() => {
@@ -136,7 +158,7 @@ export default function PembayaranDetail() {
         setError(null);
 
         // Fetch transaction data
-        const transactionResult = await api.get(`/transaction/history?trxNumber=${trxNumber}`);
+        const transactionResult = await api.get(`/transaction/detail?trxNumber=${trxNumber}`);
 
         if (transactionResult.status === "success") {
           setTransaction(transactionResult.data);
@@ -144,7 +166,7 @@ export default function PembayaranDetail() {
           // Fetch customer data using customerId
           if (transactionResult.data.customerId) {
             try {
-              const customerResult = await api.get(`/customer/${transactionResult.data.customerId}`);
+              const customerResult = await api.get(`/customer/id/${transactionResult.data.customerId}`);
               if (customerResult.status === "success") {
                 setCustomer(customerResult.data);
               }
@@ -235,7 +257,7 @@ export default function PembayaranDetail() {
               <div className="flex items-center space-x-4">
                 <Label className="w-[40%] font-semibold">Nama Customer</Label>
                 <Input
-                  value={customer?.name || ""}
+                  value={customer?.fullname || ""}
                   readOnly
                   className="bg-muted/50 cursor-not-allowed"
                   placeholder="Nama customer tidak tersedia"

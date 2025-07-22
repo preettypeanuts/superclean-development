@@ -84,7 +84,7 @@ interface Staff {
 }
 
 // Location interface
-interface LocationData {
+export interface LocationData {
     id: string;
     paramKey: string;
     paramValue: string;
