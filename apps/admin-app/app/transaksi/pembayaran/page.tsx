@@ -32,12 +32,11 @@ const DataHeaderSettlement = [
 ];
 
 const SettlementStatus = [
-  { label: "Draft", value: 0 },
-  { label: "Pending", value: 1 },
-  { label: "Batal", value: 2 },
+  { label: "All", value: 0 },
   { label: "Menunggu Bayar", value: 3 },
   { label: "Sudah Bayar", value: 4 },
   { label: "Selesai", value: 5 },
+  { label: "Dikerjakan Kembali", value: 6 },
 ];
 
 export default function SettlementPage() {

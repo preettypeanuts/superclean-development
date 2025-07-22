@@ -16,6 +16,8 @@ import { formatRupiah } from "libs/utils/formatRupiah";
 import { PembayaranTableDetail } from "libs/ui-components/src/components/pembayaran-table-detail";
 import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
 import { LocationData } from "apps/admin-app/app/transaksi/spk/edit/[...id]/page";
+import MultiSelect from "@ui-components/components/multi-select";
+import { useToast } from "@ui-components/hooks/use-toast";
 
 interface TransactionDetail {
   serviceCategory: string;
@@ -66,12 +68,10 @@ const HeaderPembayaran = [
 
 // Mapping untuk status
 const statusMapping = {
-  0: "Baru",
-  1: "Dikonfirmasi",
-  2: "Dalam Proses",
-  3: "Selesai",
-  4: "Dibatalkan",
-  5: "Menunggu Pembayaran"
+  3: "Menunggu Pembayaran",
+  4: "Sudah DiBayar",
+  5: "Selesai",
+  6: "Dikerjakan Kembali"
 };
 
 // Mapping untuk service type
@@ -83,6 +83,7 @@ const serviceTypeMapping = {
 
 export default function PembayaranDetail() {
   const pathname = usePathname();
+  const { toast } = useToast();
   const router = useRouter();
   const trxNumber = pathname.split("/transaksi/pembayaran/detail/").pop();
 
@@ -106,6 +107,13 @@ export default function PembayaranDetail() {
     customer?.district
   );
 
+  const [cleaningStaffList, setCleaningStaffList] = useState<any[]>([]);
+  const [blowerStaffList, setBlowerStaffList] = useState<any[]>([]);
+
+  // State untuk rework staff
+  const [reworkStaffList, setReworkStaffList] = useState<any[]>([]);
+  const [selectedReworkStaff, setSelectedReworkStaff] = useState<string[]>([]);
+
   const fetchLocationLabels = async () => {
     if (customer) {
       const [provinceRes, cityRes, districtRes, subDistrictRes] = await Promise.all([
@@ -127,15 +135,6 @@ export default function PembayaranDetail() {
         districtName: getLocationLabel(districtRes.data, customer.district),
         subDistrictName: getLocationLabel(subDistrictRes.data, customer.subDistrict)
       });
-
-      console.log("Location Labels:", {
-        provinceName: getLocationLabel(provinceRes.data, customer.province),
-        cityName: getLocationLabel(cityRes.data, customer.city),
-        districtName: getLocationLabel(districtRes.data, customer.district),
-        subDistrictName: getLocationLabel(subDistrictRes.data, customer.subDistrict)
-      }
-      );
-
     } else {
       setLocationLabels({
         provinceName: "",
@@ -151,6 +150,31 @@ export default function PembayaranDetail() {
     fetchLocationLabels();
   }, [customer, provinces, cities, districts, subDistricts]);
 
+  const fetchCustomerData = async (customerId: string) => {
+    try {
+      const customerResult = await api.get(`/customer/id/${customerId}`);
+      if (customerResult.status === "success") {
+        setCustomer(customerResult.data);
+      }
+    } catch (customerError) {
+      console.warn("Customer data not found or error:", customerError);
+      // Continue without customer data
+    }
+  }
+
+  // Fetch staff data
+  const fetchStaffData = async (staffIds: string[], setStaffState: Function) => {
+    try {
+      const staffPromises = staffIds.map(id => api.get(`/user/username/${id}`));
+      const staffResults = await Promise.all(staffPromises);
+      const staffData = staffResults.map(result => result.data);
+      setStaffState(staffData);
+    } catch (error) {
+      console.error("Gagal mengambil data staff:", error);
+      setStaffState([]);
+    }
+  };
+
   useEffect(() => {
     const fetchTransactionData = async () => {
       try {
@@ -165,16 +189,19 @@ export default function PembayaranDetail() {
 
           // Fetch customer data using customerId
           if (transactionResult.data.customerId) {
-            try {
-              const customerResult = await api.get(`/customer/id/${transactionResult.data.customerId}`);
-              if (customerResult.status === "success") {
-                setCustomer(customerResult.data);
-              }
-            } catch (customerError) {
-              console.warn("Customer data not found or error:", customerError);
-              // Continue without customer data
-            }
+            await fetchCustomerData(transactionResult.data.customerId);
           }
+
+          // Fetch staff data
+          if (transactionResult.data.assigns && transactionResult.data.assigns.length > 0) {
+            await fetchStaffData(transactionResult.data.assigns, setCleaningStaffList);
+          }
+
+          if (transactionResult.data.blowers && transactionResult.data.blowers.length > 0) {
+            await fetchStaffData(transactionResult.data.blowers, setBlowerStaffList);
+          }
+
+
         } else {
           setError("Data transaksi tidak ditemukan");
         }
@@ -225,6 +252,59 @@ export default function PembayaranDetail() {
   };
 
   const totals = calculateTotals();
+
+  const IS_WAITING_PAYMENT = transaction?.status === 3;
+  const IS_PAID = transaction?.status === 4;
+  const IS_COMPLETED = transaction?.status === 5;
+  const IS_REWORKED = transaction?.status === 6;
+
+  // action handlers
+  const handleComplete = async () => {
+    try {
+      await api.put(`/transaction/${transaction?.id}/status`, {
+        status: 5, // Selesai
+      });
+
+      router.back();
+
+      toast({
+        title: "Sukses",
+        description: "Transaksi berhasil diselesaikan.",
+        variant: "success"
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: "Gagal menyelesaikan transaksi.",
+        variant: "destructive"
+      });
+    }
+  }
+
+  const handleRework = async () => {
+    try {
+      await api.put(`/transaction/${transaction?.id}/status`, {
+        status: 6, // Dikerjakan Kembali
+        // reworkStaff: selectedReworkStaff
+      });
+
+      // todo: implement rework staff selection
+
+      router.back();
+
+      toast({
+        title: "Sukses",
+        description: "Transaksi berhasil dikerjakan ulang.",
+        variant: "success"
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: "Gagal mengerjakan ulang transaksi.",
+        variant: "destructive"
+      });
+    }
+  }
 
   if (loading) {
     return (
@@ -363,11 +443,19 @@ export default function PembayaranDetail() {
             {/* Kolom Kiri */}
             <div className="col-span-1 space-y-4">
               <div className="flex items-center space-x-4">
-                <Label className="w-[40%] font-semibold">Branch ID</Label>
-                <Input
+                <Label className="w-[40%] font-semibold">Petugas Cleaning</Label>
+                {/* <MultiSelect
+                  staffList={[]}
+                  selected={[]}
+                  onSelectionChange={() => { }}
+                  placeholder="Pilih petugas cleaning"
+                  loading={false}
+                /> */}
+                <Textarea
                   disabled
-                  value={transaction.branchId}
-                  className="bg-muted/50 cursor-not-allowed"
+                  className="resize-none"
+                  value={cleaningStaffList.map(staff => staff.fullname).join(", ") || "-"}
+                  rows={2}
                 />
               </div>
 
@@ -384,11 +472,30 @@ export default function PembayaranDetail() {
             {/* Kolom Kanan */}
             <div className="col-span-1 space-y-4">
               <div className="flex items-center space-x-4">
-                <Label className="w-[40%] font-semibold">Customer ID</Label>
-                <Input
+                <Label className="w-[40%] font-semibold">Petugas Blower</Label>
+                {/* <MultiSelect
+                  staffList={[]}
+                  selected={[]}
+                  onSelectionChange={() => { }}
+                  placeholder="Pilih petugas blower"
+                  loading={false}
+                /> */}
+                <Textarea
                   disabled
-                  value={transaction.customerId}
-                  className="bg-muted/50 cursor-not-allowed"
+                  className="resize-none"
+                  value={blowerStaffList.map(staff => staff.fullname).join(", ") || "-"}
+                  rows={2}
+                />
+              </div>
+
+              <div className="flex items-center space-x-4">
+                <Label className="w-[40%] font-semibold">Dikerjakan Ulang</Label>
+                <MultiSelect
+                  staffList={[]}
+                  selected={[]}
+                  onSelectionChange={() => { }}
+                  placeholder="Pilih pekerja ulang"
+                  loading={false}
                 />
               </div>
             </div>
@@ -459,6 +566,20 @@ export default function PembayaranDetail() {
               <TbArrowBack />
               Kembali
             </Button>
+
+            {IS_PAID && (
+              <Button onClick={handleComplete} variant="main">
+                Konfirmasi
+              </Button>
+            )}
+
+            {IS_WAITING_PAYMENT && (
+              <Button
+                // disabled={selectedReworkStaff.length === 0}
+                onClick={handleRework} variant="main">
+                Simpan
+              </Button>
+            )}
           </div>
         </div>
       </Wrapper>
