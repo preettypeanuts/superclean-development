@@ -57,7 +57,8 @@ const DataHeaderSPKDetail = [
     { key: "kategori", label: "Kategori" },
     { key: "jumlah", label: "Jumlah" },
     { key: "satuan", label: "Satuan" },
-    { key: "harga", label: "Harga" },
+    { key: "harga", label: "Harga Satuan" },
+    { key: "totalHarga", label: "Total Harga" },
     { key: "promo", label: "Promo" },
     { key: "menu", label: "Aksi" }
 ];
@@ -464,7 +465,7 @@ export default function NewSPK() {
 
     // Function untuk menghitung total dari semua SPK items (update)
     const calculateTotals = () => {
-        const totalPrice = spkItems.reduce((sum, item) => sum + item.harga, 0);
+        const totalPrice = spkItems.reduce((sum, item) => sum + item.harga * item.jumlah, 0);
         const totalPromo = spkItems.reduce((sum, item) => sum + item.promo, 0);
         const finalPrice = totalPrice - totalPromo - manualDiscount;
 
@@ -754,7 +755,7 @@ export default function NewSPK() {
             const newId = Date.now().toString();
             const selectedService = services.find(service => service.serviceCode === formDataTable.serviceCode);
 
-            const newItem: SPKItem = {
+            const newItem = {
                 id: newId,
                 kode: formDataTable.serviceCode,
                 layanan: selectedService?.serviceName || formDataTable.serviceCode,
@@ -766,8 +767,12 @@ export default function NewSPK() {
                 promo: formDataTable.promo,
                 tipe: formDataTable.tipe,
                 promoCode: formDataTable.promoCode,
-                promoType: formDataTable.promoType
+                promoType: formDataTable.promoType,
+                totalHarga: totalHargaSebelumPromo - formDataTable.promo
             };
+
+            console.log(newItem);
+
 
             setSPKItems(prev => [...prev, newItem]);
 
@@ -1194,7 +1199,7 @@ export default function NewSPK() {
                             <Label htmlFor="subtotal" className="w-1/4 font-bold text-lg">Subtotal</Label>
                             <Input
                                 value={formatRupiah(
-                                    (Number(formDataTable.harga) || 0) - (Number(formDataTable.promo) || 0)
+                                    (Number(formDataTable.harga) || 0) * (Number(formDataTable.jumlah) || 0) - (Number(formDataTable.promo) || 0)
                                 )}
                                 className="!border-0 !text-lg font-bold text-right"
                                 readOnly
