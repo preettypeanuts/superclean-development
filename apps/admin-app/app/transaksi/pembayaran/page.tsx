@@ -32,7 +32,7 @@ const DataHeaderSettlement = [
 ];
 
 const SettlementStatus = [
-  { label: "All", value: 0 },
+  { label: "All", value: -1 },
   { label: "Menunggu Bayar", value: 3 },
   { label: "Sudah Bayar", value: 4 },
   { label: "Selesai", value: 5 },
@@ -75,13 +75,13 @@ export default function SettlementPage() {
   const [tempSearchQuery, setTempSearchQuery] = useState("");
 
   // filter aktif
-  const [statusFilter, setStatusFilter] = useState<number>(0);
+  const [statusFilter, setStatusFilter] = useState<number>(-1);
   const [branchFilter, setBranchFilter] = useState<string>("");
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
 
   // filter sementara
-  const [tempStatus, setTempStatus] = useState<number>(0);
+  const [tempStatus, setTempStatus] = useState<number>(-1);
   const [tempBranch, setTempBranch] = useState<string>("");
   const [tempStartDate, setTempStartDate] = useState<Date>();
   const [tempEndDate, setTempEndDate] = useState<Date>();
@@ -120,7 +120,7 @@ export default function SettlementPage() {
     setLoading(true);
     try {
       let url = `/transaction/page/settlement?search=${search}&page=${page}&limit=${limit}`;
-      if (status) url += `&status=${status}`;
+      if (status > -1) url += `&status=${status}`;
       if (branch) url += `&branchId=${branch}`;
       if (start) url += `&startDate=${formatDateAPI(start)}`;
       if (end) url += `&endDate=${formatDateAPI(end)}`;
