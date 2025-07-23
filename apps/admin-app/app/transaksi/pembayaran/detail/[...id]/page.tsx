@@ -107,8 +107,9 @@ export default function PembayaranDetail() {
     customer?.district
   );
 
-  const [selectedCleaningStaffList, setSelectedCleaningStaffList] = useState<any[]>([]);
-  const [selectedBlowerStaffList, setSelectedBlowerStaffList] = useState<any[]>([]);
+  const [selectedLockedCleaningStaffList, setSelectedLockedCleaningStaffList] = useState<any[]>([]);
+  const [selectedLockedBlowerStaffList, setSelectedLockedBlowerStaffList] = useState<any[]>([]);
+  const [selectedLockedReworkStaffList, setSelectedLockedReworkStaffList] = useState<any[]>([]);
 
   // State untuk rework staff
   const [reworkStaffList, setReworkStaffList] = useState<any[]>([]);
@@ -221,13 +222,16 @@ export default function PembayaranDetail() {
 
           // Fetch staff data
           if (transactionResult.data.assigns && transactionResult.data.assigns.length > 0) {
-            await fetchStaffData(transactionResult.data.assigns, setSelectedCleaningStaffList);
+            await fetchStaffData(transactionResult.data.assigns, setSelectedLockedCleaningStaffList);
           }
 
           if (transactionResult.data.blowers && transactionResult.data.blowers.length > 0) {
-            await fetchStaffData(transactionResult.data.blowers, setSelectedBlowerStaffList);
+            await fetchStaffData(transactionResult.data.blowers, setSelectedLockedBlowerStaffList);
           }
 
+          if (transactionResult.data.reworkStaff && transactionResult.data.reworkStaff.length > 0) {
+            await fetchStaffData(transactionResult.data.reworkStaff, setSelectedLockedReworkStaffList);
+          }
 
         } else {
           setError("Data transaksi tidak ditemukan");
@@ -487,7 +491,7 @@ export default function PembayaranDetail() {
                 <Textarea
                   disabled
                   className="resize-none"
-                  value={selectedCleaningStaffList.map(staff => staff.fullname).join(", ") || "-"}
+                  value={selectedLockedCleaningStaffList.map(staff => staff.fullname).join(", ") || "-"}
                   rows={2}
                 />
               </div>
@@ -516,20 +520,31 @@ export default function PembayaranDetail() {
                 <Textarea
                   disabled
                   className="resize-none"
-                  value={selectedBlowerStaffList.map(staff => staff.fullname).join(", ") || "-"}
+                  value={selectedLockedBlowerStaffList.map(staff => staff.fullname).join(", ") || "-"}
                   rows={2}
                 />
               </div>
 
               <div className="flex items-center space-x-4">
                 <Label className="w-[40%] font-semibold">Dikerjakan Ulang</Label>
-                <MultiSelect
-                  staffList={reworkStaffList}
-                  selected={selectedReworkStaff}
-                  onSelectionChange={handleReworkStaffChange}
-                  placeholder="Pilih pekerja ulang"
-                  loading={false}
-                />
+                {IS_WAITING_PAYMENT && (
+                  <MultiSelect
+                    staffList={reworkStaffList}
+                    selected={selectedReworkStaff}
+                    onSelectionChange={handleReworkStaffChange}
+                    placeholder="Pilih pekerja ulang"
+                    loading={false}
+                  />
+                )}
+
+                {!IS_WAITING_PAYMENT && (
+                  <Textarea
+                    disabled
+                    className="resize-none"
+                    value={selectedLockedReworkStaffList.map(staff => staff.fullname).join(", ") || "-"}
+                    rows={2}
+                  />
+                )}
               </div>
             </div>
           </div>
