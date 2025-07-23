@@ -107,12 +107,16 @@ export default function PembayaranDetail() {
     customer?.district
   );
 
-  const [cleaningStaffList, setCleaningStaffList] = useState<any[]>([]);
-  const [blowerStaffList, setBlowerStaffList] = useState<any[]>([]);
+  const [selectedCleaningStaffList, setSelectedCleaningStaffList] = useState<any[]>([]);
+  const [selectedBlowerStaffList, setSelectedBlowerStaffList] = useState<any[]>([]);
 
   // State untuk rework staff
   const [reworkStaffList, setReworkStaffList] = useState<any[]>([]);
   const [selectedReworkStaff, setSelectedReworkStaff] = useState<string[]>([]);
+
+  const handleReworkStaffChange = (selected: string[]) => {
+    setSelectedReworkStaff(selected);
+  }
 
   const fetchLocationLabels = async () => {
     if (customer) {
@@ -175,6 +179,29 @@ export default function PembayaranDetail() {
     }
   };
 
+  const fetchStaffListData = async (roleId: string, city: string, setStaffList: Function) => {
+    if (!roleId || !city) {
+      setStaffList([]);
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await api.get(`/user/lookup?roleId=${roleId}&city=${city}`);
+      setStaffList(response?.data || []);
+    } catch (error) {
+      console.error(`Error fetching ${roleId} staff:`, error);
+      setStaffList([]);
+      toast({
+        title: "Error",
+        description: `Gagal mengambil data petugas ${roleId.toLowerCase()}`,
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  }
+
   useEffect(() => {
     const fetchTransactionData = async () => {
       try {
@@ -194,11 +221,11 @@ export default function PembayaranDetail() {
 
           // Fetch staff data
           if (transactionResult.data.assigns && transactionResult.data.assigns.length > 0) {
-            await fetchStaffData(transactionResult.data.assigns, setCleaningStaffList);
+            await fetchStaffData(transactionResult.data.assigns, setSelectedCleaningStaffList);
           }
 
           if (transactionResult.data.blowers && transactionResult.data.blowers.length > 0) {
-            await fetchStaffData(transactionResult.data.blowers, setBlowerStaffList);
+            await fetchStaffData(transactionResult.data.blowers, setSelectedBlowerStaffList);
           }
 
 
@@ -217,6 +244,12 @@ export default function PembayaranDetail() {
       fetchTransactionData();
     }
   }, [trxNumber]);
+
+  useEffect(() => {
+    if (customer?.city) {
+      fetchStaffListData("CLEANER", customer.city, setReworkStaffList);
+    }
+  }, [customer?.city])
 
   // Transform transaction details for table
   const transformedDetails = transaction?.details?.map((detail, index) => ({
@@ -454,7 +487,7 @@ export default function PembayaranDetail() {
                 <Textarea
                   disabled
                   className="resize-none"
-                  value={cleaningStaffList.map(staff => staff.fullname).join(", ") || "-"}
+                  value={selectedCleaningStaffList.map(staff => staff.fullname).join(", ") || "-"}
                   rows={2}
                 />
               </div>
@@ -483,7 +516,7 @@ export default function PembayaranDetail() {
                 <Textarea
                   disabled
                   className="resize-none"
-                  value={blowerStaffList.map(staff => staff.fullname).join(", ") || "-"}
+                  value={selectedBlowerStaffList.map(staff => staff.fullname).join(", ") || "-"}
                   rows={2}
                 />
               </div>
@@ -491,9 +524,9 @@ export default function PembayaranDetail() {
               <div className="flex items-center space-x-4">
                 <Label className="w-[40%] font-semibold">Dikerjakan Ulang</Label>
                 <MultiSelect
-                  staffList={[]}
-                  selected={[]}
-                  onSelectionChange={() => { }}
+                  staffList={reworkStaffList}
+                  selected={selectedReworkStaff}
+                  onSelectionChange={handleReworkStaffChange}
                   placeholder="Pilih pekerja ulang"
                   loading={false}
                 />
@@ -575,7 +608,7 @@ export default function PembayaranDetail() {
 
             {IS_WAITING_PAYMENT && (
               <Button
-                // disabled={selectedReworkStaff.length === 0}
+                disabled={selectedReworkStaff.length === 0}
                 onClick={handleRework} variant="main">
                 Simpan
               </Button>
