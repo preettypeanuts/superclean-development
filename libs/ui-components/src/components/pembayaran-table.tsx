@@ -51,12 +51,14 @@ export const PembayaranTable: React.FC<DataTableProps> = ({
     [TrxStatus.PAYMENT]: "Menunggu Bayar",
     [TrxStatus.PAID]: "Sudah Bayar",
     [TrxStatus.SETTLED]: "Selesai",
+    [TrxStatus.REASSIGN]: "Dikerjakan Ulang",
   };
 
   const statusColors: Record<string, string> = {
-    "Menunggu Bayar": "bg-orange-500 text-orange-600 dark:bg-orange-600 dark:text-orange-100",
+    "Menunggu Bayar": "bg-yellow-500 text-yellow-600 dark:bg-yellow-600 dark:text-yellow-100",
     "Sudah Bayar": "bg-blue-500 text-blue-600 dark:bg-blue-600 dark:text-blue-100",
     "Selesai": "bg-green-500 text-green-600 dark:bg-green-600 dark:text-green-100",
+    "Dikerjakan Ulang": "bg-orange-400 text-orange-600 dark:bg-orange-600 dark:text-orange-100",
   };
 
   return (
