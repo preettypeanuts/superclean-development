@@ -35,11 +35,14 @@ const columns = [
 ];
 
 const TransactionStatus = [
-  { label: "Draft", value: 0 },
-  { label: "Pending", value: 1 },
+  { label: "All", value: -1 },
+  { label: "Baru", value: 0 },
+  { label: "Proses", value: 1 },
+  { label: "Cancel", value: 2 },
   { label: "Menunggu Bayar", value: 3 },
   { label: "Sudah Bayar", value: 4 },
   { label: "Selesai", value: 5 },
+  { label: "Dikerjakan Ulang", value: 6 },
 ];
 
 // Sample employee data - replace with actual API call
@@ -87,13 +90,13 @@ export default function InquiryTransaksiPage() {
   const [tempSearchQuery, setTempSearchQuery] = useState("");
 
   // Filter aktif
-  const [statusFilter, setStatusFilter] = useState<number>(0);
+  const [statusFilter, setStatusFilter] = useState<number>(-1);
   const [branchFilter, setBranchFilter] = useState<string>("");
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
 
   // Filter sementara
-  const [tempStatus, setTempStatus] = useState<number>(0);
+  const [tempStatus, setTempStatus] = useState<number>(-1);
   const [tempBranch, setTempBranch] = useState<string>("");
   const [tempStartDate, setTempStartDate] = useState<Date>();
   const [tempEndDate, setTempEndDate] = useState<Date>();
@@ -147,7 +150,7 @@ export default function InquiryTransaksiPage() {
     setLoading(true);
     try {
       let url = `/transaction/page?search=${search}&page=${page}&limit=${limit}`;
-      if (status) url += `&status=${status}`;
+      if (status > -1) url += `&status=${status}`;
       if (branch) url += `&branchId=${branch}`;
       if (start) url += `&startDate=${formatDateAPI(start)}`;
       if (end) url += `&endDate=${formatDateAPI(end)}`;
@@ -202,7 +205,7 @@ export default function InquiryTransaksiPage() {
     setIsExporting(true);
     try {
       let url = `/report/inquiry?search=${searchQuery}`;
-      if (statusFilter) url += `&status=${statusFilter}`;
+      if (statusFilter > 0) url += `&status=${statusFilter}`;
       if (branchFilter) url += `&branchId=${branchFilter}`;
       if (startDate) url += `&startDate=${formatDateAPI(startDate)}`;
       if (endDate) url += `&endDate=${formatDateAPI(endDate)}`;
@@ -342,9 +345,9 @@ export default function InquiryTransaksiPage() {
 
   return (
     <>
-      <Breadcrumbs 
-        label="Inquiry Transaksi" 
-        count={totalData} 
+      <Breadcrumbs
+        label="Inquiry Transaksi"
+        count={totalData}
       />
       <Wrapper>
         <div className="space-y-4">

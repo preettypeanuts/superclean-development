@@ -45,10 +45,12 @@ export const InquiryTransaksiTable: React.FC<DataTableProps> = ({
 
   const statusLabels: Record<number, string> = {
     0: "Baru",
-    1: "Pending",
+    1: "Proses",
+    2: "Cancel",
     3: "Menunggu Bayar",
     4: "Sudah Bayar",
     5: "Selesai",
+    6: "Dikerjakan Ulang",
   };
 
   const statusClasses: Record<string, string> = {
@@ -95,7 +97,7 @@ export const InquiryTransaksiTable: React.FC<DataTableProps> = ({
                 return (
                   <TableCell key="menu">
                     <div className="flex gap-2">
-                      <Link href={`/transaksi/inquiry-transaksi/detail/${item.trxNumber}`}>
+                      <Link href={`/laporan/inquiry-transaksi/detail/${item.trxNumber}`}>
                         <Button
                           size="icon"
                           variant="main"
