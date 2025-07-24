@@ -19,17 +19,6 @@ import { LocationData } from "apps/admin-app/app/transaksi/spk/edit/[...id]/page
 import MultiSelect from "@ui-components/components/multi-select";
 import { useToast } from "@ui-components/hooks/use-toast";
 
-interface TransactionDetail {
-  serviceCategory: string;
-  serviceCode: string;
-  serviceType: number;
-  servicePrice: number;
-  quantity: number;
-  promoCode: string;
-  promoType: string;
-  promoAmount: number;
-}
-
 interface Transaction {
   id: string;
   trxNumber: string;
@@ -42,6 +31,20 @@ interface Transaction {
   trxDate: string;
   status: number;
   details: TransactionDetail[];
+  assigns: string[];
+  blowers: string[];
+  reassigns: string[];
+}
+
+interface TransactionDetail {
+  serviceCategory: string;
+  serviceCode: string;
+  serviceType: number;
+  servicePrice: number;
+  quantity: number;
+  promoCode: string;
+  promoType: string;
+  promoAmount: number;
 }
 
 interface Customer {
@@ -128,7 +131,6 @@ export default function PembayaranDetail() {
         api.get(`/parameter/sub-districts?province=${customer.province}&city=${customer.city}&district=${customer.district}`)
       ]);
 
-
       const getLocationLabel = (items: LocationData[], code: string) => {
         const item = items.find(item => item.paramKey === code);
         return item ? item.paramValue : "Tidak Diketahui";
@@ -172,7 +174,7 @@ export default function PembayaranDetail() {
     try {
       const staffPromises = staffIds.map(id => api.get(`/user/username/${id}`));
       const staffResults = await Promise.all(staffPromises);
-      const staffData = staffResults.map(result => result.data);
+      const staffData = staffResults.map(result => result.data || { fullname: "Unknown" });
       setStaffState(staffData);
     } catch (error) {
       console.error("Gagal mengambil data staff:", error);
@@ -211,26 +213,27 @@ export default function PembayaranDetail() {
 
         // Fetch transaction data
         const transactionResult = await api.get(`/transaction/detail?trxNumber=${trxNumber}`);
+        const transactionData = transactionResult.data as Transaction;
 
         if (transactionResult.status === "success") {
-          setTransaction(transactionResult.data);
+          setTransaction(transactionData);
 
           // Fetch customer data using customerId
-          if (transactionResult.data.customerId) {
-            await fetchCustomerData(transactionResult.data.customerId);
+          if (transactionData.customerId) {
+            await fetchCustomerData(transactionData.customerId);
           }
 
           // Fetch staff data
-          if (transactionResult.data.assigns && transactionResult.data.assigns.length > 0) {
-            await fetchStaffData(transactionResult.data.assigns, setSelectedLockedCleaningStaffList);
+          if (transactionData.assigns && transactionData.assigns.length > 0) {
+            await fetchStaffData(transactionData.assigns, setSelectedLockedCleaningStaffList);
           }
 
-          if (transactionResult.data.blowers && transactionResult.data.blowers.length > 0) {
-            await fetchStaffData(transactionResult.data.blowers, setSelectedLockedBlowerStaffList);
+          if (transactionData.blowers && transactionData.blowers.length > 0) {
+            await fetchStaffData(transactionData.blowers, setSelectedLockedBlowerStaffList);
           }
 
-          if (transactionResult.data.reworkStaff && transactionResult.data.reworkStaff.length > 0) {
-            await fetchStaffData(transactionResult.data.reworkStaff, setSelectedLockedReworkStaffList);
+          if (transactionData.reassigns && transactionData.reassigns.length > 0) {
+            await fetchStaffData(transactionData.reassigns, setSelectedLockedReworkStaffList);
           }
 
         } else {
@@ -320,12 +323,9 @@ export default function PembayaranDetail() {
 
   const handleRework = async () => {
     try {
-      await api.put(`/transaction/${transaction?.id}/status`, {
-        status: 6, // Dikerjakan Kembali
-        // reworkStaff: selectedReworkStaff
-      });
-
-      // todo: implement rework staff selection
+      await api.put(`/transaction/${transaction?.id}/reassigned`, {
+        reassigns: selectedReworkStaff,
+      }); // Assign ulang rework staff
 
       router.back();
 
@@ -481,17 +481,10 @@ export default function PembayaranDetail() {
             <div className="col-span-1 space-y-4">
               <div className="flex items-center space-x-4">
                 <Label className="w-[40%] font-semibold">Petugas Cleaning</Label>
-                {/* <MultiSelect
-                  staffList={[]}
-                  selected={[]}
-                  onSelectionChange={() => { }}
-                  placeholder="Pilih petugas cleaning"
-                  loading={false}
-                /> */}
                 <Textarea
                   disabled
                   className="resize-none"
-                  value={selectedLockedCleaningStaffList.map(staff => staff.fullname).join(", ") || "-"}
+                  value={selectedLockedCleaningStaffList.map(staff => staff?.fullname).join(", ") || "-"}
                   rows={2}
                 />
               </div>
@@ -510,17 +503,10 @@ export default function PembayaranDetail() {
             <div className="col-span-1 space-y-4">
               <div className="flex items-center space-x-4">
                 <Label className="w-[40%] font-semibold">Petugas Blower</Label>
-                {/* <MultiSelect
-                  staffList={[]}
-                  selected={[]}
-                  onSelectionChange={() => { }}
-                  placeholder="Pilih petugas blower"
-                  loading={false}
-                /> */}
                 <Textarea
                   disabled
                   className="resize-none"
-                  value={selectedLockedBlowerStaffList.map(staff => staff.fullname).join(", ") || "-"}
+                  value={selectedLockedBlowerStaffList.map(staff => staff?.fullname).join(", ") || "-"}
                   rows={2}
                 />
               </div>
@@ -541,7 +527,7 @@ export default function PembayaranDetail() {
                   <Textarea
                     disabled
                     className="resize-none"
-                    value={selectedLockedReworkStaffList.map(staff => staff.fullname).join(", ") || "-"}
+                    value={selectedLockedReworkStaffList.map(staff => staff?.fullname).join(", ") || "-"}
                     rows={2}
                   />
                 )}
@@ -560,7 +546,6 @@ export default function PembayaranDetail() {
               currentPage={1}
               limit={10}
               fetchData={() => {
-                console.log("Fetching data...");
               }}
             />
           </div>
@@ -599,7 +584,7 @@ export default function PembayaranDetail() {
                 />
               </div>
 
-              <div className="flex items-center justify-between mt-5 px-3 py-2 bg-neutral-200 rounded-lg">
+              <div className="flex items-center justify-between mt-5 px-3 py-2 bg-neutral-200 rounded-lg dark:bg-neutral-800">
                 <Label className="w-[50%] font-bold text-2xl">Total Akhir</Label>
                 <Label className="text-right font-bold text-2xl">
                   {formatRupiah(totals.finalPrice)}
