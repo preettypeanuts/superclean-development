@@ -400,8 +400,6 @@ export default function TransactionDetail() {
       // Mode edit - update existing item
       const selectedService = services.find(service => service.serviceCode === formDataTable.serviceCode);
 
-
-
       setSPKItems(prev => prev.map(item =>
         item.id === editMode
           ? {
@@ -708,7 +706,7 @@ export default function TransactionDetail() {
         description: "SPK berhasil diupdate!",
         variant: "default",
       });
-      router.push("/transaksi/spk");
+      // router.push("/transaksi/spk");
     } catch (error: any) {
       console.error("Error response:", error.response?.data || error.message);
       toast({
