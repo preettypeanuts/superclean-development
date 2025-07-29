@@ -698,9 +698,8 @@ export default function TransactionDetail() {
           }
 
           // delete first and then create new
-          // await api.delete(`/transaction-detail/${transaction?.id}/${item.id}`);
-          // await api.post(`/transaction-detail/${transaction?.id}/`, payload);
-
+          await api.delete(`/transaction-detail/${transaction?.id}/${item.id}`);
+          await api.post(`/transaction-detail/${transaction?.id}/`, payload);
         });
       }
 
@@ -709,7 +708,7 @@ export default function TransactionDetail() {
         description: "SPK berhasil diupdate!",
         variant: "default",
       });
-      // router.push("/transaksi/spk");
+      router.push("/transaksi/spk");
     } catch (error: any) {
       console.error("Error response:", error.response?.data || error.message);
       toast({
