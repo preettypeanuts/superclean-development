@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { Wrapper } from "@shared/components/Wrapper";
 import { Input } from "libs/ui-components/src/components/ui/input";
 import { Button } from "libs/ui-components/src/components/ui/button";
@@ -54,7 +54,14 @@ export default function PelangganPage() {
 
   const totalPages = Math.max(1, Math.ceil(totalData / limit));
 
-  const fetchPelanggan = async (resetPagination: boolean = false) => {
+  const selectedProvince = useMemo(() => {
+    return [...new Set(dataPelanggan.map((item) => item.province).filter(Boolean))];
+  }, [dataPelanggan]);
+
+  const { provinces } = useLocationData();
+  const [cities, setCities] = useState<any[]>([]);
+
+  const fetchPelanggan = useCallback(async (resetPagination: boolean = false) => {
     let page = currentPage
     if (resetPagination) {
       page = 1;
@@ -76,46 +83,47 @@ export default function PelangganPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentPage, limit, searchInput, statusFilter]);
 
+  // useEffect untuk fetch pelanggan
   useEffect(() => {
     fetchPelanggan();
-  }, [
-    currentPage,
-    limit
-  ]);
+  }, [currentPage, limit]);
 
-  const handleSearch = () => {
-    fetchPelanggan(true);
-  };
-
-  const resetSearch = () => {
-    setSearchInput("");
-  };
-
-  const selectedProvince = [...new Set(dataPelanggan.map((item) => item.province).filter(Boolean))];
-
-  const { provinces } = useLocationData();
-  const [cities, setCities] = useState<any[]>([]);
-
+  // useEffect untuk fetch cities dengan memoized selectedProvince
   useEffect(() => {
     if (selectedProvince.length === 0) return;
 
     const fetchCities = async () => {
-      const result = await getCitiesLabel(selectedProvince);
-      setCities(result);
+      try {
+        const result = await getCitiesLabel(selectedProvince);
+        setCities(result);
+      } catch (error) {
+        console.error("Error fetching cities:", error);
+      }
     };
 
     fetchCities();
-  }, [selectedProvince]);
+  }, [selectedProvince]); // Sekarang selectedProvince sudah di-memoize
 
-  const processedPelanggan = dataPelanggan.map((item) => ({
-    ...item,
-    province:
-      provinces.find((prov: { paramKey: string; paramValue: string }) => prov.paramKey === item.province)?.paramValue || "Tidak Diketahui",
-    city:
-      cities.find((cty) => cty.paramKey === item.city)?.paramValue || "Tidak Diketahui",
-  }));
+  const handleSearch = useCallback(() => {
+    fetchPelanggan(true);
+  }, [fetchPelanggan]);
+
+  const resetSearch = useCallback(() => {
+    setSearchInput("");
+  }, []);
+
+  // Memoize processed pelanggan data
+  const processedPelanggan = useMemo(() => {
+    return dataPelanggan.map((item) => ({
+      ...item,
+      province:
+        provinces.find((prov: { paramKey: string; paramValue: string }) => prov.paramKey === item.province)?.paramValue || "Tidak Diketahui",
+      city:
+        cities.find((cty) => cty.paramKey === item.city)?.paramValue || "Tidak Diketahui",
+    }));
+  }, [dataPelanggan, provinces, cities]);
 
   return (
     <>
@@ -131,9 +139,9 @@ export default function PelangganPage() {
                   value={searchInput}
                   onChange={(e) => setSearchInput(e.target.value)}
                   onKeyDown={(i) => {
-                    // if (i.key === "Enter") {
-                    //   handleSearch();
-                    // }
+                    if (i.key === "Enter") {
+                      handleSearch();
+                    }
                   }}
                   className="w-[30lvw]"
                   icon={<Search size={16} />}
