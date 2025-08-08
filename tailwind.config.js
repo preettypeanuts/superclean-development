@@ -29,7 +29,7 @@ module.exports = {
         thirdColor: "#FABA57",
         baseLight: "#D5EBE8",
         baseDark: "#1E2C2D",
-        mainDark: "#187f8a",
+        mainDark: "#2C9084",
         baseColor: "#F2EFE7",
         darkColor: '#232323',
         lightColor: '#efefef',
