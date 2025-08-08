@@ -2,7 +2,6 @@ import { BsArrowRight } from "react-icons/bs";
 import { AiFillCalendar } from "react-icons/ai";
 import { AiFillClockCircle } from "react-icons/ai";
 import { BsClipboard2CheckFill } from "react-icons/bs";
-import Image from "next/image";
 
 export const OngoingTask = () => {
     return (
@@ -68,7 +67,6 @@ export const OngoingTask = () => {
                         </p>
                     </div>
                 </div>
-
             </section>
         </main>
     )
