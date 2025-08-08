@@ -8,9 +8,8 @@
 
 .bg-root {
   @apply bg-lightColor dark:bg-darkColor;
-}`
-
-body {
+}
+` body {
   @apply bg-lightColor dark:bg-darkColor text-neutral-900 dark:text-neutral-100;
 }
 
@@ -127,7 +126,6 @@ body {
   );
 }
 
-
 .input-field {
   height: calc(1.5em + 1rem + 2px);
   padding: 0.5rem 1rem;
@@ -158,12 +156,12 @@ input[type='date']::-webkit-calendar-picker-indicator {
 }
 input::-webkit-datetime-edit-fields-wrapper {
   position: relative;
-  text-transform: uppercase; 
+  text-transform: uppercase;
   right: 0%;
 }
 input::-webkit-datetime-edit {
   position: relative;
-  text-transform: uppercase; 
+  text-transform: uppercase;
   right: 0%;
 }
 
@@ -220,4 +218,17 @@ input::-webkit-datetime-edit {
 
 .no-spinner {
   -moz-appearance: textfield; /* Firefox */
+}
+
+.border-bottom-dash {
+  border-bottom: .20px dashed transparent; /* Tipis, dashed */
+  border-image: repeating-linear-gradient(
+      to right,
+      currentColor 0,
+      currentColor 8px,
+      /* Panjang dash */ transparent 4px,
+      transparent 17px /* Panjang dash + jarak */
+    )
+    1;
+  border-image-slice: 1;
 }

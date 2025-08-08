@@ -6,8 +6,8 @@ import { AiFillStar } from "react-icons/ai";
 
 export const HomeBanner = () => {
     return (
-        <main className="relative">
-            <section className="w-full h-[25vh] bg-gradient-to-r from-mainColor from-10% to-mainDark to-110% rounded-b-2xl flex items-center">
+        <main className="min-h-[325px]">
+            <section className="w-full h-[23vh] bg-gradient-to-r from-mainColor from-10% to-mainDark to-110% rounded-b-2xl flex items-center relative">
                 <div className="mx-5 w-full">
                     <div className="flex items-center gap-3 w-full">
                         <Image
@@ -30,54 +30,54 @@ export const HomeBanner = () => {
                         </div>
                     </div>
                 </div>
-            </section>
-            <section className="absolute -bottom-[80px] left-1/2 -translate-x-1/2 w-full">
-                <div className="flex justify-around">
-                    <button
-                        className="space-y-[8px]"
-                    >
-                        <div
-                            className="rounded-full w-[60px] h-[60px] flex items-center justify-center bg-thirdColor text-white ring-[3px] ring-white"
+                <section className="absolute -bottom-[80px] left-1/2 -translate-x-1/2 w-full">
+                    <div className="flex justify-around">
+                        <button
+                            className="space-y-[8px]"
                         >
+                            <div
+                                className="rounded-full w-[60px] h-[60px] flex items-center justify-center bg-thirdColor text-white ring-[3px] ring-white"
+                            >
 
-                            <IoIosListBox size={35} />
-                        </div>
-                        <p className="font-semibold text-[14px]">
-                            Daftar
-                            <br />
-                            SPK
-                        </p>
-                    </button>
+                                <IoIosListBox size={35} />
+                            </div>
+                            <p className="font-semibold text-[14px]">
+                                Daftar
+                                <br />
+                                SPK
+                            </p>
+                        </button>
 
-                    <button
-                        className="space-y-3"
-                    >
-                        <div
-                            className="rounded-full w-[60px] h-[60px] flex items-center justify-center bg-thirdColor text-white ring-[3px] ring-white"
+                        <button
+                            className="space-y-3"
                         >
+                            <div
+                                className="rounded-full w-[60px] h-[60px] flex items-center justify-center bg-thirdColor text-white ring-[3px] ring-white"
+                            >
 
-                            <RiFolderHistoryFill size={35} />
-                        </div>
-                        <p className="font-semibold text-[14px]">
-                            Riwayat
-                            <br />
-                            SPK
-                        </p>
-                    </button>
-                    <button
-                        className="space-y-3 flex flex-col"
-                    >
-                        <div
-                            className="rounded-full w-[60px] h-[60px] flex items-center justify-center bg-thirdColor text-white ring-[3px] ring-white"
+                                <RiFolderHistoryFill size={35} />
+                            </div>
+                            <p className="font-semibold text-[14px]">
+                                Riwayat
+                                <br />
+                                SPK
+                            </p>
+                        </button>
+                        <button
+                            className="space-y-3 flex flex-col"
                         >
+                            <div
+                                className="rounded-full w-[60px] h-[60px] flex items-center justify-center bg-thirdColor text-white ring-[3px] ring-white"
+                            >
 
-                            <AiFillStar size={35} />
-                        </div>
-                        <p className="font-semibold text-[14px]">
-                            Rating
-                        </p>
-                    </button>
-                </div>
+                                <AiFillStar size={35} />
+                            </div>
+                            <p className="font-semibold text-[14px]">
+                                Rating
+                            </p>
+                        </button>
+                    </div>
+                </section>
             </section>
         </main>
     )
