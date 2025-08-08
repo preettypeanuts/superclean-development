@@ -1,7 +1,7 @@
 import '@superclean-workspace/shared/styles';
 import { ThemeProvider } from 'next-themes';
 import { Plus_Jakarta_Sans } from "next/font/google";
-
+import { NavigationBar } from "libs/shared/src/components/mitra/navigation-bar"
 
 export const metadata = {
   title: 'Welcome to mitra-app',
@@ -24,6 +24,7 @@ export default function RootLayout({
       >
         <ThemeProvider enableSystem={true} defaultTheme='system' attribute="class">
           {children}
+          <NavigationBar />
         </ThemeProvider>
       </body>
     </html>

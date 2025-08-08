@@ -3,7 +3,6 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { navigationItems } from "../../data/system";
 import { IoIosArrowDown } from "react-icons/io";
-import { SiCcleaner } from "react-icons/si";
 import { TbLayoutSidebarLeftExpandFilled, TbLayoutSidebarRightExpandFilled } from "react-icons/tb";
 import { ThemeSwitch } from "./ThemeSwitch";
 import { usePathname, useRouter } from "next/navigation";
