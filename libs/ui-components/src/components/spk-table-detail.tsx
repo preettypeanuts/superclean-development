@@ -184,10 +184,7 @@ export const SPKTableDetail: React.FC<DataTableProps> = ({
                 return (
                   <TableCell
                     key={header.key}
-                    className={`${header.key === "menu" ? "!w-fit" : ""} ${header.key === "harga" || header.key === "promo"
-                      ? "text-right"
-                      : ""
-                      }`}
+                    className={`${header.key === "menu" ? "!w-fit" : ""}`}
                   >
                     {renderCellValue(item, header.key, rowIndex)}
                   </TableCell>
