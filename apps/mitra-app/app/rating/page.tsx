@@ -1,14 +1,15 @@
 import { PageBanner } from "libs/shared/src/components/mitra/page-banner"
-import { DaftarSPKTabs } from "libs/shared/src/components/mitra/daftar-spk-tabs"
+import { TipWidget } from "libs/shared/src/components/mitra/tip-widget"
 
 export default function RatingPage() {
     return (
-        <main className="pb-[20vh] space-y-7">
+        <main className="pb-[20vh]">
             <PageBanner
-                title="Profile"
+                title="Rating"
                 variant="white"
                 size="compact"
             />
+            <TipWidget/>
         </main>
     )
 }

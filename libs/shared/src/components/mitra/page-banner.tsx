@@ -36,7 +36,7 @@ export const PageBanner: React.FC<PageBannerProps> = ({
   // Height styles based on size
   const heightStyles = {
     normal: "h-[147px]",
-    compact: "h-[100px]"
+    compact: "h-[80px]"
   };
 
   // Text color based on variant
