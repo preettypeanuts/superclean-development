@@ -2,7 +2,7 @@ import { BsArrowLeft } from "react-icons/bs";
 
 export const PageBanner = () => {
     return (
-        <main className="min-h-[325px]">
+        <main >
             <section className="w-full h-[147px] bg-gradient-to-r from-mainColor from-10% to-mainDark to-110% rounded-b-2xl flex items-center relative">
                 <div className="mx-5 w-full grid grid-cols-3">
                     <div>
