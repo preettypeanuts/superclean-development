@@ -3,6 +3,7 @@ import { BiSolidPencil } from "react-icons/bi";
 import { IoIosListBox } from "react-icons/io";
 import { RiFolderHistoryFill } from "react-icons/ri";
 import { AiFillStar } from "react-icons/ai";
+import Link from "next/link";
 
 export const HomeBanner = () => {
     return (
@@ -32,21 +33,25 @@ export const HomeBanner = () => {
                 </div>
                 <section className="absolute -bottom-[80px] left-1/2 -translate-x-1/2 w-full">
                     <div className="flex justify-around">
-                        <button
-                            className="space-y-[8px]"
+                        <Link
+                            href="/daftar-spk"
                         >
-                            <div
-                                className="rounded-full w-[60px] h-[60px] flex items-center justify-center bg-thirdColor text-white ring-[3px] ring-white"
+                            <button
+                                className="space-y-[8px]"
                             >
+                                <div
+                                    className="rounded-full w-[60px] h-[60px] flex items-center justify-center bg-thirdColor text-white ring-[3px] ring-white"
+                                >
 
-                                <IoIosListBox size={35} />
-                            </div>
-                            <p className="font-semibold text-[14px]">
-                                Daftar
-                                <br />
-                                SPK
-                            </p>
-                        </button>
+                                    <IoIosListBox size={35} />
+                                </div>
+                                <p className="font-semibold text-[14px]">
+                                    Daftar
+                                    <br />
+                                    SPK
+                                </p>
+                            </button>
+                        </Link>
 
                         <button
                             className="space-y-3"
