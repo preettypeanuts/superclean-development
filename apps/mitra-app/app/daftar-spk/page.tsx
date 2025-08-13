@@ -5,7 +5,7 @@ export default function DaftarSPK() {
     return (
         <main className="pb-[20vh] space-y-7">
             <PageBanner
-                title="Detail Produk"
+                title="Daftar SPK"
             />
             <DaftarSPKTabs />
         </main>

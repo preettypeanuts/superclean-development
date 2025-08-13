@@ -14,7 +14,7 @@ export const NavigationBar = () => {
               <button className="flex flex-col gap-[4px] items-center justify-center text-muted-foreground">
                 <RiNotification4Fill size={26} />
                 <p className="text-[14px]">
-                    Notifikasi
+                    Pemberitahuan
                 </p>
             </button>
               <button className="flex flex-col gap-[4px] items-center justify-center text-muted-foreground">

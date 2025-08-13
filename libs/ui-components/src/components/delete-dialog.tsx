@@ -33,7 +33,7 @@ export function DeleteDialog({
 }: DeleteDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-sm md:max-w-md">
         <DialogHeader className="flex items-center justify-center">
           <div className="text-5xl p-3 bg-destructive/40 text-destructive-foreground dark:text-destructive rounded-lg my-5">
             {icon}
