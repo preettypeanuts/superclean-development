@@ -1,5 +1,0 @@
-{
-  "version": 2,
-  "buildCommand": "npx nx build mitra-app",
-  "outputDirectory": "../../dist/apps/mitra-app/.next"
-}
