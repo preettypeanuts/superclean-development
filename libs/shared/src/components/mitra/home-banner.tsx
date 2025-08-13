@@ -7,7 +7,7 @@ import Link from "next/link";
 
 export const HomeBanner = () => {
     return (
-        <main className="min-h-[325px]">
+        <main className="min-h-[300px]">
             <section className="w-full h-[23vh] bg-gradient-to-r from-mainColor from-10% to-mainDark to-110% rounded-b-2xl flex items-center relative">
                 <div className="mx-5 w-full">
                     <div className="flex items-center gap-3 w-full">
@@ -53,34 +53,40 @@ export const HomeBanner = () => {
                             </button>
                         </Link>
 
-                        <button
-                            className="space-y-3"
+                        <Link href="/daftar-spk"
                         >
-                            <div
-                                className="rounded-full w-[60px] h-[60px] flex items-center justify-center bg-thirdColor text-white ring-[3px] ring-white"
+                            <button
+                                className="space-y-3"
                             >
+                                <div
+                                    className="rounded-full w-[60px] h-[60px] flex items-center justify-center bg-thirdColor text-white ring-[3px] ring-white"
+                                >
 
-                                <RiFolderHistoryFill size={35} />
-                            </div>
-                            <p className="font-semibold text-[14px]">
-                                Riwayat
-                                <br />
-                                SPK
-                            </p>
-                        </button>
-                        <button
-                            className="space-y-3 flex flex-col"
+                                    <RiFolderHistoryFill size={35} />
+                                </div>
+                                <p className="font-semibold text-[14px]">
+                                    Riwayat
+                                    <br />
+                                    SPK
+                                </p>
+                            </button>
+                        </Link>
+                        <Link href="/rating"
                         >
-                            <div
-                                className="rounded-full w-[60px] h-[60px] flex items-center justify-center bg-thirdColor text-white ring-[3px] ring-white"
+                            <button
+                                className="space-y-3 flex flex-col"
                             >
+                                <div
+                                    className="rounded-full w-[60px] h-[60px] flex items-center justify-center bg-thirdColor text-white ring-[3px] ring-white"
+                                >
 
-                                <AiFillStar size={35} />
-                            </div>
-                            <p className="font-semibold text-[14px]">
-                                Rating
-                            </p>
-                        </button>
+                                    <AiFillStar size={35} />
+                                </div>
+                                <p className="font-semibold text-[14px]">
+                                    Rating
+                                </p>
+                            </button>
+                        </Link>
                     </div>
                 </section>
             </section>
