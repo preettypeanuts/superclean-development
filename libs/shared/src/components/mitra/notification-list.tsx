@@ -81,7 +81,13 @@ const TabItems = [
 ];
 
 // Notification Card Component
-const NotificationCard = ({ notification, isSelected, onToggle }) => {
+interface NotificationCardProps {
+    notification: Notification;
+    isSelected: boolean;
+    onToggle: () => void;
+}
+
+const NotificationCard = ({ notification, isSelected, onToggle }: NotificationCardProps) => {
     return (
         <div className={`${!notification.read ? "bg-[#F0FAF9]" : "bg-white"} flex gap-3 pl-3 pr-4 py-3 border rounded-lg`}>
             <div className="w-fit mt-1">

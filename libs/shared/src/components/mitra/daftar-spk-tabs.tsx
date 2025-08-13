@@ -106,7 +106,20 @@ const riwayatPekerjaan = [
 ];
 
 // Task Card Component
-const TaskCard = ({ task }) => {
+interface TaskCardProps {
+  task: {
+    id: number;
+    nama: string;
+    nomorTransaksi: string;
+    alamat: string;
+    tanggal: string;
+    waktu: string;
+    status: string;
+    statusColor: string;
+  };
+}
+
+const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
   return (
     <div className="w-full bg-white p-3 rounded-lg border">
       <div className="grid grid-cols-5 pb-3 border-b border-bottom-dash">
