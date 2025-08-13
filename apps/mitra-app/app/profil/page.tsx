@@ -11,6 +11,79 @@ import { LogOut, Calendar, Eye, EyeOff } from "lucide-react"
 import { useState } from "react"
 import { RiLogoutBoxFill } from "react-icons/ri"
 import { AiFillCamera } from "react-icons/ai";
+import {
+    Dialog,
+    DialogContent,
+} from "libs/ui-components/src/components/ui/dialog";
+
+// Komponen Dialog Logout
+type LogoutDialogProps = {
+    isOpen: boolean;
+    onClose: () => void;
+    onConfirm: () => void;
+};
+
+const LogoutDialog = ({ isOpen, onClose, onConfirm }: LogoutDialogProps) => {
+    return (
+        <Dialog open={isOpen} onOpenChange={onClose}>
+            <DialogContent className="max-w-sm w-full">
+                <div className="text-center">
+                    {/* Illustration */}
+                    <div className="mb-6 flex justify-center">
+                        <div className="relative">
+                            {/* Door */}
+                            <div className="w-20 h-24 bg-mainColor rounded-r-lg relative">
+                                {/* Door handle */}
+                                <div className="absolute right-1 top-10 w-1 h-2 bg-mainColor rounded-full"></div>
+                            </div>
+
+                            {/* Person figure */}
+                            <div className="absolute -left-8 top-2">
+                                {/* Head */}
+                                <div className="w-6 h-6 bg-white border-2 border-gray-800 rounded-full mb-1"></div>
+                                {/* Body */}
+                                <div className="w-4 h-8 bg-white border-2 border-gray-800 rounded-sm mx-1"></div>
+                                {/* Arms */}
+                                <div className="absolute top-6 -left-1 w-2 h-4 bg-white border-2 border-gray-800 rounded-sm transform rotate-12"></div>
+                                <div className="absolute top-6 right-1 w-2 h-4 bg-white border-2 border-gray-800 rounded-sm transform -rotate-45"></div>
+                                {/* Legs */}
+                                <div className="absolute top-12 left-0 w-1.5 h-6 bg-white border-2 border-gray-800 rounded-sm"></div>
+                                <div className="absolute top-12 right-0.5 w-1.5 h-6 bg-white border-2 border-gray-800 rounded-sm"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Message */}
+                    <p className="text-gray-800 text-base font-medium mb-6">
+                        Apakah anda yakin ingin keluar applikasi?
+                    </p>
+
+                    {/* Buttons */}
+                    <div className="grid grid-cols-2 gap-2">
+                        {/* Logout Button */}
+                        <Button
+                            onClick={onConfirm}
+                            variant={"destructive"}
+                            className="w-full"
+                        >
+                            <RiLogoutBoxFill className="mr-1 h-4 w-4" />
+                            Log Out
+                        </Button>
+
+                        {/* Cancel Button */}
+                        <Button
+                            variant="outline"
+                            onClick={onClose}
+                            className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-3 px-4 rounded-lg transition-colors border-gray-200"
+                        >
+                            Batal
+                        </Button>
+                    </div>
+                </div>
+            </DialogContent>
+        </Dialog>
+    );
+};
 
 export default function ProfilSayaPage() {
     const [profileData, setProfileData] = useState({
@@ -33,6 +106,8 @@ export default function ProfilSayaPage() {
         confirm: false
     })
 
+    const [showLogoutDialog, setShowLogoutDialog] = useState(false)
+
     const handleInputChange = (field: string, value: string) => {
         setProfileData(prev => ({
             ...prev,
@@ -54,8 +129,15 @@ export default function ProfilSayaPage() {
         }))
     }
 
+    const handleLogout = () => {
+        // Handle logout logic here
+        console.log('User logged out');
+        setShowLogoutDialog(false);
+        // Add your logout logic here (redirect, clear tokens, etc.)
+    }
+
     return (
-        <main className="pb-[20vh] space-y-7 bg-gray-50 min-h-screen">
+        <main className="pb-[20vh] space-y-7  min-h-screen">
             <PageBanner
                 title="Profil Saya"
                 variant="white"
@@ -193,6 +275,7 @@ export default function ProfilSayaPage() {
                                     <div className="pt-2 border-t">
                                         <Button
                                             variant="ghost"
+                                            onClick={() => setShowLogoutDialog(true)}
                                             className="w-full justify-start text-destructive hover:text-red-900 hover:bg-red-50 text-sm py-3"
                                         >
                                             <RiLogoutBoxFill className="mr-3 h-4 w-4" />
@@ -302,9 +385,14 @@ export default function ProfilSayaPage() {
                         </div>
                     </TabsContent>
                 </Tabs>
-
-
             </div>
+
+            {/* Logout Dialog */}
+            <LogoutDialog
+                isOpen={showLogoutDialog}
+                onClose={() => setShowLogoutDialog(false)}
+                onConfirm={handleLogout}
+            />
         </main>
     )
 }
