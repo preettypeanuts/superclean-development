@@ -232,3 +232,15 @@ input::-webkit-datetime-edit {
     1;
   border-image-slice: 1;
 }
+
+.loader {
+  border: 2px solid transparent;
+  border-radius: 50%;
+  border-top-color: #3498db;
+  width: 1em;
+  height: 1em;
+  animation: spin 1s linear infinite;
+}
+
+
+/* .html2canvas-container { width: 3000px !important; height: 3000px !important; } */
