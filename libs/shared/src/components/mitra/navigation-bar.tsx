@@ -20,7 +20,7 @@ export const NavigationBar = () => {
               <button className="flex flex-col gap-[4px] items-center justify-center text-muted-foreground">
                 <MdAccountCircle size={26} />
                 <p className="text-[14px]">
-                    Akun
+                    Profil
                 </p>
             </button>
         </nav>
