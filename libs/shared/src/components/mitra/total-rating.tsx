@@ -1,5 +1,6 @@
 import { BsArrowRight } from "react-icons/bs";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
+import Link from "next/link";
 
 export const TotalRating = () => {
     return (
@@ -8,9 +9,11 @@ export const TotalRating = () => {
                 <p className="text-[20px] font-medium tracking-tight">
                     Total Rating
                 </p>
-                <button className="text-[22px] w-[34px] h-[34px] flex items-center justify-center rounded-full bg-mainColor/20 text-mainDark">
-                    <BsArrowRight />
-                </button>
+                <Link href="/rating">
+                    <button className="text-[22px] w-[34px] h-[34px] flex items-center justify-center rounded-full bg-mainColor/20 text-mainDark">
+                        <BsArrowRight />
+                    </button>
+                </Link>
             </section>
             <section className="">
                 <div className="flex items-center gap-3 border border-b-0 p-2 rounded-t-lg">
@@ -40,7 +43,7 @@ export const TotalRating = () => {
                 </div>
                 <div className="px-4 py-1 bg-[#74CA94] text-white rounded-b-lg border border-t-0">
                     <p>
-                        Ayo semangattt, dikit lagi nilai kamu sempurna! 
+                        Ayo semangattt, dikit lagi nilai kamu sempurna!
                     </p>
                 </div>
             </section>

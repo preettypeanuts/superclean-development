@@ -108,7 +108,7 @@ const riwayatPekerjaan = [
 // Task Card Component
 const TaskCard = ({ task }) => {
   return (
-    <div className="w-full bg-white">
+    <div className="w-full bg-white p-3 rounded-lg border">
       <div className="grid grid-cols-5 pb-3 border-b border-bottom-dash">
         <div className="col-span-4">
           <h1 className="text-[20px] font-semibold mb-1">
@@ -136,7 +136,7 @@ const TaskCard = ({ task }) => {
         </div>
       </div>
 
-      <div className="flex items-center justify-between text-[14px] pt-3">
+      <div className="flex flex-col gap-2 text-[14px] pt-3">
         <div className="flex truncate items-center gap-1 text-gray-600">
           <AiFillCalendar />
           <p>{task.tanggal}</p>
@@ -145,9 +145,9 @@ const TaskCard = ({ task }) => {
           <AiFillClockCircle />
           <p>{task.waktu}</p>
         </div>
-        <div className={`flex truncate items-center gap-1 px-3 py-1 bg-gray-50 rounded-full ${task.statusColor}`}>
+        <div className={`flex truncate items-center gap-1 ${task.statusColor}`}>
           <BsClipboard2CheckFill />
-          <p className="font-medium">{task.status}</p>
+          <p>{task.status}</p>
         </div>
       </div>
     </div>
@@ -157,19 +157,19 @@ const TaskCard = ({ task }) => {
 export const DaftarSPKTabs = () => {
   return (
     <main className="flex items-center justify-center mx-5 relative !-mt-7">
-      <Tabs defaultValue="account" className=" flex flex-col items-center justify-center w-full">
+      <Tabs defaultValue="account" className="flex flex-col items-center justify-center w-full">
         <TabsList className="bg-[#F0FAF9] w-full">
           <TabsTrigger className="w-full text-[16px]" value="account">Pekerjaan Berlangsung</TabsTrigger>
           <TabsTrigger className="w-full text-[16px]" value="password">Riwayat Pekerjaan</TabsTrigger>
         </TabsList>
-        <TabsContent className="w-full !px-2" value="account">
+        <TabsContent className="!mt-0 w-full" value="account">
           <div className="w-full space-y-3">
             {pekerjaanBerlangsung.map((task) => (
               <TaskCard key={task.id} task={task} />
             ))}
           </div>
         </TabsContent>
-        <TabsContent className="w-full !px-2" value="password">
+        <TabsContent className="!mt-0 w-full" value="password">
           <div className="w-full space-y-3">
             {riwayatPekerjaan.map((task) => (
               <TaskCard key={task.id} task={task} />

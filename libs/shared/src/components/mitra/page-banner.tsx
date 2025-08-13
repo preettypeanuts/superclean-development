@@ -1,5 +1,6 @@
 "use client"
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { BsArrowLeft } from "react-icons/bs";
 
 interface PageBannerProps {
@@ -21,7 +22,22 @@ export const PageBanner: React.FC<PageBannerProps> = ({
   titleClassName = "",
   backButtonClassName = ""
 }) => {
+
+  const [isScrolled, setIsScrolled] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY;
+      setIsScrolled(scrollPosition > 0);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   const handleBackClick = () => {
     router.back();
@@ -43,18 +59,20 @@ export const PageBanner: React.FC<PageBannerProps> = ({
   const textColor = variant === "gradient" ? "text-white" : "text-gray-900";
 
   // Back button styles based on variant
-  const backButtonStyles = variant === "gradient" 
-    ? "bg-white/80 text-mainColor" 
+  const backButtonStyles = variant === "gradient"
+    ? "bg-white/80 text-mainColor"
     : "bg-mainColor/50 text-mainDark";
   return (
-    <main>
-      <section 
-        className={`w-full ${heightStyles[size]} ${backgroundStyles[variant]} rounded-b-2xl flex items-center relative ${className}`}
+    <main
+      className={`${isScrolled ? "sticky top-0 z-40" : ""}`}
+    >
+      <section
+        className={`w-full ${isScrolled && "!max-h-[80px]"} ${heightStyles[size]} ${backgroundStyles[variant]} rounded-b-2xl flex items-center relative ${className}`}
       >
         <div className="mx-5 w-full grid grid-cols-3">
           <div>
             {showBackButton && (
-              <button 
+              <button
                 onClick={handleBackClick}
                 className={`w-[30px] h-[30px] ${backButtonStyles} rounded-lg flex items-center justify-center ${backButtonClassName}`}
               >

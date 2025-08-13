@@ -2,6 +2,7 @@ import { BsArrowRight } from "react-icons/bs";
 import { AiFillCalendar } from "react-icons/ai";
 import { AiFillClockCircle } from "react-icons/ai";
 import { BsClipboard2CheckFill } from "react-icons/bs";
+import Link from "next/link";
 
 export const OngoingTask = () => {
     return (
@@ -10,9 +11,11 @@ export const OngoingTask = () => {
                 <p className="text-[20px] font-medium tracking-tight">
                     Pekerjaan Berlangsung
                 </p>
-                <button className="text-[22px] w-[34px] h-[34px] flex items-center justify-center rounded-full bg-mainColor/20 text-mainDark">
-                    <BsArrowRight />
-                </button>
+                <Link href="/daftar-spk">
+                    <button className="text-[22px] w-[34px] h-[34px] flex items-center justify-center rounded-full bg-mainColor/20 text-mainDark">
+                        <BsArrowRight />
+                    </button>
+                </Link>
             </section>
             <section className="w-full h-full p-2 space-y-2 rounded-lg bg-mainColor text-white">
                 <p className="text-[14px] text-[400]">
