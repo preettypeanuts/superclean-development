@@ -40,6 +40,7 @@ interface Karyawan {
   noWhatsapp: string;
   branchId: number;
   roleId: string;
+  
   status: number;
   birthDate: string;
 }

@@ -126,7 +126,7 @@ export const RatingHistory: React.FC<RatingHistoryProps> = ({ items = [] }) => {
                             </div>
 
                             <div className="text-right flex-shrink-0">
-                                <p className="text-sm text-gray-500 mb-1">Uang Tip</p>
+                                <p className="text-sm text-gray-500 mb-1 text-left">Uang Tip</p>
                                 <p className="text-xs font-bold text-green-600">
                                     + {formatCurrency(item.tipAmount)}
                                 </p>
