@@ -22,7 +22,7 @@ export default function RootLayout({
       <body
         className={`${jakartaSans.className} antialiased md:flex `}
       >
-        <ThemeProvider enableSystem={false} defaultTheme='light' attribute="class">
+        <ThemeProvider forcedTheme='light' enableSystem={false} defaultTheme='light' attribute="class">
           {children}
           <NavigationBar />
         </ThemeProvider>
