@@ -1,12 +1,14 @@
 "use client"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AiFillHome } from "react-icons/ai";
 import { RiNotification4Fill } from "react-icons/ri";
 import { MdAccountCircle } from "react-icons/md";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 export const NavigationBar = () => {
     const [activeTab, setActiveTab] = useState('beranda');
+    const pathname = usePathname();
+    const router = useRouter();
 
     const navigationItems = [
         {
@@ -29,21 +31,33 @@ export const NavigationBar = () => {
         }
     ];
 
-    const router = useRouter();
+    // Sinkronkan activeTab dengan pathname saat ini
+    useEffect(() => {
+        const currentItem = navigationItems.find(item => item.path === pathname);
+        if (currentItem) {
+            setActiveTab(currentItem.id);
+        }
+    }, [pathname]);
 
     const handleTabClick = (tabId: string) => {
-        setActiveTab(tabId);
         const item = navigationItems.find(nav => nav.id === tabId);
         if (item) {
+            // Set active tab dan navigate
+            setActiveTab(tabId);
             router.push(item.path);
         }
+    };
+
+    // Fungsi untuk mengecek apakah tab sedang active
+    const isTabActive = (item: typeof navigationItems[0]) => {
+        return pathname === item.path;
     };
 
     return (
         <nav className="fixed bottom-0 left-0 right-0 w-full h-[90px] shadow-secondaryShadow flex items-center justify-evenly backdrop-blur-xl bg-white/70 rounded-t-2xl z-50">
             {navigationItems.map((item) => {
                 const Icon = item.icon;
-                const isActive = activeTab === item.id;
+                const isActive = isTabActive(item);
                 
                 return (
                     <button
@@ -82,4 +96,3 @@ export const NavigationBar = () => {
         </nav>
     );
 };
-
