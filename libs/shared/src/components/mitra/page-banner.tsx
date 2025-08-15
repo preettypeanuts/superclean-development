@@ -64,23 +64,23 @@ export const PageBanner: React.FC<PageBannerProps> = ({
     : "bg-mainColor/50 text-mainDark";
   return (
     <main
-      className={`${isScrolled ? "sticky top-0 z-40" : ""}`}
+      className={`${isScrolled ? "sticky top-0 z-40" : ""} w-screen`}
     >
       <section
-        className={`w-full ${isScrolled && "!max-h-[80px]"} ${heightStyles[size]} ${backgroundStyles[variant]} rounded-b-2xl flex items-center relative ${className}`}
+        className={`w-screen ${isScrolled && "!max-h-[80px]"} ${heightStyles[size]} ${backgroundStyles[variant]} rounded-b-2xl flex items-center relative ${className}`}
       >
-        <div className="mx-5 w-full grid grid-cols-3">
+        <div className="mx-5 w-full  flex justify-center ">
           <div>
             {showBackButton && (
               <button
                 onClick={handleBackClick}
-                className={`w-[30px] h-[30px] ${backButtonStyles} rounded-lg flex items-center justify-center ${backButtonClassName}`}
+                className={`w-[30px] h-[30px] ${backButtonStyles} rounded-lg flex  justify-center items-center ${backButtonClassName}`}
               >
                 <BsArrowLeft size={20} />
               </button>
             )}
           </div>
-          <div className="flex items-center justify-center">
+          <div className="flex flex-1  justify-center">
             <p className={`text-[20px] font-medium ${textColor} text-center ${titleClassName}`}>
               {title}
             </p>
