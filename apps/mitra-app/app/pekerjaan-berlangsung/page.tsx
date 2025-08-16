@@ -332,9 +332,39 @@ const EditItemModal = ({ isOpen = false, item, onClose = () => { } }: EditItemMo
   )
 }
 
+const DeleteItemModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
+  return (
+    <>
+      <DialogWrapper
+        className="w-10/12"
+        open={isOpen}
+        onOpenChange={onClose}
+      >
+        <div className="flex items-center justify-between">
+          <div className="mx-auto items-center rounded-md justify-center p-4 bg-red-400/50">
+            <div className="mx-auto items-center rounded-md justify-center p-2 bg-red-400/70">
+              <Trash2Icon className="w-6 h-6 text-red-500" />
+            </div>
+          </div>
+        </div>
+        <DialogTitle className="text-center line-clamp-2 mx-10">Kamu yakin menghapus item?</DialogTitle>
+        <div className="flex mt-4">
+          <Button className="flex-1 mx-2" variant="outline2" onClick={onClose}>Batal</Button>
+          <Button className="flex-1 mx-2" variant="destructive" onClick={() => { onClose }}>Hapus</Button>
+        </div>
+      </DialogWrapper>
+    </>
+  )
+}
 
 
-export const TaskTimelineItem = ({ task, onEditItem }: { task: Task; onEditItem: (item?: Item) => void }) => {
+export type TaskTimelineProps = {
+  tasks: Task[];
+  onEditItem?: (item?: Item) => void;
+  onDeleteItem?: (item?: Item) => void;
+};
+
+export const TaskTimelineItem = ({ task, onEditItem, onDeleteItem }: { task: Task; onEditItem: (item?: Item) => void; onDeleteItem: (item?: Item) => void; }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const itemList: Item[] = [
@@ -393,7 +423,7 @@ export const TaskTimelineItem = ({ task, onEditItem }: { task: Task; onEditItem:
                         </p>
 
                         <div className="flex">
-                          <button className="text-red-500 p-2 mx-2 bg-red-500/10 rounded-md hover:bg-red-500/20 transition-colors">
+                          <button onClick={() => onDeleteItem(item)} className="text-red-500 p-2 mx-2 bg-red-500/10 rounded-md hover:bg-red-500/20 transition-colors">
                             <Trash2Icon className="w-4 h-4" />
                           </button>
 
@@ -439,6 +469,8 @@ export const TaskTimeline = ({ tasks }: { tasks: Task[] }) => {
 
   const [isEdit, setIsEdit] = useState(false);
   const [editItem, setEditItem] = useState<Item | null>(null);
+  const [isDelete, setIsDelete] = useState(false);
+  const [deleteItem, setDeleteItem] = useState<Item | null>(null);
 
   return (
     <>
@@ -447,11 +479,16 @@ export const TaskTimeline = ({ tasks }: { tasks: Task[] }) => {
           <TaskTimelineItem key={index} task={task} onEditItem={(item) => {
             setIsEdit(true);
             setEditItem(item || null);
-          }} />
+          }}
+            onDeleteItem={(item) => {
+              setIsDelete(true);
+              setDeleteItem(item || null);
+            }}
+          />
         ))}
       </ol>
       <EditItemModal isOpen={isEdit} onClose={() => setIsEdit(false)} item={editItem} />
-
+      <DeleteItemModal isOpen={isDelete} onClose={() => setIsDelete(false)} />
     </>
   );
 }
