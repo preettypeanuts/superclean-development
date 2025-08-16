@@ -5,7 +5,7 @@ import { api } from "libs/utils/apiClient";
 type ParameterMapping = Record<string, string>;
 
 // Tipe data untuk service berdasarkan response API
-interface Service {
+export interface Service {
   serviceCode: string;
   serviceName: string;
   vacuumPrice: number;
@@ -68,7 +68,7 @@ export function useServiceLookup(category: string) {
 
       setLoading(true);
       setError(null);
-      
+
       try {
         const response = await api.get(`/service/lookup?category=${category}`);
         setServices(response.data || []);
@@ -85,4 +85,49 @@ export function useServiceLookup(category: string) {
   }, [category]);
 
   return { services, loading, error };
+}
+
+export interface PromoResponse {
+  amount: number;
+  code: string;
+  type: "Persentase" | "Nominal"
+}
+
+export function usePromoLookup(serviceCode: string, quantity: number) {
+  const [promo, setPromo] = useState<PromoResponse | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchPromo = async () => {
+      if (!serviceCode || serviceCode.trim() === "" || quantity <= 0) {
+        setPromo(null);
+        return;
+      }
+
+      setLoading(true);
+      setError(null);
+
+      try {
+        const response = await api.get(`/promo/current?serviceCode=${serviceCode}&quantity=${quantity}`);
+        const data: PromoResponse = {
+          amount: response.data?.amount || 0,
+          code: response.data?.code || "",
+          type: response.data?.promoType || ""
+        }
+
+        setPromo(data);
+      } catch (err: any) {
+        console.error(`Gagal mengambil promo untuk service ${serviceCode}:`, err);
+        setError(err.message || "Gagal mengambil promo");
+        setPromo(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPromo();
+  }, [serviceCode, quantity])
+
+  return { promo, loading, error };
 }

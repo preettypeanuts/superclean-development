@@ -1171,31 +1171,12 @@ export default function NewSPK() {
 
             <div className="flex items-center space-x-4">
               <Label htmlFor="promo" className="w-1/4 font-semibold">Promo</Label>
-              <div className="flex items-center space-x-2 w-full">
-                <div className="relative flex-1">
-                  <Input
-                    value={formatRupiah(formDataTable.promoType === 'Persentase' ? formDataTable.promo * formDataTable.harga * Number(formDataTable.jumlah) / 100 : formDataTable.promo)}
-                    className="bg-muted/50 cursor-not-allowed text-right"
-                    readOnly
-                    placeholder="Rp. 0"
-                  />
-                  {loadingPromo && (
-                    <div className="absolute inset-0 bg-background/50 flex items-center justify-center rounded-md">
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
-                    </div>
-                  )}
-                </div>
-                {/* <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={handleCheckPromo}
-                      disabled={loadingPromo || !formDataTable.serviceCode || !formDataTable.jumlah}
-                      className="px-3 py-1 h-10 whitespace-nowrap"
-                  >
-                      Cek Promo
-                  </Button> */}
-              </div>
+              <RupiahInput
+                value={formatRupiah(formDataTable.promoType === 'Persentase' ? formDataTable.promo * formDataTable.harga * Number(formDataTable.jumlah) / 100 : formDataTable.promo)}
+                className="bg-muted/50 cursor-not-allowed text-right"
+                readOnly
+                loading={loadingPromo}
+                placeholder="Rp. 0" />
             </div>
 
             <div className="flex items-center space-x-4">

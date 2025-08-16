@@ -1,10 +1,31 @@
 "use client";
 
 import { PageBanner } from "@shared/components/mitra/page-banner";
-import { CheckIcon, ChevronDown, ChevronUp, PenLine, Trash2Icon } from "lucide-react";
-import { useState } from "react";
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  SelectGroup,
+  SelectLabel
+} from "@ui-components/components/ui/select";
+import { CheckIcon, ChevronDown, ChevronUp, LucideListFilter, PenLine, Trash2Icon, XIcon } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { AiFillCalendar, AiFillClockCircle } from "react-icons/ai";
 import { BsClipboard2CheckFill } from "react-icons/bs";
+import { DialogWrapper } from "libs/ui-components/src/components/dialog-wrapper";
+import { Header } from "@shared/components/Header";
+import { Label } from "libs/ui-components/src/components/ui/label";
+import { Service, useCategoryStore, usePromoLookup, useServiceLookup } from "libs/utils/useCategoryStore";
+import { DialogTitle } from "@ui-components/components/ui/dialog";
+import { Input } from "@ui-components/components/ui/input";
+import { RadioGroup, RadioGroupItem } from "@ui-components/components/ui/radio-group";
+import { RupiahInput } from "@ui-components/components/rupiah-input";
+import { formatRupiah } from "@shared/utils/formatRupiah";
+import { Button } from "@ui-components/components/ui/button";
+
 
 type Task = {
   date: string;
@@ -15,18 +36,311 @@ type Task = {
 
 type Item = {
   id: number;
-  name: string;
+  category: string;
+  service: string;
   quantity: number;
   price: number;
+  type: "vakum" | "cuci";
 }
 
-export const TaskTimelineItem = ({ task }: { task: Task }) => {
+type EditItemModalProps = {
+  isOpen?: boolean;
+  item?: Item | null;
+  onClose?: () => void;
+};
+
+const EditItemModal = ({ isOpen = false, item, onClose = () => { } }: EditItemModalProps) => {
+  const isEdit = !!item;
+  const [formData, setFormData] = useState<Item>({
+    id: item?.id || 0,
+    category: item?.category || "",
+    service: item?.service || "",
+    quantity: item?.quantity || 1,
+    type: item?.type || "vakum",
+    price: item?.price || 0,
+  });
+
+  const handleChangeTable = (field: keyof Item, value: string | number) => {
+    let type = formData.type;
+    if (field === "category") {
+      type = "vakum"; // Default type
+      if (value === "GENERAL" || value === "BLOWER") {
+        type = "cuci"; // Change type for these categories
+      }
+
+      setFormData((prev) => ({
+        ...prev,
+        category: value as string,
+        type: type, // Set the type based on category
+        service: "", // Reset service when category changes
+        price: 0, // Reset price when category changes
+      }));
+
+      return;
+    }
+
+
+    if (field === "service") {
+      const service = services.find((s) => s.serviceCode === value);
+      if (service) {
+        const price = type === "vakum" ? service.vacuumPrice : service.cleanPrice;
+        console.log("Selected service:", service, "Price:", price);
+
+        setFormData((prev) => ({
+          ...prev,
+          service: service.serviceCode,
+          price: price,
+        }));
+      }
+
+      return;
+    }
+
+    const serviceCode = formData.service
+    const service = services.find((s) => s.serviceCode === serviceCode);
+
+    if (field === 'type' && service) {
+      const newType = value as "vakum" | "cuci"
+      const price = newType === "vakum" ? service.vacuumPrice : service.cleanPrice;
+
+      setFormData((prev) => ({
+        ...prev,
+        service: service.serviceCode,
+        price: price,
+        type: newType,
+      }));
+      return;
+    }
+
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  }
+
+  const { catLayananMapping, loading: loadingCat } = useCategoryStore();
+  const { services, loading: loadingServices } = useServiceLookup(formData.category);
+  const { promo, loading: loadingPromo, error: promoError } = usePromoLookup(formData.service, formData.quantity);
+
+  const totals = useMemo(() => {
+
+    // total price calculation
+    const price = formData.price || 0
+    const quantity = formData.quantity || 1;
+
+    const totalPrice = quantity * price
+
+    // total promo calculation
+    const promoAmount = promo?.amount || 0
+    const promoType = promo?.type || "Nominal"
+
+    let totalPromo = 0;
+    if (promoType === "Persentase") {
+      totalPromo = (totalPrice * promoAmount) / 100;
+    } else if (promoType === "Nominal") {
+      totalPromo = promoAmount;
+    }
+
+    const endPrice = totalPrice - totalPromo;
+
+    return {
+      totalPrice,
+      totalPromo,
+      endPrice
+    }
+  }, [formData.quantity, formData.price, promo]);
+
+  const loading = useMemo(() => {
+    return loadingCat || loadingServices || loadingPromo;
+  }, [loadingCat, loadingServices, loadingPromo]);
+
+  const isValid = useMemo(() => {
+    return formData.category !== "" &&
+      formData.service !== "" &&
+      formData.quantity > 0 &&
+      totals.endPrice >= 0;
+  }, [formData, totals]);
+
+  return (
+    <>
+      <DialogWrapper
+        className="w-10/12"
+        open={isOpen}
+        onOpenChange={onClose}
+        headItem={
+          <>
+            <Header label={"Tambah SPK Baru"} />
+          </>
+        }
+      >
+        <DialogTitle className="hidden" />
+        <div className="mx-2">
+          <div className="space-y-4">
+            <div className=" space-y-2">
+              <Label htmlFor="category" className="w-1/4">
+                Kategori
+              </Label>
+              <Select
+                onValueChange={(value) => handleChangeTable("category", value)}
+                value={formData.category}
+                disabled={loadingCat}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Pilih Kategori" />
+                </SelectTrigger>
+                <SelectContent className="z-[999]">
+                  <SelectGroup>
+                    <SelectLabel>Kategori</SelectLabel>
+                    {loadingCat ? (
+                      <SelectItem value="loading" disabled>
+                        Loading...
+                      </SelectItem>
+                    ) : (
+                      Object.keys(catLayananMapping).map((key) => (
+                        <SelectItem key={key} value={key}>
+                          {catLayananMapping[key]}
+                        </SelectItem>
+                      ))
+                    )}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="unit" className="w-1/4 font-semibold">
+                Layanan
+              </Label>
+              <Select
+                onValueChange={(value) => handleChangeTable("service", value)}
+                value={formData.service}
+                disabled={loadingServices || !formData.category || formData.category === ""}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue
+                    placeholder={
+                      !formData.category
+                        ? "Pilih kategori terlebih dahulu"
+                        : loadingServices
+                          ? "Loading..."
+                          : "Pilih Layanan"
+                    }
+                  />
+                </SelectTrigger>
+                <SelectContent className="z-[999]">
+                  <SelectGroup>
+                    <SelectLabel>Layanan</SelectLabel>
+                    {loadingServices ? (
+                      <SelectItem value="loading" disabled>
+                        Loading...
+                      </SelectItem>
+                    ) : services.length === 0 ? (
+                      <SelectItem value="no-data" disabled>
+                        Tidak ada layanan untuk kategori ini
+                      </SelectItem>
+                    ) : (
+                      services.map((service) => (
+                        <SelectItem key={service.serviceCode} value={service.serviceCode}>
+                          {service.serviceName}
+                        </SelectItem>
+                      ))
+                    )}
+                  </SelectGroup>
+                </SelectContent>
+
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="jumlah" className="w-1/4 font-semibold">Jumlah</Label>
+              <Input
+                min={1}
+                placeholder="Masukkan Jumlah"
+                type="number"
+                value={formData.quantity}
+                onChange={(e) => handleChangeTable("quantity", e.target.value)}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="tipe" className="w-[20%] font-semibold">Tipe</Label>
+              <RadioGroup
+                value={formData.type}
+                onValueChange={(value) => handleChangeTable("type", value)}
+                className="flex items-center gap-5"
+                disabled={(formData.category === "GENERAL" || formData.category === "BLOWER")}
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="vakum" id="vakum" />
+                  <Label htmlFor="vakum">Vakum</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="cuci" id="cuci" />
+                  <Label htmlFor="cuci">Cuci</Label>
+                </div>
+              </RadioGroup>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="harga" className="w-1/4 font-semibold">Harga</Label>
+              <RupiahInput
+                disabled
+                placeholder="Rp. 0"
+                value={formatRupiah(totals.totalPrice)}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="harga" className="w-1/4 font-semibold">Promo</Label>
+              <RupiahInput
+                loading={loadingPromo}
+                disabled
+                placeholder="Rp. 0"
+                value={formatRupiah(totals.totalPromo)}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="harga" className="w-1/4 font-bold">Total</Label>
+              <RupiahInput
+                className="!bg-transparent !border-transparent font-bold text-lg text-black !opacity-100"
+                disabled
+                placeholder="Rp. 0"
+                value={formatRupiah(totals.endPrice)}
+              />
+            </div>
+
+          </div>
+        </div>
+        <div className="flex mt-6 gap-2 py-2">
+          <Button
+            className="flex-1" onClick={() => { onClose() }} variant="outline2">
+            Kembali
+          </Button>
+          <Button
+            className="flex-1"
+            type="submit"
+            variant="main"
+            onClick={() => { onClose() }}
+            disabled={!isValid}
+          >
+            Simpan
+          </Button>
+        </div>
+      </DialogWrapper>
+    </>
+  )
+}
+
+
+
+export const TaskTimelineItem = ({ task, onEditItem }: { task: Task; onEditItem: (item?: Item) => void }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const itemList: Item[] = [
-    { id: 1, name: "Cuci Sofa", quantity: 1, price: 20000 },
-    { id: 2, name: "Cuci Bantal", quantity: 1, price: 20000 },
-    { id: 3, name: "Cuci Kasur", quantity: 1, price: 30000 },
+    { id: 1, type: "cuci", category: "", service: "Cuci Sofa", quantity: 1, price: 20000 },
+    { id: 2, type: "cuci", category: "", service: "Cuci Bantal", quantity: 1, price: 20000 },
+    { id: 3, type: "cuci", category: "", service: "Cuci Kasur", quantity: 1, price: 30000 },
   ]
 
   return (
@@ -45,7 +359,6 @@ export const TaskTimelineItem = ({ task }: { task: Task }) => {
         {
           isOpen && (
             <>
-
               {/* top divider */}
               <div className="border-b border-gray-200 dark:border-gray-700 my-2"></div>
 
@@ -63,15 +376,16 @@ export const TaskTimelineItem = ({ task }: { task: Task }) => {
                   <div className="flex">
                     <p className="flex-1 font-semibold text-black text-base">List Item Pengerjaan:</p>
                     <p onClick={() => {
-                      // todo: open modal to add new item
+                      onEditItem();
                     }}
                       className="flex text-blue-500 font-semibold text-base">+ <span className="underline ml-1">Tambah Item</span></p>
                   </div>
 
                   {/* item list content */}
                   <div className="mt-3">
-                    {itemList.map((item) => (
-                      <div className="py-2 flex justify-center items-center">
+                    {itemList.map((item, index) => (
+                      <div key={index} className="py-2 flex justify-center items-center">
+
                         <p className="flex flex-1 gap-1">
                           <span>1x </span> -
                           <span className="max-w-[120px] block overflow-hidden whitespace-nowrap text-ellipsis"> Cuci Sofa</span> -
@@ -83,7 +397,7 @@ export const TaskTimelineItem = ({ task }: { task: Task }) => {
                             <Trash2Icon className="w-4 h-4" />
                           </button>
 
-                          <button className="text-blue-600 p-2 bg-blue-500/10 rounded-md hover:bg-blue-500/20 transition-colors">
+                          <button onClick={() => onEditItem(item)} className="text-blue-600 p-2 bg-blue-500/10 rounded-md hover:bg-blue-500/20 transition-colors">
                             <PenLine className="w-4 h-4" />
                           </button>
                         </div>
@@ -119,17 +433,26 @@ export const TaskTimelineItem = ({ task }: { task: Task }) => {
   )
 }
 
-
 export const TaskTimeline = ({ tasks }: { tasks: Task[] }) => {
   const currentTask = tasks.find(task => task.isCurrent);
   const currentIndex = tasks.indexOf(currentTask!);
 
+  const [isEdit, setIsEdit] = useState(false);
+  const [editItem, setEditItem] = useState<Item | null>(null);
+
   return (
-    <ol className="relative border-s border-black/40 dark:border-gray-700">
-      {tasks.map((task, index) => (
-        <TaskTimelineItem key={index} task={task} />
-      ))}
-    </ol>
+    <>
+      <ol className="relative border-s border-black/40 dark:border-gray-700">
+        {tasks.map((task, index) => (
+          <TaskTimelineItem key={index} task={task} onEditItem={(item) => {
+            setIsEdit(true);
+            setEditItem(item || null);
+          }} />
+        ))}
+      </ol>
+      <EditItemModal isOpen={isEdit} onClose={() => setIsEdit(false)} item={editItem} />
+
+    </>
   );
 }
 
