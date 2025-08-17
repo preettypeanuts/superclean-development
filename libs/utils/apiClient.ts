@@ -6,12 +6,8 @@ export const apiClient = async (
   { method = "GET", body, headers, ...customConfig }: RequestInit = {}
 ) => {
   try {
-  // Ambil token dari localStorage
+    // Ambil token dari localStorage
     let accessToken = localStorage.getItem("access_token");
-
-    // todo: debug only
-    accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwMUpQMlk5NUs4NkgwN1hQOTQ1TUY0SFFLMyIsInVzZXJuYW1lIjoiYnVkaS5zbGFtZXQiLCJmdWxsbmFtZSI6IkJ1ZGkgQnVkaW1hbiAiLCJyb2xlIjoiU1BWIiwiYnJhbmNoIjoiMDAxIiwianRpIjoiYnVkaS5zbGFtZXQtMTc1NTMxODY1NjEyMiIsImlhdCI6MTc1NTMxODY1NiwiZXhwIjoxNzU1MzYxODU2fQ._QWEjWfVQhk8JvYpjrPZoZE4KBdKTpH3Q82bftlVcpo"
-
 
     // Headers default
     const defaultHeaders: HeadersInit = {
