@@ -126,13 +126,21 @@ export default function ProfilPage() {
 
                             <FormRow label="Nama Lengkap">
                                 <Input
+                  required
+                  validation={/^[a-zA-Z\s]+$/}
+                  label="Nama Lengkap"
+                  placeholder="Masukkan nama lengkap"
                                     value={formData.fullname}
                                     onChange={(e) => setFormData({ ...formData, fullname: e.target.value })}
                                 />
                             </FormRow>
 
-                            <FormRow label="No Whatsapp">
+              <FormRow label="No Whatsapp" error={!formData.noWhatsapp ? "No Whatsapp tidak boleh kosong" : ""}>
                                 <Input
+                  required
+                  validation={/^(?:\+62|08)[0-9]{8,14}$/}
+                  label="No Whatsapp"
+                  placeholder="Masukkan no Whatsapp"
                                     value={formData.noWhatsapp}
                                     onChange={(e) => setFormData({ ...formData, noWhatsapp: e.target.value })}
                                 />
@@ -141,6 +149,7 @@ export default function ProfilPage() {
                             <FormRow label="Tanggal Lahir">
                                 <Input
                                     type="date"
+                  required
                                     value={formatDateInput(formData.birthDate)}
                                     onChange={(e) => setFormData({ ...formData, birthDate: e.target.value })}
                                 />

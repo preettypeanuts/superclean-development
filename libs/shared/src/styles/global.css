@@ -221,7 +221,7 @@ input::-webkit-datetime-edit {
 }
 
 .border-bottom-dash {
-  border-bottom: .20px dashed transparent; /* Tipis, dashed */
+  border-bottom: 0.2px dashed transparent; /* Tipis, dashed */
   border-image: repeating-linear-gradient(
       to right,
       currentColor 0,

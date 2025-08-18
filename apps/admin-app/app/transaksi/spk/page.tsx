@@ -189,7 +189,7 @@ export default function SPKPage() {
               <div className="relative">
                 <Input
                   type="text"
-                  placeholder="Cari No Transaksi, Naman No. Whatsapp"
+                  placeholder="Cari No. Transaksi, Nama, No. Whatsapp"
                   value={tempSearchQuery}
                   onChange={(e) => setTempSearchQuery(e.target.value)}
                   onKeyDown={(i) => {

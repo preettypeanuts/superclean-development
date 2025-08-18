@@ -36,14 +36,22 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   asChild?: boolean
   icon?: React.ReactNode
   iconPosition?: "left" | "right"
+  loading?: boolean
 }
 
+const ButtonLoader = () => (
+  <>
+    <div className="loader"></div>
+  </>
+)
+
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, icon, iconPosition = "left", children, ...props }, ref) => {
+  ({ className, variant, size, asChild = false, icon, iconPosition = "left", children, loading = false, ...props }, ref) => {
     const Comp = asChild ? Slot : "button"
 
     return (
       <Comp className={cn(buttonVariants({ variant, size, className }))} ref={ref} {...props}>
+        {loading && <ButtonLoader />}
         {icon && iconPosition === "left" && <span>{icon}</span>}
         {children}
         {icon && iconPosition === "right" && <span>{icon}</span>}

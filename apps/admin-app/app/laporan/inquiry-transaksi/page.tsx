@@ -426,7 +426,7 @@ export default function InquiryTransaksiPage() {
               </GroupFilter>
 
               <Button variant="main" onClick={handleSearch}>
-                Cari
+                Tampilkan
               </Button>
             </div>
 

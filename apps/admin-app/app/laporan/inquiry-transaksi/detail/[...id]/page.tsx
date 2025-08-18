@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { Wrapper } from "@shared/components/Wrapper";
 import { Header } from "@shared/components/Header";
@@ -16,6 +16,9 @@ import { formatRupiah } from "libs/utils/formatRupiah";
 import { PembayaranTableDetail } from "libs/ui-components/src/components/pembayaran-table-detail";
 import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
 import { LocationData } from "apps/admin-app/app/transaksi/spk/edit/[...id]/page";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@ui-components/components/ui/tabs";
+import { useTransactionHistory } from "@shared/utils/useTransactionHistory";
+import { PiWarningCircleFill } from "react-icons/pi";
 
 interface Transaction {
   id: string;
@@ -109,6 +112,24 @@ export default function InquiryTransaksiDetail() {
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const id = useMemo(() => {
+    return pathname.split("/laporan/inquiry-transaksi/detail/").pop();
+  }, [])
+  const { history, loading: historyLoading, error: historyError, refetch: refetchHistory } = useTransactionHistory(id);
+
+  // Format date with time
+  const formatDateTime = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleString('id-ID', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    });
+  };
 
   // State untuk menyimpan display names dari location codes
   const [locationLabels, setLocationLabels] = useState({
@@ -300,222 +321,315 @@ export default function InquiryTransaksiDetail() {
     <>
       <Breadcrumbs label={`Detail Pembayaran - ${transaction.trxNumber}`} />
       <Wrapper className="relative">
-        <div className="flex flex-col gap-4">
-          <div className="grid grid-cols-2 gap-20">
-            {/* Kolom Kiri */}
-            <div className="col-span-1 space-y-4">
-              <div className="flex items-center space-x-4">
-                <Label className="w-[40%] font-semibold">No Transaksi</Label>
-                <Input
-                  disabled
-                  value={transaction.trxNumber}
-                  className="bg-muted/50 cursor-not-allowed"
+
+        <Tabs defaultValue="detail" className="-mt-2">
+          <TabsList>
+            <TabsTrigger value="detail">Detail</TabsTrigger>
+            <TabsTrigger value="riwayat">Riwayat</TabsTrigger>
+            <TabsTrigger value="foto">Foto</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="detail">
+            <div className="flex flex-col gap-4">
+              <div className="grid grid-cols-2 gap-20">
+                {/* Kolom Kiri */}
+                <div className="col-span-1 space-y-4">
+                  <div className="flex items-center space-x-4">
+                    <Label className="w-[40%] font-semibold">No Transaksi</Label>
+                    <Input
+                      disabled
+                      value={transaction.trxNumber}
+                      className="bg-muted/50 cursor-not-allowed"
+                    />
+                  </div>
+
+                  <div className="flex items-center space-x-4">
+                    <Label className="w-[40%] font-semibold">No WhatsApp</Label>
+                    <Input
+                      value={customer?.noWhatsapp || ""}
+                      readOnly
+                      className="bg-muted/50 cursor-not-allowed"
+                      placeholder="No WhatsApp tidak tersedia"
+                    />
+                  </div>
+
+                  <div className="flex items-center space-x-4">
+                    <Label className="w-[40%] font-semibold">Nama Customer</Label>
+                    <Input
+                      value={customer?.fullname || ""}
+                      readOnly
+                      className="bg-muted/50 cursor-not-allowed"
+                      placeholder="Nama customer tidak tersedia"
+                    />
+                  </div>
+
+                  <div className="flex items-center space-x-4">
+                    <Label className="w-[40%] font-semibold">Alamat</Label>
+                    <Textarea
+                      className="resize-none bg-muted/50 cursor-not-allowed"
+                      value={customer?.address || ""}
+                      readOnly
+                      rows={4}
+                      placeholder="Alamat tidak tersedia"
+                    />
+                  </div>
+                </div>
+
+                {/* Kolom Kanan */}
+                <div className="col-span-1 space-y-4">
+                  <div className="flex items-center space-x-4">
+                    <Label className="w-[40%] font-semibold">Status</Label>
+                    <Input
+                      value={statusMapping[transaction.status as keyof typeof statusMapping] || "Unknown"}
+                      readOnly
+                      className="bg-muted/50 cursor-not-allowed"
+                    />
+                  </div>
+
+                  {/* Provinsi - View Only */}
+                  <div className="flex items-center space-x-4">
+                    <Label className="w-[40%] font-semibold">Provinsi</Label>
+                    <Input
+                      value={locationLabels.provinceName}
+                      placeholder="Provinsi tidak tersedia"
+                      readOnly
+                      className="bg-muted/50 cursor-not-allowed"
+                    />
+                  </div>
+
+                  {/* Kab/Kota - View Only */}
+                  <div className="flex items-center space-x-4">
+                    <Label className="w-[40%] font-semibold">Kab/Kota</Label>
+                    <Input
+                      value={locationLabels.cityName}
+                      placeholder="Kota/Kabupaten tidak tersedia"
+                      readOnly
+                      className="bg-muted/50 cursor-not-allowed"
+                    />
+                  </div>
+
+                  {/* Kecamatan - View Only */}
+                  <div className="flex items-center space-x-4">
+                    <Label className="w-[40%] font-semibold">Kecamatan</Label>
+                    <Input
+                      value={locationLabels.districtName}
+                      placeholder="Kecamatan tidak tersedia"
+                      readOnly
+                      className="bg-muted/50 cursor-not-allowed"
+                    />
+                  </div>
+
+                  {/* Kelurahan - View Only */}
+                  <div className="flex items-center space-x-4">
+                    <Label className="w-[40%] font-semibold">Kelurahan</Label>
+                    <Input
+                      value={locationLabels.subDistrictName}
+                      placeholder="Kelurahan tidak tersedia"
+                      readOnly
+                      className="bg-muted/50 cursor-not-allowed"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Divider */}
+              <div className="w-full border-t my-7"></div>
+
+              <div className="grid grid-cols-2 gap-20">
+                {/* Kolom Kiri */}
+                <div className="col-span-1 space-y-4">
+                  <div className="flex items-center space-x-4">
+                    <Label className="w-[40%] font-semibold">Petugas Cleaning</Label>
+                    <Textarea
+                      disabled
+                      className="resize-none"
+                      value={selectedCleaningStaffList.map(staff => staff.fullname).join(", ") || "-"}
+                      rows={2}
+                    />
+                  </div>
+
+                  <div className="flex items-center space-x-4">
+                    <Label className="w-[40%] font-semibold">Tanggal Transaksi</Label>
+                    <Input
+                      disabled
+                      value={formatDate(transaction.trxDate)}
+                      className="bg-muted/50 cursor-not-allowed"
+                    />
+                  </div>
+                </div>
+
+                {/* Kolom Kanan */}
+                <div className="col-span-1 space-y-4">
+                  <div className="flex items-center space-x-4">
+                    <Label className="w-[40%] font-semibold">Petugas Blower</Label>
+                    <Textarea
+                      disabled
+                      className="resize-none"
+                      value={selectedBlowerStaffList.map(staff => staff.fullname).join(", ") || "-"}
+                      rows={2}
+                    />
+                  </div>
+
+                  <div className="flex items-center space-x-4">
+                    <Label className="w-[40%] font-semibold">Dikerjakan Ulang</Label>
+                    <Textarea
+                      disabled
+                      className="resize-none"
+                      value={reworkStaffList.map(staff => staff.fullname).join(", ") || "-"}
+                      rows={2}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Detail Transaksi Table */}
+              <div className="mt-5 space-y-3">
+                <PembayaranTableDetail
+                  data={transformedDetails}
+                  columns={HeaderPembayaran}
+                  currentPage={1}
+                  limit={10}
+                  fetchData={() => {
+                    console.log("Fetching data...");
+                  }}
                 />
               </div>
 
-              <div className="flex items-center space-x-4">
-                <Label className="w-[40%] font-semibold">No WhatsApp</Label>
-                <Input
-                  value={customer?.noWhatsapp || ""}
-                  readOnly
-                  className="bg-muted/50 cursor-not-allowed"
-                  placeholder="No WhatsApp tidak tersedia"
-                />
+              {/* Summary Pricing */}
+              <div className="grid grid-cols-2 gap-20 mt-8 border-t pt-6">
+                {/* Kolom Kiri - Kosong */}
+                <div className="col-span-1"></div>
+
+                {/* Kolom Kanan - Summary */}
+                <div className="col-span-1 space-y-4">
+                  <div className="flex items-center space-x-4">
+                    <Label className="w-[40%] font-semibold">Total Harga</Label>
+                    <Input
+                      disabled
+                      value={formatRupiah(totals.totalPrice)}
+                      className="text-right bg-muted/50 cursor-not-allowed"
+                    />
+                  </div>
+
+                  <div className="flex items-center space-x-4">
+                    <Label className="w-[40%] font-semibold">Total Promo</Label>
+                    <Input
+                      disabled
+                      value={formatRupiah(totals.totalPromo)}
+                      className="text-right bg-muted/50 cursor-not-allowed"
+                    />
+                  </div>
+
+                  <div className="flex items-center space-x-4">
+                    <Label className="w-[40%] font-semibold">Diskon Manual</Label>
+                    <Input
+                      disabled
+                      value={formatRupiah(transaction.discountPrice)}
+                      className="text-right bg-muted/50 cursor-not-allowed"
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between mt-5 px-3 py-2 bg-neutral-200 rounded-lg dark:bg-neutral-800">
+                    <Label className="w-[50%] font-bold text-2xl">Total Akhir</Label>
+                    <Label className="text-right font-bold text-2xl">
+                      {formatRupiah(totals.finalPrice)}
+                    </Label>
+                  </div>
+                </div>
               </div>
 
-              <div className="flex items-center space-x-4">
-                <Label className="w-[40%] font-semibold">Nama Customer</Label>
-                <Input
-                  value={customer?.fullname || ""}
-                  readOnly
-                  className="bg-muted/50 cursor-not-allowed"
-                  placeholder="Nama customer tidak tersedia"
-                />
-              </div>
-
-              <div className="flex items-center space-x-4">
-                <Label className="w-[40%] font-semibold">Alamat</Label>
-                <Textarea
-                  className="resize-none bg-muted/50 cursor-not-allowed"
-                  value={customer?.address || ""}
-                  readOnly
-                  rows={4}
-                  placeholder="Alamat tidak tersedia"
-                />
+              {/* Action Buttons */}
+              <div className="flex justify-end mt-6 gap-2">
+                <Button onClick={() => router.back()} variant="outline2">
+                  <TbArrowBack />
+                  Kembali
+                </Button>
               </div>
             </div>
+          </TabsContent>
 
-            {/* Kolom Kanan */}
-            <div className="col-span-1 space-y-4">
-              <div className="flex items-center space-x-4">
-                <Label className="w-[40%] font-semibold">Status</Label>
-                <Input
-                  value={statusMapping[transaction.status as keyof typeof statusMapping] || "Unknown"}
-                  readOnly
-                  className="bg-muted/50 cursor-not-allowed"
-                />
+          <TabsContent value="riwayat">
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <h3 className="text-lg font-semibold">Riwayat Transaksi</h3>
+                <Button
+                  onClick={() => refetchHistory()}
+                  variant="outline"
+                  size="sm"
+                  disabled={historyLoading}
+                >
+                  {historyLoading ? "Loading..." : "Refresh"}
+                </Button>
               </div>
 
-              {/* Provinsi - View Only */}
-              <div className="flex items-center space-x-4">
-                <Label className="w-[40%] font-semibold">Provinsi</Label>
-                <Input
-                  value={locationLabels.provinceName}
-                  placeholder="Provinsi tidak tersedia"
-                  readOnly
-                  className="bg-muted/50 cursor-not-allowed"
-                />
-              </div>
+              {historyLoading && (
+                <div className="text-center py-8 text-muted-foreground">
+                  <div className="flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mr-2"></div>
+                    Memuat riwayat...
+                  </div>
+                </div>
+              )}
 
-              {/* Kab/Kota - View Only */}
-              <div className="flex items-center space-x-4">
-                <Label className="w-[40%] font-semibold">Kab/Kota</Label>
-                <Input
-                  value={locationLabels.cityName}
-                  placeholder="Kota/Kabupaten tidak tersedia"
-                  readOnly
-                  className="bg-muted/50 cursor-not-allowed"
-                />
-              </div>
+              {historyError && (
+                <div className="text-center py-8">
+                  <div className="flex items-center justify-center text-red-500 mb-2">
+                    <PiWarningCircleFill className="mr-2" />
+                    Error memuat riwayat
+                  </div>
+                  <p className="text-sm text-muted-foreground">{historyError}</p>
+                  <Button
+                    onClick={() => refetchHistory()}
+                    variant="outline"
+                    size="sm"
+                    className="mt-2"
+                  >
+                    Coba Lagi
+                  </Button>
+                </div>
+              )}
 
-              {/* Kecamatan - View Only */}
-              <div className="flex items-center space-x-4">
-                <Label className="w-[40%] font-semibold">Kecamatan</Label>
-                <Input
-                  value={locationLabels.districtName}
-                  placeholder="Kecamatan tidak tersedia"
-                  readOnly
-                  className="bg-muted/50 cursor-not-allowed"
-                />
-              </div>
+              {!historyLoading && !historyError && history.length === 0 && (
+                <div className="text-center py-8 text-muted-foreground">
+                  <PiWarningCircleFill className="mx-auto mb-2 text-2xl" />
+                  <p>Belum ada riwayat untuk transaksi ini</p>
+                </div>
+              )}
 
-              {/* Kelurahan - View Only */}
-              <div className="flex items-center space-x-4">
-                <Label className="w-[40%] font-semibold">Kelurahan</Label>
-                <Input
-                  value={locationLabels.subDistrictName}
-                  placeholder="Kelurahan tidak tersedia"
-                  readOnly
-                  className="bg-muted/50 cursor-not-allowed"
-                />
-              </div>
+              {!historyLoading && !historyError && history.length > 0 && (
+                <div className="space-y-4">
+                  {history.map((item, index) => (
+                    <div
+                      key={item.id}
+                      className="border rounded-lg p-4 bg-white hover:bg-gray-50 transition-colors"
+                    >
+                      <div className="flex justify-between items-start mb-2">
+                        <div className="flex items-center">
+                          <div className="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-semibold mr-3">
+                            {index + 1}
+                          </div>
+                          <div>
+                            <p className="font-medium text-gray-900">
+                              {item.trxNumber}
+                            </p>
+                            <p className="text-sm text-gray-500">
+                              {formatDateTime(item.logDate)}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                      <div
+                        className="text-sm text-gray-700 ml-11"
+                        dangerouslySetInnerHTML={{ __html: item.notes }}
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
-          </div>
+          </TabsContent>
+        </Tabs>
 
-          {/* Divider */}
-          <div className="w-full border-t my-7"></div>
-
-          <div className="grid grid-cols-2 gap-20">
-            {/* Kolom Kiri */}
-            <div className="col-span-1 space-y-4">
-              <div className="flex items-center space-x-4">
-                <Label className="w-[40%] font-semibold">Petugas Cleaning</Label>
-                <Textarea
-                  disabled
-                  className="resize-none"
-                  value={selectedCleaningStaffList.map(staff => staff.fullname).join(", ") || "-"}
-                  rows={2}
-                />
-              </div>
-
-              <div className="flex items-center space-x-4">
-                <Label className="w-[40%] font-semibold">Tanggal Transaksi</Label>
-                <Input
-                  disabled
-                  value={formatDate(transaction.trxDate)}
-                  className="bg-muted/50 cursor-not-allowed"
-                />
-              </div>
-            </div>
-
-            {/* Kolom Kanan */}
-            <div className="col-span-1 space-y-4">
-              <div className="flex items-center space-x-4">
-                <Label className="w-[40%] font-semibold">Petugas Blower</Label>
-                <Textarea
-                  disabled
-                  className="resize-none"
-                  value={selectedBlowerStaffList.map(staff => staff.fullname).join(", ") || "-"}
-                  rows={2}
-                />
-              </div>
-
-              <div className="flex items-center space-x-4">
-                <Label className="w-[40%] font-semibold">Dikerjakan Ulang</Label>
-                <Textarea
-                  disabled
-                  className="resize-none"
-                  value={reworkStaffList.map(staff => staff.fullname).join(", ") || "-"}
-                  rows={2}
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Detail Transaksi Table */}
-          <div className="mt-5 space-y-3">
-            <PembayaranTableDetail
-              data={transformedDetails}
-              columns={HeaderPembayaran}
-              currentPage={1}
-              limit={10}
-              fetchData={() => {
-                console.log("Fetching data...");
-              }}
-            />
-          </div>
-
-          {/* Summary Pricing */}
-          <div className="grid grid-cols-2 gap-20 mt-8 border-t pt-6">
-            {/* Kolom Kiri - Kosong */}
-            <div className="col-span-1"></div>
-
-            {/* Kolom Kanan - Summary */}
-            <div className="col-span-1 space-y-4">
-              <div className="flex items-center space-x-4">
-                <Label className="w-[40%] font-semibold">Total Harga</Label>
-                <Input
-                  disabled
-                  value={formatRupiah(totals.totalPrice)}
-                  className="text-right bg-muted/50 cursor-not-allowed"
-                />
-              </div>
-
-              <div className="flex items-center space-x-4">
-                <Label className="w-[40%] font-semibold">Total Promo</Label>
-                <Input
-                  disabled
-                  value={formatRupiah(totals.totalPromo)}
-                  className="text-right bg-muted/50 cursor-not-allowed"
-                />
-              </div>
-
-              <div className="flex items-center space-x-4">
-                <Label className="w-[40%] font-semibold">Diskon Manual</Label>
-                <Input
-                  disabled
-                  value={formatRupiah(transaction.discountPrice)}
-                  className="text-right bg-muted/50 cursor-not-allowed"
-                />
-              </div>
-
-              <div className="flex items-center justify-between mt-5 px-3 py-2 bg-neutral-200 rounded-lg dark:bg-neutral-800">
-                <Label className="w-[50%] font-bold text-2xl">Total Akhir</Label>
-                <Label className="text-right font-bold text-2xl">
-                  {formatRupiah(totals.finalPrice)}
-                </Label>
-              </div>
-            </div>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex justify-end mt-6 gap-2">
-            <Button onClick={() => router.back()} variant="outline2">
-              <TbArrowBack />
-              Kembali
-            </Button>
-          </div>
-        </div>
       </Wrapper>
     </>
   );

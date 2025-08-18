@@ -25,7 +25,7 @@ export default function NewDiscount() {
     code: "",
     name: "",
     amount: "",
-    promoType: "",
+    promoType: "Nominal", // Default to Nominal
     category: "",
     serviceCode: "",
     minItem: "1", // Set default value to "1"
