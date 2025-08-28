@@ -145,7 +145,7 @@ export default function PromoPage() {
               data={dataPromo}
               columns={DataHeaderPromo}
               key={`${currentPage}-${limit}`}
-                    currentPage={currentPage.page}
+                  currentPage={currentPage.page}
               limit={limit}
               fetchData={fetchPromo} // Pass the fetchPromo function to the table
             />

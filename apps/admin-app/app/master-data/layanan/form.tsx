@@ -23,13 +23,29 @@ import { Checkbox } from "libs/ui-components/src/components/ui/checkbox";
 import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
 import { formatRupiah, unformatRupiah } from "libs/utils/formatRupiah";
 
-export default function NewLayanan() {
+
+export interface Layanan {
+  code: string;
+  name: string;
+  category: string;
+  unit: string;
+  vacuumPrice: number;
+  cleanPrice: number;
+  status: 1 | 0;
+}
+
+export interface LayananFormProps {
+  layanan?: Layanan;
+}
+
+export default function LayananForm() {
   const { toast } = useToast();
   const router = useRouter();
+
   const { unitLayananMapping, catLayananMapping, loading: loadingParams } = useCategoryStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<Layanan>({
     code: "",
     name: "",
     category: "",

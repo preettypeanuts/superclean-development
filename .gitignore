@@ -46,3 +46,9 @@ Thumbs.db
 
 # Nx Cache
 .nx/cache/
+
+# Nx generated files
+.nx/
+
+# Vscode specific
+.vscode/

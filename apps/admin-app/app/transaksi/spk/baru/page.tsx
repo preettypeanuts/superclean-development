@@ -27,7 +27,7 @@ import { Check, ChevronsUpDown, Cross, Plus, PlusCircle, Search, AlertTriangle }
 import { DatePicker } from "@ui-components/components/date-picker";
 
 // Interface untuk SPK Item (tanpa total)
-export interface SPKItem {
+export interface SPKItkategoriem {
   id: string;
   kode: string;
   layanan: string;
@@ -63,7 +63,6 @@ const DataHeaderSPKDetail = [
   { key: "menu", label: "Aksi" }
 ];
 
-// Searchable Combobox Component untuk WhatsApp
 function WhatsAppCombobox({
   value,
   onValueChange,
@@ -577,6 +576,8 @@ export default function NewSPK() {
 
   // Input Dialog Form
   const { catLayananMapping, loading: loadingParams } = useCategoryStore();
+  console.log(catLayananMapping);
+
 
   // State untuk tracking mode edit
   const [editMode, setEditMode] = useState<string | null>(null);
