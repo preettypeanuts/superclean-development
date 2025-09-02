@@ -81,7 +81,13 @@ export default function PengaturanPage() {
     return param ? param.paramValue : "";
   };
 
-  const handleInputChange = useCallback((key: string, value: string) => {
+  const handleInputChange = useCallback((key: string, value: any, isCurrency = false) => {
+    if (isCurrency) {
+      // replace dots with empty string
+      value = value.split(".").join("").replace("Rp", "").trim();
+      // value = Number(value)
+    }
+
     setParameters(prev => {
       // Check if the parameter already exists
       const index = prev.findIndex(p => p.paramKey === key);
@@ -176,7 +182,7 @@ export default function PengaturanPage() {
                     id="kantorPusat"
                     value={formatRupiah(getParameterValue(PARAMS.TARGET_HO))}
                     onChange={value => {
-                      handleInputChange(PARAMS.TARGET_HO, value.target.value)
+                      handleInputChange(PARAMS.TARGET_HO, value.target.value, true)
                     }}
                   />
                 </div>
@@ -186,7 +192,7 @@ export default function PengaturanPage() {
                     placeholder="Rp 0"
                     id="kantorCabang"
                     value={formatRupiah(getParameterValue(PARAMS.TARGET_BRANCH))}
-                    onChange={value => handleInputChange(PARAMS.TARGET_BRANCH, value.target.value)}
+                    onChange={value => handleInputChange(PARAMS.TARGET_BRANCH, value.target.value, true)}
                   />
                 </div>
               </div>
