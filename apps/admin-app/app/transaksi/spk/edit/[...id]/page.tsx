@@ -1534,7 +1534,7 @@ export default function TransactionDetail() {
                 value={formDataTable.tipe}
                 onValueChange={(value) => handleChangeTable("tipe", value)}
                 className="flex items-center gap-5"
-                disabled={!(formDataTable.category === "GENERAL" || formDataTable.category === "BLOWER")}
+                disabled={!(formDataTable.category !== "GENERAL" && formDataTable.category !== "BLOWER")}
               >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="vakum" id="vakum" />
