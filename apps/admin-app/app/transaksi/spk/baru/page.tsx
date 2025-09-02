@@ -27,7 +27,7 @@ import { Check, ChevronsUpDown, Cross, Plus, PlusCircle, Search, AlertTriangle }
 import { DatePicker } from "@ui-components/components/date-picker";
 
 // Interface untuk SPK Item (tanpa total)
-export interface SPKItkategoriem {
+export interface SPKItem {
   id: string;
   kode: string;
   layanan: string;

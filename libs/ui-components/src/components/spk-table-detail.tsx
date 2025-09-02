@@ -13,70 +13,35 @@ import {
 } from "./ui/dialog";
 import { formatRupiah } from "libs/utils/formatRupiah";
 import { HiMiniPencilSquare } from "react-icons/hi2";
-import { Category, Service } from "@shared/utils/useCategoryStore";
 
 interface TableHeader {
   key: string;
   label: string;
 }
 
-export interface PromoResponse {
-  amount: number;
-  code: string;
-  type: "Persentase" | "Nominal";
-}
-
-export type PromoSPKItem = PromoResponse
-
-
-export type SPKItemForm = {
-  id?: string;
-
-  category: Category | null;
-  service: Service | null;
-
-  // kategori: string;
-  // kategoriCode: string;
-
-  // kode: string;
-  // layanan: string;
-  // satuan: string;
-  // harga: number;
-
-  type: "vakum" | "cuci";
+interface SPKItem {
+  id: string;
+  kode: string;
+  layanan: string;
+  kategori: string;
+  kategoriCode: string;
   jumlah: number;
-
-  promo: PromoSPKItem | null;
-
-  // promo: number;
-  // promoCode?: string;
-  // promoType?: string;
-
+  satuan: string;
+  harga: number;
+  promo: number;
+  tipe?: string;
+  promoCode?: string;
+  promoType?: string;
 }
-
-// interface SPKItem {
-//   id: string;
-//   kode: string;
-//   layanan: string;
-//   kategori: string;
-//   kategoriCode: string;
-//   jumlah: number;
-//   satuan: string;
-//   harga: number;
-//   promo: number;
-//   tipe?: string;
-//   promoCode?: string;
-//   promoType?: string;
-// }
 
 interface DataTableProps {
-  data: SPKItemForm[];
+  data: SPKItem[];
   columns: TableHeader[];
   currentPage: number;
   limit: number;
   fetchData: () => void;
   onDelete?: (id: string) => void;
-  onEdit?: (item: SPKItemForm) => void;
+  onEdit?: (item: SPKItem) => void;
 }
 
 export const SPKTableDetail: React.FC<DataTableProps> = ({
@@ -88,78 +53,49 @@ export const SPKTableDetail: React.FC<DataTableProps> = ({
 }) => {
   const { toast } = useToast();
 
-  const handleDelete = (item: SPKItemForm) => {
-    if (onDelete && item.id) {
+  const handleDelete = (item: SPKItem) => {
+    if (onDelete) {
       onDelete(item.id);
     } else {
       console.log(`Menghapus SPK dengan ID: ${item.id}`);
       toast({
         title: "Sukses!",
-        description: `SPK berhasil dihapus.`,
+        description: `SPK ${item?.kode} berhasil dihapus.`,
         variant: "default",
       });
       fetchData();
     }
   };
 
-  const handleEdit = (item: SPKItemForm) => {
+  const handleEdit = (item: SPKItem) => {
     if (onEdit) {
       onEdit(item);
     } else {
       console.log(`Mengedit SPK dengan ID: ${item.id}`);
       toast({
         title: "Info",
-        description: `Edit functionality untuk ${item.id} belum diimplementasi.`,
+        description: `Edit functionality untuk ${item.kode} belum diimplementasi.`,
         variant: "default",
       });
     }
   };
 
   // Render value berdasarkan column key
-  const renderCellValue = (item: SPKItemForm, columnKey: string, index: number) => {
+  const renderCellValue = (item: SPKItem, columnKey: string, index: number) => {
     switch (columnKey) {
       case "no":
         return index + 1; // Nomor urut mulai dari 1
       case "jumlah":
-        return `${item.jumlah} ${item.service?.unit}`;
+        return `${item.jumlah} ${item.satuan}`;
       case "harga":
       case "servicePrice":
       case "totalPrice":
       case "totalHarga":
-        return formatRupiah(item[columnKey as keyof SPKItemForm] as number);
+        return formatRupiah(item[columnKey as keyof SPKItem] as number);
       case "promo":
-        if (!item.service) return formatRupiah(0);
-        if (!item.promo) return formatRupiah(0);
-
-        const {
-          service,
-          type,
-          promo
-        } = item;
-
-        const {
-          amount,
-          code,
-          type: promoType
-        } = item.promo;
-
-        const {
-          cleanPrice,
-          vacuumPrice,
-        } = service;
-
-        let price = 0;
-        if (type === "cuci") {
-          price = cleanPrice;
-        } else if (type === "vakum") {
-          price = vacuumPrice;
-        }
-
-        if (promoType === "Persentase") {
-          return formatRupiah((amount / 100) * price * item.jumlah);
-        } else {
-          return formatRupiah(amount);
-        }
+        return item.promoType === "Persentase"
+          ? formatRupiah((item.promo as number) * (item.harga / 100) * item.jumlah)
+          : formatRupiah(item.promo as number);
       case "menu":
         return (
           <div className="w-fit flex gap-2">
@@ -184,7 +120,7 @@ export const SPKTableDetail: React.FC<DataTableProps> = ({
                   <div className="text-5xl text-destructive bg-destructive-foreground/10 rounded-full p-2 w-fit mb-4">
                     <IoMdTrash />
                   </div>
-                  <DialogTitle>Kamu yakin menghapus item {item.service?.serviceName}?</DialogTitle>
+                  <DialogTitle>Kamu yakin menghapus item {item.kode}?</DialogTitle>
                   <DialogDescription className="text-center">
                     Data akan terhapus permanen dan tidak dapat dikembalikan.
                   </DialogDescription>
@@ -210,8 +146,7 @@ export const SPKTableDetail: React.FC<DataTableProps> = ({
           </div>
         );
       default:
-        return <></>
-      // return item[columnKey as keyof SPKItemForm];
+        return item[columnKey as keyof SPKItem];
     }
   };
 
