@@ -24,23 +24,40 @@ export default function LoginPage() {
             {/* Background Image */}
             <Image
                 fill
-                src="https://images.unsplash.com/photo-1522918279596-eb92d4d75259?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                src="/assets/bg.jpg"
                 alt="Background"
                 className="object-cover"
                 priority
             />
-            
+
             {/* Overlay gradient */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
 
             {/* Login Form Container */}
-            <div className="absolute bottom-0 left-0 right-0 bg-white w-full h-auto pb-20 rounded-t-xl p-8 shadow-2xl">
-                <div className="max-w-md mx-auto">
+            <div className="absolute bottom-0 left-0 right-0">
+                <div className="text-white mb-4 px-8 space-y-2 ">
+                    <div className="w-[56px] h-[56px] aspect-square bg-mainColor flex items-center justify-center mb-2">
+                        <div
+                            className="w-full h-full bg-white"
+                            style={{
+                                mask: "url(/assets/SC_LogoOnlyBig.png) no-repeat center / contain",
+                                WebkitMask: "url(/assets/SC_LogoOnlyBig.png) no-repeat center / contain",
+                            }}
+                        ></div>
+                    </div>
+                    <h1 className="text-2xl font-semibold">
+                        Login
+                    </h1>
+                    <p className="text-base">
+                        Silakan masuk untuk melanjutkan.
+                    </p>
+                </div>
+                <div className="bg-white w-full h-auto pb-20 rounded-t-xl p-8 shadow-2xl max-w-md mx-auto">
                     <div className="flex flex-col gap-4">
                         {/* Username Field */}
                         <div className="space-y-1">
-                            <Label 
-                                htmlFor="username" 
+                            <Label
+                                htmlFor="username"
                                 className="text-sm font-semibold text-gray-700"
                             >
                                 Nama Akun
@@ -57,8 +74,8 @@ export default function LoginPage() {
 
                         {/* Password Field */}
                         <div className="space-y-1">
-                            <Label 
-                                htmlFor="password" 
+                            <Label
+                                htmlFor="password"
                                 className="text-sm font-semibold text-gray-700"
                             >
                                 Kata Sandi
@@ -89,7 +106,7 @@ export default function LoginPage() {
 
 
                         {/* Login Button */}
-                        <button 
+                        <button
                             onClick={handleSubmit}
                             disabled={!username || !password}
                             className="mt-5 w-full h-10 bg-mainColor hover:bg-mainDark disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors shadow-md hover:shadow-lg"

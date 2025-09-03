@@ -10,6 +10,11 @@ export const NavigationBar = () => {
     const pathname = usePathname();
     const router = useRouter();
 
+    const noNavigation = ["/login", "/forgot-password", "/reset-password", "/invoice", "/rating"];
+    if (noNavigation.includes(pathname)) {
+        return null;
+    }
+
     const navigationItems = [
         {
             id: 'beranda',
