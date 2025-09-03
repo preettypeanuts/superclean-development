@@ -73,27 +73,6 @@ const PelangganForm = ({ pelanggan, onSubmit, toast, loadingData, isEdit, loadin
     return <Breadcrumbs label={isEdit ? "Ubah Profil Pelanggan" : "Tambah Pelanggan Baru"} />
   }, [isEdit])
 
-  if (isEdit && loadingData) {
-    return (
-      <>
-        {header}
-        <Wrapper>
-          <p className="text-center py-4">Memuat data pelanggan...</p>
-        </Wrapper>
-      </>
-    );
-  }
-
-  if (isEdit && pelanggan?.id !== '') {
-    return (
-      <>
-        {header}
-        <Wrapper>
-          <p className="text-center py-4 text-red-500">Pelanggan tidak ditemukan!</p>
-        </Wrapper>
-      </>
-    );
-  }
 
   // Mengambil data lokasi berdasarkan provinsi, kota, kecamatan yang dipilih
   const { provinces, cities, districts, subDistricts, loading } = useLocationData(
@@ -189,9 +168,28 @@ const PelangganForm = ({ pelanggan, onSubmit, toast, loadingData, isEdit, loadin
     await onSubmit(formData);
   }
 
+  if (isEdit && loadingData) {
+    return (
+      <>
+        {header}
+        <Wrapper>
+          <p className="text-center py-4">Memuat data pelanggan...</p>
+        </Wrapper>
+      </>
+    );
+  }
 
 
-
+  if (isEdit && pelanggan?.id === '') {
+    return (
+      <>
+        {header}
+        <Wrapper>
+          <p className="text-center py-4 text-red-500">Pelanggan tidak ditemukan!</p>
+        </Wrapper>
+      </>
+    );
+  }
 
   return (
     <>
