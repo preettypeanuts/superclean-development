@@ -92,12 +92,12 @@ export function ChartKaryawan() {
 
       data.forEach((parameter: AppsettingsData) => {
         if (parameter.paramKey == TARGET_BRANCH_PARAMKEY) {
-          const newTargetBranchValue = Number(parameter.paramValue)
+          const newTargetBranchValue = Number(parameter.paramValue.split(".").join(""))
           setTargetCabang(newTargetBranchValue)
         }
 
         if (parameter.paramKey == TARGET_KANTOR_PUSAT_PARAMKEY) {
-          const newTargetPusatValue = Number(parameter.paramValue)
+          const newTargetPusatValue = Number(parameter.paramValue.split(".").join(""))
           setTargetPusat(newTargetPusatValue)
         }
       });
