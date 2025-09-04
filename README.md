@@ -148,6 +148,7 @@ npx nx s mitra-app --port 3001
 To build the production-ready application:
 
 ```bash
+
 npm run build:all
 npm run build:admin-app 
 

@@ -4,9 +4,6 @@ import { api } from "libs/utils/apiClient";
 // Tipe data untuk hasil mapping
 type ParameterMapping = Record<string, string>;
 
-// Tipe data untuk service berdasarkan response API
-
-
 export function useCategoryStore() {
   const [unitLayananMapping, setUnitLayananMapping] = useState<ParameterMapping>({});
   const [catLayananMapping, setCatLayananMapping] = useState<ParameterMapping>({});
@@ -83,6 +80,7 @@ export interface Service {
   cleanPrice: number;
   unit: string;
 }
+
 // Hook khusus untuk service lookup berdasarkan kategori
 export function useServiceLookup(category?: string) {
   const [services, setServices] = useState<Service[]>([]);

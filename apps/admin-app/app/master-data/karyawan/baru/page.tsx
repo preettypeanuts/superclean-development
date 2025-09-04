@@ -23,7 +23,6 @@ import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import KaryawanForm, { MasterKaryawan } from "apps/admin-app/app/master-data/karyawan/form";
 
-
 interface FormErrors {
   username?: string;
   fullname?: string;
@@ -47,9 +46,6 @@ interface ApiError extends Error {
   };
   request?: unknown;
 }
-
-// Type for form field keys
-type FormFieldKeys = keyof FormData;
 
 // Type for parameter store
 interface ParameterStore {
@@ -78,7 +74,6 @@ export default function NewKaryawan(): JSX.Element {
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-
 
   const getErrorMessage = (error: ApiError): { title: string; message: string } => {
     let errorMessage = "Terjadi kesalahan saat menambahkan karyawan";
@@ -169,7 +164,6 @@ export default function NewKaryawan(): JSX.Element {
       setIsSubmitting(false);
     }
   };
-
 
   return (
     <>

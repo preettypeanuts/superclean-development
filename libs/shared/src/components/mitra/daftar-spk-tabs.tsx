@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {
   Tabs,
   TabsContent,
@@ -169,27 +170,29 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
 
 export const DaftarSPKTabs = () => {
   return (
-    <main className="flex items-center justify-center mx-5 relative !-mt-7">
-      <Tabs defaultValue="account" className="flex flex-col items-center justify-center w-full">
-        <TabsList className="bg-[#F0FAF9] w-full">
-          <TabsTrigger className="w-full text-[16px]" value="account">Pekerjaan Berlangsung</TabsTrigger>
-          <TabsTrigger className="w-full text-[16px]" value="password">Riwayat Pekerjaan</TabsTrigger>
-        </TabsList>
-        <TabsContent className="!mt-0 w-full" value="account">
-          <div className="w-full space-y-3">
-            {pekerjaanBerlangsung.map((task) => (
-              <TaskCard key={task.id} task={task} />
-            ))}
-          </div>
-        </TabsContent>
-        <TabsContent className="!mt-0 w-full" value="password">
-          <div className="w-full space-y-3">
-            {riwayatPekerjaan.map((task) => (
-              <TaskCard key={task.id} task={task} />
-            ))}
-          </div>
-        </TabsContent>
-      </Tabs>
-    </main>
+    <Link href="/pekerjaan-berlangsung">
+      <main className="flex items-center justify-center mx-5 relative !-mt-7">
+        <Tabs defaultValue="account" className="flex flex-col items-center justify-center w-full">
+          <TabsList className="bg-[#F0FAF9] w-full">
+            <TabsTrigger className="w-full text-[16px]" value="account">Pekerjaan Berlangsung</TabsTrigger>
+            <TabsTrigger className="w-full text-[16px]" value="password">Riwayat Pekerjaan</TabsTrigger>
+          </TabsList>
+          <TabsContent className="!mt-0 w-full" value="account">
+            <div className="w-full space-y-3">
+              {pekerjaanBerlangsung.map((task) => (
+                <TaskCard key={task.id} task={task} />
+              ))}
+            </div>
+          </TabsContent>
+          <TabsContent className="!mt-0 w-full" value="password">
+            <div className="w-full space-y-3">
+              {riwayatPekerjaan.map((task) => (
+                <TaskCard key={task.id} task={task} />
+              ))}
+            </div>
+          </TabsContent>
+        </Tabs>
+      </main>
+    </Link>
   )
 }
