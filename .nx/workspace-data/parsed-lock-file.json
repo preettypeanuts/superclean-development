@@ -6795,6 +6795,15 @@
         "hash": "sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw=="
       }
     },
+    "npm:base64-arraybuffer": {
+      "type": "npm",
+      "name": "npm:base64-arraybuffer",
+      "data": {
+        "version": "1.0.2",
+        "packageName": "base64-arraybuffer",
+        "hash": "sha512-I3yl4r9QB5ZRY3XuJVEPfc2XhZO6YweFPI+UovAzn+8/hb3oJ6lnysaFcjVpkCPfVWFUDvoZ8kmVDP7WyRtYtQ=="
+      }
+    },
     "npm:base64-js": {
       "type": "npm",
       "name": "npm:base64-js",
@@ -7846,6 +7855,15 @@
         "version": "7.2.0",
         "packageName": "css-declaration-sorter",
         "hash": "sha512-h70rUM+3PNFuaBDTLe8wF/cdWu+dOZmb7pJt8Z2sedYbAcQVQV/tEchueg3GWxwqS0cxtbxmaHEdkNACqcvsow=="
+      }
+    },
+    "npm:css-line-break": {
+      "type": "npm",
+      "name": "npm:css-line-break",
+      "data": {
+        "version": "2.1.0",
+        "packageName": "css-line-break",
+        "hash": "sha512-FHcKFCZcAha3LwfVBhCQbW2nCNbkZXn7KVUJcsT5/P8YmfsVja0FMPJr0B903j/E69HUphKiV9iQArX8SDYA4w=="
       }
     },
     "npm:css-loader": {
@@ -10537,6 +10555,15 @@
         "version": "2.0.2",
         "packageName": "html-escaper",
         "hash": "sha512-H2iMtd0I4Mt5eYiapRdIDjp+XzelXQ0tFE4JS7YFwFevXXMmOp9myNrUvCg0D6ws8iqkRPBfKHgbwig1SmlLfg=="
+      }
+    },
+    "npm:html2canvas": {
+      "type": "npm",
+      "name": "npm:html2canvas",
+      "data": {
+        "version": "1.4.1",
+        "packageName": "html2canvas",
+        "hash": "sha512-fPU6BHNpsyIhr8yyMpTLLxAbkaK8ArIBcmZIRiBLiDhjeqvXolaEmDGmELFuX9I4xDcaKKcJl+TKZLqruBbmWA=="
       }
     },
     "npm:http-assert": {
@@ -14958,6 +14985,15 @@
         "hash": "sha512-cAGWPIyOHU6zlmg88jwm7VRyXnMN7iV68OGAbYDk/Mh/xC/pzVPlQtY6ngoIH/5/tciuhGfvESU8GrHrcxD56w=="
       }
     },
+    "npm:text-segmentation": {
+      "type": "npm",
+      "name": "npm:text-segmentation",
+      "data": {
+        "version": "1.0.3",
+        "packageName": "text-segmentation",
+        "hash": "sha512-iOiPUo/BGnZ6+54OsWxZidGCsdU8YbE4PSpdPinp7DeMtUJNJBoJ/ouUSTJjHkh1KntHaltHl/gDs2FC4i5+Nw=="
+      }
+    },
     "npm:text-table": {
       "type": "npm",
       "name": "npm:text-table",
@@ -15478,6 +15514,15 @@
         "version": "1.0.1",
         "packageName": "utils-merge",
         "hash": "sha512-pMZTvIkT1d+TFGvDOqodOclx0QWkkgi6Tdoa8gC8ffGAAqz9pzPTZWAybbsHHoED/ztMtkv/VoYTYyShUn81hA=="
+      }
+    },
+    "npm:utrie": {
+      "type": "npm",
+      "name": "npm:utrie",
+      "data": {
+        "version": "1.0.2",
+        "packageName": "utrie",
+        "hash": "sha512-1MLa5ouZiOmQzUbjbu9VmjLzn1QLXBhwpUa7kdLUQK+KQ5KA9I1vk5U4YHe/X2Ch7PYnJfWuWT+VbuxbGwljhw=="
       }
     },
     "npm:uuid": {
@@ -28684,6 +28729,11 @@
       "type": "static"
     },
     {
+      "source": "npm:css-line-break",
+      "target": "npm:utrie",
+      "type": "static"
+    },
+    {
       "source": "npm:css-loader",
       "target": "npm:@rspack/core",
       "type": "static"
@@ -32576,6 +32626,16 @@
     {
       "source": "npm:html-encoding-sniffer",
       "target": "npm:whatwg-encoding",
+      "type": "static"
+    },
+    {
+      "source": "npm:html2canvas",
+      "target": "npm:css-line-break",
+      "type": "static"
+    },
+    {
+      "source": "npm:html2canvas",
+      "target": "npm:text-segmentation",
       "type": "static"
     },
     {
@@ -39084,6 +39144,11 @@
       "type": "static"
     },
     {
+      "source": "npm:text-segmentation",
+      "target": "npm:utrie",
+      "type": "static"
+    },
+    {
       "source": "npm:thenify",
       "target": "npm:any-promise",
       "type": "static"
@@ -39611,6 +39676,11 @@
     {
       "source": "npm:use-sidecar",
       "target": "npm:tslib",
+      "type": "static"
+    },
+    {
+      "source": "npm:utrie",
+      "target": "npm:base64-arraybuffer",
       "type": "static"
     },
     {
