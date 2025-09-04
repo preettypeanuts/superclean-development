@@ -452,7 +452,7 @@ const TimelineIcon = ({ taskIndex, currentTaskIndex }: { taskIndex: number; curr
   </>
 }
 
-export const TimelineItemCompleted = ({
+const TimelineItemCompleted = ({
   task,
   currentTaskIndex = 0,
   completeTask = () => { }
@@ -520,7 +520,7 @@ export const TimelineItemCompleted = ({
   );
 }
 
-export const TimelineItemInProgress = ({
+const TimelineItemInProgress = ({
   task,
   itemList = [],
   onEditItem,
@@ -628,7 +628,7 @@ export const TimelineItemInProgress = ({
   );
 }
 
-export const TimelineItemPending = ({
+const TimelineItemPending = ({
   task,
   itemList = [],
   onEditItem,
@@ -734,7 +734,7 @@ export const TimelineItemPending = ({
 }
 
 
-export const TaskTimeline = ({
+const TaskTimeline = ({
   tasks,
   itemList,
   setEditItem,
@@ -796,7 +796,7 @@ export const TaskTimeline = ({
   );
 }
 
-export const DetailTab = ({
+const DetailTab = ({
   tasks,
   itemList,
   setItemList,
@@ -859,7 +859,7 @@ interface AttachmentImageProps {
 }
 
 
-export const UploadPhoto = ({
+const UploadPhoto = ({
   onUpload = () => { },
   label = "Upload Image",
   className = "",
@@ -919,7 +919,7 @@ export const UploadPhoto = ({
 
 }
 
-export const FotoTab = () => {
+const FotoTab = () => {
   return <>
     <div className="bg-mainColor/20 p-2 rounded-md">
       <p>Bukti Pengerjaan</p>
