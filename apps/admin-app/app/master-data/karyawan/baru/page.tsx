@@ -29,8 +29,8 @@ interface FormData {
     password: string;
     branchId: string;
     roleId: string;
-    birthDate: string; // Format: YYYY-MM-DD
-    joinDate: string; // Format: YYYY-MM-DD
+    birthDate: string; // Format: ISO 8601
+    joinDate: string; // Format: ISO 8601
     status: 1 | 2; // 1 = Active, 2 = Inactive
 }
 
@@ -68,6 +68,46 @@ interface ParameterStore {
     loading: boolean;
 }
 
+// Helper function to convert date to ISO format for backend
+const formatDateForBackend = (dateString: string): string => {
+    if (!dateString) return '';
+    
+    // If it's already in ISO format, return as is
+    if (dateString.includes('T')) {
+        return dateString;
+    }
+    
+    // If it's in DD/MM/YYYY format, convert to ISO
+    if (dateString.includes('/')) {
+        const [day, month, year] = dateString.split('/');
+        const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day), 12, 0, 0);
+        return date.toISOString();
+    }
+    
+    // If it's in YYYY-MM-DD format, convert to ISO with noon time
+    if (dateString.includes('-')) {
+        const date = new Date(dateString + 'T12:00:00.000Z');
+        return date.toISOString();
+    }
+    
+    return dateString;
+};
+
+// Helper function to convert ISO date to display format
+const formatDateForDisplay = (isoString: string): string => {
+    if (!isoString) return '';
+    
+    if (isoString.includes('T')) {
+        const date = new Date(isoString);
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+    }
+    
+    return isoString;
+};
+
 export default function NewKaryawan(): JSX.Element {
     const { toast } = useToast();
     const router = useRouter();
@@ -85,7 +125,7 @@ export default function NewKaryawan(): JSX.Element {
         status: 1,
     });
 
-    console.log(formData)
+    console.log('FormData:', formData);
 
     const [errors, setErrors] = useState<FormErrors>({});
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -101,7 +141,6 @@ export default function NewKaryawan(): JSX.Element {
         } else if (!/^(?!.*\.\.)(?!\.)(?!.*\.$)[a-zA-Z0-9_.]+$/.test(formData.username)) {
             newErrors.username = "Nama pengguna hanya boleh huruf, angka, underscore, dan titik (tidak boleh diawali/diakhiri titik atau ada titik ganda)";
         }
-
 
         if (!formData.fullname.trim()) {
             newErrors.fullname = "Nama lengkap wajib diisi";
@@ -124,8 +163,10 @@ export default function NewKaryawan(): JSX.Element {
         if (!formData.birthDate) {
             newErrors.birthDate = "Tanggal lahir wajib diisi";
         } else {
-            const birthYear = new Date(formData.birthDate).getFullYear();
+            const birthDate = new Date(formData.birthDate);
             const currentYear = new Date().getFullYear();
+            const birthYear = birthDate.getFullYear();
+            
             if (currentYear - birthYear < 17) {
                 newErrors.birthDate = "Usia minimal 17 tahun";
             } else if (currentYear - birthYear > 70) {
@@ -177,7 +218,13 @@ export default function NewKaryawan(): JSX.Element {
     };
 
     const handleDateChange = (field: 'birthDate' | 'joinDate') => (date: string): void => {
-        setFormData(prev => ({ ...prev, [field]: date }));
+        // Convert the date to ISO format for backend storage
+        const isoDate = formatDateForBackend(date);
+        
+        console.log(`${field} received:`, date);
+        console.log(`${field} converted to ISO:`, isoDate);
+        
+        setFormData(prev => ({ ...prev, [field]: isoDate }));
 
         // Clear error when user selects date
         if (errors[field]) {
@@ -278,9 +325,16 @@ export default function NewKaryawan(): JSX.Element {
         setIsSubmitting(true);
 
         try {
-            console.log("Data yang dikirim:", formData);
+            // Prepare data for backend - ensure dates are in ISO format
+            const dataToSend = {
+                ...formData,
+                birthDate: formatDateForBackend(formData.birthDate),
+                joinDate: formatDateForBackend(formData.joinDate)
+            };
 
-            await api.post("/user", formData);
+            console.log("Data yang dikirim ke backend:", dataToSend);
+
+            await api.post("/user", dataToSend);
 
             toast({
                 title: "Berhasil!",
@@ -382,7 +436,7 @@ export default function NewKaryawan(): JSX.Element {
 
                     {renderFormField("Tanggal Lahir", "birthDate", true,
                         <DatePickerInput
-                            value={formData.birthDate}
+                            value={formatDateForDisplay(formData.birthDate)}
                             onChange={handleDateChange("birthDate")}
                             placeholder="DD/MM/YYYY"
                             className={errors.birthDate ? "border-red-500" : ""}
@@ -391,7 +445,7 @@ export default function NewKaryawan(): JSX.Element {
 
                     {renderFormField("Tanggal Bergabung", "joinDate", true,
                         <DatePickerInput
-                            value={formData.joinDate}
+                            value={formatDateForDisplay(formData.joinDate)}
                             onChange={handleDateChange("joinDate")}
                             placeholder="DD/MM/YYYY"
                             className={errors.joinDate ? "border-red-500" : ""}
