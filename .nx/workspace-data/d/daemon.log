@@ -3226,3 +3226,109 @@ Node.js v22.11.0
 [NX v21.0.3 Daemon Server] - 2025-09-04T05:15:43.358Z - [SYNC]: project graph hash is the same, not collecting task sync generators
 [NX v21.0.3 Daemon Server] - 2025-09-04T05:15:43.358Z - [SYNC]: nx.json hash is the same, not collecting global sync generators
 [NX v21.0.3 Daemon Server] - 2025-09-04T05:15:43.358Z - Time taken for 'total execution time for createProjectGraph()' 30.254917000012938ms
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:25:21.225Z - Started listening on: /var/folders/z6/4_69c17n7116zlqjnt9l_mhh0000gn/T/707d4982765518ebc196/d.sock
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:25:21.257Z - [WATCHER]: Subscribed to changes within: /Users/mra.fly/Documents/Projects/superclean-workspace (native)
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:25:21.259Z - Established a connection. Number of open connections: 1
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:25:21.259Z - Established a connection. Number of open connections: 2
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:25:21.260Z - Closed a connection. Number of open connections: 1
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:25:21.261Z - [REQUEST]: Client Request for Project Graph Received
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:25:21.265Z - Time taken for 'loadSpecifiedNxPlugins' 1.1047499999999673ms
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:25:21.470Z - Time taken for 'Load Nx Plugin: /Users/mra.fly/Documents/Projects/superclean-workspace/node_modules/@nx/next/node_modules/nx/src/plugins/package-json' 207.62875000000003ms
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:25:21.489Z - Time taken for 'Load Nx Plugin: /Users/mra.fly/Documents/Projects/superclean-workspace/node_modules/@nx/next/node_modules/nx/src/plugins/project-json/build-nodes/project-json' 226.68712500000004ms
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:25:21.509Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:25:21.509Z - [REQUEST]: 
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:25:21.509Z - [REQUEST]: 
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:25:21.518Z - Time taken for 'loadDefaultNxPlugins' 247.143625ms
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:25:21.673Z - Time taken for 'build-project-configs' 48.17270800000006ms
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:25:21.674Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:25:21.727Z - [SYNC]: collect registered sync generators
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:25:21.728Z - [REQUEST]: Responding to the client. project-graph
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:25:21.728Z - Time taken for 'total for creating and serializing project graph' 466.43275000000006ms
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:25:21.731Z - Done responding to the client project-graph
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:25:21.731Z - Handled REQUEST_PROJECT_GRAPH. Handling time: 467. Response time: 3.
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:25:22.191Z - [REQUEST]: Client Request for Project Graph Received
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:25:22.191Z - [REQUEST]: Responding to the client. project-graph
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:25:22.192Z - Time taken for 'total for creating and serializing project graph' 0.22545900000000074ms
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:25:22.211Z - Done responding to the client project-graph
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:25:22.211Z - Handled REQUEST_PROJECT_GRAPH. Handling time: 0. Response time: 20.
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:25:24.189Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:25:25.231Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:25:25.488Z - [REQUEST]: Client Request for Project Graph Received
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:25:25.488Z - [REQUEST]: Responding to the client. project-graph
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:25:25.489Z - Time taken for 'total for creating and serializing project graph' 0.672750000000633ms
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:25:25.493Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:25:25.500Z - Done responding to the client project-graph
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:25:25.500Z - Handled REQUEST_PROJECT_GRAPH. Handling time: 0. Response time: 12.
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:25:25.546Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:25:26.995Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:25:58.384Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:25:58.439Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:25:58.601Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:26:05.217Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:26:05.374Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:26:05.429Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:26:06.041Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:26:08.209Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:26:08.276Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:26:10.016Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:26:12.426Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:26:12.545Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:26:16.392Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:26:16.539Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:26:22.536Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:26:22.631Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:26:22.795Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:26:23.504Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:26:23.741Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:26:24.161Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:26:30.016Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:26:30.155Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:26:35.617Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:26:35.698Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:26:35.779Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:26:35.831Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:26:35.886Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:26:37.393Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:26:42.522Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:26:42.595Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:26:44.536Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:26:44.601Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:26:44.656Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:26:45.619Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:26:45.676Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:27:45.074Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:27:45.289Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:27:46.190Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:27:48.612Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:27:48.770Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:27:51.418Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:27:51.479Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:27:51.967Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:27:52.548Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:27:52.688Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:27:54.198Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:27:54.852Z - [WATCHER]: Processing file changes in outputs
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:28:44.047Z - Established a connection. Number of open connections: 2
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:28:44.054Z - Established a connection. Number of open connections: 3
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:28:44.056Z - Closed a connection. Number of open connections: 2
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:28:44.085Z - [REQUEST]: Client Request for Project Graph Received
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:28:44.094Z - [REQUEST]: Responding to the client. project-graph
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:28:44.099Z - Time taken for 'total for creating and serializing project graph' 8.376540999975987ms
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:28:44.101Z - Done responding to the client project-graph
+[NX v21.0.3 Daemon Server] - 2025-09-04T05:28:44.101Z - Handled REQUEST_PROJECT_GRAPH. Handling time: 10. Response time: 7.
+/Users/mra.fly/Documents/Projects/superclean-workspace/node_modules/@nx/next/node_modules/nx/src/hasher/native-task-hasher-impl.js:32
+        const plans = this.planner.getPlansReference(tasks.map((t) => t.id), taskGraph);
+                                   ^
+
+Error: Missing field `outputs` on TaskGraph.tasks
+    at NativeTaskHasherImpl.hashTasks [90m(/Users/mra.fly/Documents/Projects/superclean-workspace/[39mnode_modules/[4m@nx[24m/next/node_modules/[4mnx[24m/src/hasher/native-task-hasher-impl.js:32:36[90m)[39m
+    at InProcessTaskHasher.hashTasks [90m(/Users/mra.fly/Documents/Projects/superclean-workspace/[39mnode_modules/[4m@nx[24m/next/node_modules/[4mnx[24m/src/hasher/task-hasher.js:41:46[90m)[39m
+    at handleHashTasks [90m(/Users/mra.fly/Documents/Projects/superclean-workspace/[39mnode_modules/[4m@nx[24m/next/node_modules/[4mnx[24m/src/daemon/server/handle-hash-tasks.js:30:56[90m)[39m
+[90m    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)[39m
+    at async handleResult [90m(/Users/mra.fly/Documents/Projects/superclean-workspace/[39mnode_modules/[4m@nx[24m/next/node_modules/[4mnx[24m/src/daemon/server/server.js:186:16[90m)[39m
+    at async handleMessage [90m(/Users/mra.fly/Documents/Projects/superclean-workspace/[39mnode_modules/[4m@nx[24m/next/node_modules/[4mnx[24m/src/daemon/server/server.js:112:9[90m)[39m
+    at async [90m/Users/mra.fly/Documents/Projects/superclean-workspace/[39mnode_modules/[4m@nx[24m/next/node_modules/[4mnx[24m/src/daemon/server/server.js:74:9 {
+  code: [32m'InvalidArg'[39m
+}
+
+Node.js v22.12.0

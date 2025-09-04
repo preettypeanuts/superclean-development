@@ -34,68 +34,84 @@
   "fileMap": {
     "nonProjectFiles": [
       {
-        "file": "libs/utils/useTransactionHistory.tsx",
-        "hash": "7312097242897263256"
+        "file": ".editorconfig",
+        "hash": "5443105041930014821"
+      },
+      {
+        "file": ".env.local",
+        "hash": "3740600725829722770"
+      },
+      {
+        "file": ".eslintignore",
+        "hash": "7663861978715868291"
       },
       {
         "file": ".eslintrc.json",
         "hash": "18315524891129148814"
       },
       {
-        "file": "tsconfig.json",
-        "hash": "12396942299428161250"
-      },
-      {
-        "file": "vercel.json",
-        "hash": "13757879466007396965"
-      },
-      {
-        "file": "README.md",
-        "hash": "8313441868620010134"
-      },
-      {
         "file": ".gitignore",
         "hash": "5075566091591122989"
-      },
-      {
-        "file": "postcss.config.js",
-        "hash": "17192229984174384003"
-      },
-      {
-        "file": "Superclean.drawio",
-        "hash": "5242338139829531214"
-      },
-      {
-        "file": "libs/utils/useCustomerInfoByWhatsapp.tsx",
-        "hash": "10801234735775489226"
       },
       {
         "file": ".prettierignore",
         "hash": "8865097869854018350"
       },
       {
-        "file": "package.json",
-        "hash": "15861563895771953193"
+        "file": ".prettierrc",
+        "hash": "16267754514737964994"
       },
       {
-        "file": "libs/utils/useLocationData.tsx",
-        "hash": "11837542131548020222"
+        "file": "README.md",
+        "hash": "8313441868620010134"
       },
       {
-        "file": "libs/utils/slugify.tsx",
-        "hash": "13337896778678670331"
+        "file": "Superclean.drawio",
+        "hash": "5242338139829531214"
       },
       {
-        "file": "libs/utils/useUserProfile.tsx",
-        "hash": "3926109448529587588"
+        "file": "components.json",
+        "hash": "4280279583905880420"
+      },
+      {
+        "file": "jest.config.ts",
+        "hash": "12333515226966617182"
+      },
+      {
+        "file": "jest.preset.js",
+        "hash": "9430166341120122740"
       },
       {
         "file": "libs/utils/apiClient.ts",
         "hash": "4809011576491692557"
       },
       {
-        "file": "nx.json",
-        "hash": "1192325811798520629"
+        "file": "libs/utils/formatDate.ts",
+        "hash": "6861542216162132774"
+      },
+      {
+        "file": "libs/utils/formatRupiah.tsx",
+        "hash": "463930803625100666"
+      },
+      {
+        "file": "libs/utils/slugify.tsx",
+        "hash": "13337896778678670331"
+      },
+      {
+        "file": "libs/utils/useCategoryStore.tsx",
+        "hash": "9603958719955441392"
+      },
+      {
+        "file": "libs/utils/useCustomerData.tsx",
+        "hash": "4960465118637807795"
+      },
+      {
+        "file": "libs/utils/useCustomerInfoByWhatsapp.tsx",
+        "hash": "10801234735775489226"
+      },
+      {
+        "file": "libs/utils/useLocationData.tsx",
+        "hash": "11837542131548020222"
       },
       {
         "file": "libs/utils/useParameterStore.tsx",
@@ -106,63 +122,444 @@
         "hash": "9031816914721325458"
       },
       {
-        "file": ".env.local",
-        "hash": "3740600725829722770"
+        "file": "libs/utils/useTransactionHistory.tsx",
+        "hash": "7312097242897263256"
+      },
+      {
+        "file": "libs/utils/useUserProfile.tsx",
+        "hash": "3926109448529587588"
+      },
+      {
+        "file": "nx.json",
+        "hash": "1192325811798520629"
       },
       {
         "file": "package-lock.json",
         "hash": "14449334121038455695"
       },
       {
-        "file": "libs/utils/formatRupiah.tsx",
-        "hash": "463930803625100666"
+        "file": "package.json",
+        "hash": "15861563895771953193"
       },
       {
-        "file": ".editorconfig",
-        "hash": "5443105041930014821"
-      },
-      {
-        "file": "jest.config.ts",
-        "hash": "12333515226966617182"
-      },
-      {
-        "file": "tsconfig.base.json",
-        "hash": "9986903419117766011"
-      },
-      {
-        "file": "libs/utils/useCustomerData.tsx",
-        "hash": "4960465118637807795"
+        "file": "postcss.config.js",
+        "hash": "17192229984174384003"
       },
       {
         "file": "tailwind.config.js",
         "hash": "2865094165339159992"
       },
       {
-        "file": "libs/utils/useCategoryStore.tsx",
-        "hash": "9603958719955441392"
+        "file": "tsconfig.base.json",
+        "hash": "9986903419117766011"
       },
       {
-        "file": "components.json",
-        "hash": "4280279583905880420"
+        "file": "tsconfig.json",
+        "hash": "12396942299428161250"
       },
       {
-        "file": ".eslintignore",
-        "hash": "7663861978715868291"
-      },
-      {
-        "file": "libs/utils/formatDate.ts",
-        "hash": "6861542216162132774"
-      },
-      {
-        "file": ".prettierrc",
-        "hash": "16267754514737964994"
-      },
-      {
-        "file": "jest.preset.js",
-        "hash": "9430166341120122740"
+        "file": "vercel.json",
+        "hash": "13757879466007396965"
       }
     ],
     "projectFileMap": {
+      "shared": [
+        {
+          "file": "libs/shared/.eslintrc.json",
+          "hash": "11012487992710232822"
+        },
+        {
+          "file": "libs/shared/project.json",
+          "hash": "3184342224015291298"
+        },
+        {
+          "file": "libs/shared/src/components/BirthdayReminder.tsx",
+          "hash": "121371789723611686",
+          "deps": [
+            "npm:lucide-react",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "libs/shared/src/components/ChartKaryawan.tsx",
+          "hash": "12208799494971494996",
+          "deps": [
+            "npm:react",
+            "ui-components"
+          ]
+        },
+        {
+          "file": "libs/shared/src/components/ChartOrder.tsx",
+          "hash": "11878322601409464766",
+          "deps": [
+            "npm:react-icons",
+            "ui-components"
+          ]
+        },
+        {
+          "file": "libs/shared/src/components/Header.tsx",
+          "hash": "13793345546249389096"
+        },
+        {
+          "file": "libs/shared/src/components/ModalProfile.tsx",
+          "hash": "10882144356088966201",
+          "deps": [
+            "ui-components"
+          ]
+        },
+        {
+          "file": "libs/shared/src/components/ProtectedLayout.tsx",
+          "hash": "4246320589663532697",
+          "deps": [
+            "npm:next",
+            "npm:react"
+          ]
+        },
+        {
+          "file": "libs/shared/src/components/SalesChart.tsx",
+          "hash": "15427049848573661855",
+          "deps": [
+            "npm:react",
+            "npm:recharts",
+            "ui-components"
+          ]
+        },
+        {
+          "file": "libs/shared/src/components/WidgetMatrix.tsx",
+          "hash": "2550115074765596568",
+          "deps": [
+            "npm:react-icons",
+            "ui-components"
+          ]
+        },
+        {
+          "file": "libs/shared/src/components/Wrapper.tsx",
+          "hash": "5489800743355297811",
+          "deps": [
+            "npm:react"
+          ]
+        },
+        {
+          "file": "libs/shared/src/components/auth/AuthLayout.tsx",
+          "hash": "9532200850014043885",
+          "deps": [
+            "npm:next",
+            "npm:react-icons",
+            "npm:react"
+          ]
+        },
+        {
+          "file": "libs/shared/src/components/mitra/daftar-spk-tabs.tsx",
+          "hash": "7143386610136397631",
+          "deps": [
+            "ui-components",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "libs/shared/src/components/mitra/history-task.tsx",
+          "hash": "6387867825161104893",
+          "deps": [
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "libs/shared/src/components/mitra/home-banner.tsx",
+          "hash": "15028421449419412720",
+          "deps": [
+            "npm:next",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "libs/shared/src/components/mitra/navigation-bar.tsx",
+          "hash": "11659294916554871587",
+          "deps": [
+            "npm:react",
+            "npm:react-icons",
+            "npm:next"
+          ]
+        },
+        {
+          "file": "libs/shared/src/components/mitra/notification-list.tsx",
+          "hash": "14768295207944951948",
+          "deps": [
+            "ui-components",
+            "npm:react",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "libs/shared/src/components/mitra/ongoing-task.tsx",
+          "hash": "2969364019000524534",
+          "deps": [
+            "npm:react-icons",
+            "npm:next"
+          ]
+        },
+        {
+          "file": "libs/shared/src/components/mitra/page-banner.tsx",
+          "hash": "9388321596338041221",
+          "deps": [
+            "npm:next",
+            "npm:react",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "libs/shared/src/components/mitra/rating-history.tsx",
+          "hash": "16630082979400642419",
+          "deps": [
+            "npm:react",
+            "npm:lucide-react",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "libs/shared/src/components/mitra/tip-widget.tsx",
+          "hash": "13378388016635787873",
+          "deps": [
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "libs/shared/src/components/mitra/total-rating.tsx",
+          "hash": "9864130441764107761",
+          "deps": [
+            "npm:react-icons",
+            "npm:next"
+          ]
+        },
+        {
+          "file": "libs/shared/src/components/ui/Breadcrumbs.tsx",
+          "hash": "1781059823851124855",
+          "deps": [
+            "npm:react",
+            "ui-components",
+            "npm:next",
+            "npm:lucide-react",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "libs/shared/src/components/ui/Navbar.tsx",
+          "hash": "12014667533316092998",
+          "deps": [
+            "npm:next",
+            "npm:react",
+            "ui-components",
+            "npm:lucide-react",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "libs/shared/src/components/ui/Searchbar.tsx",
+          "hash": "16479637820086483424",
+          "deps": [
+            "npm:react",
+            "npm:react-icons",
+            "ui-components"
+          ]
+        },
+        {
+          "file": "libs/shared/src/components/ui/Sidebar.tsx",
+          "hash": "5570201884501384332",
+          "deps": [
+            "npm:next",
+            "npm:react",
+            "npm:react-icons",
+            "ui-components"
+          ]
+        },
+        {
+          "file": "libs/shared/src/components/ui/ThemeSwitch.tsx",
+          "hash": "7337092305291705450",
+          "deps": [
+            "npm:react",
+            "npm:next-themes",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "libs/shared/src/data/system.tsx",
+          "hash": "4522636524231082004",
+          "deps": [
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "libs/shared/src/index.ts",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "libs/shared/src/styles/global.css",
+          "hash": "11355486562243257913"
+        },
+        {
+          "file": "libs/shared/tsconfig.json",
+          "hash": "283218446886438565"
+        },
+        {
+          "file": "libs/shared/tsconfig.lib.json",
+          "hash": "5575421938664506599"
+        }
+      ],
+      "mitra-app": [
+        {
+          "file": "apps/mitra-app/.eslintrc.json",
+          "hash": "1322966927938926602"
+        },
+        {
+          "file": "apps/mitra-app/app/daftar-spk/page.tsx",
+          "hash": "1838934047933526576",
+          "deps": [
+            "shared"
+          ]
+        },
+        {
+          "file": "apps/mitra-app/app/layout.tsx",
+          "hash": "1238554524084980994",
+          "deps": [
+            "shared",
+            "npm:next-themes",
+            "npm:next"
+          ]
+        },
+        {
+          "file": "apps/mitra-app/app/login/page.tsx",
+          "hash": "13381526888669313955",
+          "deps": [
+            "npm:next",
+            "ui-components",
+            "npm:react",
+            "npm:lucide-react"
+          ]
+        },
+        {
+          "file": "apps/mitra-app/app/page.tsx",
+          "hash": "12151160935944635295",
+          "deps": [
+            "shared"
+          ]
+        },
+        {
+          "file": "apps/mitra-app/app/pekerjaan-berlangsung/page.tsx",
+          "hash": "10856190493204426347",
+          "deps": [
+            "shared",
+            "ui-components",
+            "npm:lucide-react",
+            "npm:react",
+            "npm:react-icons",
+            "npm:next"
+          ]
+        },
+        {
+          "file": "apps/mitra-app/app/pemberitahuan copy/page.tsx",
+          "hash": "6657743027521157263",
+          "deps": [
+            "npm:next",
+            "shared",
+            "ui-components",
+            "npm:lucide-react",
+            "npm:react",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "apps/mitra-app/app/pemberitahuan/page.tsx",
+          "hash": "3567824116004532625",
+          "deps": [
+            "shared"
+          ]
+        },
+        {
+          "file": "apps/mitra-app/app/profil/page.tsx",
+          "hash": "6657743027521157263",
+          "deps": [
+            "npm:next",
+            "shared",
+            "ui-components",
+            "npm:lucide-react",
+            "npm:react",
+            "npm:react-icons"
+          ]
+        },
+        {
+          "file": "apps/mitra-app/app/rating/page.tsx",
+          "hash": "4306202949178876661",
+          "deps": [
+            "shared"
+          ]
+        },
+        {
+          "file": "apps/mitra-app/index.d.ts",
+          "hash": "5498222895072842432"
+        },
+        {
+          "file": "apps/mitra-app/jest.config.ts",
+          "hash": "4933756946131926746"
+        },
+        {
+          "file": "apps/mitra-app/next-env.d.ts",
+          "hash": "1320675027584673186"
+        },
+        {
+          "file": "apps/mitra-app/next.config.js",
+          "hash": "7923829107438910761",
+          "deps": [
+            "npm:@nx/next"
+          ]
+        },
+        {
+          "file": "apps/mitra-app/project.json",
+          "hash": "15468575244545874128"
+        },
+        {
+          "file": "apps/mitra-app/public/.gitkeep",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/mitra-app/public/assets/SC_Email.png",
+          "hash": "2127051160649697023"
+        },
+        {
+          "file": "apps/mitra-app/public/assets/SC_LogoOnly.png",
+          "hash": "7804160941518454106"
+        },
+        {
+          "file": "apps/mitra-app/public/assets/SC_LogoOnlyBig.png",
+          "hash": "7351871632759985105"
+        },
+        {
+          "file": "apps/mitra-app/public/assets/SC_NoTagline.png",
+          "hash": "3783545966871995084"
+        },
+        {
+          "file": "apps/mitra-app/public/assets/SC_Primary.png",
+          "hash": "2766383482637524824"
+        },
+        {
+          "file": "apps/mitra-app/public/assets/SC_PrimaryTagline.png",
+          "hash": "8645043162018332294"
+        },
+        {
+          "file": "apps/mitra-app/public/assets/qris.png",
+          "hash": "12941780059054163540"
+        },
+        {
+          "file": "apps/mitra-app/public/favicon.ico",
+          "hash": "9303420814833116677"
+        },
+        {
+          "file": "apps/mitra-app/tsconfig.json",
+          "hash": "2830803785477633619"
+        },
+        {
+          "file": "apps/mitra-app/tsconfig.spec.json",
+          "hash": "6922413205408300107"
+        }
+      ],
       "admin-app": [
         {
           "file": "apps/admin-app/.eslintrc.json",
@@ -589,162 +986,6 @@
         },
         {
           "file": "apps/admin-app/tsconfig.spec.json",
-          "hash": "6922413205408300107"
-        }
-      ],
-      "mitra-app": [
-        {
-          "file": "apps/mitra-app/.eslintrc.json",
-          "hash": "1322966927938926602"
-        },
-        {
-          "file": "apps/mitra-app/app/daftar-spk/page.tsx",
-          "hash": "1838934047933526576",
-          "deps": [
-            "shared"
-          ]
-        },
-        {
-          "file": "apps/mitra-app/app/layout.tsx",
-          "hash": "1238554524084980994",
-          "deps": [
-            "shared",
-            "npm:next-themes",
-            "npm:next"
-          ]
-        },
-        {
-          "file": "apps/mitra-app/app/login/page.tsx",
-          "hash": "13381526888669313955",
-          "deps": [
-            "npm:next",
-            "ui-components",
-            "npm:react",
-            "npm:lucide-react"
-          ]
-        },
-        {
-          "file": "apps/mitra-app/app/page.tsx",
-          "hash": "12151160935944635295",
-          "deps": [
-            "shared"
-          ]
-        },
-        {
-          "file": "apps/mitra-app/app/pekerjaan-berlangsung/page.tsx",
-          "hash": "10856190493204426347",
-          "deps": [
-            "shared",
-            "ui-components",
-            "npm:lucide-react",
-            "npm:react",
-            "npm:react-icons",
-            "npm:next"
-          ]
-        },
-        {
-          "file": "apps/mitra-app/app/pemberitahuan copy/page.tsx",
-          "hash": "6657743027521157263",
-          "deps": [
-            "npm:next",
-            "shared",
-            "ui-components",
-            "npm:lucide-react",
-            "npm:react",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "apps/mitra-app/app/pemberitahuan/page.tsx",
-          "hash": "3567824116004532625",
-          "deps": [
-            "shared"
-          ]
-        },
-        {
-          "file": "apps/mitra-app/app/profil/page.tsx",
-          "hash": "6657743027521157263",
-          "deps": [
-            "npm:next",
-            "shared",
-            "ui-components",
-            "npm:lucide-react",
-            "npm:react",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "apps/mitra-app/app/rating/page.tsx",
-          "hash": "4306202949178876661",
-          "deps": [
-            "shared"
-          ]
-        },
-        {
-          "file": "apps/mitra-app/index.d.ts",
-          "hash": "5498222895072842432"
-        },
-        {
-          "file": "apps/mitra-app/jest.config.ts",
-          "hash": "4933756946131926746"
-        },
-        {
-          "file": "apps/mitra-app/next-env.d.ts",
-          "hash": "1320675027584673186"
-        },
-        {
-          "file": "apps/mitra-app/next.config.js",
-          "hash": "7923829107438910761",
-          "deps": [
-            "npm:@nx/next"
-          ]
-        },
-        {
-          "file": "apps/mitra-app/project.json",
-          "hash": "15468575244545874128"
-        },
-        {
-          "file": "apps/mitra-app/public/.gitkeep",
-          "hash": "3244421341483603138"
-        },
-        {
-          "file": "apps/mitra-app/public/assets/SC_Email.png",
-          "hash": "2127051160649697023"
-        },
-        {
-          "file": "apps/mitra-app/public/assets/SC_LogoOnly.png",
-          "hash": "7804160941518454106"
-        },
-        {
-          "file": "apps/mitra-app/public/assets/SC_LogoOnlyBig.png",
-          "hash": "7351871632759985105"
-        },
-        {
-          "file": "apps/mitra-app/public/assets/SC_NoTagline.png",
-          "hash": "3783545966871995084"
-        },
-        {
-          "file": "apps/mitra-app/public/assets/SC_Primary.png",
-          "hash": "2766383482637524824"
-        },
-        {
-          "file": "apps/mitra-app/public/assets/SC_PrimaryTagline.png",
-          "hash": "8645043162018332294"
-        },
-        {
-          "file": "apps/mitra-app/public/assets/qris.png",
-          "hash": "12941780059054163540"
-        },
-        {
-          "file": "apps/mitra-app/public/favicon.ico",
-          "hash": "9303420814833116677"
-        },
-        {
-          "file": "apps/mitra-app/tsconfig.json",
-          "hash": "2830803785477633619"
-        },
-        {
-          "file": "apps/mitra-app/tsconfig.spec.json",
           "hash": "6922413205408300107"
         }
       ],
@@ -1221,247 +1462,6 @@
         {
           "file": "libs/ui-components/tsconfig.lib.json",
           "hash": "13346013761036945219"
-        }
-      ],
-      "shared": [
-        {
-          "file": "libs/shared/.eslintrc.json",
-          "hash": "11012487992710232822"
-        },
-        {
-          "file": "libs/shared/project.json",
-          "hash": "3184342224015291298"
-        },
-        {
-          "file": "libs/shared/src/components/BirthdayReminder.tsx",
-          "hash": "121371789723611686",
-          "deps": [
-            "npm:lucide-react",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "libs/shared/src/components/ChartKaryawan.tsx",
-          "hash": "12208799494971494996",
-          "deps": [
-            "npm:react",
-            "ui-components"
-          ]
-        },
-        {
-          "file": "libs/shared/src/components/ChartOrder.tsx",
-          "hash": "11878322601409464766",
-          "deps": [
-            "npm:react-icons",
-            "ui-components"
-          ]
-        },
-        {
-          "file": "libs/shared/src/components/Header.tsx",
-          "hash": "13793345546249389096"
-        },
-        {
-          "file": "libs/shared/src/components/ModalProfile.tsx",
-          "hash": "10882144356088966201",
-          "deps": [
-            "ui-components"
-          ]
-        },
-        {
-          "file": "libs/shared/src/components/ProtectedLayout.tsx",
-          "hash": "4246320589663532697",
-          "deps": [
-            "npm:next",
-            "npm:react"
-          ]
-        },
-        {
-          "file": "libs/shared/src/components/SalesChart.tsx",
-          "hash": "15427049848573661855",
-          "deps": [
-            "npm:react",
-            "npm:recharts",
-            "ui-components"
-          ]
-        },
-        {
-          "file": "libs/shared/src/components/WidgetMatrix.tsx",
-          "hash": "2550115074765596568",
-          "deps": [
-            "npm:react-icons",
-            "ui-components"
-          ]
-        },
-        {
-          "file": "libs/shared/src/components/Wrapper.tsx",
-          "hash": "5489800743355297811",
-          "deps": [
-            "npm:react"
-          ]
-        },
-        {
-          "file": "libs/shared/src/components/auth/AuthLayout.tsx",
-          "hash": "9532200850014043885",
-          "deps": [
-            "npm:next",
-            "npm:react-icons",
-            "npm:react"
-          ]
-        },
-        {
-          "file": "libs/shared/src/components/mitra/daftar-spk-tabs.tsx",
-          "hash": "7143386610136397631",
-          "deps": [
-            "ui-components",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "libs/shared/src/components/mitra/history-task.tsx",
-          "hash": "6387867825161104893",
-          "deps": [
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "libs/shared/src/components/mitra/home-banner.tsx",
-          "hash": "15028421449419412720",
-          "deps": [
-            "npm:next",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "libs/shared/src/components/mitra/navigation-bar.tsx",
-          "hash": "11659294916554871587",
-          "deps": [
-            "npm:react",
-            "npm:react-icons",
-            "npm:next"
-          ]
-        },
-        {
-          "file": "libs/shared/src/components/mitra/notification-list.tsx",
-          "hash": "14768295207944951948",
-          "deps": [
-            "ui-components",
-            "npm:react",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "libs/shared/src/components/mitra/ongoing-task.tsx",
-          "hash": "2969364019000524534",
-          "deps": [
-            "npm:react-icons",
-            "npm:next"
-          ]
-        },
-        {
-          "file": "libs/shared/src/components/mitra/page-banner.tsx",
-          "hash": "9388321596338041221",
-          "deps": [
-            "npm:next",
-            "npm:react",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "libs/shared/src/components/mitra/rating-history.tsx",
-          "hash": "16630082979400642419",
-          "deps": [
-            "npm:react",
-            "npm:lucide-react",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "libs/shared/src/components/mitra/tip-widget.tsx",
-          "hash": "13378388016635787873",
-          "deps": [
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "libs/shared/src/components/mitra/total-rating.tsx",
-          "hash": "9864130441764107761",
-          "deps": [
-            "npm:react-icons",
-            "npm:next"
-          ]
-        },
-        {
-          "file": "libs/shared/src/components/ui/Breadcrumbs.tsx",
-          "hash": "1781059823851124855",
-          "deps": [
-            "npm:react",
-            "ui-components",
-            "npm:next",
-            "npm:lucide-react",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "libs/shared/src/components/ui/Navbar.tsx",
-          "hash": "12014667533316092998",
-          "deps": [
-            "npm:next",
-            "npm:react",
-            "ui-components",
-            "npm:lucide-react",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "libs/shared/src/components/ui/Searchbar.tsx",
-          "hash": "16479637820086483424",
-          "deps": [
-            "npm:react",
-            "npm:react-icons",
-            "ui-components"
-          ]
-        },
-        {
-          "file": "libs/shared/src/components/ui/Sidebar.tsx",
-          "hash": "5570201884501384332",
-          "deps": [
-            "npm:next",
-            "npm:react",
-            "npm:react-icons",
-            "ui-components"
-          ]
-        },
-        {
-          "file": "libs/shared/src/components/ui/ThemeSwitch.tsx",
-          "hash": "7337092305291705450",
-          "deps": [
-            "npm:react",
-            "npm:next-themes",
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "libs/shared/src/data/system.tsx",
-          "hash": "4522636524231082004",
-          "deps": [
-            "npm:react-icons"
-          ]
-        },
-        {
-          "file": "libs/shared/src/index.ts",
-          "hash": "3244421341483603138"
-        },
-        {
-          "file": "libs/shared/src/styles/global.css",
-          "hash": "11355486562243257913"
-        },
-        {
-          "file": "libs/shared/tsconfig.json",
-          "hash": "283218446886438565"
-        },
-        {
-          "file": "libs/shared/tsconfig.lib.json",
-          "hash": "5575421938664506599"
         }
       ]
     }
