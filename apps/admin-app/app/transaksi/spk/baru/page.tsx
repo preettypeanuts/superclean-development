@@ -797,8 +797,8 @@ export default function NewSPK() {
         <Tabs defaultValue="detail" className="-mt-2">
           <TabsList>
             <TabsTrigger value="detail">Detail</TabsTrigger>
-            <TabsTrigger value="riwayat">Riwayat</TabsTrigger>
-            <TabsTrigger value="foto">Foto</TabsTrigger>
+            <TabsTrigger disabled value="riwayat">Riwayat</TabsTrigger>
+            <TabsTrigger disabled value="foto">Foto</TabsTrigger>
           </TabsList>
           <div className="w-full border-t my-3 -mx-10"></div>
 
