@@ -2,6 +2,7 @@ import '@superclean-workspace/shared/styles';
 import { ThemeProvider } from 'next-themes';
 import { Plus_Jakarta_Sans } from "next/font/google";
 import { NavigationBar } from "libs/shared/src/components/mitra/navigation-bar"
+import ProtectedLayout from "@shared/components/ProtectedLayout"
 
 export const metadata = {
   title: 'Superclean - Mitra Apps',
@@ -22,11 +23,11 @@ export default function RootLayout({
       <body
         className={`${jakartaSans.className} antialiased md:flex `}
       >
-        <ThemeProvider defaultTheme="light"
-          enableSystem={false}
-          attribute="class">
-          {children}
-          <NavigationBar />
+        <ThemeProvider defaultTheme="light" enableSystem={false} attribute="class">
+          <ProtectedLayout>
+            {children}
+            <NavigationBar />
+          </ProtectedLayout>
         </ThemeProvider>
       </body>
     </html>
