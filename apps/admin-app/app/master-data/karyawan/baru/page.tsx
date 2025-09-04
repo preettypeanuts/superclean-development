@@ -85,6 +85,8 @@ export default function NewKaryawan(): JSX.Element {
         status: 1,
     });
 
+    console.log(formData)
+
     const [errors, setErrors] = useState<FormErrors>({});
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
@@ -92,14 +94,14 @@ export default function NewKaryawan(): JSX.Element {
     const validateForm = (): boolean => {
         const newErrors: FormErrors = {};
 
-        // Required field validation
         if (!formData.username.trim()) {
             newErrors.username = "Nama pengguna wajib diisi";
         } else if (formData.username.length < 3) {
             newErrors.username = "Nama pengguna minimal 3 karakter";
-        } else if (!/^[a-zA-Z0-9_]+$/.test(formData.username)) {
-            newErrors.username = "Nama pengguna hanya boleh mengandung huruf, angka, dan underscore";
+        } else if (!/^(?!.*\.\.)(?!\.)(?!.*\.$)[a-zA-Z0-9_.]+$/.test(formData.username)) {
+            newErrors.username = "Nama pengguna hanya boleh huruf, angka, underscore, dan titik (tidak boleh diawali/diakhiri titik atau ada titik ganda)";
         }
+
 
         if (!formData.fullname.trim()) {
             newErrors.fullname = "Nama lengkap wajib diisi";
@@ -156,9 +158,9 @@ export default function NewKaryawan(): JSX.Element {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
         const { id, name, value } = e.target;
         const fieldName = (id || name) as FormFieldKeys;
-        
+
         setFormData(prev => ({ ...prev, [fieldName]: value }));
-        
+
         // Clear error when user starts typing
         if (errors[fieldName]) {
             setErrors(prev => ({ ...prev, [fieldName]: undefined }));
@@ -167,7 +169,7 @@ export default function NewKaryawan(): JSX.Element {
 
     const handleSelectChange = (id: FormFieldKeys, value: string | number): void => {
         setFormData(prev => ({ ...prev, [id]: value }));
-        
+
         // Clear error when user selects value
         if (errors[id]) {
             setErrors(prev => ({ ...prev, [id]: undefined }));
@@ -176,7 +178,7 @@ export default function NewKaryawan(): JSX.Element {
 
     const handleDateChange = (field: 'birthDate' | 'joinDate') => (date: string): void => {
         setFormData(prev => ({ ...prev, [field]: date }));
-        
+
         // Clear error when user selects date
         if (errors[field]) {
             setErrors(prev => ({ ...prev, [field]: undefined }));
@@ -191,11 +193,11 @@ export default function NewKaryawan(): JSX.Element {
     const getErrorMessage = (error: ApiError): { title: string; message: string } => {
         let errorMessage = "Terjadi kesalahan saat menambahkan karyawan";
         let errorTitle = "Gagal Menambahkan Karyawan";
-        
+
         if (error.response) {
             const status = error.response.status;
             const data = error.response.data;
-            
+
             switch (status) {
                 case 400:
                     errorTitle = "Data Tidak Valid";
@@ -263,7 +265,7 @@ export default function NewKaryawan(): JSX.Element {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
         e.preventDefault();
-        
+
         if (!validateForm()) {
             toast({
                 title: "Form Tidak Valid",
@@ -277,27 +279,27 @@ export default function NewKaryawan(): JSX.Element {
 
         try {
             console.log("Data yang dikirim:", formData);
-            
+
             await api.post("/user", formData);
-            
+
             toast({
                 title: "Berhasil!",
                 description: `Karyawan ${formData.fullname} berhasil ditambahkan`,
                 variant: "default",
             });
-            
+
             resetForm();
-            
+
             setTimeout(() => {
                 router.push("/master-data/karyawan");
             }, 1000);
-            
+
         } catch (error) {
             console.error("Error adding employee:", error);
-            
+
             const apiError = error as ApiError;
             const { title, message } = getErrorMessage(apiError);
-            
+
             toast({
                 title,
                 description: message,
@@ -337,42 +339,42 @@ export default function NewKaryawan(): JSX.Element {
             <Wrapper>
                 <form className="space-y-4" onSubmit={handleSubmit}>
                     {renderFormField("Nama Pengguna", "username", true,
-                        <Input 
-                            placeholder="Masukkan Nama Pengguna" 
-                            id="username" 
-                            value={formData.username} 
+                        <Input
+                            placeholder="Masukkan Nama Pengguna"
+                            id="username"
+                            value={formData.username}
                             onChange={handleChange}
                             className={errors.username ? "border-red-500" : ""}
                         />
                     )}
-                    
+
                     {renderFormField("Nama Lengkap", "fullname", true,
-                        <Input 
-                            placeholder="Masukkan Nama lengkap karyawan" 
-                            id="fullname" 
-                            value={formData.fullname} 
+                        <Input
+                            placeholder="Masukkan Nama lengkap karyawan"
+                            id="fullname"
+                            value={formData.fullname}
                             onChange={handleChange}
                             className={errors.fullname ? "border-red-500" : ""}
                         />
                     )}
-                    
+
                     {renderFormField("No WhatsApp", "noWhatsapp", true,
-                        <Input 
-                            placeholder="Masukkan no WhatsApp (contoh: 08123456789)" 
-                            type="text" 
-                            id="noWhatsapp" 
-                            value={formData.noWhatsapp} 
+                        <Input
+                            placeholder="Masukkan no WhatsApp (contoh: 08123456789)"
+                            type="text"
+                            id="noWhatsapp"
+                            value={formData.noWhatsapp}
                             onChange={handleChange}
                             className={errors.noWhatsapp ? "border-red-500" : ""}
                         />
                     )}
-                    
+
                     {renderFormField("Kata Sandi", "password", true,
-                        <Input 
-                            placeholder="Masukkan kata sandi (minimal 6 karakter)" 
-                            type="password" 
-                            id="password" 
-                            value={formData.password} 
+                        <Input
+                            placeholder="Masukkan kata sandi (minimal 6 karakter)"
+                            type="password"
+                            id="password"
+                            value={formData.password}
                             onChange={handleChange}
                             className={errors.password ? "border-red-500" : ""}
                         />
@@ -423,7 +425,7 @@ export default function NewKaryawan(): JSX.Element {
                             </SelectContent>
                         </Select>
                     )}
-                    
+
                     {renderFormField("Akses Pengguna", "roleId", true,
                         <Select
                             onValueChange={(value: string) => handleSelectChange("roleId", value)}
@@ -451,7 +453,7 @@ export default function NewKaryawan(): JSX.Element {
                             </SelectContent>
                         </Select>
                     )}
-                    
+
                     <div className="flex items-center space-x-4">
                         <Label className="w-1/4 font-semibold">Status</Label>
                         <div className="flex items-center space-x-2">
@@ -462,18 +464,18 @@ export default function NewKaryawan(): JSX.Element {
                             <Label>{formData.status === 1 ? "Aktif" : "Tidak Aktif"}</Label>
                         </div>
                     </div>
-                    
+
                     <div className="flex justify-end w-full space-x-2 pt-4">
-                        <Button 
-                            type="button" 
-                            variant="outline2" 
+                        <Button
+                            type="button"
+                            variant="outline2"
                             onClick={handleBackClick}
                             disabled={isSubmitting}
                         >
                             Kembali
                         </Button>
-                        <Button 
-                            type="submit" 
+                        <Button
+                            type="submit"
                             variant="main"
                             disabled={isSubmitting || loadingParams}
                         >
