@@ -27,13 +27,13 @@ export function useParameterStore() {
 
         // Mapping Role
         const roleMap: ParameterMapping = {};
-        roleRes.data.forEach((role) => {
+        roleRes.data.forEach((role: Parameter) => {
           roleMap[role.paramKey] = role.paramValue;
         });
 
         // Mapping Branch
         const branchMap: ParameterMapping = {};
-        branchRes.data.forEach((branch) => {
+        branchRes.data.forEach((branch: Parameter) => {
           branchMap[branch.paramKey] = branch.paramValue;
         });
 
