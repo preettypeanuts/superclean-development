@@ -3,6 +3,7 @@ import { ThemeProvider } from 'next-themes';
 import { Plus_Jakarta_Sans } from "next/font/google";
 import { NavigationBar } from "libs/shared/src/components/mitra/navigation-bar"
 import ProtectedLayout from "@shared/components/ProtectedLayout"
+import { Toaster } from "libs/ui-components/src/components/ui/toaster"
 
 export const metadata = {
   title: 'Superclean - Mitra Apps',
@@ -25,6 +26,7 @@ export default function RootLayout({
       >
         <ThemeProvider defaultTheme="light" enableSystem={false} attribute="class">
           <ProtectedLayout>
+              <Toaster />
             {children}
             <NavigationBar />
           </ProtectedLayout>

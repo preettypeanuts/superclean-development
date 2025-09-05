@@ -6,15 +6,30 @@ import { Input } from "libs/ui-components/src/components/ui/input"
 import { Label } from "libs/ui-components/src/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "libs/ui-components/src/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "libs/ui-components/src/components/ui/tabs"
-import { Card, CardContent } from "libs/ui-components/src/components/ui/card"
 import { LogOut, Calendar, Eye, EyeOff } from "lucide-react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { RiLogoutBoxFill } from "react-icons/ri"
-import { AiFillCamera } from "react-icons/ai";
-import {
-    Dialog,
-    DialogContent,
-} from "libs/ui-components/src/components/ui/dialog";
+import { AiFillCamera } from "react-icons/ai"
+import { Dialog, DialogContent } from "libs/ui-components/src/components/ui/dialog"
+import { useToast } from "libs/ui-components/src/hooks/use-toast"
+import { api, apiClient } from "libs/utils/apiClient"
+import { useParameterStore } from "libs/utils/useParameterStore"
+import { formatDateInput } from 'libs/utils/formatDate'
+import { ConfirmSaveDialog } from "libs/ui-components/src/components/save-dialog"
+import { DatePickerInput } from "libs/ui-components/src/components/date-picker-input";
+import { useRouter } from "next/navigation"
+
+// Interface untuk data user dari API
+interface UserData {
+    username: string;
+    fullname: string;
+    noWhatsapp: string;
+    birthDate: string;
+    branchId: string;
+    // Tambahan field jika ada di API
+    email?: string;
+    gender?: string;
+}
 
 // Komponen Dialog Logout
 type LogoutDialogProps = {
@@ -86,58 +101,201 @@ const LogoutDialog = ({ isOpen, onClose, onConfirm }: LogoutDialogProps) => {
 };
 
 export default function ProfilSayaPage() {
-    const [profileData, setProfileData] = useState({
-        fullName: "Mirna Putri",
-        email: "mirnaptr@gmail.com",
-        phone: "081288908784456",
-        birthDate: "22/06/1997",
-        gender: "Perempuan"
-    })
+    const { toast } = useToast();
+    const { branchMapping } = useParameterStore();
+    const router = useRouter();
 
+
+    // State untuk data user dari API
+    const [userData, setUserData] = useState<UserData | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
+
+    // State untuk form data profil
+    const [profileData, setProfileData] = useState({
+        fullname: "",
+        noWhatsapp: "",
+        birthDate: "",
+        email: "", // Jika ada di API
+        gender: "" // Jika ada di API
+    });
+
+    // State untuk form password
     const [securityData, setSecurityData] = useState({
-        currentPassword: "P@ssw0rd123",
-        newPassword: "P@ssw0rd123",
-        confirmPassword: "P@ssw0rd123"
-    })
+        password: "",
+        retypePassword: ""
+    });
 
     const [showPasswords, setShowPasswords] = useState({
-        current: false,
         new: false,
         confirm: false
-    })
+    });
 
-    const [showLogoutDialog, setShowLogoutDialog] = useState(false)
+    const [showLogoutDialog, setShowLogoutDialog] = useState(false);
+    const [showConfirmProfile, setShowConfirmProfile] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [updating, setUpdating] = useState(false);
 
-    const handleInputChange = (field: string, value: string) => {
+    // Fetch data user saat komponen mount
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                setLoading(true);
+                const res = await apiClient("/profile");
+                if (res.status === "success") {
+                    const data: UserData = res.data;
+                    setUserData(data);
+                    setProfileData({
+                        fullname: data.fullname || "",
+                        noWhatsapp: data.noWhatsapp || "",
+                        birthDate: data.birthDate || "",
+                        email: data.email || "", // Jika field ini ada
+                        gender: data.gender || "" // Jika field ini ada
+                    });
+                }
+            } catch (error) {
+                toast({
+                    title: "Error!",
+                    description: "Gagal memuat data profil",
+                    variant: "destructive",
+                });
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchUserData();
+    }, [toast]);
+
+    // Fungsi untuk menangani perubahan tanggal lahir
+    const handleDateChange = (field: string) => (value: string) => {
         setProfileData(prev => ({
             ...prev,
             [field]: value
-        }))
-    }
+        }));
+    };
+
+    const handleProfileChange = (field: string, value: string) => {
+        setProfileData(prev => ({
+            ...prev,
+            [field]: value
+        }));
+    };
 
     const handleSecurityChange = (field: string, value: string) => {
         setSecurityData(prev => ({
             ...prev,
             [field]: value
-        }))
-    }
+        }));
+    };
 
-    const togglePasswordVisibility = (field: 'current' | 'new' | 'confirm') => {
+    const togglePasswordVisibility = (field: 'new' | 'confirm') => {
         setShowPasswords(prev => ({
             ...prev,
             [field]: !prev[field]
-        }))
-    }
+        }));
+    };
+
+    // Submit update profil
+    const submitProfileUpdate = async () => {
+        setUpdating(true);
+        try {
+            // Siapkan data yang akan dikirim (sesuaikan dengan struktur API)
+            const updateData = {
+                fullname: profileData.fullname,
+                noWhatsapp: profileData.noWhatsapp,
+                birthDate: profileData.birthDate,
+                // Tambahkan field lain jika ada di API
+                ...(profileData.email && { email: profileData.email }),
+                ...(profileData.gender && { gender: profileData.gender }),
+            };
+
+            await api.put("/profile", updateData);
+            toast({
+                title: "Berhasil!",
+                description: "Profil berhasil diperbarui."
+            });
+            setShowConfirmProfile(false);
+
+            // Refresh data user
+            const res = await apiClient("/profile");
+            if (res.status === "success") {
+                setUserData(res.data);
+            }
+        } catch (error) {
+            toast({
+                title: "Error!",
+                description: `Gagal memperbarui profil. Error: ${error instanceof Error ? error.message : String(error)}`,
+                variant: "destructive",
+            });
+        } finally {
+            setUpdating(false);
+        }
+    };
+
+    // Submit update password
+    const submitPasswordUpdate = async () => {
+        if (securityData.password !== securityData.retypePassword) {
+            toast({
+                title: "Error!",
+                description: "Kata sandi tidak sama.",
+                variant: "destructive",
+            });
+            return;
+        }
+
+        setUpdating(true);
+        try {
+            await api.post("/profile/change-password", {
+                password: securityData.password,
+                retypePassword: securityData.retypePassword
+            });
+            toast({
+                title: "Berhasil!",
+                description: "Kata sandi berhasil diubah."
+            });
+            setSecurityData({ password: "", retypePassword: "" });
+            setShowConfirmPassword(false);
+        } catch (error) {
+            toast({
+                title: "Error!",
+                description: "Gagal mengubah kata sandi. Coba lagi nanti.",
+                variant: "destructive",
+            });
+        } finally {
+            setUpdating(false);
+        }
+    };
 
     const handleLogout = () => {
-        // Handle logout logic here
-        console.log('User logged out');
+        localStorage.removeItem('access_token');
+        toast({
+            title: "Berhasil!",
+            description: "Anda telah berhasil logout.",
+        });
+
         setShowLogoutDialog(false);
-        // Add your logout logic here (redirect, clear tokens, etc.)
+        router.push("/login");
+
+    };
+
+    // Loading state
+    if (loading) {
+        return (
+            <main className="pb-[20vh] space-y-7 min-h-screen">
+                <PageBanner
+                    title="Profil Saya"
+                    variant="white"
+                    size="compact"
+                />
+                <div className="px-5 flex justify-center">
+                    <p>Memuat data profil...</p>
+                </div>
+            </main>
+        );
     }
 
     return (
-        <main className="pb-[20vh] space-y-7  min-h-screen">
+        <main className="pb-[20vh] space-y-7 min-h-screen">
             <PageBanner
                 title="Profil Saya"
                 variant="white"
@@ -153,7 +311,7 @@ export default function ProfilSayaPage() {
                             height={80}
                             className="rounded-full object-cover aspect-square ring-[3px] ring-white shadow-lg"
                             src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=1064&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                            alt="Profile Picture"
+                            alt={userData?.fullname || "Profile Picture"}
                         />
                         <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-mainColor rounded-full border-2 border-white flex items-center justify-center">
                             <span className="text-white text-xs">
@@ -183,6 +341,20 @@ export default function ProfilSayaPage() {
                     <TabsContent value="data-diri" className="space-y-4">
                         <div className="border-0">
                             <div className="flex flex-col gap-4">
+                                {/* Username (Read Only) */}
+                                <div className="space-y-2">
+                                    <Label htmlFor="username" className="text-sm font-medium text-gray-900">
+                                        Nama Pengguna
+                                    </Label>
+                                    <Input
+                                        id="username"
+                                        value={userData?.username || ""}
+                                        readOnly
+                                        disabled
+                                        className="text-sm bg-gray-50"
+                                    />
+                                </div>
+
                                 {/* Nama Lengkap */}
                                 <div className="space-y-2">
                                     <Label htmlFor="fullName" className="text-sm font-medium text-gray-900">
@@ -190,39 +362,41 @@ export default function ProfilSayaPage() {
                                     </Label>
                                     <Input
                                         id="fullName"
-                                        value={profileData.fullName}
-                                        onChange={(e) => handleInputChange('fullName', e.target.value)}
+                                        value={profileData.fullname}
+                                        onChange={(e) => handleProfileChange('fullname', e.target.value)}
                                         className="text-sm"
                                         placeholder="Masukkan nama lengkap"
                                     />
                                 </div>
 
-                                {/* Email */}
-                                <div className="space-y-2">
-                                    <Label htmlFor="email" className="text-sm font-medium text-gray-900">
-                                        Email
-                                    </Label>
-                                    <Input
-                                        id="email"
-                                        type="email"
-                                        value={profileData.email}
-                                        onChange={(e) => handleInputChange('email', e.target.value)}
-                                        className="text-sm"
-                                        placeholder="Masukkan email"
-                                    />
-                                </div>
+                                {/* Email - Jika ada di API */}
+                                {userData?.email !== undefined && (
+                                    <div className="space-y-2">
+                                        <Label htmlFor="email" className="text-sm font-medium text-gray-900">
+                                            Email
+                                        </Label>
+                                        <Input
+                                            id="email"
+                                            type="email"
+                                            value={profileData.email}
+                                            onChange={(e) => handleProfileChange('email', e.target.value)}
+                                            className="text-sm"
+                                            placeholder="Masukkan email"
+                                        />
+                                    </div>
+                                )}
 
-                                {/* No Telpon */}
+                                {/* No WhatsApp */}
                                 <div className="space-y-2">
                                     <Label htmlFor="phone" className="text-sm font-medium text-gray-900">
-                                        No Telpon
+                                        No WhatsApp
                                     </Label>
                                     <Input
                                         id="phone"
-                                        value={profileData.phone}
-                                        onChange={(e) => handleInputChange('phone', e.target.value)}
+                                        value={profileData.noWhatsapp}
+                                        onChange={(e) => handleProfileChange('noWhatsapp', e.target.value)}
                                         className="text-sm"
-                                        placeholder="Masukkan nomor telepon"
+                                        placeholder="Masukkan nomor WhatsApp"
                                     />
                                 </div>
 
@@ -231,41 +405,54 @@ export default function ProfilSayaPage() {
                                     <Label htmlFor="birthDate" className="text-sm font-medium text-gray-900">
                                         Tanggal Lahir
                                     </Label>
-                                    <div className="relative">
-                                        <Input
-                                            id="birthDate"
-                                            value={profileData.birthDate}
-                                            onChange={(e) => handleInputChange('birthDate', e.target.value)}
-                                            className="text-sm pr-10"
-                                            placeholder="DD/MM/YYYY"
-                                        />
-                                        <Calendar className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                                    </div>
+                                    <DatePickerInput
+                                        value={formatDateInput(profileData.birthDate)}
+                                        onChange={handleDateChange("birthDate")}
+                                        placeholder="DD/MM/YYYY"
+                                        className="text-sm"
+                                    />
                                 </div>
 
-                                {/* Jenis Kelamin */}
+                                {/* Jenis Kelamin - Jika ada di API */}
+                                {userData?.gender !== undefined && (
+                                    <div className="space-y-2">
+                                        <Label className="text-sm font-medium text-gray-900">
+                                            Jenis Kelamin
+                                        </Label>
+                                        <Select
+                                            value={profileData.gender}
+                                            onValueChange={(value) => handleProfileChange('gender', value)}
+                                        >
+                                            <SelectTrigger className="text-sm">
+                                                <SelectValue placeholder="Pilih jenis kelamin" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="Laki-laki">Laki-laki</SelectItem>
+                                                <SelectItem value="Perempuan">Perempuan</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                )}
+
+                                {/* Cabang (Read Only) */}
                                 <div className="space-y-2">
-                                    <Label className="text-sm font-medium text-gray-900">
-                                        Jenis Kelamin
+                                    <Label htmlFor="branch" className="text-sm font-medium text-gray-900">
+                                        Cabang
                                     </Label>
-                                    <Select
-                                        value={profileData.gender}
-                                        onValueChange={(value) => handleInputChange('gender', value)}
-                                    >
-                                        <SelectTrigger className="text-sm">
-                                            <SelectValue placeholder="Pilih jenis kelamin" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="Laki-laki">Laki-laki</SelectItem>
-                                            <SelectItem value="Perempuan">Perempuan</SelectItem>
-                                        </SelectContent>
-                                    </Select>
+                                    <Input
+                                        id="branch"
+                                        value={userData ? (branchMapping[userData.branchId] || userData.branchId) : ""}
+                                        readOnly
+                                        disabled
+                                        className="text-sm bg-gray-50"
+                                    />
                                 </div>
 
                                 {/* Save Button */}
                                 <Button
                                     variant={"main"}
                                     className="w-full"
+                                    onClick={() => setShowConfirmProfile(true)}
                                 >
                                     Simpan
                                 </Button>
@@ -290,34 +477,6 @@ export default function ProfilSayaPage() {
                     <TabsContent value="keamanan" className="space-y-4">
                         <div className="border-0">
                             <div className="space-y-4">
-                                {/* Kata Sandi Saat Ini */}
-                                <div className="space-y-2">
-                                    <Label htmlFor="currentPassword" className="text-sm font-medium text-gray-900">
-                                        Kata Sandi Saat Ini
-                                    </Label>
-                                    <div className="relative">
-                                        <Input
-                                            id="currentPassword"
-                                            type={showPasswords.current ? "text" : "password"}
-                                            value={securityData.currentPassword}
-                                            onChange={(e) => handleSecurityChange('currentPassword', e.target.value)}
-                                            className="text-sm pr-10"
-                                            placeholder="Masukkan kata sandi saat ini"
-                                        />
-                                        <button
-                                            type="button"
-                                            onClick={() => togglePasswordVisibility('current')}
-                                            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                                        >
-                                            {showPasswords.current ? (
-                                                <Eye className="h-4 w-4" />
-                                            ) : (
-                                                <EyeOff className="h-4 w-4" />
-                                            )}
-                                        </button>
-                                    </div>
-                                </div>
-
                                 {/* Kata Sandi Baru */}
                                 <div className="space-y-2">
                                     <Label htmlFor="newPassword" className="text-sm font-medium text-gray-900">
@@ -327,8 +486,8 @@ export default function ProfilSayaPage() {
                                         <Input
                                             id="newPassword"
                                             type={showPasswords.new ? "text" : "password"}
-                                            value={securityData.newPassword}
-                                            onChange={(e) => handleSecurityChange('newPassword', e.target.value)}
+                                            value={securityData.password}
+                                            onChange={(e) => handleSecurityChange('password', e.target.value)}
                                             className="text-sm pr-10"
                                             placeholder="Masukkan kata sandi baru"
                                         />
@@ -355,8 +514,8 @@ export default function ProfilSayaPage() {
                                         <Input
                                             id="confirmPassword"
                                             type={showPasswords.confirm ? "text" : "password"}
-                                            value={securityData.confirmPassword}
-                                            onChange={(e) => handleSecurityChange('confirmPassword', e.target.value)}
+                                            value={securityData.retypePassword}
+                                            onChange={(e) => handleSecurityChange('retypePassword', e.target.value)}
                                             className="text-sm pr-10"
                                             placeholder="Konfirmasi kata sandi baru"
                                         />
@@ -378,6 +537,7 @@ export default function ProfilSayaPage() {
                                 <Button
                                     variant={"main"}
                                     className="w-full"
+                                    onClick={() => setShowConfirmPassword(true)}
                                 >
                                     Simpan
                                 </Button>
@@ -386,6 +546,23 @@ export default function ProfilSayaPage() {
                     </TabsContent>
                 </Tabs>
             </div>
+
+            {/* Confirmation Dialogs */}
+            <ConfirmSaveDialog
+                title="Simpan perubahan profil?"
+                open={showConfirmProfile}
+                onOpenChange={setShowConfirmProfile}
+                onConfirm={submitProfileUpdate}
+                isLoading={updating}
+            />
+
+            <ConfirmSaveDialog
+                title="Simpan perubahan kata sandi?"
+                open={showConfirmPassword}
+                onOpenChange={setShowConfirmPassword}
+                onConfirm={submitPasswordUpdate}
+                isLoading={updating}
+            />
 
             {/* Logout Dialog */}
             <LogoutDialog
