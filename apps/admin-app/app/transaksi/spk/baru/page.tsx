@@ -466,7 +466,7 @@ export default function NewSPK() {
   const calculateTotals = () => {
     const totalPrice = spkItems.reduce((sum, item) => sum + item.harga * item.jumlah, 0);
     const totalPromo = spkItems.reduce((sum, item) => {
-      const promoAmount = item.promoType === "Persentase" ? (item.promo * item.harga * item.jumlah) / 100 : item.promo;
+      const promoAmount = item.promoType === "Persentase" ? (item.promo * item.harga * item.jumlah) / 100 : item.promo * item.jumlah;
       return sum + promoAmount;
     }, 0);
     const finalPrice = totalPrice - totalPromo - manualDiscount;
@@ -1175,7 +1175,7 @@ export default function NewSPK() {
               <div className="flex items-center space-x-2 w-full">
                 <div className="relative flex-1">
                   <Input
-                    value={formatRupiah(formDataTable.promoType === 'Persentase' ? formDataTable.promo * formDataTable.harga * Number(formDataTable.jumlah) / 100 : formDataTable.promo)}
+                    value={formatRupiah(formDataTable.promoType === 'Persentase' ? formDataTable.promo * formDataTable.harga * Number(formDataTable.jumlah) / 100 : formDataTable.promo * Number(formDataTable.jumlah))}
                     className="bg-muted/50 cursor-not-allowed text-right"
                     readOnly
                     placeholder="Rp. 0"
@@ -1203,7 +1203,7 @@ export default function NewSPK() {
               <Label htmlFor="subtotal" className="w-1/4 font-bold text-lg">Subtotal</Label>
               <Input
                 value={formatRupiah(
-                  (Number(formDataTable.harga) || 0) * (Number(formDataTable.jumlah) || 1) - (Number(formDataTable.promoType === "Persentase" ? formDataTable.promo * formDataTable.harga * Number(formDataTable.jumlah) / 100 : formDataTable.promo) || 0)
+                  (Number(formDataTable.harga) || 0) * (Number(formDataTable.jumlah) || 1) - (Number(formDataTable.promoType === "Persentase" ? Number(formDataTable.jumlah) * formDataTable.promo * formDataTable.harga * Number(formDataTable.jumlah) / 100 : formDataTable.promo * Number(formDataTable.jumlah)) || 0)
                 )}
                 className="!border-0 !text-lg font-bold text-right"
                 readOnly
