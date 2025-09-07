@@ -40,6 +40,7 @@ export interface SPKItem {
   tipe?: string;
   promoCode?: string;
   promoType?: string;
+  totalHarga?: number; // Optional, hanya untuk display di tabel
 }
 
 // Interface untuk promo response
@@ -58,8 +59,8 @@ const DataHeaderSPKDetail = [
   { key: "jumlah", label: "Jumlah" },
   { key: "satuan", label: "Satuan" },
   { key: "harga", label: "Harga Satuan" },
-  { key: "totalHarga", label: "Total Harga" },
-  { key: "promo", label: "Promo" },
+  // { key: "totalHarga", label: "Total Harga" },
+  { key: "promo", label: "Promo Satuan" },
   { key: "menu", label: "Aksi" }
 ];
 
@@ -71,12 +72,12 @@ function WhatsAppCombobox({
   loading,
   placeholder = "Masukkan No Whatsapp"
 }: {
-    value: string;
-    onValueChange: (value: string) => void;
-    onCustomerSelect: (customer: any) => void;
-    searchResults: any[];
-    loading: boolean;
-    placeholder?: string;
+  value: string;
+  onValueChange: (value: string) => void;
+  onCustomerSelect: (customer: any) => void;
+  searchResults: any[];
+  loading: boolean;
+  placeholder?: string;
 }) {
   const [open, setOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState(value);
@@ -332,49 +333,7 @@ export default function NewSPK() {
     }
   };
 
-  // Function untuk manual check promo dengan toast feedback
-  const handleCheckPromo = async () => {
-    if (!formDataTable.serviceCode) {
-      toast({
-        title: "Peringatan",
-        description: "Silakan pilih layanan terlebih dahulu",
-        variant: "destructive",
-      });
-      return;
-    }
 
-    if (!formDataTable.jumlah || parseInt(formDataTable.jumlah) <= 0) {
-      toast({
-        title: "Peringatan",
-        description: "Silakan masukkan jumlah yang valid",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    const promoData = await fetchPromo(formDataTable.serviceCode, formDataTable.jumlah);
-
-    setFormDataTable(prev => ({
-      ...prev,
-      promo: promoData.amount,
-      promoCode: promoData.code,
-      promoType: promoData.type
-    }));
-
-    if (promoData.amount > 0) {
-      toast({
-        title: "Promo Ditemukan!",
-        description: `Anda mendapat promo sebesar ${formatRupiah(promoData.amount)}`,
-        variant: "default",
-      });
-    } else {
-      toast({
-        title: "Tidak Ada Promo",
-        description: "Tidak ada promo yang tersedia untuk layanan dan jumlah ini",
-        variant: "default",
-      });
-    }
-  };
 
   // Effect untuk fetch staff data ketika customer berubah
   useEffect(() => {
@@ -540,7 +499,7 @@ export default function NewSPK() {
     // Prepare data sesuai expected request body
     const submitData = {
       customerId: selectedCustomer.id,
-      discountPrice: totals.totalReductions, // Total promo + diskon manual
+      discountPrice: totals.manualDiscount, // hanya diskon manual
       trxDate: new Date(formData.trxDate).toISOString(),
       assigns: formData.cleaningStaff,
       blowers: formData.blowerStaff,
@@ -652,7 +611,7 @@ export default function NewSPK() {
     setTimeout(async () => {
       const currentData = { ...formDataTable, [field]: value };
 
-      if ((field === "serviceCode" || field === "jumlah") &&
+      if ((field === "serviceCode" || field === "jumlah" || field === "tipe") &&
         currentData.serviceCode &&
         currentData.jumlah &&
         parseInt(currentData.jumlah) > 0) {
@@ -1161,7 +1120,7 @@ export default function NewSPK() {
             </div>
 
             <div className="flex items-center space-x-4">
-              <Label htmlFor="harga" className="w-1/4 font-semibold">Harga</Label>
+              <Label htmlFor="harga" className="w-1/4 font-semibold">Harga (Per Item)</Label>
               <RupiahInput
                 disabled
                 placeholder="Rp. 0"
@@ -1171,11 +1130,11 @@ export default function NewSPK() {
             </div>
 
             <div className="flex items-center space-x-4">
-              <Label htmlFor="promo" className="w-1/4 font-semibold">Promo</Label>
+              <Label htmlFor="promo" className="w-1/4 font-semibold">Promo (Per Item)</Label>
               <div className="flex items-center space-x-2 w-full">
                 <div className="relative flex-1">
                   <Input
-                    value={formatRupiah(formDataTable.promoType === 'Persentase' ? formDataTable.promo * formDataTable.harga * Number(formDataTable.jumlah) / 100 : formDataTable.promo * Number(formDataTable.jumlah))}
+                    value={formatRupiah(formDataTable.promoType === 'Persentase' ? formDataTable.promo * formDataTable.harga / 100 : formDataTable.promo)}
                     className="bg-muted/50 cursor-not-allowed text-right"
                     readOnly
                     placeholder="Rp. 0"

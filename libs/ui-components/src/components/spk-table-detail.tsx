@@ -94,8 +94,8 @@ export const SPKTableDetail: React.FC<DataTableProps> = ({
         return formatRupiah(item[columnKey as keyof SPKItem] as number);
       case "promo":
         return item.promoType === "Persentase"
-          ? formatRupiah((item.promo as number) * (item.harga / 100) * item.jumlah)
-          : formatRupiah((item.promo as number) * item.jumlah);
+          ? formatRupiah((item.promo as number) * (item.harga / 100))
+          : formatRupiah((item.promo as number));
       case "menu":
         return (
           <div className="w-fit flex gap-2">

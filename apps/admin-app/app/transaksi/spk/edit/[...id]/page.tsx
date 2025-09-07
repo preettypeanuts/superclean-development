@@ -267,7 +267,7 @@ export default function TransactionDetail() {
   const calculateTotals = () => {
     const totalPrice = spkItems.reduce((sum, item) => sum + item.harga * item.jumlah, 0);
     const totalPromo = spkItems.reduce((sum, item) => {
-      const promoAmount = item.promoType === "Persentase" ? (item.promo * item.harga * item.jumlah) / 100 : item.promo;
+      const promoAmount = item.promoType === "Persentase" ? (item.promo * item.harga * item.jumlah) / 100 : item.promo * item.jumlah;
       return sum + promoAmount;
     }, 0);
     const finalPrice = totalPrice - totalPromo - manualDiscount;
@@ -294,7 +294,11 @@ export default function TransactionDetail() {
         const result = await api.get(`/transaction/detail?trxNumber=${id}`);
         const transactionData = result.data as Transaction
         setTransaction(transactionData);
-        setManualDiscount(transactionData.discountPrice || 0);
+
+        const totalDiscount = transactionData.discountPrice || 0;
+        const totalPromo = transactionData.promoPrice || 0;
+
+        setManualDiscount(totalDiscount - totalPromo);
 
         // Fetch customer data
         if (transactionData.customerId) {
@@ -404,8 +408,8 @@ export default function TransactionDetail() {
       { key: "jumlah", label: "Jumlah" },
       { key: "satuan", label: "Satuan" },
       { key: "harga", label: "Harga Satuan" },
-      { key: "totalHarga", label: "Total Harga" },
-      { key: "promo", label: "Promo" },
+      // { key: "totalHarga", label: "Total Harga" },
+      { key: "promo", label: "Promo Satuan" },
     ];
 
     if (!IS_CANCELLED) {
@@ -427,7 +431,7 @@ export default function TransactionDetail() {
       satuan: detail.service.unit || "PCS",
       harga: detail.servicePrice,
       totalHarga: detail.totalPrice,
-      promo: detail.promoPrice,
+      promo: detail.promoPrice / Number(detail.quantity || 1),
       id: detail.id,
     }));
   };
@@ -519,7 +523,8 @@ export default function TransactionDetail() {
             promo: formDataTable.promo,
             tipe: formDataTable.tipe,
             promoCode: formDataTable.promoCode,
-            promoType: formDataTable.promoType
+            promoType: formDataTable.promoType,
+            totalHarga: totalHargaSebelumPromo - (formDataTable.promo * quantity)
           }
           : item
       ));
@@ -673,7 +678,7 @@ export default function TransactionDetail() {
     setTimeout(async () => {
       const currentData = { ...formDataTable, [field]: value };
 
-      if ((field === "serviceCode" || field === "jumlah") &&
+      if ((field === "serviceCode" || field === "jumlah" || field === "tipe") &&
         currentData.serviceCode &&
         currentData.jumlah &&
         parseInt(currentData.jumlah) > 0) {
@@ -758,20 +763,15 @@ export default function TransactionDetail() {
 
     const newItems = spkItems.filter(item => !originalSPKItems.some(i => i.id === item.id));
 
-    console.log(updateData);
-
-
     try {
-      // await api.put(`/transaction/${transaction?.id}/update`, updateData);
-
       if (deletedItems.length > 0) {
-        deletedItems.forEach(async (item) => {
+        await Promise.all(deletedItems.map(async (item) => {
           await api.delete(`/transaction-detail/${transaction?.id}/${item.id}`);
-        });
+        }));
       }
 
       if (newItems.length > 0) {
-        newItems.forEach(async (item) => {
+        await Promise.all(newItems.map(async (item) => {
           const payload = {
             serviceCategory: item.kategoriCode,
             serviceCode: item.kode,
@@ -783,15 +783,12 @@ export default function TransactionDetail() {
             quantity: item.jumlah,
           }
 
-          console.log("Creating new item:", payload, spkItems);
-
-
           await api.post(`/transaction-detail/${transaction?.id}/`, payload);
-        });
+        }));
       }
 
       if (changedItems.length > 0) {
-        changedItems.forEach(async (item) => {
+        await Promise.all(changedItems.map(async (item) => {
           const payload = {
             serviceCategory: item.kategoriCode,
             serviceCode: item.layanan,
@@ -806,8 +803,10 @@ export default function TransactionDetail() {
           // delete first and then create new
           await api.delete(`/transaction-detail/${transaction?.id}/${item.id}`);
           await api.post(`/transaction-detail/${transaction?.id}/`, payload);
-        });
+        }));
       }
+
+      await api.put(`/transaction/${transaction?.id}/update`, updateData);
 
       toast({
         title: "Berhasil",
@@ -1076,7 +1075,7 @@ export default function TransactionDetail() {
                   </div>
 
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold">Promo</Label>
+                    <Label className="w-[40%] font-semibold">Total Promo</Label>
                     <Input className="text-right" disabled value={formatRupiah(totals.totalPromo)} />
                   </div>
 
@@ -1542,7 +1541,7 @@ export default function TransactionDetail() {
                 value={formDataTable.tipe}
                 onValueChange={(value) => handleChangeTable("tipe", value)}
                 className="flex items-center gap-5"
-                disabled={!(formDataTable.category === "GENERAL" || formDataTable.category === "BLOWER")}
+                disabled={!(formDataTable.category !== "GENERAL" && formDataTable.category !== "BLOWER")}
               >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="vakum" id="vakum" />
@@ -1560,7 +1559,7 @@ export default function TransactionDetail() {
               <RupiahInput
                 disabled
                 placeholder="Rp. 0"
-                value={formatRupiah(formDataTable.harga)}
+                value={formatRupiah(formDataTable.harga * Number(formDataTable.jumlah || 1))}
                 onValueChange={(value) => handleChangeTable("harga", value)}
               />
             </div>
@@ -1570,7 +1569,7 @@ export default function TransactionDetail() {
               <div className="flex items-center space-x-2 w-full">
                 <div className="relative flex-1">
                   <Input
-                    value={formatRupiah(formDataTable.promoType === 'Persentase' ? formDataTable.promo * formDataTable.harga * Number(formDataTable.jumlah) / 100 : formDataTable.promo)}
+                    value={formatRupiah(formDataTable.promoType === 'Persentase' ? formDataTable.promo * formDataTable.harga * Number(formDataTable.jumlah) / 100 : formDataTable.promo * Number(formDataTable.jumlah))}
                     className="bg-muted/50 cursor-not-allowed text-right"
                     readOnly
                     placeholder="Rp. 0"
