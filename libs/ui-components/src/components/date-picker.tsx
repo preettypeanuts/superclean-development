@@ -35,6 +35,7 @@ export function DatePicker({ label, value, onChange }: DatePickerProps) {
           selected={value || undefined}
           onSelect={onChange}
           initialFocus
+          timeZone="UTC"
         />
       </PopoverContent>
     </Popover>
