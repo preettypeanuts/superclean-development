@@ -361,7 +361,7 @@ const PelangganForm = ({ pelanggan, onSubmit, toast, loadingData, isEdit, loadin
           </Select>
         </div>
 
-        <div className="flex items-center space-x-4">
+        {/* <div className="flex items-center space-x-4">
           <Label className="w-[20%] font-semibold">Status</Label>
           <div className="flex items-center space-x-2">
             <Checkbox
@@ -371,7 +371,7 @@ const PelangganForm = ({ pelanggan, onSubmit, toast, loadingData, isEdit, loadin
             />
             <Label>{formData.status === 1 ? "Aktif" : "Tidak Aktif"}</Label>
           </div>
-        </div>
+        </div> */}
 
         <div className="flex justify-end space-x-2">
           <Button

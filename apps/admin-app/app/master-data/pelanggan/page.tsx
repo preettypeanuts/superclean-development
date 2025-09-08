@@ -24,7 +24,6 @@ const DataHeaderPelanggan = [
   { key: "address", label: "Alamat" },
   { key: "city", label: "Kota" },
   { key: "createdBy", label: "Didaftarkan Oleh" },
-  { key: "status", label: "Status" },
   { key: "menu", label: "Aksi" },
 ];
 
