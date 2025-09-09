@@ -49,7 +49,7 @@ export default function PelangganPage() {
   const [totalData, setTotalData] = useState<number>(0);
   const [limit, setLimit] = useState<number>(10);
   const [searchInput, setSearchInput] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string>("");
+  // const [statusFilter, setStatusFilter] = useState<string>("");
 
   const totalPages = Math.max(1, Math.ceil(totalData / limit));
 
@@ -70,9 +70,9 @@ export default function PelangganPage() {
     setLoading(true);
     try {
       let url = `/customer/page?search=${searchInput}&page=${page}&limit=${limit}`;
-      if (statusFilter !== "") {
-        url += `&status=${statusFilter}`;
-      }
+      // if (statusFilter !== "") {
+      //   url += `&status=${statusFilter}`;
+      // }
 
       const result = await apiClient(url);
       setDataPelanggan(result.data[0] || []);
@@ -82,7 +82,9 @@ export default function PelangganPage() {
     } finally {
       setLoading(false);
     }
-  }, [currentPage, limit, searchInput, statusFilter]);
+  }, [currentPage, limit, searchInput,
+    // statusFilter
+  ]);
 
   // useEffect untuk fetch pelanggan
   useEffect(() => {
@@ -155,11 +157,11 @@ export default function PelangganPage() {
                   </button>
                 )}
               </div>
-              <FilterStatus
+              {/* <FilterStatus
                 placeholder="Status"
                 value={statusFilter}
                 onChange={setStatusFilter}
-              />
+              /> */}
               <Button variant="main" onClick={handleSearch}>
                 Cari
               </Button>

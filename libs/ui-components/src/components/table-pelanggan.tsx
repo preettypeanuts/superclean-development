@@ -124,11 +124,11 @@ export const TablePelanggan: React.FC<DataTableProps> = ({ data, columns, curren
                                     </p>
                                 ) : header.key === "id" ? (
                                     <p>{(currentPage - 1) * limit + rowIndex + 1}</p>
-                                ) : header.key === "status" ? (
-                                    <p className={`badge truncate dark:bg-opacity-70 rounded-md !font-medium border-0 ${customer[header.key as keyof Pelanggan] === 1 ? "bg-green-200 text-green-900 dark:bg-green-500 dark:text-green-100" : "bg-red-200 text-red-900 dark:bg-red-500 dark:text-red-100"}`}>
-                                        <span className={`mr-2 ${customer["status"] === 1 ?  "bg-green-500 dark:bg-green-200" : "bg-red-500 dark:bg-red-200"} rounded-full w-[6px] h-[6px]`}></span>
-                                        {customer[header.key as keyof Pelanggan] === 1 ? "Aktif" : "Tidak Aktif"}
-                                    </p>
+                                    // ) : header.key === "status" ? (
+                                    //     <p className={`badge truncate dark:bg-opacity-70 rounded-md !font-medium border-0 ${customer[header.key as keyof Pelanggan] === 1 ? "bg-green-200 text-green-900 dark:bg-green-500 dark:text-green-100" : "bg-red-200 text-red-900 dark:bg-red-500 dark:text-red-100"}`}>
+                                    //         <span className={`mr-2 ${customer["status"] === 1 ?  "bg-green-500 dark:bg-green-200" : "bg-red-500 dark:bg-red-200"} rounded-full w-[6px] h-[6px]`}></span>
+                                    //         {customer[header.key as keyof Pelanggan] === 1 ? "Aktif" : "Tidak Aktif"}
+                                    //     </p>
                                 ) : header.key === "fullname" ? (
                                     <div className="flex items-center">
                                         <span className={`mr-2 ${customer["status"] === 1 ? "bg-green-500" : "bg-red-500"} rounded-full w-[6px] h-[6px]`}></span>
