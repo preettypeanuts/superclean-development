@@ -4,7 +4,6 @@ import { useEffect, useState, useMemo, useCallback } from "react";
 import { Wrapper } from "@shared/components/Wrapper";
 import { Input } from "libs/ui-components/src/components/ui/input";
 import { Button } from "libs/ui-components/src/components/ui/button";
-import { FilterStatus } from "@superclean-workspace/ui-components/components/filter-status";
 import { LuPlus } from "react-icons/lu";
 import { Search } from "lucide-react";
 import { SelectData } from "libs/ui-components/src/components/select-data";
@@ -14,7 +13,9 @@ import { apiClient } from "libs/utils/apiClient";
 import { IoClose } from "react-icons/io5";
 import { Label } from "@ui-components/components/ui/label";
 import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
-import { useLocationData, getCitiesLabel } from "libs/utils/useLocationData";
+import { useLocationData, getCitiesLabel, LocationData } from "libs/utils/useLocationData";
+import { GroupFilter } from "@ui-components/components/group-filter";
+import { SelectFilter } from "@ui-components/components/select-filter";
 
 const DataHeaderPelanggan = [
   { key: "id", label: "#" },
@@ -49,6 +50,9 @@ export default function PelangganPage() {
   const [totalData, setTotalData] = useState<number>(0);
   const [limit, setLimit] = useState<number>(10);
   const [searchInput, setSearchInput] = useState("");
+  const [cityFilter, setCityFilter] = useState<string>("all");
+  const [customerTypeFilter, setCustomerTypeFilter] = useState<string>("all");
+
   // const [statusFilter, setStatusFilter] = useState<string>("");
 
   const totalPages = Math.max(1, Math.ceil(totalData / limit));
@@ -58,7 +62,7 @@ export default function PelangganPage() {
   }, [dataPelanggan]);
 
   const { provinces } = useLocationData();
-  const [cities, setCities] = useState<any[]>([]);
+  const [cities, setCities] = useState<LocationData[]>([]);
 
   const fetchPelanggan = useCallback(async (resetPagination: boolean = false) => {
     let page = currentPage
@@ -70,6 +74,12 @@ export default function PelangganPage() {
     setLoading(true);
     try {
       let url = `/customer/page?search=${searchInput}&page=${page}&limit=${limit}`;
+      if (cityFilter !== "" && cityFilter !== "all") {
+        url += `&city=${cityFilter}`;
+      }
+      if (customerTypeFilter !== "" && customerTypeFilter !== "all") {
+        url += `&customerType=${customerTypeFilter}`;
+      }
       // if (statusFilter !== "") {
       //   url += `&status=${statusFilter}`;
       // }
@@ -83,6 +93,8 @@ export default function PelangganPage() {
       setLoading(false);
     }
   }, [currentPage, limit, searchInput,
+    cityFilter,
+    customerTypeFilter
     // statusFilter
   ]);
 
@@ -126,6 +138,11 @@ export default function PelangganPage() {
     }));
   }, [dataPelanggan, provinces, cities]);
 
+  const handleResetFilter = () => {
+    setCityFilter("all");
+    setCustomerTypeFilter("all");
+  };
+
   return (
     <>
       <Breadcrumbs label="Daftar Pelanggan" count={totalData} />
@@ -162,6 +179,47 @@ export default function PelangganPage() {
                 value={statusFilter}
                 onChange={setStatusFilter}
               /> */}
+
+              <GroupFilter
+                className="space-y-2"
+                // onApply={handleApplyFilter}
+                onReset={handleResetFilter}
+                // onCancel={handleCancelFilter}
+                hideButtons
+              >
+                <SelectFilter
+                  label="Kota"
+                  id="kota"
+                  placeholder="Pilih Kota"
+                  value={cityFilter}
+                  optionsString={[
+                    { label: "Semua Kota", value: "all" },
+                    ...cities.map((city) => ({ label: city.paramValue, value: city.paramKey })),
+                  ]}
+                  onChange={setCityFilter}
+                />
+                <SelectFilter
+                  label="Jenis Pelanggan"
+                  id="jenisPelanggan"
+                  placeholder="Pilih Jenis Pelanggan"
+                  value={customerTypeFilter}
+                  optionsString={[
+                    {
+                      label: "Semua Jenis Pelanggan",
+                      value: "all"
+                    },
+                    {
+                      label: "Perusahaan",
+                      value: "Perusahaan"
+                    },
+                    {
+                      label: "Pribadi",
+                      value: "Pribadi"
+                    }
+                  ]}
+                  onChange={setCustomerTypeFilter}
+                />
+              </GroupFilter>
               <Button variant="main" onClick={handleSearch}>
                 Cari
               </Button>
