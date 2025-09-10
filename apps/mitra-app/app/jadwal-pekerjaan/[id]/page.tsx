@@ -25,9 +25,7 @@ import { RadioGroup, RadioGroupItem } from "@ui-components/components/ui/radio-g
 import { RupiahInput } from "@ui-components/components/rupiah-input";
 import { formatRupiah } from "@shared/utils/formatRupiah";
 import { Button } from "@ui-components/components/ui/button";
-import Image from "next/image";
-import { FaX } from "react-icons/fa6";
-import { cn } from "@ui-components/utils";
+import { DateTimePicker } from "libs/ui-components/src/components/date-picker-time";
 
 type statusName = "pending" | "in_progress" | "completed";
 
@@ -561,6 +559,7 @@ const TimelineItemInProgress = ({
                                 <p className="my-4 font-sm text-muted-foreground">
                                     Tentukan Jam Pengambilan
                                 </p>
+                                <DateTimePicker />
                                 <p className="font-bold text-base text-black">Alamat</p>
                                 <p className="mt-3 text-sm font-medium mb-4">Jl. Cimanuk No.1A, Citarum, Kec. Bandung Wetan, Kota Bandung, Jawa Barat 40115</p>
 
@@ -723,8 +722,6 @@ const TaskTimeline = ({
 }
 
 const DetailTab = ({
-    tasks,
-    itemList,
     setItemList,
 }: {
     tasks: Task[];
