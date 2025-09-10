@@ -11,6 +11,7 @@ interface PageBannerProps {
   className?: string;
   titleClassName?: string;
   backButtonClassName?: string;
+  scrollThreshold?: number; // Threshold untuk memulai transisi sticky
 }
 
 export const PageBanner: React.FC<PageBannerProps> = ({
@@ -20,24 +21,37 @@ export const PageBanner: React.FC<PageBannerProps> = ({
   size = "normal",
   className = "",
   titleClassName = "",
-  backButtonClassName = ""
+  backButtonClassName = "",
+  scrollThreshold = 0
 }) => {
 
+  const [scrollY, setScrollY] = useState(0);
   const [isScrolled, setIsScrolled] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
+    let ticking = false;
+
     const handleScroll = () => {
-      const scrollPosition = window.scrollY;
-      setIsScrolled(scrollPosition > 0);
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          const scrollPosition = window.scrollY;
+          setScrollY(scrollPosition);
+
+          // Menggunakan threshold untuk mencegah flickering pada scroll kecil
+          setIsScrolled(scrollPosition > scrollThreshold);
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, []);
+  }, [scrollThreshold]);
 
   const handleBackClick = () => {
     router.back();
@@ -62,26 +76,81 @@ export const PageBanner: React.FC<PageBannerProps> = ({
   const backButtonStyles = variant === "gradient"
     ? "bg-white/80 text-mainColor"
     : "bg-mainColor/50 text-mainDark";
+
+  // Calculate dynamic height dengan smooth transition
+  const dynamicHeight = isScrolled
+    ? "80px"
+    : size === "normal" ? "147px" : "80px";
+
+  // Calculate opacity untuk smooth fade effect
+  const backgroundOpacity = Math.min(1, Math.max(0.8, (scrollThreshold - scrollY) / scrollThreshold));
+
   return (
     <main
-      className={`${isScrolled ? "sticky top-0 z-40" : ""} w-screen`}
+      className={`${isScrolled ? "sticky top-0 z-40 backdrop-blur-lg" : ""} w-screen`}
     >
       <section
-        className={`w-screen ${isScrolled && "!max-h-[80px]"} ${heightStyles[size]} ${backgroundStyles[variant]} rounded-b-2xl flex items-center relative ${className}`}
+        className={`
+          w-screen 
+          ${backgroundStyles[variant]} 
+          rounded-b-2xl 
+          flex 
+          items-center 
+          relative 
+          transition-all 
+          duration-300 
+          ease-out
+          ${className}
+        `}
+        style={{
+          height: dynamicHeight,
+          opacity: isScrolled ? backgroundOpacity : 1,
+          backdropFilter: isScrolled ? 'blur(10px)' : 'none',
+          WebkitBackdropFilter: isScrolled ? 'blur(10px)' : 'none',
+        }}
       >
-        <div className="mx-5 w-full  flex justify-center ">
+        <div className="mx-5 w-full flex justify-center">
           <div>
             {showBackButton && (
               <button
                 onClick={handleBackClick}
-                className={`w-[30px] h-[30px] ${backButtonStyles} rounded-lg flex  justify-center items-center ${backButtonClassName}`}
+                className={`
+                  w-[30px] 
+                  h-[30px] 
+                  ${backButtonStyles} 
+                  rounded-lg 
+                  flex 
+                  justify-center 
+                  items-center 
+                  transition-all 
+                  duration-200 
+                  ease-out
+                  hover:scale-105
+                  active:scale-95
+                  ${backButtonClassName}
+                `}
               >
                 <BsArrowLeft size={20} />
               </button>
             )}
           </div>
-          <div className="flex flex-1  justify-center">
-            <p className={`text-[20px] font-medium ${textColor} text-center ${titleClassName}`}>
+          <div className="flex flex-1 justify-center">
+            <p
+              className={`
+                text-[20px] 
+                font-medium 
+                ${textColor} 
+                text-center 
+                transition-all 
+                duration-200 
+                ease-out
+                ${titleClassName}
+              `}
+              style={{
+                fontSize: isScrolled ? '18px' : '20px',
+                transform: `translateY(${isScrolled ? '0px' : '0px'})`,
+              }}
+            >
               {title}
             </p>
           </div>
