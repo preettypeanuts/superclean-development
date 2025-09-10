@@ -1,17 +1,29 @@
+"use client"
+
 import { BsArrowRight } from "react-icons/bs";
 import { AiFillCalendar } from "react-icons/ai";
 import { AiFillClockCircle } from "react-icons/ai";
 import { BsClipboard2CheckFill } from "react-icons/bs";
 import Link from "next/link";
+import { useUserProfile } from "../../../../utils/useUserProfile";
 
 export const OngoingTask = () => {
+        const { user } = useUserProfile();
+
+        const getPathByRole = () => {
+            if (user?.roleId === "Staff Blower") {
+                return "/jadwal-pekerjaan";
+            }
+            return "/daftar-spk";
+        };
+    
     return (
         <main className="mx-5 space-y-[12px]">
             <section className="w-full flex items-center justify-between">
                 <p className="text-[20px] font-medium tracking-tight">
                     Pekerjaan Berlangsung
                 </p>
-                <Link href="/daftar-spk">
+                <Link href={getPathByRole()}>
                     <button className="text-[22px] w-[34px] h-[34px] flex items-center justify-center rounded-full bg-mainColor/20 text-mainDark">
                         <BsArrowRight />
                     </button>

@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState, useCallback } from "react";
-import { api, apiClient } from "./apiClient";
+import { api } from "./apiClient";
 import { useParameterStore } from "./useParameterStore";
 import { usePathname } from "next/navigation";
 
@@ -38,12 +38,17 @@ const fetchUserProfile = useCallback(async () => {
   
       if (response.status === "success") {
         const rawUser: RawUserData = response.data;
+
+        // console.log(">>>",rawUser);
+        
   
         const processed: ProcessedUserData = {
           ...rawUser,
           roleId: roleMapping[rawUser.roleId] || "Tidak Diketahui",
           branchId: branchMapping[rawUser.branchId] || "Tidak Diketahui",
         };
+        // console.log("<<<",processed);
+
   
         setUser(processed);
         setError(null);
