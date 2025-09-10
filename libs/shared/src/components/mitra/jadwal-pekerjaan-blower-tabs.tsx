@@ -155,7 +155,7 @@ interface TaskCardProps {
 
 const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
   return (
-    <Link href={"/pekerjaan-berlangsung"} >
+    <Link href={`/jadwal-pekerjaan/${task.nomorTransaksi}`} >
       <div className="w-full bg-white p-3 rounded-lg border">
         <div className="grid grid-cols-5 pb-3 border-b border-bottom-dash">
           <div className="col-span-4">
