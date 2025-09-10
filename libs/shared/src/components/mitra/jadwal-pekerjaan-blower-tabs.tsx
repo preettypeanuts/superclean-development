@@ -155,58 +155,60 @@ interface TaskCardProps {
 
 const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
   return (
-    <div className="w-full bg-white p-3 rounded-lg border">
-      <div className="grid grid-cols-5 pb-3 border-b border-bottom-dash">
-        <div className="col-span-4">
-          <h1 className="text-[20px] font-semibold mb-1">
-            {task.nama}
-          </h1>
-          <div className="text-[14px] text-gray-600 space-y-1">
-            <p className="text-orange-600 font-medium">
-              Nomor Transaksi : {task.nomorTransaksi}
-            </p>
-            <p className="truncate">
-              Alamat: {task.alamat}
-            </p>
+    <Link href={"/pekerjaan-berlangsung"} >
+      <div className="w-full bg-white p-3 rounded-lg border">
+        <div className="grid grid-cols-5 pb-3 border-b border-bottom-dash">
+          <div className="col-span-4">
+            <h1 className="text-[20px] font-semibold mb-1">
+              {task.nama}
+            </h1>
+            <div className="text-[14px] text-gray-600 space-y-1">
+              <p className="text-orange-600 font-medium">
+                Nomor Transaksi : {task.nomorTransaksi}
+              </p>
+              <p className="truncate">
+                Alamat: {task.alamat}
+              </p>
+            </div>
+          </div>
+          <div className="flex items-end justify-end">
+            <div className="w-[45px] h-[45px] aspect-square bg-mainColor flex items-center justify-center rounded-md">
+              <div
+                className="w-10 h-10 bg-white"
+                style={{
+                  mask: "url(/assets/SC_LogoOnlyBig.png) no-repeat center / contain",
+                  WebkitMask: "url(/assets/SC_LogoOnlyBig.png) no-repeat center / contain",
+                }}
+              ></div>
+            </div>
           </div>
         </div>
-        <div className="flex items-end justify-end">
-          <div className="w-[45px] h-[45px] aspect-square bg-mainColor flex items-center justify-center rounded-md">
-            <div
-              className="w-10 h-10 bg-white"
-              style={{
-                mask: "url(/assets/SC_LogoOnlyBig.png) no-repeat center / contain",
-                WebkitMask: "url(/assets/SC_LogoOnlyBig.png) no-repeat center / contain",
-              }}
-            ></div>
-          </div>
-        </div>
-      </div>
 
-      <div className="flex flex-col gap-2 text-[14px] pt-3">
-        <div className="flex truncate items-center gap-1 text-gray-600">
-          <AiFillCalendar />
-          <p>{task.tanggal}</p>
-        </div>
-        <div className="flex truncate items-center gap-1 text-gray-600">
-          <AiFillClockCircle />
-          <p>{task.waktu}</p>
-        </div>
-        <div className={`flex truncate items-center gap-1 ${task.statusColor}`}>
-          <BsClipboard2CheckFill />
-          <p>{task.status}</p>
+        <div className="flex flex-col gap-2 text-[14px] pt-3">
+          <div className="flex truncate items-center gap-1 text-gray-600">
+            <AiFillCalendar />
+            <p>{task.tanggal}</p>
+          </div>
+          <div className="flex truncate items-center gap-1 text-gray-600">
+            <AiFillClockCircle />
+            <p>{task.waktu}</p>
+          </div>
+          <div className={`flex truncate items-center gap-1 ${task.statusColor}`}>
+            <BsClipboard2CheckFill />
+            <p>{task.status}</p>
+          </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 
 export const JadwalPekerjaanBlowerTabs = () => {
   return (
-    <Link href="">
-      <main className="flex items-center justify-center mx-5 relative !-mt-7">
+    <div className="">
+      <main className="flex items-center justify-center mx-5 -mt-12">
         <Tabs defaultValue="pengantaran" className="flex flex-col items-center justify-center w-full">
-          <TabsList className="bg-[#F0FAF9] w-full">
+          <TabsList className="bg-[#F0FAF9] w-full z-50">
             <TabsTrigger className="w-full text-[16px]" value="pengantaran">Pengantaran</TabsTrigger>
             <TabsTrigger className="w-full text-[16px]" value="pengambilan">Pengambilan</TabsTrigger>
             <TabsTrigger className="w-full text-[16px]" value="riwayat">Riwayat</TabsTrigger>
@@ -218,7 +220,7 @@ export const JadwalPekerjaanBlowerTabs = () => {
               ))}
             </div>
           </TabsContent>
-            <TabsContent className="!mt-0 w-full" value="pengantaran">
+          <TabsContent className="!mt-0 w-full" value="pengambilan">
             <div className="w-full space-y-3">
               {pengambilan.map((task) => (
                 <TaskCard key={task.id} task={task} />
@@ -234,6 +236,6 @@ export const JadwalPekerjaanBlowerTabs = () => {
           </TabsContent>
         </Tabs>
       </main>
-    </Link>
+    </div>
   )
 }

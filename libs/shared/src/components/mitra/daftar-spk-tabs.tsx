@@ -170,10 +170,10 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
 
 export const DaftarSPKTabs = () => {
   return (
-    <Link href="/pekerjaan-berlangsung">
-      <main className="flex items-center justify-center mx-5 relative !-mt-7">
+    <div>
+      <main className="flex items-center justify-center mx-5 !-mt-12">
         <Tabs defaultValue="account" className="flex flex-col items-center justify-center w-full">
-          <TabsList className="bg-[#F0FAF9] w-full">
+          <TabsList className="bg-[#F0FAF9] w-full z-50">
             <TabsTrigger className="w-full text-[16px]" value="account">Pekerjaan Berlangsung</TabsTrigger>
             <TabsTrigger className="w-full text-[16px]" value="password">Riwayat Pekerjaan</TabsTrigger>
           </TabsList>
@@ -193,6 +193,6 @@ export const DaftarSPKTabs = () => {
           </TabsContent>
         </Tabs>
       </main>
-    </Link>
+    </div>
   )
 }

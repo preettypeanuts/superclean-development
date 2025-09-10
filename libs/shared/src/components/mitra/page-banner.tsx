@@ -63,12 +63,6 @@ export const PageBanner: React.FC<PageBannerProps> = ({
     white: "bg-white dark:bg-black"
   };
 
-  // Height styles based on size
-  const heightStyles = {
-    normal: "h-[147px]",
-    compact: "h-[80px]"
-  };
-
   // Text color based on variant
   const textColor = variant === "gradient" ? "text-white" : "text-gray-900";
 
@@ -87,7 +81,7 @@ export const PageBanner: React.FC<PageBannerProps> = ({
 
   return (
     <main
-      className={`${isScrolled ? "sticky top-0 z-40 backdrop-blur-lg" : ""} w-screen`}
+      className={`${isScrolled ? "sticky top-0 z-[100] backdrop-blur-lg" : ""} w-screen`}
     >
       <section
         className={`
