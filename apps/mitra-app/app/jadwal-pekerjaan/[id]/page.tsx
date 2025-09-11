@@ -482,11 +482,10 @@ const TimelineItemCompleted = ({
 
                                 {/* additional details */}
                                 <div>
-                                    <p className="text-sm mb-4">Jika pelanggan sudah puas dan pekerjaan sudah selesai, mohon untuk klik tombol <span>"Selesai"</span></p>
+                                    <p className="text-sm mb-4">Jika pelanggan sudah puas dan pekerjaan sudah selesai, mohon untuk klik tombol <span className="font-bold">"Selesai"</span></p>
 
                                     <div className="flex">
-                                        <Button className="flex-1 mx-2" variant="outline2" onClick={() => { }}>Kembali</Button>
-                                        <Button className="flex-1 mx-2" variant="main" onClick={() => {
+                                        <Button className="flex-1" variant="main" onClick={() => {
                                             setJobCompleted(true);
                                             completeTask();
                                             setIsOpen(false);
@@ -557,16 +556,14 @@ const TimelineItemInProgress = ({
                             <div className="mt-2 text-sm text-gray-600">
                                 {/* preview information */}
                                 <p className="my-4 font-sm text-muted-foreground">
-                                    Tentukan Jam Pengambilan
+                                    Tentukan jam pengambilan
                                 </p>
                                 <DateTimePicker />
-                                <p className="font-bold text-base text-black">Alamat</p>
-                                <p className="mt-3 text-sm font-medium mb-4">Jl. Cimanuk No.1A, Citarum, Kec. Bandung Wetan, Kota Bandung, Jawa Barat 40115</p>
 
                                 {/* action button */}
                                 <div className="mt-4 flex justify-end">
                                     <button onClick={() => { setIsOpen(false); completeTask(); }} className="px-4 py-2 bg-mainColor text-white rounded-md hover:bg-mainColor/80 transition-colors">
-                                        Pekerjaan Selesai
+                                        Sudah Diambil
                                     </button>
                                 </div>
                             </div>
@@ -722,6 +719,7 @@ const TaskTimeline = ({
 }
 
 const DetailTab = ({
+    tasks,
     setItemList,
 }: {
     tasks: Task[];
@@ -763,7 +761,7 @@ const DetailTab = ({
     return (
         <>
             <p className="mb-6 font-bold text-lg">Status Pengerjaan</p>
-            <TaskTimeline tasks={tasks} itemList={itemList} setDeleteItem={setDeleteItem} setEditItem={setEditItem} />
+            <TaskTimeline tasks={tasks} itemList={""} setDeleteItem={setDeleteItem} setEditItem={setEditItem} />
 
             <EditItemModal handleEditItem={handleEditItem} isOpen={!!editItem} onClose={() => setEditItem(null)} item={editItem} />
             <DeleteItemModal isOpen={!!deleteItem} onClose={() => setDeleteItem(null)} handleDeleteItem={handleDeleteItem} item={deleteItem} />

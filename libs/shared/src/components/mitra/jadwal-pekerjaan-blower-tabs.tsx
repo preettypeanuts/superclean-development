@@ -214,21 +214,21 @@ export const JadwalPekerjaanBlowerTabs = () => {
             <TabsTrigger className="w-full text-[16px]" value="riwayat">Riwayat</TabsTrigger>
           </TabsList>
           <TabsContent className="!mt-0 w-full" value="pengantaran">
-            <div className="w-full space-y-3">
+            <div className="w-full flex flex-col gap-3">
               {pengantaran.map((task) => (
                 <TaskCard key={task.id} task={task} />
               ))}
             </div>
           </TabsContent>
           <TabsContent className="!mt-0 w-full" value="pengambilan">
-            <div className="w-full space-y-3">
+            <div className="w-full flex flex-col gap-3">
               {pengambilan.map((task) => (
                 <TaskCard key={task.id} task={task} />
               ))}
             </div>
           </TabsContent>
           <TabsContent className="!mt-0 w-full" value="riwayat">
-            <div className="w-full space-y-3">
+            <div className="w-full flex flex-col gap-3">
               {riwayatPekerjaan.map((task) => (
                 <TaskCard key={task.id} task={task} />
               ))}
