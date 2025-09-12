@@ -15,40 +15,14 @@ import { formatDate } from "libs/utils/formatDate";
 import { formatRupiah } from "libs/utils/formatRupiah";
 import { PembayaranTableDetail } from "libs/ui-components/src/components/pembayaran-table-detail";
 import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
-import { LocationData } from "apps/admin-app/app/transaksi/spk/edit/[...id]/page";
+import { formatDetailsForTable, LocationData, Transaction } from "apps/admin-app/app/transaksi/spk/edit/[...id]/page";
 import MultiSelect from "@ui-components/components/multi-select";
 import { useToast } from "@ui-components/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@ui-components/components/ui/tabs";
 import { useTransactionHistory } from "@shared/utils/useTransactionHistory";
 import { PiWarningCircleFill } from "react-icons/pi";
-
-interface Transaction {
-  id: string;
-  trxNumber: string;
-  customerId: string;
-  branchId: string;
-  totalPrice: number;
-  discountPrice: number;
-  promoPrice: number;
-  finalPrice: number;
-  trxDate: string;
-  status: number;
-  details: TransactionDetail[];
-  assigns: string[];
-  blowers: string[];
-  reassigns: string[];
-}
-
-interface TransactionDetail {
-  serviceCategory: string;
-  serviceCode: string;
-  serviceType: number;
-  servicePrice: number;
-  quantity: number;
-  promoCode: string;
-  promoType: string;
-  promoAmount: number;
-}
+import PhotoSection from "apps/admin-app/app/transaksi/spk/photoSection";
+import { SPKTableDetail } from "@ui-components/components/spk-table-detail";
 
 interface Customer {
   id: string;
@@ -86,6 +60,8 @@ const serviceTypeMapping = {
   2: "Express",
   3: "Premium"
 };
+
+
 
 export default function PembayaranDetail() {
   const pathname = usePathname();
@@ -225,7 +201,9 @@ export default function PembayaranDetail() {
         const transactionData = transactionResult.data as Transaction;
 
         if (transactionResult.status === "success") {
-          setTransaction(transactionData);
+          setTransaction({
+            ...transactionData,
+          });
 
           // Fetch customer data using customerId
           if (transactionData.customerId) {
@@ -268,24 +246,44 @@ export default function PembayaranDetail() {
   }, [customer?.city])
 
   // Transform transaction details for table
-  const transformedDetails = transaction?.details?.map((detail, index) => ({
-    id: (index + 1).toString(),
-    serviceCode: detail.serviceCode,
-    serviceCategory: detail.serviceCategory,
-    serviceType: serviceTypeMapping[detail.serviceType as keyof typeof serviceTypeMapping] || "Unknown",
-    quantity: detail.quantity,
-    servicePrice: formatRupiah(detail.servicePrice),
-    promoCode: detail.promoCode || "-",
-    promoAmount: detail.promoAmount ? formatRupiah(detail.promoAmount) : "-",
-  })) || [];
+  // const transformedDetails = transaction?.details?.map((detail, index) => ({
+  //   id: (index + 1).toString(),
+  //   serviceCode: detail.serviceCode,
+  //   serviceCategory: detail.serviceCategory,
+  //   serviceType: serviceTypeMapping[detail.serviceType as keyof typeof serviceTypeMapping] || "Unknown",
+  //   quantity: detail.quantity,
+  //   servicePrice: formatRupiah(detail.servicePrice),
+  //   promoCode: detail.promoCode || "-",
+  //   promoAmount: detail.promoAmount ? formatRupiah(detail.promoAmount) : "-",
+  // })) || [];
+
+  const spkItems = formatDetailsForTable(transaction?.details || []);
+
+
+  const DataHeaderSPKDetail = useMemo(() => {
+    const columns = [
+      { key: "no", label: "#" },
+      { key: "kode", label: "Kode Service" },
+      { key: "layanan", label: "Layanan" },
+      { key: "kategori", label: "Kategori" },
+      { key: "jumlah", label: "Jumlah" },
+      { key: "satuan", label: "Satuan" },
+      { key: "harga", label: "Harga Satuan" },
+      // { key: "totalHarga", label: "Total Harga" },
+      { key: "promo", label: "Promo Satuan" },
+    ];
+
+    return columns;
+  }, [transaction]);
 
   const calculateTotals = () => {
     const totalPrice = transaction?.details.reduce((sum, item) => sum + item.servicePrice * item.quantity, 0) || 0;
     const totalPromo = transaction?.details.reduce((sum, item) => sum + item.promoAmount, 0) || 0;
 
     const manualDiscount = transaction?.discountPrice || 0;
+    const additionalFee = transaction?.additionalFee || 0;
 
-    const finalPrice = totalPrice - totalPromo - manualDiscount;
+    const finalPrice = totalPrice - totalPromo - manualDiscount + additionalFee;
 
     // Validasi: total pengurangan tidak boleh lebih besar dari total harga
     const totalReductions = totalPromo;
@@ -296,7 +294,7 @@ export default function PembayaranDetail() {
       totalPromo,
       totalReductions,
       finalPrice,
-      isInvalidTotal
+      isInvalidTotal,
     };
   };
 
@@ -522,7 +520,7 @@ export default function PembayaranDetail() {
                   </div>
 
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold">Tanggal Transaksi</Label>
+                    <Label className="w-[40%] font-semibold">Tanggal Pengerjaan</Label>
                     <Input
                       disabled
                       value={formatDate(transaction.trxDate)}
@@ -538,10 +536,37 @@ export default function PembayaranDetail() {
                     <Textarea
                       disabled
                       className="resize-none"
+                      placeholder="Tidak ada petugas blower"
                       value={selectedLockedBlowerStaffList.map(staff => staff?.fullname).join(", ") || "-"}
                       rows={2}
                     />
                   </div>
+
+                  {
+                    transaction.blowers.length > 0 && (
+                      <>
+                        <div className="flex items-center space-x-4">
+                          <Label className="w-[40%] font-semibold">Tanggal Pengantaran</Label>
+                          <Textarea
+                            disabled
+                            className="resize-none"
+                            value={transaction.deliveryDate ? formatDate(transaction.deliveryDate) : "-"}
+                            rows={1}
+                          />
+                        </div>
+
+                        <div className="flex items-center space-x-4">
+                          <Label className="w-[40%] font-semibold">Tanggal Pengambilan</Label>
+                          <Textarea
+                            disabled
+                            className="resize-none"
+                            value={transaction.pickupDate ? formatDate(transaction.pickupDate) : "-"}
+                            rows={1}
+                          />
+                        </div>
+                      </>
+                    )
+                  }
 
                   <div className="flex items-center space-x-4">
                     <Label className="w-[40%] font-semibold">Dikerjakan Ulang</Label>
@@ -572,12 +597,13 @@ export default function PembayaranDetail() {
                 <div className="flex justify-between items-center">
                   <h3 className="text-lg font-semibold">Detail Layanan</h3>
                 </div>
-                <PembayaranTableDetail
-                  data={transformedDetails}
-                  columns={HeaderPembayaran}
+                <SPKTableDetail
+                  data={spkItems}
+                  columns={DataHeaderSPKDetail}
                   currentPage={1}
                   limit={10}
                   fetchData={() => {
+                    console.log("Fetching data...");
                   }}
                 />
               </div>
@@ -585,12 +611,28 @@ export default function PembayaranDetail() {
               {/* Summary Pricing */}
               <div className="grid grid-cols-2 gap-20 mt-8 border-t pt-6">
                 {/* Kolom Kiri - Kosong */}
-                <div className="col-span-1"></div>
+                <div className="col-span-1">
+                  <div className="flex items-start space-x-4">
+                    <Label className="w-[40%] font-semibold flex items-center mt-2">
+                      Catatan
+                    </Label>
+                    <Textarea
+                      disabled
+                      id="notes"
+                      placeholder="Tidak ada catatan"
+                      value={transaction.notes || ""}
+                      rows={5}
+                      className="resize-none"
+                    />
+                  </div>
+                </div>
 
                 {/* Kolom Kanan - Summary */}
                 <div className="col-span-1 space-y-4">
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold">Total Harga</Label>
+                    <Label className="w-[40%] font-semibold">
+                      <span>Total Harga</span>
+                    </Label>
                     <Input
                       disabled
                       value={formatRupiah(totals.totalPrice)}
@@ -612,6 +654,15 @@ export default function PembayaranDetail() {
                     <Input
                       disabled
                       value={formatRupiah(transaction.discountPrice)}
+                      className="text-right bg-muted/50 cursor-not-allowed"
+                    />
+                  </div>
+
+                  <div className="flex items-center space-x-4">
+                    <Label className="w-[40%] font-semibold">Biaya Tambahan</Label>
+                    <Input
+                      disabled
+                      value={formatRupiah(transaction.additionalFee || 0)}
                       className="text-right bg-muted/50 cursor-not-allowed"
                     />
                   </div>
@@ -728,6 +779,24 @@ export default function PembayaranDetail() {
                 </div>
               )}
             </div>
+          </TabsContent>
+
+          <TabsContent value="foto">
+            <PhotoSection
+              transaction={transaction}
+              customer={customer}
+              locationLabels={locationLabels}
+              cleaningStaffList={selectedLockedCleaningStaffList}
+              blowerStaffList={selectedLockedBlowerStaffList}
+              spkItems={[]}
+              totals={{
+                totalPrice: totals.totalPrice,
+                totalPromo: totals.totalPromo,
+                finalPrice: totals.finalPrice,
+                isInvalidTotal: totals.isInvalidTotal,
+                manualDiscount: transaction.discountPrice
+              }}
+            />
           </TabsContent>
         </Tabs>
       </Wrapper>

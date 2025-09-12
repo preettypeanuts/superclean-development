@@ -1,5 +1,4 @@
 "use client";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { PembayaranTable } from "libs/ui-components/src/components/pembayaran-table";
 import { DatePicker } from "libs/ui-components/src/components/date-picker";
@@ -25,6 +24,7 @@ const DataHeaderSettlement = [
   { key: "customerName", label: "Nama Pelanggan" },
   { key: "noWhatsapp", label: "No. Whatsapp" },
   { key: "branchId", label: "Cabang" },
+  { key: "cleaner", label: "Petugas Cleaning" },
   { key: "finalPrice", label: "Nominal" },
   { key: "trxDate", label: "Tanggal Transaksi" },
   { key: "status", label: "Status" },
@@ -79,12 +79,14 @@ export default function SettlementPage() {
   const [branchFilter, setBranchFilter] = useState<string>("");
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
+  const [includeBlower, setIncludeBlower] = useState<number>(-1);
 
   // filter sementara
   const [tempStatus, setTempStatus] = useState<number>(-1);
   const [tempBranch, setTempBranch] = useState<string>("");
   const [tempStartDate, setTempStartDate] = useState<Date>();
   const [tempEndDate, setTempEndDate] = useState<Date>();
+  const [tempIncludeBlower, setTempIncludeBlower] = useState<number>(1);
 
   const { branchMapping, loading: loadingParams } = useParameterStore();
 
@@ -97,6 +99,7 @@ export default function SettlementPage() {
     let branch = branchFilter;
     let start = startDate;
     let end = endDate;
+    let include = includeBlower;
 
     if (reset) {
       page = 1;
@@ -105,6 +108,7 @@ export default function SettlementPage() {
       branch = tempBranch;
       start = tempStartDate;
       end = tempEndDate;
+      include = tempIncludeBlower;
 
       setCurrentPage({
         page: page,
@@ -115,6 +119,7 @@ export default function SettlementPage() {
       setBranchFilter(tempBranch)
       setStartDate(tempStartDate)
       setEndDate(tempEndDate)
+      setIncludeBlower(tempIncludeBlower)
     }
 
     setLoading(true);
@@ -124,6 +129,9 @@ export default function SettlementPage() {
       if (branch) url += `&branchId=${branch}`;
       if (start) url += `&startDate=${formatDateAPI(start)}`;
       if (end) url += `&endDate=${formatDateAPI(end)}`;
+      if (include) {
+        url += `&includeBlower=${include === 2 ? "true" : "false"}`;
+      }
 
       const result = await apiClient(url);
       setDataSettlement(result.data[0] || []);
@@ -264,6 +272,17 @@ export default function SettlementPage() {
                     onChange={(date) => setTempEndDate(date)}
                   />
                 </div>
+                <SelectFilter
+                  label="Include Blower"
+                  id="include-blower"
+                  placeholder="Pilih Include Blower"
+                  value={tempIncludeBlower}
+                  optionsNumber={[
+                    { label: "Tidak", value: 1 },
+                    { label: "Ya", value: 2 },
+                  ]}
+                  onChange={setTempIncludeBlower}
+                />
               </GroupFilter>
 
               <Button variant="main" onClick={handleSearch}>

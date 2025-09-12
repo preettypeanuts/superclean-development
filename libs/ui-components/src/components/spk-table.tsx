@@ -40,8 +40,6 @@ interface DataTableProps {
 
 export const SPKTable: React.FC<DataTableProps> = ({ data, columns, currentPage, limit, fetchData }) => {
   const { toast } = useToast();
-  console.log(data);
-
 
   const [selectedSPK, setSelectedSPK] = useState<SPK | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);

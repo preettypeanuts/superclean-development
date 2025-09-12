@@ -82,6 +82,7 @@ export interface Transaction {
   assigns: string[]; // Array of user IDs for cleaning staff
   blowers: string[]; // Array of user IDs for blower staff
   details: TransactionItem[];
+  reassigns: string[];
 }
 
 // Customer interface
@@ -110,6 +111,7 @@ interface TransactionItem {
   promoPrice: number;
   isPl: number;
   service: TransactionItemService;
+  promoAmount: number;
 }
 
 interface TransactionItemService {
@@ -141,6 +143,22 @@ export interface LocationData {
   paramValue: string;
 }
 
+// Format transaction details for table
+export const formatDetailsForTable = (details: TransactionItem[]) => {
+  return details.map((detail, index) => ({
+    no: index + 1,
+    kode: detail.serviceCode,
+    layanan: detail.service.name,
+    kategori: detail.serviceCategory,
+    kategoriCode: detail.serviceCategory,
+    jumlah: detail.quantity,
+    satuan: detail.service.unit || "PCS",
+    harga: detail.servicePrice,
+    totalHarga: detail.totalPrice,
+    promo: detail.promoPrice / Number(detail.quantity || 1),
+    id: detail.id,
+  }));
+};
 
 
 export default function TransactionDetail() {
@@ -396,22 +414,7 @@ export default function TransactionDetail() {
     });
   };
 
-  // Format transaction details for table
-  const formatDetailsForTable = (details: TransactionItem[]) => {
-    return details.map((detail, index) => ({
-      no: index + 1,
-      kode: detail.serviceCode,
-      layanan: detail.service.name,
-      kategori: detail.serviceCategory,
-      kategoriCode: detail.serviceCategory,
-      jumlah: detail.quantity,
-      satuan: detail.service.unit || "PCS",
-      harga: detail.servicePrice,
-      totalHarga: detail.totalPrice,
-      promo: detail.promoPrice / Number(detail.quantity || 1),
-      id: detail.id,
-    }));
-  };
+
 
   // handleEditSPKItem function
   const handleEditSPKItem = (item: SPKItem) => {

@@ -104,6 +104,11 @@ export const PembayaranTable: React.FC<DataTableProps> = ({
                 return <TableCell key="id">{(currentPage - 1) * limit + rowIndex + 1}</TableCell>;
               }
 
+              if (header.key === "cleaner") {
+                let cleaner = (item as any).cleaner as string;
+                return <TableCell title={cleaner} key="cleaner">{cleaner.length > 30 ? cleaner.substring(0, 30) + "..." : cleaner}</TableCell>;
+              }
+
               if (header.key === "finalPrice") {
                 return <TableCell key="finalPrice">{formatRupiah(Number(value))}</TableCell>;
               }
