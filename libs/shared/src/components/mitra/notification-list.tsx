@@ -8,71 +8,32 @@ import {
 } from "../../../../ui-components/src/components/ui/tabs";
 import { Button } from "../../../../ui-components/src/components/ui/button";
 import { Checkbox } from "../../../../ui-components/src/components/ui/checkbox";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { IoMdTrash } from "react-icons/io";
 import { IoCheckmarkCircleOutline } from "react-icons/io5";
 import { BsCheckCircle } from "react-icons/bs";
 import { DeleteDialog } from "../../../../ui-components/src/components/delete-dialog";
+import { api } from "../../../../utils/apiClient";
 
-// Dummy data
-const allNotifications = [
-    {
-        id: 1,
-        date: "12/02/2025",
-        title: "SPK Baru",
-        desc: "SPK baru telah masuk ke sistem. Silakan cek detailnya dan lakukan proses selanjutnya",
-        read: false
-    },
-    {
-        id: 2,
-        date: "12/02/2025",
-        title: "SPK Baru",
-        desc: "SPK baru telah masuk ke sistem. Silakan cek detailnya dan lakukan proses selanjutnya",
-        read: false
-    },
-    {
-        id: 3,
-        date: "12/02/2025",
-        title: "Pembayaran Diterima",
-        desc: "Transaksi dengan nomor TRX-001 telah melakukan pembayaran",
-        read: true
-    },
-    {
-        id: 4,
-        date: "12/02/2025",
-        title: "Pembayaran Diterima",
-        desc: "Transaksi dengan nomor TRX-001 telah melakukan pembayaran",
-        read: false
-    },
-    {
-        id: 5,
-        date: "12/02/2025",
-        title: "SPK Baru",
-        desc: "SPK baru telah masuk ke sistem. Silakan cek detailnya dan lakukan proses selanjutnya",
-        read: false
-    },
-    {
-        id: 6,
-        date: "12/02/2025",
-        title: "SPK Baru",
-        desc: "SPK baru telah masuk ke sistem. Silakan cek detailnya dan lakukan proses selanjutnya",
-        read: false
-    },
-    {
-        id: 7,
-        date: "12/02/2025",
-        title: "Pembayaran Diterima",
-        desc: "Transaksi dengan nomor TRX-001 telah melakukan pembayaran",
-        read: false
-    },
-    {
-        id: 8,
-        date: "12/02/2025",
-        title: "Pembayaran Diterima",
-        desc: "Transaksi dengan nomor TRX-001 telah melakukan pembayaran",
-        read: false
-    }
-];
+// Interface untuk data notification sesuai API response
+interface Notification {
+    id: string;
+    createdAt: string;
+    createdBy: string;
+    updatedAt: string;
+    updatedBy: string | null;
+    title: string;
+    detail: string;
+    recipient: string;
+    isRead: boolean;
+    status: boolean;
+}
+
+// Interface untuk response API
+interface ApiResponse {
+    status: string;
+    data: Notification[];
+}
 
 const TabItems = [
     { value: "all", label: "Semuanya" },
@@ -88,8 +49,27 @@ interface NotificationCardProps {
 }
 
 const NotificationCard = ({ notification, isSelected, onToggle }: NotificationCardProps) => {
+    const formatDate = (dateString: string) => {
+        try {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('id-ID', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            });
+        } catch {
+            return dateString;
+        }
+    };
+
+    const stripHtml = (html: string) => {
+        const div = document.createElement("div");
+        div.innerHTML = html;
+        return div.textContent || div.innerText || "";
+    };
+
     return (
-        <div className={`${!notification.read ? "bg-[#F0FAF9]" : "bg-white"} flex gap-3 pl-3 pr-4 py-3 border rounded-lg`}>
+        <div className={`${!notification.isRead ? "bg-[#F0FAF9]" : "bg-white"} flex gap-3 pl-3 pr-4 py-3 border rounded-lg`}>
             <div className="w-fit mt-1">
                 <Checkbox
                     checked={isSelected}
@@ -99,8 +79,8 @@ const NotificationCard = ({ notification, isSelected, onToggle }: NotificationCa
             </div>
             <div className="w-full">
                 <div className="flex justify-between items-start mb-1">
-                    <span className="text-xs text-gray-500">{notification.date}</span>
-                    {notification.read && (
+                    <span className="text-xs text-gray-500">{formatDate(notification.createdAt)}</span>
+                    {notification.isRead && (
                         <span className="flex items-center gap-1 text-xs text-green-400">
                             <BsCheckCircle />
                             Sudah Dibaca
@@ -108,27 +88,40 @@ const NotificationCard = ({ notification, isSelected, onToggle }: NotificationCa
                     )}
                 </div>
                 <h4 className="text-sm font-bold mb-1">{notification.title}</h4>
-                <p className="text-xs text-gray-600 leading-relaxed">{notification.desc}</p>
+                <p className="text-xs text-gray-600 leading-relaxed">{stripHtml(notification.detail)}</p>
             </div>
         </div>
     );
 };
 
-type Notification = {
-    id: number;
-    date: string;
-    title: string;
-    desc: string;
-    read: boolean;
-};
-
 interface NotificationListProps {
     items: Notification[];
-    selectedIds: number[];
-    toggleCheckbox: (id: number) => void;
+    selectedIds: string[];
+    toggleCheckbox: (id: string) => void;
+    loading: boolean;
 }
 
-function NotificationList({ items, selectedIds, toggleCheckbox }: NotificationListProps) {
+function NotificationList({ items, selectedIds, toggleCheckbox, loading }: NotificationListProps) {
+    if (loading) {
+        return (
+            <div className="space-y-2">
+                {[...Array(5)].map((_, index) => (
+                    <div key={index} className="bg-white flex gap-3 pl-3 pr-4 py-3 border rounded-lg animate-pulse">
+                        <div className="w-4 h-4 bg-gray-300 rounded mt-1"></div>
+                        <div className="w-full space-y-2">
+                            <div className="flex justify-between items-start mb-1">
+                                <div className="h-3 bg-gray-300 rounded w-16"></div>
+                            </div>
+                            <div className="h-4 bg-gray-300 rounded w-1/2"></div>
+                            <div className="h-3 bg-gray-300 rounded w-full"></div>
+                            <div className="h-3 bg-gray-300 rounded w-3/4"></div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        );
+    }
+
     if (items.length === 0) {
         return <p className="text-gray-500 text-center py-8">Tidak ada pemberitahuan.</p>;
     }
@@ -148,25 +141,72 @@ function NotificationList({ items, selectedIds, toggleCheckbox }: NotificationLi
 }
 
 export const NotificationListItems = () => {
-    const [notifications, setNotifications] = useState(allNotifications);
-    const [selectedIds, setSelectedIds] = useState<number[]>([]);
-    
-    // Dialog state management
+    const [notifications, setNotifications] = useState<Notification[]>([]);
+    const [selectedIds, setSelectedIds] = useState<string[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [actionLoading, setActionLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-    const toggleCheckbox = (id: number) => {
+    // Fetch notifications dari API
+    useEffect(() => {
+        fetchNotifications();
+    }, []);
+
+    const fetchNotifications = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            
+            const response: ApiResponse = await api.get('/notification/mitra?page=1&limit=10');
+            
+            if (response && response.status === "success") {
+                setNotifications(response.data);
+            } else {
+                setNotifications([]);
+            }
+        } catch (err) {
+            console.error('Error fetching notifications:', err);
+            setError(err instanceof Error ? err.message : 'Terjadi kesalahan saat memuat data');
+            setNotifications([]);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const toggleCheckbox = (id: string) => {
         setSelectedIds((prev) =>
             prev.includes(id) ? prev.filter((v) => v !== id) : [...prev, id]
         );
     };
 
-    const handleMarkAsRead = () => {
-        setNotifications((prev) =>
-            prev.map((n) =>
-                selectedIds.includes(n.id) ? { ...n, read: true } : n
-            )
-        );
-        setSelectedIds([]);
+    const handleMarkAsRead = async () => {
+        if (selectedIds.length === 0) return;
+
+        try {
+            setActionLoading(true);
+            
+            // Call API untuk mark as read setiap notification yang dipilih
+            const updatePromises = selectedIds.map(id => 
+                api.put(`/notification/${id}/read`)
+            );
+            
+            await Promise.all(updatePromises);
+            
+            // Update UI setelah API berhasil
+            setNotifications((prev) =>
+                prev.map((n) =>
+                    selectedIds.includes(n.id) ? { ...n, isRead: true } : n
+                )
+            );
+            
+            setSelectedIds([]);
+        } catch (err) {
+            console.error('Error marking as read:', err);
+            setError('Gagal menandai notifikasi sebagai sudah dibaca');
+        } finally {
+            setActionLoading(false);
+        }
     };
 
     const handleDeleteConfirmation = () => {
@@ -174,17 +214,52 @@ export const NotificationListItems = () => {
         setIsDialogOpen(true);
     };
 
-    const handleDelete = () => {
-        setNotifications((prev) => prev.filter((n) => !selectedIds.includes(n.id)));
-        setSelectedIds([]);
-        setIsDialogOpen(false);
+    const handleDelete = async () => {
+        if (selectedIds.length === 0) return;
+
+        try {
+            setActionLoading(true);
+            setIsDialogOpen(false);
+            
+            // Call API untuk delete setiap notification yang dipilih
+            const deletePromises = selectedIds.map(id => 
+                api.delete(`/notification/${id}`)
+            );
+            
+            await Promise.all(deletePromises);
+            
+            // Update UI setelah API berhasil
+            setNotifications((prev) => prev.filter((n) => !selectedIds.includes(n.id)));
+            setSelectedIds([]);
+        } catch (err) {
+            console.error('Error deleting notifications:', err);
+            setError('Gagal menghapus notifikasi');
+        } finally {
+            setActionLoading(false);
+        }
     };
 
-    const unread = notifications.filter((n) => !n.read);
-    const read = notifications.filter((n) => n.read);
+    const handleRetry = () => {
+        fetchNotifications();
+    };
 
-    // Get selected notifications count for dialog
-    const selectedCount = selectedIds.length;
+    // Filter notifications berdasarkan read status
+    const unreadNotifications = notifications.filter((n) => !n.isRead);
+    const readNotifications = notifications.filter((n) => n.isRead);
+
+    // Show error state
+    if (error && !loading) {
+        return (
+            <main className="flex items-center justify-center mx-5">
+                <div className="w-full max-w-md p-6 text-center">
+                    <p className="text-red-600 mb-4">{error}</p>
+                    <Button onClick={handleRetry} className="w-full">
+                        Coba Lagi
+                    </Button>
+                </div>
+            </main>
+        );
+    }
 
     return (
         <main className="flex items-center justify-center mx-5 relative !-mt-0">
@@ -202,17 +277,17 @@ export const NotificationListItems = () => {
                         <Button
                             size="sm"
                             className="bg-yellow-400 hover:bg-yellow-500 text-white text-sm px-3 py-1 rounded"
-                            disabled={selectedIds.length === 0}
+                            disabled={selectedIds.length === 0 || loading || actionLoading}
                             onClick={handleMarkAsRead}
                         >
                             <IoCheckmarkCircleOutline />
-                            Tandai Sudah Dibaca
+                            {actionLoading ? 'Memproses...' : 'Tandai Sudah Dibaca'}
                         </Button>
                         <Button
                             size="sm"
                             variant="destructive"
                             className="text-sm px-3 py-1 rounded"
-                            disabled={selectedIds.length === 0}
+                            disabled={selectedIds.length === 0 || loading || actionLoading}
                             onClick={handleDeleteConfirmation}
                         >
                             <IoMdTrash />
@@ -226,22 +301,25 @@ export const NotificationListItems = () => {
                         items={notifications}
                         selectedIds={selectedIds}
                         toggleCheckbox={toggleCheckbox}
+                        loading={loading}
                     />
                 </TabsContent>
 
                 <TabsContent className="w-full !px-0" value="unread">
                     <NotificationList
-                        items={unread}
+                        items={unreadNotifications}
                         selectedIds={selectedIds}
                         toggleCheckbox={toggleCheckbox}
+                        loading={loading}
                     />
                 </TabsContent>
 
                 <TabsContent className="w-full !px-0" value="read">
                     <NotificationList
-                        items={read}
+                        items={readNotifications}
                         selectedIds={selectedIds}
                         toggleCheckbox={toggleCheckbox}
+                        loading={loading}
                     />
                 </TabsContent>
             </Tabs>
@@ -251,9 +329,9 @@ export const NotificationListItems = () => {
                 open={isDialogOpen}
                 onOpenChange={setIsDialogOpen}
                 onConfirm={handleDelete}
-                isLoading={false}
-                title={`Kamu yakin menghapus ${selectedCount} pemberitahuan${selectedCount > 1 ? '' : ''}?`}
-                itemName={`${selectedCount} pemberitahuan`}
+                isLoading={actionLoading}
+                title={`Kamu yakin menghapus ${selectedIds.length} pemberitahuan${selectedIds.length > 1 ? '' : ''}?`}
+                itemName={`${selectedIds.length} pemberitahuan`}
                 cancelLabel="Batal"
                 confirmLabel="Hapus"
             />

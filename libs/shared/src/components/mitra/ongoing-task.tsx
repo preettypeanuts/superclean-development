@@ -202,7 +202,7 @@ export const OngoingTask = () => {
                 </section>
             ) : (
                 <Link href="">
-                    <section className="w-full h-full p-2 space-y-2 rounded-lg bg-mainColor text-white">
+                    <section className="w-full mt-3 h-full p-2 space-y-2 rounded-lg bg-mainColor text-white">
                         <p className="text-[14px] text-[400]">
                             Pekerjaan Yang Berlangsung
                         </p>
