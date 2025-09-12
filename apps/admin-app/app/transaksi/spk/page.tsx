@@ -25,6 +25,7 @@ const DataHeaderSPK = [
   { key: "customerName", label: "Nama Pelanggan" },
   { key: "noWhatsapp", label: "No. Whatsapp" },
   { key: "branchId", label: "Cabang" },
+  { key: "cleaner", label: "Petugas Cleaning" },
   { key: "finalPrice", label: "Nominal" },
   { key: "trxDate", label: "Tanggal Transaksi" },
   { key: "status", label: "Status" },
@@ -50,6 +51,7 @@ export default function SPKPage() {
     status: number;
     createdBy: string;
     createdAt: string;
+    cleaner: string;
   }
 
   const [dataSPK, setDataSPK] = useState<SPKData[]>([]);

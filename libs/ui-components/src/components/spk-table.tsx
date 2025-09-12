@@ -12,33 +12,36 @@ import { DeleteDialog } from "./delete-dialog";
 import { useState } from "react";
 
 interface TableHeader {
-    key: string;
-    label: string;
+  key: string;
+  label: string;
 }
 
 interface SPK {
-    id: string;
-    trxNumber: string;
-    noWhatsapp: string;
-    customerName: string;
-    branchId: string;
-    finalPrice: number;
-    trxDate: string;
-    status: number;
-    createdBy: string;
-    createdAt: string;
+  id: string;
+  trxNumber: string;
+  noWhatsapp: string;
+  customerName: string;
+  branchId: string;
+  finalPrice: number;
+  trxDate: string;
+  status: number;
+  createdBy: string;
+  createdAt: string;
+  cleaner: string;
 }
 
 interface DataTableProps {
-    data: SPK[];
-    columns: TableHeader[];
-    currentPage: number;
-    limit: number;
-    fetchData: () => void; // Add fetchData property
+  data: SPK[];
+  columns: TableHeader[];
+  currentPage: number;
+  limit: number;
+  fetchData: () => void; // Add fetchData property
 }
 
 export const SPKTable: React.FC<DataTableProps> = ({ data, columns, currentPage, limit, fetchData }) => {
   const { toast } = useToast();
+  console.log(data);
+
 
   const [selectedSPK, setSelectedSPK] = useState<SPK | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -124,8 +127,7 @@ export const SPKTable: React.FC<DataTableProps> = ({ data, columns, currentPage,
                       </Button>
                     </div>
                   ) : header.key === "status" ? (
-                    <p className={`badge rounded-md !font-medium border-0 ${
-                      statusColors[
+                      <p className={`badge rounded-md !font-medium border-0 ${statusColors[
                         (() => {
                           switch (spk.status) {
                             case TrxStatus.TODO: return "Baru";
@@ -135,7 +137,7 @@ export const SPKTable: React.FC<DataTableProps> = ({ data, columns, currentPage,
                           }
                         })()
                       ]
-                    }`}>
+                        }`}>
                       {(() => {
                         switch (spk.status) {
                           case TrxStatus.TODO: return "Baru";
@@ -147,6 +149,12 @@ export const SPKTable: React.FC<DataTableProps> = ({ data, columns, currentPage,
                     </p>
                   ) : header.key === "id" ? (
                     <p>{(currentPage - 1) * limit + rowIndex + 1}</p>
+                      ) : header.key === "cleaner" ? (
+                        <p className="cursor-default" title={spk.cleaner}>
+                          {spk.cleaner.length > 30
+                            ? spk.cleaner.slice(0, 30) + "..."
+                            : spk.cleaner}
+                        </p>
                   ) : header.key === "noWhatsapp" ? (
                     <p>{spk.noWhatsapp}</p>
                   ) : header.key === "finalPrice" ? (
@@ -155,18 +163,16 @@ export const SPKTable: React.FC<DataTableProps> = ({ data, columns, currentPage,
                     <p>{formatDate(spk.trxDate)}</p>
                   ) : header.key === "trxNumber" ? (
                     <div className="flex items-center">
-                      <div
-                        className={`mr-2 rounded-full w-[6px] h-[6px] ${
-                          pingColor[
-                            (() => {
-                              switch (spk.status) {
-                                case TrxStatus.TODO: return "Baru";
-                                case TrxStatus.ACCEPT: return "Proses";
-                                case TrxStatus.CANCEL: return "Batal";
-                                default: return spk.status;
-                              }
-                            })()
-                          ]
+                                    <div className={`mr-2 rounded-full w-[6px] h-[6px] ${pingColor[
+                                      (() => {
+                                        switch (spk.status) {
+                                          case TrxStatus.TODO: return "Baru";
+                                          case TrxStatus.ACCEPT: return "Proses";
+                                          case TrxStatus.CANCEL: return "Batal";
+                                          default: return spk.status;
+                                        }
+                                      })()
+                                    ]
                         }`}
                       ></div>
                       <p>{spk.trxNumber}</p>
