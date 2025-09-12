@@ -71,12 +71,14 @@ export default function SPKPage() {
   const [branchFilter, setBranchFilter] = useState<string>("");
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
+  const [includeBlower, setIncludeBlower] = useState<number>(1);
 
   // filter sementara
   const [tempStatus, setTempStatus] = useState<number>(-1);
   const [tempBranch, setTempBranch] = useState<string>("");
   const [tempStartDate, setTempStartDate] = useState<Date>();
   const [tempEndDate, setTempEndDate] = useState<Date>();
+  const [tempIncludeBlower, setTempIncludeBlower] = useState<number>(1);
 
   const { branchMapping, loading: loadingParams } = useParameterStore();
 
@@ -89,6 +91,7 @@ export default function SPKPage() {
     let branch = branchFilter;
     let start = startDate;
     let end = endDate;
+    let include = includeBlower;
 
     if (reset) {
       page = 1;
@@ -97,6 +100,7 @@ export default function SPKPage() {
       branch = tempBranch;
       start = tempStartDate;
       end = tempEndDate;
+      include = tempIncludeBlower;
 
       setCurrentPage({
         page: page,
@@ -107,6 +111,7 @@ export default function SPKPage() {
       setBranchFilter(tempBranch)
       setStartDate(tempStartDate)
       setEndDate(tempEndDate)
+      setIncludeBlower(tempIncludeBlower)
     }
 
     setLoading(true);
@@ -116,6 +121,9 @@ export default function SPKPage() {
       if (branch) url += `&branchId=${branch}`;
       if (start) url += `&startDate=${formatDateAPI(start)}`;
       if (end) url += `&endDate=${formatDateAPI(end)}`;
+      if (include) {
+        url += `&includeBlower=${include === 2 ? "true" : "false"}`;
+      }
 
       const result = await apiClient(url);
       setDataSPK(result.data[0] || []);
@@ -256,6 +264,17 @@ export default function SPKPage() {
                     onChange={(date) => setTempEndDate(date)}
                   />
                 </div>
+                <SelectFilter
+                  label="Include Blower"
+                  id="include-blower"
+                  placeholder="Pilih Include Blower"
+                  value={tempIncludeBlower}
+                  optionsNumber={[
+                    { label: "Tidak", value: 1 },
+                    { label: "Ya", value: 2 },
+                  ]}
+                  onChange={setTempIncludeBlower}
+                />
               </GroupFilter>
 
 
@@ -275,14 +294,14 @@ export default function SPKPage() {
             <p className="text-center py-4">Memuat data...</p>
           ) : dataSPK.length === 0 ? (
             <p className="text-center py-4">
-                SPK tidak ditemukan.
+              SPK tidak ditemukan.
             </p>
           ) : (
             <SPKTable
               data={processedSPK}
               columns={DataHeaderSPK}
               key={`${currentPage}-${limit}`}
-                  currentPage={currentPage.page}
+              currentPage={currentPage.page}
               limit={limit}
               fetchData={() => { }}
             />
