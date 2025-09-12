@@ -429,309 +429,264 @@ export type TaskTimelineProps = {
   onDeleteItem?: (item?: Item) => void;
 };
 
-const TimelineIcon = ({ taskIndex, currentTaskIndex }: { taskIndex: number; currentTaskIndex: number }) => {
-  return <>
-    {taskIndex > currentTaskIndex ? (
-      <>
-        <div className="absolute w-3 h-3 rounded-full mt-1.5 -start-1.5 bg-gray-500 dark:border-gray-500 dark:bg-gray-500 flex items-center justify-center"></div>
-        <div className="absolute w-3 h-3 rounded-full mt-[3.25px] -start-[9.5px] border border-gray-500 dark:border-gray-500 bg-transparent p-2"></div>
-      </>
-    ) : taskIndex === currentTaskIndex ? (
-      <>
-        <div className="absolute w-3 h-3 bg-orange-400 rounded-full mt-1.5 -start-1.5  dark:border-orange-400 dark:bg-orange-400 flex items-center justify-center"></div>
-        <div className="absolute w-3 h-3 rounded-full mt-[3.25px] -start-[9.5px] border border-orange-400 dark:border-orange-400 bg-transparent p-2"></div>
-      </>
-    ) : (
-      <>
-        <div className="absolute w-3 h-3 bg-mainColor rounded-full mt-1.5 -start-1.5  dark:border-mainDark dark:bg-mainDark flex items-center justify-center">
-          <CheckIcon className="text-white" />
+const TimelineIcon = ({ taskIndex, currentTaskIndex }: {
+    taskIndex: number;
+    currentTaskIndex: number;
+}) => {
+    return (
+        <div className="relative z-10 mt-3">
+            {taskIndex > currentTaskIndex ? (
+                // Future task - gray circle with border
+                <div className="w-3 h-3 rounded-full border-2 border-neutral-400 bg-neutral-400 relative">
+                    <div className="absolute left-1/2 top-1/2 w-6 h-6 border-[1.5px] border-dashed rounded-full border-gray-400 -translate-x-1/2 -translate-y-1/2"></div>
+                </div>
+            ) : taskIndex === currentTaskIndex ? (
+                // Current task - orange circle
+                <div className="w-3 h-3 rounded-full bg-orange-400 border-2 border-orange-400 relative">
+                    <div className="absolute left-1/2 top-1/2 w-6 h-6 border-[1.5px] border-dashed rounded-full border-orange-400 -translate-x-1/2 -translate-y-1/2"></div>
+                </div>
+            ) : (
+                // Completed task - teal circle with check
+                <div className="w-3 h-3 rounded-full bg-mainColor flex items-center justify-center relative">
+                    <CheckIcon size={8} className="text-white" />
+                    <div className="absolute left-1/2 top-1/2 w-6 h-6 border-[1.5px] border-dashed rounded-full border-mainColor -translate-x-1/2 -translate-y-1/2"></div>
+                </div>
+            )}
         </div>
-        <div className="absolute w-3 h-3 rounded-full mt-[3.25px] -start-[9.5px] border border-mainColor dark:border-mainDark bg-transparent p-2"></div>
-      </>
-    )}
-  </>
-}
+    );
+};
 
 const TimelineItemCompleted = ({
-  task,
-  currentTaskIndex = 0,
-  completeTask = () => { }
+    task,
+    currentTaskIndex = 0,
+    completeTask = () => { }
 }: {
-  task: Task;
-  currentTaskIndex: number;
-  completeTask: () => void;
+    task: Task;
+    currentTaskIndex: number;
+    completeTask: () => void;
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const TASK_INDEX = 2;
-  const isOpenable = TASK_INDEX == currentTaskIndex;
+    const [isOpen, setIsOpen] = useState(false);
+    const TASK_INDEX = 2;
+    const isOpenable = TASK_INDEX === currentTaskIndex;
+    const [jobCompleted, setJobCompleted] = useState(false);
 
-  const [jobCompleted, setJobCompleted] = useState(false);
+    return (
+        <>
+            <li className="mb-10 flex items-start space-x-4 relative">
+                <div className="relative">
+                    <TimelineIcon
+                        taskIndex={TASK_INDEX}
+                        currentTaskIndex={currentTaskIndex}
+                    />
+                </div>
+                <div className="flex-1 min-w-0">
+                    <time className="mb-1 text-sm font-normal leading-none text-gray-400">
+                        ({task.date} - {task.time})
+                    </time>
+                    <h3 className="text-lg font-semibold text-gray-900">
+                        Selesai & Diterima Pelanggan
+                    </h3>
 
-  return (
-    <>
-      <li className="mb-10 ms-4 flex">
-        <div className="">
-          <TimelineIcon taskIndex={TASK_INDEX} currentTaskIndex={currentTaskIndex} />
-        </div>
-        <div className="flex-1">
-          <time className="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">({task.date} - {task.time})</time>
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Selesai & Diterima Pelanggan</h3>
-          {
-            isOpen && (
-              <>
-                {/* top divider */}
-                <div className="border-b border-gray-200 dark:border-gray-700 my-2"></div>
-
-                {/* additional details */}
-                <div>
-                  <p className="text-sm mb-4">Jika pelanggan sudah puas dan pekerjaan sudah selesai, mohon untuk klik tombol <span>"Selesai"</span></p>
-
-                  <div className="flex">
-                    <Button className="flex-1 mx-2" variant="outline2" onClick={() => { }}>Kembali</Button>
-                    <Button className="flex-1 mx-2" variant="main" onClick={() => {
-                      setJobCompleted(true);
-                      completeTask();
-                      setIsOpen(false);
-                    }}>Selesai</Button>
-                  </div>
+                    {isOpen && (
+                        <>
+                            <div className="border-b border-gray-200 my-2"></div>
+                            <div>
+                                <p className="text-sm mb-4">
+                                    Jika pelanggan sudah puas dan pekerjaan sudah selesai,
+                                    mohon untuk klik tombol <span className="font-bold">"Selesai"</span>
+                                </p>
+                                <div className="flex">
+                                    <Button
+                                        className="flex-1"
+                                        variant="main"
+                                        onClick={() => {
+                                            setJobCompleted(true);
+                                            completeTask();
+                                            setIsOpen(false);
+                                        }}
+                                    >
+                                        Selesai
+                                    </Button>
+                                </div>
+                            </div>
+                        </>
+                    )}
                 </div>
 
-              </>
-            )
-          }
-        </div>
+                <div className="pt-0.5">
+                    {isOpen ? (
+                        <ChevronUp
+                            className={`w-4 h-4 text-gray-400 ${isOpenable ? 'cursor-pointer' : ''}`}
+                            onClick={() => isOpenable && setIsOpen(!isOpen)}
+                        />
+                    ) : (
+                        <ChevronDown
+                            className={`w-4 h-4 text-gray-400 ${isOpenable ? 'cursor-pointer' : ''}`}
+                            onClick={() => isOpenable && setIsOpen(!isOpen)}
+                        />
+                    )}
+                </div>
+            </li>
 
-        <div className="">
-          {/* dropdown chevron */}
-          {isOpen ? (
-            <ChevronUp className="w-4 h-4 text-gray-400" onClick={() => isOpenable && setIsOpen(!isOpen)} />
-          ) : (
-            <ChevronDown className="w-4 h-4 text-gray-400" onClick={() => isOpenable && setIsOpen(!isOpen)} />
-          )}
-        </div>
-      </li>
-
-      <JobCompletedModal
-        isOpen={jobCompleted}
-        onClose={() => setJobCompleted(false)}
-      />
-
-    </>
-  );
-}
+            <JobCompletedModal
+                isOpen={jobCompleted}
+                onClose={() => setJobCompleted(false)}
+            />
+        </>
+    );
+};
 
 const TimelineItemInProgress = ({
-  task,
-  itemList = [],
-  onEditItem,
-  onDeleteItem,
-  currentTaskIndex = 0,
-  completeTask = () => { }
+    task,
+    currentTaskIndex = 0,
+    completeTask = () => { }
 }: {
-  task: Task;
-  itemList?: Item[];
-  onEditItem: (item?: Item) => void;
-  onDeleteItem: (item?: Item) => void;
-  currentTaskIndex: number;
-  completeTask: () => void;
+    task: Task;
+    currentTaskIndex: number;
+    completeTask: () => void;
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const TASK_INDEX = 1;
-  const isOpenable = TASK_INDEX == currentTaskIndex;
+    const [isOpen, setIsOpen] = useState(false);
+    const TASK_INDEX = 1;
+    const isOpenable = TASK_INDEX === currentTaskIndex;
 
-  return (
-    <li className="mb-10 ms-4 flex">
-      <div className="">
-        <TimelineIcon taskIndex={TASK_INDEX} currentTaskIndex={currentTaskIndex} />
-      </div>
-      <div className="flex-1">
-        <time className="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">({task.date} - {task.time})</time>
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Dalam Proses Pengerjaan</h3>
-        {
-          isOpen && (
-            <>
-              {/* top divider */}
-              <div className="border-b border-gray-200 dark:border-gray-700 my-2"></div>
+    return (
+        <li className="mb-10 flex items-start space-x-4 relative">
+            <div className="relative">
+                {/* Garis penghubung ke item berikutnya */}
+                <div className="absolute left-[5px] top-8 w-0.5 border-l h-full"></div>
+                <TimelineIcon
+                    taskIndex={TASK_INDEX}
+                    currentTaskIndex={currentTaskIndex}
+                />
+            </div>
+            <div className="flex-1 min-w-0 pt-0.5">
+                <time className="mb-1 text-sm font-normal leading-none text-gray-400">
+                    ({task.date} - {task.time})
+                </time>
+                <h3 className="text-lg font-semibold text-gray-900">
+                    Jadwal Pengambilan
+                </h3>
 
-              {/* additional details */}
-              <div className="mt-2 text-sm text-gray-600">
-                {/* preview information */}
-                <p className="my-4 font-medium">List item yang harus segera dikerjakan dan diselesaikan</p>
-                <p className="font-bold text-base text-black">Alamat</p>
-                <p className="mt-3 text-sm font-medium mb-4">Jl. Cimanuk No.1A, Citarum, Kec. Bandung Wetan, Kota Bandung, Jawa Barat 40115</p>
+                {isOpen && (
+                    <>
+                        <div className="border-b border-gray-200 my-2"></div>
+                        <div className="mt-2 text-sm text-gray-600">
+                            <p className="my-4 font-sm text-muted-foreground">
+                                Tentukan jam pengambilan
+                            </p>
+                            <DateTimePicker />
 
-                {/* item list */}
-                <div>
-                  {/* item list header */}
-                  <div className="flex">
-                    <p className="flex-1 font-semibold text-black text-base">List Item Pengerjaan:</p>
-                    <p onClick={() => {
-                      onEditItem();
-                    }}
-                      className="flex text-blue-500 font-semibold text-base">+ <span className="underline ml-1">Tambah Item</span></p>
-                  </div>
-
-                  {/* item list content */}
-                  <div className="mt-3">
-                    {itemList.map((item, index) => {
-                      const isOriginal = item.id !== 0; // Assuming id 0 is the original item
-
-                      return (
-                        <div key={index} className="py-2 flex justify-center items-center">
-                          <p className="flex flex-1 gap-1">
-                            <span>{item.quantity}x </span> -
-                            <span className="max-w-[120px] block overflow-hidden whitespace-nowrap text-ellipsis"> {item.service}</span> -
-                            <span> Rp. {item.totalPrice.toLocaleString()} </span>
-                          </p>
-
-                          {!isOriginal && (
-                            <div className="flex">
-                              <button onClick={() => onDeleteItem(item)} className="text-red-500 p-2 mx-2 bg-red-500/10 rounded-md hover:bg-red-500/20 transition-colors">
-                                <Trash2Icon className="w-4 h-4" />
-                              </button>
-
-                              <button onClick={() => onEditItem(item)} className="text-blue-600 p-2 bg-blue-500/10 rounded-md hover:bg-blue-500/20 transition-colors">
-                                <PenLine className="w-4 h-4" />
-                              </button>
+                            <div className="mt-4 flex justify-end">
+                                <button
+                                    onClick={() => {
+                                        setIsOpen(false);
+                                        completeTask();
+                                    }}
+                                    className="px-4 py-2 bg-mainColor text-white rounded-md hover:bg-mainColor/80 transition-colors"
+                                >
+                                    Sudah Diambil
+                                </button>
                             </div>
-                          )}
                         </div>
-                      )
-                    })}
-                  </div>
-                </div>
+                        <div className="border-b border-gray-200 my-2"></div>
+                    </>
+                )}
+            </div>
 
-                {/* action button */}
-                <div className="mt-4 flex justify-end">
-                  <button onClick={() => { setIsOpen(false); completeTask(); }} className="px-4 py-2 bg-mainColor text-white rounded-md hover:bg-mainColor/80 transition-colors">
-                    Pekerjaan Selesai
-                  </button>
-                </div>
-              </div>
-
-              {/* bottom divider */}
-              <div className="border-b border-gray-200 dark:border-gray-700 my-2"></div>
-            </>
-          )
-        }
-      </div>
-
-      <div className="">
-        {/* dropdown chevron */}
-        {isOpen ? (
-          <ChevronUp className="w-4 h-4 text-gray-400" onClick={() => isOpenable && setIsOpen(!isOpen)} />
-        ) : (
-          <ChevronDown className="w-4 h-4 text-gray-400" onClick={() => isOpenable && setIsOpen(!isOpen)} />
-        )}
-      </div>
-    </li>
-  );
-}
+            <div className="pt-0.5">
+                {isOpen ? (
+                    <ChevronUp
+                        className={`w-4 h-4 text-gray-400 ${isOpenable ? 'cursor-pointer' : ''}`}
+                        onClick={() => isOpenable && setIsOpen(!isOpen)}
+                    />
+                ) : (
+                    <ChevronDown
+                        className={`w-4 h-4 text-gray-400 ${isOpenable ? 'cursor-pointer' : ''}`}
+                        onClick={() => isOpenable && setIsOpen(!isOpen)}
+                    />
+                )}
+            </div>
+        </li>
+    );
+};
 
 const TimelineItemPending = ({
-  task,
-  itemList = [],
-  onEditItem,
-  onDeleteItem,
-  currentTaskIndex = 0,
-  completeTask = () => { }
+    task,
+    currentTaskIndex = 0,
+    completeTask = () => { }
 }: {
-  task: Task;
-  itemList: Item[];
-  onEditItem: (item?: Item) => void;
-  onDeleteItem: (item?: Item) => void;
-  currentTaskIndex: number;
-  completeTask: () => void;
+    task: Task;
+    currentTaskIndex: number;
+    completeTask: () => void;
 }) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const TASK_INDEX = 0;
+    const isOpenable = TASK_INDEX === currentTaskIndex;
 
-  const [isOpen, setIsOpen] = useState(false);
-  const TASK_INDEX = 0;
-  const isOpenable = TASK_INDEX == currentTaskIndex;
-
-  return (
-    <li className="mb-10 ms-4 flex">
-      <div className="">
-        <TimelineIcon taskIndex={TASK_INDEX} currentTaskIndex={currentTaskIndex} />
-      </div>
-      <div className="flex-1">
-        <time className="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">({task.date} - {task.time})</time>
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Terjadwal</h3>
-        {
-          isOpen && (
-            <>
-              {/* top divider */}
-              <div className="border-b border-gray-200 dark:border-gray-700 my-2"></div>
-
-              {/* additional details */}
-              <div className="mt-2 text-sm text-gray-600">
-                {/* preview information */}
-                <p className="my-4 font-medium">Jadwal pengerjaan yang harus diselesaikan</p>
-                <p className="font-bold text-base text-black">Alamat</p>
-                <p className="mt-3 text-sm font-medium mb-4">Jl. Cimanuk No.1A, Citarum, Kec. Bandung Wetan, Kota Bandung, Jawa Barat 40115</p>
-
-                {/* item list */}
-                <div>
-                  {/* item list header */}
-                  <div className="flex">
-                    <p className="flex-1 font-semibold text-black text-base">List Item Pengerjaan:</p>
-                    <p onClick={() => {
-                      onEditItem();
+    return (
+        <li className="mb-10 flex items-start space-x-4 relative">
+            <div className="relative">
+                {/* Garis penghubung ke item berikutnya */}
+                <div 
+                    className="absolute left-[5px] top-8 w-0.5 border-l transition-all duration-300" 
+                    style={{ 
+                        height: isOpen ? 'calc(100% + 2.5rem)' : 'calc(100% + 2.5rem)'
                     }}
-                      className="flex text-blue-500 font-semibold text-base">+ <span className="underline ml-1">Tambah Item</span></p>
-                  </div>
+                ></div>
+                <TimelineIcon
+                    taskIndex={TASK_INDEX}
+                    currentTaskIndex={currentTaskIndex}
+                />
+            </div>
+            <div className="flex-1 min-w-0 pt-0.5">
+                <time className="mb-1 text-sm font-normal leading-none text-gray-400">
+                    ({task.date} - {task.time})
+                </time>
+                <h3 className="text-lg font-semibold text-gray-900">Terjadwal</h3>
 
-                  {/* item list content */}
-                  <div className="mt-3">
-                    {itemList.map((item, index) => {
-                      return (
-                        <div key={index} className="py-2 flex justify-center items-center">
-                          <p className="flex flex-1 gap-1">
-                            <span>{item.quantity}x </span> -
-                            <span className="max-w-[120px] block overflow-hidden whitespace-nowrap text-ellipsis"> {item.service}</span> -
-                            <span> Rp. {item.totalPrice.toLocaleString()} </span>
-                          </p>
+                {isOpen && (
+                    <>
+                        <div className="border-b border-gray-200 my-2"></div>
+                        <div className="mt-2 text-sm text-gray-600">
+                            <p className="my-4 font-medium">Jadwal pengerjaan yang harus diselesaikan</p>
+                            <p className="font-bold text-base text-black">Alamat</p>
+                            <p className="mt-3 text-sm font-medium mb-4">
+                                Jl. Cimanuk No.1A, Citarum, Kec. Bandung Wetan, Kota Bandung, Jawa Barat 40115
+                            </p>
 
-                          <div className="flex">
-                            <button onClick={() => onDeleteItem(item)} className="text-red-500 p-2 mx-2 bg-red-500/10 rounded-md hover:bg-red-500/20 transition-colors">
-                              <Trash2Icon className="w-4 h-4" />
-                            </button>
-
-                            <button onClick={() => onEditItem(item)} className="text-blue-600 p-2 bg-blue-500/10 rounded-md hover:bg-blue-500/20 transition-colors">
-                              <PenLine className="w-4 h-4" />
-                            </button>
-                          </div>
+                            <div className="mt-4 flex justify-end">
+                                <button
+                                    onClick={() => {
+                                        setIsOpen(false);
+                                        completeTask();
+                                    }}
+                                    className="px-4 py-2 bg-mainColor text-white rounded-md hover:bg-mainColor/80 transition-colors"
+                                >
+                                    Mulai Pengerjaan
+                                </button>
+                            </div>
                         </div>
-                      )
-                    })}
-                  </div>
-                </div>
+                        <div className="border-b border-gray-200 my-2"></div>
+                    </>
+                )}
+            </div>
 
-                {/* action button */}
-                <div className="mt-4 flex justify-end">
-                  <button onClick={() => { setIsOpen(false); completeTask(); }} className="px-4 py-2 bg-mainColor text-white rounded-md hover:bg-mainColor/80 transition-colors">
-                    Mulai Pengerjaan
-                  </button>
-                </div>
-              </div>
-
-              {/* bottom divider */}
-              <div className="border-b border-gray-200 dark:border-gray-700 my-2"></div>
-            </>
-          )
-        }
-      </div>
-
-      <div className="">
-        {/* dropdown chevron */}
-        {isOpen ? (
-          <ChevronUp className="w-4 h-4 text-gray-400" onClick={() => isOpenable && setIsOpen(!isOpen)} />
-        ) : (
-            <ChevronDown className="w-4 h-4 text-gray-400" onClick={() => isOpenable && setIsOpen(!isOpen)} />
-        )}
-      </div>
-    </li>
-  );
-}
+            <div className="pt-0.5">
+                {isOpen ? (
+                    <ChevronUp
+                        className={`w-4 h-4 text-gray-400 ${isOpenable ? 'cursor-pointer' : ''}`}
+                        onClick={() => isOpenable && setIsOpen(!isOpen)}
+                    />
+                ) : (
+                    <ChevronDown
+                        className={`w-4 h-4 text-gray-400 ${isOpenable ? 'cursor-pointer' : ''}`}
+                        onClick={() => isOpenable && setIsOpen(!isOpen)}
+                    />
+                )}
+            </div>
+        </li>
+    );
+};
 
 
 const TaskTimeline = ({
