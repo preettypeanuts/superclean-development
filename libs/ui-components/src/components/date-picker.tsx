@@ -12,9 +12,11 @@ interface DatePickerProps {
   label?: string;
   value?: Date | null;
   onChange?: (date: Date | undefined) => void;
+  startFrom?: Date;
+  endTo?: Date;
 }
 
-export function DatePicker({ label, value, onChange }: DatePickerProps) {
+export function DatePicker({ label, value, onChange, startFrom, endTo }: DatePickerProps) {
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -36,6 +38,10 @@ export function DatePicker({ label, value, onChange }: DatePickerProps) {
           onSelect={onChange}
           initialFocus
           timeZone="UTC"
+          disabled={{
+            before: startFrom ? startFrom : new Date(1900, 0, 1),
+            after: endTo ? endTo : new Date(2100, 11, 31)
+          }}
         />
       </PopoverContent>
     </Popover>

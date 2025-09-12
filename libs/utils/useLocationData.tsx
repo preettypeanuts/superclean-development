@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { apiClient } from "libs/utils/apiClient";
 
 // Tipe data umum untuk hasil API
-interface LocationData {
+export interface LocationData {
   id: string;
   paramCategory: string;
   paramKey: string;

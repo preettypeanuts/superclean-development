@@ -2,6 +2,9 @@
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_APIURL || "http://localhost:3000";
+
+
 // List halaman yang tidak butuh proteksi
 const PUBLIC_ROUTES = ["/login", "/register", "/about", "/invoice", "/rating"];
 
@@ -19,7 +22,7 @@ const ProtectedRoutes = ({ children }: { children: React.ReactNode }) => {
         }
 
         try {
-            const response = await fetch('https://murafly.my.id/auth/whoAmI', {
+          const response = await fetch(`${API_BASE_URL}/auth/whoAmI`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`,

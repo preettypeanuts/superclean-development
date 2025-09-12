@@ -30,10 +30,6 @@ export default function MultiSelect({
 }: MultiSelectProps) {
     const [open, setOpen] = useState(false)
 
-    console.log('====================================');
-    console.log(staffList);
-    console.log('====================================');
-
     const toggleSelect = (staffKey: string) => {
         const newSelected = selected.includes(staffKey)
             ? selected.filter((item) => item !== staffKey)

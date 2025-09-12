@@ -25,6 +25,7 @@ import { RadioGroup, RadioGroupItem } from "@ui-components/components/ui/radio-g
 import { Header } from "@shared/components/Header";
 import { Check, ChevronsUpDown, Cross, Plus, PlusCircle, Search, AlertTriangle } from "lucide-react";
 import { DatePicker } from "@ui-components/components/date-picker";
+import { BsInfoCircleFill } from "react-icons/bs";
 
 // Interface untuk SPK Item (tanpa total)
 export interface SPKItem {
@@ -208,6 +209,7 @@ export default function NewSPK() {
 
   // State untuk diskon manual
   const [manualDiscount, setManualDiscount] = useState<number>(0);
+  const [additionalFee, setAdditionalFee] = useState<number>(0);
 
   // State untuk menyimpan data customer yang dipilih
   const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
@@ -220,6 +222,8 @@ export default function NewSPK() {
 
   // State untuk loading promo
   const [loadingPromo, setLoadingPromo] = useState(false);
+
+  const [loadingSubmit, setLoadingSubmit] = useState(false);
 
   // State untuk menyimpan display names dari location codes
   const [locationLabels, setLocationLabels] = useState({
@@ -240,6 +244,9 @@ export default function NewSPK() {
     cleaningStaff: string[];
     blowerStaff: string[];
     trxDate: string;
+    deliveryDate?: string;
+    pickupDate?: string;
+    notes: string;
   };
 
   const [formData, setFormData] = useState<FormDataType>({
@@ -253,6 +260,9 @@ export default function NewSPK() {
     cleaningStaff: [],
     blowerStaff: [],
     trxDate: formatDateInput(new Date().toISOString()),
+    deliveryDate: undefined,
+    pickupDate: undefined,
+    notes: ""
   });
 
   // Hook untuk mengambil data lokasi berdasarkan customer yang dipilih
@@ -333,8 +343,6 @@ export default function NewSPK() {
     }
   };
 
-
-
   // Effect untuk fetch staff data ketika customer berubah
   useEffect(() => {
     if (selectedCustomer?.city) {
@@ -390,10 +398,23 @@ export default function NewSPK() {
   };
 
   const handleBlowerStaffChange = (selectedStaffIds: string[]) => {
-    setFormData(prev => ({
-      ...prev,
-      blowerStaff: selectedStaffIds
-    }));
+    if (selectedStaffIds.length == 0) {
+      // remove delivery date and accept date
+      setFormData(prev => ({
+        ...prev,
+        deliveryDate: undefined,
+        pickupDate: undefined,
+        blowerStaff: []
+      }));
+    } else if (selectedStaffIds.length > 0 && !(formData.deliveryDate && formData.pickupDate)) {
+      // if previously blowerStaff was empty and now has value, set delivery date and accept date to trxDate
+      setFormData(prev => ({
+        ...prev,
+        deliveryDate: formData.trxDate,
+        pickupDate: formData.trxDate,
+        blowerStaff: selectedStaffIds
+      }));
+    }
   };
 
   const handleClearCustomer = () => {
@@ -423,16 +444,23 @@ export default function NewSPK() {
 
   // Function untuk menghitung total dari semua SPK items (update)
   const calculateTotals = () => {
-    const totalPrice = spkItems.reduce((sum, item) => sum + item.harga * item.jumlah, 0);
+    let totalPrice = spkItems.reduce((sum, item) => sum + item.harga * item.jumlah, 0);
+    const isTotalPriceValid = totalPrice >= 250_000;
+
+    if (!isTotalPriceValid) {
+      totalPrice = 250_000;
+    }
+
     const totalPromo = spkItems.reduce((sum, item) => {
       const promoAmount = item.promoType === "Persentase" ? (item.promo * item.harga * item.jumlah) / 100 : item.promo * item.jumlah;
       return sum + promoAmount;
     }, 0);
-    const finalPrice = totalPrice - totalPromo - manualDiscount;
+
+    const finalPrice = totalPrice - totalPromo - manualDiscount + additionalFee;
 
     // Validasi: total pengurangan tidak boleh lebih besar dari total harga
     const totalReductions = totalPromo + manualDiscount;
-    const isInvalidTotal = totalReductions > totalPrice;
+    const isInvalidTotal = finalPrice < 0;
 
     return {
       totalPrice,
@@ -440,7 +468,8 @@ export default function NewSPK() {
       manualDiscount,
       totalReductions,
       finalPrice,
-      isInvalidTotal
+      isInvalidTotal,
+      isTotalPriceValid
     };
   };
 
@@ -500,6 +529,8 @@ export default function NewSPK() {
     const submitData = {
       customerId: selectedCustomer.id,
       discountPrice: totals.manualDiscount, // hanya diskon manual
+      additionalFee: additionalFee,
+      notes: formData.notes,
       trxDate: new Date(formData.trxDate).toISOString(),
       assigns: formData.cleaningStaff,
       blowers: formData.blowerStaff,
@@ -515,7 +546,12 @@ export default function NewSPK() {
       }))
     };
 
+    if (formData.blowerStaff.length > 0) {
+      submitData["deliveryDate"] = formData.deliveryDate ? new Date(formData.deliveryDate).toISOString() : new Date(formData.trxDate).toISOString();
+    }
+
     try {
+      setLoadingSubmit(true);
       await api.post("/transaction", submitData);
       toast({
         title: "Berhasil",
@@ -530,13 +566,13 @@ export default function NewSPK() {
         description: "Terjadi kesalahan saat menambahkan SPK.",
         variant: "destructive",
       });
+    } finally {
+      setLoadingSubmit(false);
     }
   };
 
   // Input Dialog Form
   const { catLayananMapping, loading: loadingParams } = useCategoryStore();
-  console.log(catLayananMapping);
-
 
   // State untuk tracking mode edit
   const [editMode, setEditMode] = useState<string | null>(null);
@@ -555,10 +591,6 @@ export default function NewSPK() {
 
   // Hook untuk service lookup berdasarkan kategori yang dipilih
   const { services, loading: loadingServices } = useServiceLookup(formDataTable.category);
-
-  // console.log('===========service=========================');
-  // console.log(services);
-  // console.log('====================================');
 
   // Updated handleChangeTable function untuk handle promo fetching
   const handleChangeTable = async (field: string, value: any) => {
@@ -734,9 +766,6 @@ export default function NewSPK() {
         totalHarga: totalHargaSebelumPromo
       };
 
-      console.log(newItem);
-
-
       setSPKItems(prev => [...prev, newItem]);
 
       toast({
@@ -869,8 +898,9 @@ export default function NewSPK() {
                     </div>
 
                     <div className="flex items-center space-x-4">
-                      <Label className="w-[40%] font-semibold">Tanggal Transaksi</Label>
+                      <Label className="w-[40%] font-semibold">Tanggal Pengerjaan</Label>
                       <DatePicker
+                        startFrom={new Date()}
                         value={formData.trxDate ? new Date(formData.trxDate) : null}
                         onChange={(date) => {
                           if (date) {
@@ -895,6 +925,44 @@ export default function NewSPK() {
                         loading={loadingBlowerStaff}
                       />
                     </div>
+
+                    {
+                      formData.blowerStaff.length > 0 && (
+                        <>
+                          <div className="flex items-center space-x-4">
+                            <Label className="w-[40%] font-semibold">Tanggal Pengantaran</Label>
+                            <DatePicker
+                              startFrom={new Date()}
+                              value={formData.deliveryDate ? new Date(formData.deliveryDate) : new Date(formData.trxDate)}
+                              onChange={(date) => {
+                                if (date) {
+                                  setFormData(prev => ({
+                                    ...prev,
+                                    deliveryDate: formatDateInput(date.toISOString())
+                                  }));
+                                }
+                              }}
+                            />
+                          </div>
+
+                          <div className="flex items-center space-x-4">
+                            <Label className="w-[40%] font-semibold">Tanggal Pengambilan</Label>
+                            <DatePicker
+                              startFrom={new Date()}
+                              value={formData.pickupDate ? new Date(formData.pickupDate) : new Date(formData.trxDate)}
+                              onChange={(date) => {
+                                if (date) {
+                                  setFormData(prev => ({
+                                    ...prev,
+                                    pickupDate: formatDateInput(date.toISOString())
+                                  }));
+                                }
+                              }}
+                            />
+                          </div>
+                        </>
+                      )
+                    }
                   </div>
                 </div>
               </form>
@@ -929,23 +997,37 @@ export default function NewSPK() {
 
               {/* Summary Section - Moved to bottom */}
               <div className="grid grid-cols-2 gap-20 mt-8 border-t pt-6">
-                <div className="col-span-1"></div>
+                <div className="col-span-1">
+                  <div className="flex items-start space-x-4">
+                    <Label className="w-[40%] font-semibold flex items-center mt-2">
+                      Catatan
+                    </Label>
+                    <Textarea
+                      id="notes"
+                      value={formData.notes}
+                      placeholder="Masukkan catatan anda disini"
+                      rows={5}
+                      className="resize-none"
+                      onChange={(e) => handleChange("notes", e.target.value)}
+                    />
+                  </div>
+                </div>
                 <div className="col-span-1 space-y-4">
                   <div className="flex items-center space-x-4">
                     <Label className="w-[40%] font-semibold flex items-center gap-1">
-                      Total Harga
-                      {totals.isInvalidTotal && (
-                        <div className="relative group">
-                          <AlertTriangle className="h-4 w-4 text-red-500" />
+                      <span>Total Harga</span>
+                      {!totals.isTotalPriceValid && (
+                        <div className="relative group mx-1">
+                          <BsInfoCircleFill className="h-4 w-4" />
                           <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
-                            Total pengurangan tidak boleh lebih besar dari total harga
+                            Transaksi dibawah minimum Rp 250.000 akan dikenakan sebesar pembayaran minimum yaitu Rp 250.000
                           </div>
                         </div>
                       )}
                     </Label>
                     <Input
-                      className={`text-right ${totals.isInvalidTotal ? 'border-red-500 bg-red-50' : ''}`}
                       disabled
+                      className="text-right"
                       value={formatRupiah(totals.totalPrice)}
                     />
                   </div>
@@ -956,11 +1038,32 @@ export default function NewSPK() {
                   </div>
 
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold">Diskon Manual</Label>
+                    <Label className="w-[40%] font-semibold flex items-center gap-1">
+                      <span>Diskon Manual</span>
+                      {totals.isInvalidTotal && (
+                        <div className="relative group mx-1">
+                          <AlertTriangle className="h-4 w-4 text-red-500" />
+                          <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
+                            Total pengurangan tidak boleh lebih besar dari total harga
+                          </div>
+                        </div>
+                      )}
+                    </Label>
+
                     <RupiahInput
                       placeholder="Rp. 0"
-                      value={manualDiscount}
+                      value={formatRupiah(manualDiscount)}
                       onValueChange={setManualDiscount}
+                      className={`text-right ${totals.isInvalidTotal ? 'border-red-500 bg-red-50 dark:bg-red-500/40' : ''}`}
+                    />
+                  </div>
+
+                  <div className="flex items-center space-x-4">
+                    <Label className="w-[40%] font-semibold">Biaya Tambahan</Label>
+                    <RupiahInput
+                      placeholder="Rp. 0"
+                      value={formatRupiah(additionalFee)}
+                      onValueChange={setAdditionalFee}
                       className="text-right"
                     />
                   </div>
@@ -972,6 +1075,8 @@ export default function NewSPK() {
                 </div>
               </div>
 
+
+
               <div className="flex justify-end mt-6 gap-2">
                 <Button onClick={() => router.back()} variant="outline2">
                   Kembali
@@ -980,7 +1085,7 @@ export default function NewSPK() {
                   type="submit"
                   variant="main"
                   onClick={handleSubmit}
-                  disabled={totals.isInvalidTotal}
+                  disabled={totals.isInvalidTotal || loadingSubmit}
                 >
                   Simpan
                 </Button>
