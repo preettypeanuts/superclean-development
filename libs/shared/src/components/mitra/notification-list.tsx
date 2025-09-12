@@ -188,7 +188,7 @@ export const NotificationListItems = () => {
             
             // Call API untuk mark as read setiap notification yang dipilih
             const updatePromises = selectedIds.map(id => 
-                api.put(`/notification/${id}/read`)
+                api.put(`/notification/${id}/read`, {})
             );
             
             await Promise.all(updatePromises);
