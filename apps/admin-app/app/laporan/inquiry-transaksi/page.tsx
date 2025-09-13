@@ -24,12 +24,14 @@ const columns = [
   { key: "id", label: "#" },
   { key: "trxNumber", label: "No Transaksi" },
   { key: "customerName", label: "Nama Pelanggan" },
+  { key: "customerCity", label: "Kota Pelanggan" },
   { key: "noWhatsapp", label: "No. Whatsapp" },
-  { key: "address", label: "Alamat" },
-  { key: "city", label: "Kota" },
   { key: "branchId", label: "Cabang" },
+  { key: "cleaner", label: "Petugas Cleaning" },
+  // { key: "address", label: "Alamat" },
   { key: "finalPrice", label: "Nominal" },
   { key: "trxDate", label: "Tanggal Transaksi" },
+  { key: "includeBlower", label: "Include Blower" },
   { key: "status", label: "Status" },
   { key: "menu", label: "Aksi" },
 ];
@@ -100,6 +102,7 @@ export default function InquiryTransaksiPage() {
   const [tempBranch, setTempBranch] = useState<string>("");
   const [tempStartDate, setTempStartDate] = useState<Date>();
   const [tempEndDate, setTempEndDate] = useState<Date>();
+  const [tempIncludeBlower, setTempIncludeBlower] = useState<number>(1);
 
   // Detail state
   const [selectedEmployee, setSelectedEmployee] = useState<string>("");
@@ -107,6 +110,7 @@ export default function InquiryTransaksiPage() {
   const [pdfData, setPdfData] = useState<string>("");
   const [isLoadingDetail, setIsLoadingDetail] = useState(false);
   const [showDetail, setShowDetail] = useState(false);
+  const [includeBlower, setIncludeBlower] = useState<number>(-1);
 
   const { branchMapping, loading: loadingParams } = useParameterStore();
 
@@ -127,6 +131,7 @@ export default function InquiryTransaksiPage() {
     let branch = branchFilter;
     let start = startDate;
     let end = endDate;
+    let include = includeBlower;
 
     if (reset) {
       page = 1;
@@ -135,6 +140,7 @@ export default function InquiryTransaksiPage() {
       branch = tempBranch;
       start = tempStartDate;
       end = tempEndDate;
+      include = tempIncludeBlower;
 
       setCurrentPage({
         page: page,
@@ -145,6 +151,7 @@ export default function InquiryTransaksiPage() {
       setBranchFilter(tempBranch)
       setStartDate(tempStartDate)
       setEndDate(tempEndDate)
+      setIncludeBlower(tempIncludeBlower)
     }
 
     setLoading(true);
@@ -154,6 +161,9 @@ export default function InquiryTransaksiPage() {
       if (branch) url += `&branchId=${branch}`;
       if (start) url += `&startDate=${formatDateAPI(start)}`;
       if (end) url += `&endDate=${formatDateAPI(end)}`;
+      if (include) {
+        url += `&includeBlower=${include === 2 ? "true" : "false"}`;
+      }
 
       const result = await apiClient(url);
       setDataTransaksi(result.data[0] || []);
@@ -423,6 +433,17 @@ export default function InquiryTransaksiPage() {
                     onChange={(date) => setTempEndDate(date)}
                   />
                 </div>
+                <SelectFilter
+                  label="Include Blower"
+                  id="include-blower"
+                  placeholder="Pilih Include Blower"
+                  value={tempIncludeBlower}
+                  optionsNumber={[
+                    { label: "Tidak", value: 1 },
+                    { label: "Ya", value: 2 },
+                  ]}
+                  onChange={setTempIncludeBlower}
+                />
               </GroupFilter>
 
               <Button variant="main" onClick={handleSearch}>

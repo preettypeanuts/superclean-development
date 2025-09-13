@@ -25,6 +25,8 @@ interface InquiryTransaksi {
   customerId?: string;
   createdBy?: string;
   createdAt?: string;
+  cleaner?: string;
+  includeBlower?: number;
 }
 
 interface DataTableProps {
@@ -112,6 +114,10 @@ export const InquiryTransaksiTable: React.FC<DataTableProps> = ({
 
               if (header.key === "id") {
                 return <TableCell key="id">{(currentPage - 1) * limit + rowIndex + 1}</TableCell>;
+              }
+
+              if (header.key === "includeBlower") {
+                return <TableCell key="includeBlower">{item.includeBlower ? "Ya" : "Tidak"}</TableCell>;
               }
 
               if (header.key === "finalPrice") {

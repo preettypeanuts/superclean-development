@@ -15,57 +15,12 @@ import { formatDate } from "libs/utils/formatDate";
 import { formatRupiah } from "libs/utils/formatRupiah";
 import { PembayaranTableDetail } from "libs/ui-components/src/components/pembayaran-table-detail";
 import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
-import { LocationData } from "apps/admin-app/app/transaksi/spk/edit/[...id]/page";
+import { formatDetailsForTable, LocationData, Transaction } from "apps/admin-app/app/transaksi/spk/edit/[...id]/page";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@ui-components/components/ui/tabs";
 import { useTransactionHistory } from "@shared/utils/useTransactionHistory";
 import { PiWarningCircleFill } from "react-icons/pi";
-
-interface Transaction {
-  id: string;
-  trxNumber: string;
-  customerId: string;
-  branchId: string;
-  totalPrice: number;
-  discountPrice: number;
-  promoPrice: number;
-  finalPrice: number;
-  trxDate: string;
-  status: number;
-  details: TransactionItem[];
-  assigns: string[]; // List of staff usernames
-  blowers: string[]; // List of blower usernames
-  reassigns: string[]; // List of rework staff usernames
-}
-
-interface TransactionItem {
-  id: string;
-  trxNumber: string;
-  serviceCategory: string;
-  serviceCode: string;
-  serviceType: number;
-  quantity: number;
-  promoCode: string;
-  servicePrice: number;
-  totalPrice: number;
-  promoPrice: number;
-  isPl: number;
-  service: TransactionDetailService;
-}
-
-interface TransactionDetailService {
-  id: string;
-  code: string;
-  name: string;
-  category: string;
-  unit: string;
-  vacuumPrice: number;
-  cleanPrice: number;
-  status: number;
-  createdAt: string;
-  createdBy: string;
-  updatedAt: string;
-  updatedBy: string;
-}
+import PhotoSection from "apps/admin-app/app/transaksi/spk/photoSection";
+import { SPKTableDetail } from "@ui-components/components/spk-table-detail";
 
 interface Customer {
   id: string;
@@ -78,15 +33,15 @@ interface Customer {
   subDistrict: string;
 }
 
-const HeaderPembayaran = [
-  { key: "id", label: "#" },
-  { key: "serviceCode", label: "Kode Layanan" },
-  { key: "serviceCategory", label: "Kategori" },
-  { key: "serviceType", label: "Jenis Layanan" },
-  { key: "quantity", label: "Jumlah" },
-  { key: "servicePrice", label: "Harga" },
-  { key: "promoAmount", label: "Diskon Promo" }
-];
+// const HeaderPembayaran = [
+//   { key: "id", label: "#" },
+//   { key: "serviceCode", label: "Kode Layanan" },
+//   { key: "serviceCategory", label: "Kategori" },
+//   { key: "serviceType", label: "Jenis Layanan" },
+//   { key: "quantity", label: "Jumlah" },
+//   { key: "servicePrice", label: "Harga" },
+//   { key: "promoAmount", label: "Diskon Promo" }
+// ];
 
 // Mapping untuk status
 const statusMapping = {
@@ -97,11 +52,11 @@ const statusMapping = {
 };
 
 // Mapping untuk service type
-const serviceTypeMapping = {
-  1: "Regular",
-  2: "Express",
-  3: "Premium"
-};
+// const serviceTypeMapping = {
+//   1: "Regular",
+//   2: "Express",
+//   3: "Premium"
+// };
 
 export default function InquiryTransaksiDetail() {
   const pathname = usePathname();
@@ -259,24 +214,44 @@ export default function InquiryTransaksiDetail() {
   }, [trxNumber]);
 
   // Transform transaction details for table
-  const transformedDetails = transaction?.details?.map((detail, index) => ({
-    id: (index + 1).toString(),
-    serviceCode: detail.serviceCode,
-    serviceCategory: detail.serviceCategory,
-    serviceType: serviceTypeMapping[detail.serviceType as keyof typeof serviceTypeMapping] || "Unknown",
-    quantity: detail.quantity,
-    servicePrice: formatRupiah(detail.servicePrice),
-    promoCode: detail.promoCode || "-",
-    promoAmount: detail.promoPrice ? formatRupiah(detail.promoPrice) : "-",
-  })) || [];
+  // const transformedDetails = transaction?.details?.map((detail, index) => ({
+  //   id: (index + 1).toString(),
+  //   serviceCode: detail.serviceCode,
+  //   serviceCategory: detail.serviceCategory,
+  //   serviceType: serviceTypeMapping[detail.serviceType as keyof typeof serviceTypeMapping] || "Unknown",
+  //   quantity: detail.quantity,
+  //   servicePrice: formatRupiah(detail.servicePrice),
+  //   promoCode: detail.promoCode || "-",
+  //   promoAmount: detail.promoPrice ? formatRupiah(detail.promoPrice) : "-",
+  // })) || [];
+
+  const DataHeaderSPKDetail = useMemo(() => {
+    const columns = [
+      { key: "no", label: "#" },
+      { key: "kode", label: "Kode Service" },
+      { key: "layanan", label: "Layanan" },
+      { key: "kategori", label: "Kategori" },
+      { key: "jumlah", label: "Jumlah" },
+      { key: "satuan", label: "Satuan" },
+      { key: "harga", label: "Harga Satuan" },
+      // { key: "totalHarga", label: "Total Harga" },
+      { key: "promo", label: "Promo Satuan" },
+    ];
+
+    return columns;
+  }, [transaction]);
+
+  const spkItems = formatDetailsForTable(transaction?.details || []);
+
 
   const calculateTotals = () => {
     const totalPrice = transaction?.details.reduce((sum, item) => sum + item.servicePrice * item.quantity, 0) || 0;
     const totalPromo = transaction?.details.reduce((sum, item) => sum + item.promoPrice, 0) || 0;
 
     const manualDiscount = transaction?.discountPrice || 0;
+    const additionalFee = transaction?.additionalFee || 0;
 
-    const finalPrice = totalPrice - totalPromo - manualDiscount;
+    const finalPrice = totalPrice - totalPromo - manualDiscount + additionalFee;
 
     // Validasi: total pengurangan tidak boleh lebih besar dari total harga
     const totalReductions = totalPromo;
@@ -449,7 +424,7 @@ export default function InquiryTransaksiDetail() {
                   </div>
 
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold">Tanggal Transaksi</Label>
+                    <Label className="w-[40%] font-semibold">Tanggal Pengerjaan</Label>
                     <Input
                       disabled
                       value={formatDate(transaction.trxDate)}
@@ -470,6 +445,32 @@ export default function InquiryTransaksiDetail() {
                     />
                   </div>
 
+                  {
+                    transaction.blowers.length > 0 && (
+                      <>
+                        <div className="flex items-center space-x-4">
+                          <Label className="w-[40%] font-semibold">Tanggal Pengantaran</Label>
+                          <Textarea
+                            disabled
+                            className="resize-none"
+                            value={transaction.deliveryDate ? formatDate(transaction.deliveryDate) : "-"}
+                            rows={1}
+                          />
+                        </div>
+
+                        <div className="flex items-center space-x-4">
+                          <Label className="w-[40%] font-semibold">Tanggal Pengambilan</Label>
+                          <Textarea
+                            disabled
+                            className="resize-none"
+                            value={transaction.pickupDate ? formatDate(transaction.pickupDate) : "-"}
+                            rows={1}
+                          />
+                        </div>
+                      </>
+                    )
+                  }
+
                   <div className="flex items-center space-x-4">
                     <Label className="w-[40%] font-semibold">Dikerjakan Ulang</Label>
                     <Textarea
@@ -484,9 +485,19 @@ export default function InquiryTransaksiDetail() {
 
               {/* Detail Transaksi Table */}
               <div className="mt-5 space-y-3">
-                <PembayaranTableDetail
+                {/* <PembayaranTableDetail
                   data={transformedDetails}
                   columns={HeaderPembayaran}
+                  currentPage={1}
+                  limit={10}
+                  fetchData={() => {
+                    console.log("Fetching data...");
+                  }}
+                /> */}
+
+                <SPKTableDetail
+                  data={spkItems}
+                  columns={DataHeaderSPKDetail}
                   currentPage={1}
                   limit={10}
                   fetchData={() => {
@@ -498,7 +509,21 @@ export default function InquiryTransaksiDetail() {
               {/* Summary Pricing */}
               <div className="grid grid-cols-2 gap-20 mt-8 border-t pt-6">
                 {/* Kolom Kiri - Kosong */}
-                <div className="col-span-1"></div>
+                <div className="col-span-1">
+                  <div className="flex items-start space-x-4">
+                    <Label className="w-[40%] font-semibold flex items-center mt-2">
+                      Catatan
+                    </Label>
+                    <Textarea
+                      disabled
+                      id="notes"
+                      placeholder="Tidak ada catatan"
+                      value={transaction.notes || ""}
+                      rows={5}
+                      className="resize-none"
+                    />
+                  </div>
+                </div>
 
                 {/* Kolom Kanan - Summary */}
                 <div className="col-span-1 space-y-4">
@@ -525,6 +550,15 @@ export default function InquiryTransaksiDetail() {
                     <Input
                       disabled
                       value={formatRupiah(transaction.discountPrice)}
+                      className="text-right bg-muted/50 cursor-not-allowed"
+                    />
+                  </div>
+
+                  <div className="flex items-center space-x-4">
+                    <Label className="w-[40%] font-semibold">Biaya Tambahan</Label>
+                    <Input
+                      disabled
+                      value={formatRupiah(transaction.additionalFee || 0)}
                       className="text-right bg-muted/50 cursor-not-allowed"
                     />
                   </div>
@@ -627,6 +661,24 @@ export default function InquiryTransaksiDetail() {
                 </div>
               )}
             </div>
+          </TabsContent>
+
+          <TabsContent value="foto">
+            <PhotoSection
+              transaction={transaction}
+              customer={customer}
+              locationLabels={locationLabels}
+              cleaningStaffList={selectedCleaningStaffList}
+              blowerStaffList={selectedBlowerStaffList}
+              spkItems={spkItems}
+              totals={{
+                totalPrice: totals.totalPrice,
+                totalPromo: totals.totalPromo,
+                finalPrice: totals.finalPrice,
+                isInvalidTotal: totals.isInvalidTotal,
+                manualDiscount: transaction.discountPrice
+              }}
+            />
           </TabsContent>
         </Tabs>
 
