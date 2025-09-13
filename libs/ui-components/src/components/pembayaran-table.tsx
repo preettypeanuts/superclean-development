@@ -28,6 +28,8 @@ interface Pembayaran {
   city: string;
   district: string;
   subDistrict: string;
+  cleaner?: string;
+  includeBlower?: number;
 }
 
 interface DataTableProps {
@@ -107,6 +109,10 @@ export const PembayaranTable: React.FC<DataTableProps> = ({
               if (header.key === "cleaner") {
                 let cleaner = (item as any).cleaner as string;
                 return <TableCell title={cleaner} key="cleaner">{cleaner.length > 30 ? cleaner.substring(0, 30) + "..." : cleaner}</TableCell>;
+              }
+
+              if (header.key === "includeBlower") {
+                return <TableCell key="includeBlower">{item.includeBlower ? "Ya" : "Tidak"}</TableCell>;
               }
 
               if (header.key === "finalPrice") {

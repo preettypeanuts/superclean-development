@@ -23,11 +23,13 @@ const DataHeaderSPK = [
   { key: "id", label: "#" },
   { key: "trxNumber", label: "No Transaksi" },
   { key: "customerName", label: "Nama Pelanggan" },
+  { key: "customerCity", label: "Kota Pelanggan" },
   { key: "noWhatsapp", label: "No. Whatsapp" },
   { key: "branchId", label: "Cabang" },
   { key: "cleaner", label: "Petugas Cleaning" },
   { key: "finalPrice", label: "Nominal" },
   { key: "trxDate", label: "Tanggal Transaksi" },
+  { key: "includeBlower", label: "Include Blower" },
   { key: "status", label: "Status" },
   { key: "menu", label: "Aksi" },
 ];

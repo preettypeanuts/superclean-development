@@ -28,6 +28,7 @@ interface SPK {
   createdBy: string;
   createdAt: string;
   cleaner: string;
+  includeBlower?: number;
 }
 
 interface DataTableProps {
@@ -153,7 +154,10 @@ export const SPKTable: React.FC<DataTableProps> = ({ data, columns, currentPage,
                             ? spk.cleaner.slice(0, 30) + "..."
                             : spk.cleaner}
                         </p>
-                  ) : header.key === "noWhatsapp" ? (
+                        ) : header.key === "includeBlower" ? (
+                          <p>{spk.includeBlower === 1 ? "Ya" : "Tidak"}</p>
+                        ) :
+                          header.key === "noWhatsapp" ? (
                     <p>{spk.noWhatsapp}</p>
                   ) : header.key === "finalPrice" ? (
                     <p>{formatRupiah(Number(spk.finalPrice))}</p>
