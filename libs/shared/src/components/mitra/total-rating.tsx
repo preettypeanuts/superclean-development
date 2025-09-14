@@ -47,6 +47,7 @@ export const TotalRating = () => {
 
     useEffect(() => {
         fetchRatingData();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const fetchRatingData = async () => {
