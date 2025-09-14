@@ -15,7 +15,7 @@ import { formatDate } from "libs/utils/formatDate";
 import { formatRupiah } from "libs/utils/formatRupiah";
 import { PembayaranTableDetail } from "libs/ui-components/src/components/pembayaran-table-detail";
 import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
-import { formatDetailsForTable, LocationData, Transaction } from "apps/admin-app/app/transaksi/spk/edit/[...id]/page";
+import { LocationData, Transaction, TransactionItem } from "apps/admin-app/app/transaksi/spk/edit/[...id]/page";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@ui-components/components/ui/tabs";
 import { useTransactionHistory } from "@shared/utils/useTransactionHistory";
 import { PiWarningCircleFill } from "react-icons/pi";
@@ -57,6 +57,23 @@ const statusMapping = {
 //   2: "Express",
 //   3: "Premium"
 // };
+
+const formatDetailsForTable = (details: TransactionItem[]) => {
+  return details.map((detail, index) => ({
+    no: index + 1,
+    kode: detail.serviceCode,
+    layanan: detail.service.name,
+    kategori: detail.serviceCategory,
+    kategoriCode: detail.serviceCategory,
+    jumlah: detail.quantity,
+    satuan: detail.service.unit || "PCS",
+    harga: detail.servicePrice,
+    totalHarga: detail.totalPrice,
+    promo: detail.promoPrice / Number(detail.quantity || 1),
+    id: detail.id,
+  }));
+};
+
 
 export default function InquiryTransaksiDetail() {
   const pathname = usePathname();

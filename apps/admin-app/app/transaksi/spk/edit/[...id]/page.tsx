@@ -98,7 +98,7 @@ export interface Customer {
 }
 
 // Transaction Detail interface
-interface TransactionItem {
+export interface TransactionItem {
   id: string;
   trxNumber: string;
   serviceCategory: string;
@@ -144,7 +144,7 @@ export interface LocationData {
 }
 
 // Format transaction details for table
-export const formatDetailsForTable = (details: TransactionItem[]) => {
+const formatDetailsForTable = (details: TransactionItem[]) => {
   return details.map((detail, index) => ({
     no: index + 1,
     kode: detail.serviceCode,
