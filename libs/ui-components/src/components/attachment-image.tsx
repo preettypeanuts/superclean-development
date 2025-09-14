@@ -81,6 +81,7 @@ function AttachmentImage({
                 onLoad={onLoad}
                 onError={onLoad}
                 src={imageSrc}
+                unoptimized
                 alt={label}
                 width={width}
                 height={height}
