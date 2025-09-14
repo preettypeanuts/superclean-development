@@ -80,7 +80,7 @@ function AttachmentImage({
                 ref={ref}
                 onLoad={onLoad}
                 onError={onLoad}
-                src={"https://placehold.co/400x400"}
+                src={imageSrc}
                 alt={label}
                 width={width}
                 height={height}
