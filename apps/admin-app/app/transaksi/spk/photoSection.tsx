@@ -13,6 +13,7 @@ import { formatRupiah } from "@shared/utils/formatRupiah";
 import html2canvas from "html2canvas";
 import { useToast } from "@ui-components/hooks/use-toast";
 import { api } from "@shared/utils/apiClient";
+import { apiFormdata } from '@shared/utils/apiFormdataClient'
 
 export type PhotoSectionProps = {
   transaction: Transaction;
@@ -23,7 +24,10 @@ export type PhotoSectionProps = {
     districtName: string;
     subDistrictName: string;
   };
-  cleaningStaffList?: { id: string; fullname: string }[];
+  cleaningStaffList?: {
+    lookupKey: string;
+    lookupValue: string;
+  }[];
   blowerStaffList?: { id: string; fullname: string }[];
   spkItems: SPKItem[];
   totals: {
@@ -32,44 +36,46 @@ export type PhotoSectionProps = {
     manualDiscount: number;
     finalPrice: number;
     isInvalidTotal: boolean;
-  }
+  },
+  readonly?: boolean
 }
 
 interface TransactionReview {
-  "id": string,
-  "trxNumber": string,
-  "customerId": string,
-  "branchId": string,
-  "totalPrice": number,
-  "discountPrice": number,
-  "promoPrice": number | null,
-  "finalPrice": number,
-  "trxDate": string,
-  "status": number,
-  "paymentAt": string | null,
-  "rating": number,
-  "review": string | null,
-  "transactionDocument": {
-    "id": string,
-    "trxNumber": string,
-    "docType": string,
-    "docUrl": string,
-    "createdAt": string,
-    "createdBy": string,
-    "updatedAt": string,
-    "updatedBy": string | null
+  id: string,
+  trxNumber: string,
+  customerId: string,
+  branchId: string,
+  totalPrice: number,
+  discountPrice: number,
+  promoPrice: number | null,
+  finalPrice: number,
+  trxDate: string,
+  status: number,
+  paymentAt: string | null,
+  rating: number,
+  review: string | null,
+  transactionDocument: {
+    id: string,
+    trxNumber: string,
+    docType: string,
+    docUrl: string,
+    createdAt: string,
+    createdBy: string,
+    updatedAt: string,
+    updatedBy: string | null
   }
 }
 
 interface TransactionReviewImage {
-  "id": string,
-  "createdAt": string,
-  "createdBy": string,
-  "updatedAt": string,
-  "updatedBy": string | null,
-  "trxNumber": string,
-  "docType": "PAYMENT" | "BEFORE" | "AFTER",
-  "docUrl": string
+  id: string,
+  createdAt: string,
+  createdBy: string,
+  updatedAt: string,
+  updatedBy: string | null,
+  trxNumber: string,
+  docType: "PAYMENT" | "BEFORE" | "AFTER",
+  docUrl: string
+  tempFile?: File;
 }
 
 const downloadImage = (blob: string, fileName: string) => {
@@ -95,8 +101,6 @@ const exportAsImage = async (element: HTMLElement, filename: string) => {
     const elementHeight = element.scrollHeight;
     const offset = window.outerHeight - window.innerHeight;
 
-    console.log(elementHeight, offset, elementHeight + offset);
-
     const canvas = await html2canvas(element, {
       allowTaint: true,
       useCORS: true,
@@ -111,6 +115,7 @@ const exportAsImage = async (element: HTMLElement, filename: string) => {
   }
 }
 
+
 export default function PhotoSection({
   transaction,
   customer,
@@ -118,17 +123,28 @@ export default function PhotoSection({
   cleaningStaffList = [],
   blowerStaffList = [],
   spkItems = [],
-  totals
+  totals,
+  readonly = false
 }: PhotoSectionProps) {
   const { toast } = useToast();
 
   const [showInvoice, setShowInvoice] = useState(false);
   const [isDownloadInvoice, setIsDownloadInvoice] = useState(false);
 
+  const [loading, setLoading] = useState(true);
+  const [submitLoading, setSubmitLoading] = useState(false)
+
   const [transactionReview, setTransactionReview] = useState<TransactionReview | null>(null);
   const [paymentImage, setPaymentImage] = useState<TransactionReviewImage | null>(null);
   const [beforeImages, setBeforeImages] = useState<TransactionReviewImage[]>([]);
   const [afterImages, setAfterImages] = useState<TransactionReviewImage[]>([]);
+
+  const [originalPaymentImage, setOriginalPaymentImage] = useState<TransactionReviewImage | null>(null);
+  const [originalBeforeImages, setOriginalBeforeImages] = useState<TransactionReviewImage[]>([]);
+  const [originalAfterImages, setOriginalAfterImages] = useState<TransactionReviewImage[]>([]);
+
+  // reload indicator
+  const [reload, setReload] = useState(false)
 
   // Format date with time
   const formatDateTime = (dateString: string) => {
@@ -186,28 +202,166 @@ export default function PhotoSection({
       catch (error) {
         console.error("Error fetching transaction review:", error);
       }
+
     };
 
     const fetchTransactionReviewImages = async (type: "PAYMENT" | "BEFORE" | "AFTER") => {
+      setLoading(true)
+
       try {
         const result = await api.get(`/transaction/${transaction.id}/documents?docType=${type}`);
         const images = result.data as TransactionReviewImage[];
 
         if (type === "PAYMENT") {
           setPaymentImage(images[0] || null);
+          setOriginalPaymentImage(images[0] || null);
         } else if (type === "BEFORE") {
           setBeforeImages(images);
+          setOriginalBeforeImages(images);
         } else if (type === "AFTER") {
           setAfterImages(images);
+          setOriginalAfterImages(images);
         }
       }
       catch (error) {
         console.error(`Error fetching transaction review images (${type}):`, error);
       }
     };
-  })
+
+    if (!transaction || !transaction.id) return;
+
+    const promises = [
+      fetchTransactionReview(),
+      fetchTransactionReviewImages("PAYMENT"),
+      fetchTransactionReviewImages("BEFORE"),
+      fetchTransactionReviewImages("AFTER"),
+    ]
+
+    Promise.all(promises)
+      .then((e) => {
+        setLoading(false)
+      })
+      .catch(error => {
+        console.error("Error fetching transaction review data:", error);
+      }).finally(() => {
+        setLoading(false);
+      })
+  }, [reload]);
 
 
+  const handleUpdate = async (e: React.FormEvent) => {
+    // compare original and current images
+    e.preventDefault();
+
+    // compare payment image
+    const imagesToUpload: TransactionReviewImage[] = [];
+    const imagesToDelete: string[] = [];
+    if (originalPaymentImage?.docUrl !== paymentImage?.docUrl) {
+      if (paymentImage) {
+        imagesToUpload.push(paymentImage);
+      }
+      if (originalPaymentImage) {
+        imagesToDelete.push(originalPaymentImage.id);
+      }
+    }
+
+    // compare before images by unique ID
+    // Find images to delete (in original but not in current)
+    originalBeforeImages.forEach((origImg) => {
+      if (origImg.id && !beforeImages.some((img) => img.id === origImg.id)) {
+        imagesToDelete.push(origImg.id);
+      }
+    });
+
+    // Find images to upload (in current but not in original)
+    beforeImages.forEach((img) => {
+      if (!img.id || !originalBeforeImages.some((origImg) => origImg.id === img.id)) {
+        imagesToUpload.push(img);
+      }
+    });
+    //   if (!originalBeforeImages.find((oImg) => oImg.id === img.id)) {
+    //     imagesToUpload.push(img);
+    //   }
+
+    //   if (originalBeforeImages.find((oImg) => oImg.id === img.id)) {
+    //     imagesToDelete.push(img.id);
+    //   }
+    // });
+
+    // compare after images by unique ID
+    // Find images to delete (in original but not in current)
+    originalAfterImages.forEach((origImg) => {
+      if (origImg.id && !afterImages.some((img) => img.id === origImg.id)) {
+        imagesToDelete.push(origImg.id);
+      }
+    });
+
+    // Find images to upload (in current but not in original)
+    afterImages.forEach((img) => {
+      if (!img.id || !originalAfterImages.some((origImg) => origImg.id === img.id)) {
+        imagesToUpload.push(img);
+      }
+    });
+
+    // afterImages.forEach((img) => {
+    //   if (!originalAfterImages.find((oImg) => oImg.id === img.id)) {
+    //     imagesToUpload.push(img);
+    //   }
+
+    //   if (originalAfterImages.find((oImg) => oImg.id === img.id)) {
+    //     imagesToDelete.push(img.id);
+    //   }
+    // });
+
+
+    const promises: Promise<any>[] = [];
+
+    console.log(imagesToDelete, imagesToUpload);
+
+
+    for (const file of imagesToUpload) {
+      const formData = new FormData();
+      formData.append("file", file.tempFile as File);
+      formData.append("docType", file.docType);
+
+      const newUploadPromise = apiFormdata.post(`/transaction/${transaction.id}/documents`, formData);
+      promises.push(newUploadPromise);
+    }
+
+    for (const id of imagesToDelete) {
+      const deletePromise = await api.delete(`/transaction/documents/${id}`);
+      promises.push(deletePromise);
+    }
+
+    try {
+      setSubmitLoading(true)
+      await Promise.all(promises);
+      toast({
+        title: "Success",
+        description: "Berhasil mengupdate dokumen.",
+        variant: "default",
+      });
+    }
+    catch (error) {
+      toast({
+        title: "Error",
+        description: "Terjadi kesalahan saat mengupdate dokumen.",
+        variant: "destructive",
+      });
+    }
+    finally {
+      setReload(!reload)
+      setSubmitLoading(false)
+    }
+  }
+
+  const imageRowCount = Math.ceil(Math.max(beforeImages.length + 1, afterImages.length + 1) / 3)
+
+  if (loading) {
+    return (
+      <p className="text-center py-8">Memuat data...</p>
+    );
+  }
 
   return <>
     <div className="space-y-8">
@@ -228,11 +382,26 @@ export default function PhotoSection({
         <div className="flex flex-1">
           <div className="mr-8 flex flex-1">
             <AttachmentImage
-              src={"https://placehold.co/400x500"}
+              readonly={readonly}
+              src={paymentImage?.docUrl}
               className="object-cover w-full h-full min-w-[400px] mr-4"
               width={200}
               height={200}
               label="Foto Bukti Transfer"
+              onChange={(file: File) => {
+                setPaymentImage({
+                  id: "",
+                  createdAt: "",
+                  createdBy: "",
+                  docType: "PAYMENT",
+                  trxNumber: transaction.trxNumber,
+                  docUrl: URL.createObjectURL(file),
+                  updatedAt: "",
+                  updatedBy: null,
+                  tempFile: file
+                })
+              }}
+              onDelete={() => setPaymentImage(null)}
             />
           </div>
 
@@ -242,27 +411,35 @@ export default function PhotoSection({
               <Label className="w-[40%] font-semibold">Rating</Label>
               <div className="flex items-center space-x-1">
                 {/* create placeholder stars */}
-                <div className="flex space-x-1">
-                  <StarRating
-                    readonly
-                    totalStars={5}
-                    initialSelected={2}
-                    onChange={(index) => console.log(index)}
-                  />
-                </div>
+                {
+                  Number(transactionReview?.rating) > 0 ? (
+                    <div className="flex space-x-1">
+                      <StarRating
+                        readonly
+                        totalStars={5}
+                        initialSelected={transactionReview?.rating || 0}
+                        onChange={(index) => console.log(index)}
+                      />
+                    </div>
+                  ) : (
+                    <span className="text-gray-500">Belum ada rating</span>
+                  )
+                }
               </div>
             </div>
 
             {/* payment date */}
-            {/* todo: dummy random */}
             {true && (
               <div className="flex items-center space-x-2 mb-4">
                 <Label className="w-[40%] font-semibold">Tanggal Pembayaran</Label>
                 <div className="flex items-center space-x-1">
-                  {/* create placeholder stars */}
-                  <div className="flex space-x-1">
-                    {formatDateTime("2023-10-10T10:10:10Z")}
-                  </div>
+                  {
+                    transactionReview?.paymentAt ? (
+                      <span>{formatDateTime(transactionReview.paymentAt)}</span>
+                    ) : (
+                      <span className="text-gray-500">Belum ada pembayaran</span>
+                    )
+                  }
                 </div>
               </div>
             )}
@@ -271,10 +448,15 @@ export default function PhotoSection({
             <div className="flex flex-1 justify-center space-x-2">
               <Label className="w-[40%] font-semibold">Catatan</Label>
               <div className="flex-1 flex">
-                <Textarea
-                  className="flex flex-1"
-                  placeholder="Tulis catatan untuk transaksi ini"
-                />
+                {
+                  transactionReview?.review ? (
+                    <Textarea
+                      className="flex flex-1"
+                      value={transactionReview?.review || "Belum ada catatan"}
+                      disabled
+                    />)
+                    : (<span className="text-gray-500">Belum ada catatan</span>)
+                }
               </div>
             </div>
           </div>
@@ -289,82 +471,182 @@ export default function PhotoSection({
       </div>
 
       {/* list bukti pengerjaan per product */}
-      <div className="flex flex-col gap-4">
-        {[1, 2, 4].map((item, index) => (
-          <div className="flex" key={index}>
-            {/* before */}
-            <div className="flex-1 flex flex-col mr-4 overflow-x-auto">
-              <h3 className="px-1 font-semibold">{`${index + 1} - Product 1`}</h3>
-              <p className="mt-4 font-semibold text-gray-500">Foto Sebelum</p>
-
-              {/* 3 product photos */}
-              <div className="flex mt-2">
-                <AttachmentImage
-                  src="https://placehold.co/400x500"
-                  className="flex-1 aspect-square min-w-[200px] mr-6"
-                  label="Foto Depan"
-                  width={200}
-                  height={200}
-                />
-
-                <AttachmentImage
-                  // src="https://placehold.co/400x500"
-                  className="flex-1 aspect-square min-w-[200px] mr-6 "
-                  label="Foto Samping"
-                />
-
-                <AttachmentImage
-                  // src="https://placehold.co/400x500"
-                  className="flex-1 aspect-square min-w-[200px] mr-6"
-                  width={200}
-                  height={200}
-                  label="Foto Detail"
-                />
-              </div>
-
-            </div>
-
-            {/* divider */}
-            <div className="w-0 border-l mx-4"></div>
-
-
-            {/* after */}
-            <div className="flex-1 flex flex-col mr-4 overflow-x-auto">
-              <h3 className="px-1 font-semibold">{`${index + 1} - Product 1`}</h3>
-              <p className="mt-4 font-semibold text-gray-500">Foto Sebelum</p>
-
-              {/* 3 product photos */}
-              <div className="flex mt-2">
-                <AttachmentImage
-                  src="https://placehold.co/400x500"
-                  className="flex-1 aspect-square min-w-[200px] mr-6"
-                  label="Foto Depan"
-                  width={200}
-                  height={200}
-                />
-
-                <AttachmentImage
-                  // src="https://placehold.co/400x500"
-                  className="flex-1 aspect-square min-w-[200px] mr-6 "
-                  label="Foto Samping"
-                />
-
-                <AttachmentImage
-                  // src="https://placehold.co/400x500"
-                  className="flex-1 aspect-square min-w-[200px] mr-6"
-                  width={200}
-                  height={200}
-                  label="Foto Detail"
-                />
-              </div>
-
-            </div>
+      <div className="flex flex-col gap-2">
+        <div className="flex">
+          <div className="flex-1 flex flex-col overflow-x-auto">
+            <h4 className="font-semibold mb-2 !text-mainDark dark:!text-mainColor">Sebelum</h4>
           </div>
-        ))}
+          <div className="flex-1 flex flex-col mr-4 overflow-x-auto ml-4">
+            <h4 className="font-semibold mb-2 !text-mainDark dark:!text-mainColor">Sesudah</h4>
+          </div>
+        </div>
+
+        {
+          [0].map(() => {
+            let beforePlaceholderUsed = false;
+            let afterPlaceholderUsed = false;
+
+            {
+              return Array.from({ length: imageRowCount }).map((_, rowIndex) => {
+                const startIndex = rowIndex * 3;
+                const endIndex = startIndex + 3;
+
+                const beforeRowImages = beforeImages.slice(startIndex, endIndex);
+                const afterRowImages = afterImages.slice(startIndex, endIndex);
+
+                return (
+                  <div className="flex" key={rowIndex}>
+                    <div className="flex-1 flex flex-col overflow-x-auto">
+                      <div className="flex mt-2">
+                        {[0, 1, 2].map((image, index) => {
+                          const img = beforeRowImages[index];
+
+                          if (!img && !readonly) {
+                            if (!beforePlaceholderUsed) {
+                              beforePlaceholderUsed = true;
+                              return (<AttachmentImage
+                                readonly={readonly}
+                                key={`before-${startIndex + index}`}
+                                className="flex-1 aspect-square min-w-[200px] mr-6"
+                                label={`Upload Foto Sebelum`}
+                                width={200}
+                                height={200}
+                                onChange={(file: File) => {
+                                  const newImage: TransactionReviewImage = {
+                                    id: "",
+                                    createdAt: "",
+                                    createdBy: "",
+                                    docType: "BEFORE",
+                                    trxNumber: transaction.trxNumber,
+                                    docUrl: URL.createObjectURL(file),
+                                    updatedAt: "",
+                                    updatedBy: null,
+                                    tempFile: file
+                                  };
+
+                                  const newImages = [...beforeImages];
+                                  newImages[startIndex + index] = newImage;
+                                  setBeforeImages(newImages);
+                                }}
+                                onDelete={() => {
+                                  const newImages = beforeImages.filter((_, i) => i !== startIndex + index);
+                                  setBeforeImages(newImages);
+                                }}
+                              />)
+                            }
+                            return (
+                              <div className="flex-1 aspect-square min-w-[200px] mr-6"></div>
+                            );
+                          }
+
+                          return (
+                            <AttachmentImage
+                              readonly={readonly}
+                              key={`before-${startIndex + index}`}
+                              src={`${beforeRowImages[index]?.docUrl}`}
+                              className="flex-1 aspect-square min-w-[200px] mr-6"
+                              label={`Foto Sebelum`}
+                              width={200}
+                              height={200}
+                              onDelete={() => {
+                                const newImages = beforeImages.filter((_, i) => i !== startIndex + index);
+                                setBeforeImages(newImages);
+                              }}
+                            />
+                          )
+                        })}
+                      </div>
+                    </div>
+
+                    <div className="w-0 border-l mx-4"></div>
+
+                    <div className="flex-1 flex flex-col mr-4 overflow-x-auto">
+                      <div className="flex mt-2">
+                        {[0, 1, 2].map((image, index) => {
+                          const img = afterRowImages[index];
+                          if (!img && !readonly) {
+                            if (!afterPlaceholderUsed) {
+                              afterPlaceholderUsed = true;
+                              return (<AttachmentImage
+                                readonly={readonly}
+                                key={`after-${startIndex + index}`}
+                                className="flex-1 aspect-square min-w-[200px] mr-6"
+                                label={`Upload Foto Sesudah`}
+                                width={200}
+                                height={200}
+                                onChange={(file: File) => {
+                                  const newImage: TransactionReviewImage = {
+                                    id: "",
+                                    createdAt: "",
+                                    createdBy: "",
+                                    docType: "AFTER",
+                                    trxNumber: transaction.trxNumber,
+                                    docUrl: URL.createObjectURL(file),
+                                    updatedAt: "",
+                                    updatedBy: null,
+                                    tempFile: file
+                                  };
+
+                                  const newImages = [...afterImages];
+                                  newImages[startIndex + index] = newImage;
+                                  setAfterImages(newImages);
+                                }}
+                                onDelete={() => {
+                                  const newImages = afterImages.filter((_, i) => i !== startIndex + index);
+                                  setAfterImages(newImages);
+                                }}
+                              />)
+                            }
+                            return (
+                              <div className="flex-1 aspect-square min-w-[200px] mr-6"></div>
+                            );
+                          }
+
+                          return (
+                            <AttachmentImage
+                              readonly={readonly}
+                              key={`before-${startIndex + index}`}
+                              src={afterRowImages[index]?.docUrl}
+                              className="flex-1 aspect-square min-w-[200px] mr-6"
+                              label={`Foto Sesudah`}
+                              width={200}
+                              height={200}
+                              onDelete={() => {
+                                const newImages = afterImages.filter((_, i) => i !== startIndex + index);
+                                setAfterImages(newImages);
+                              }}
+                            />
+                          )
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })
+            }
+          })
+        }
+
       </div>
 
       {/*  */}
-      <div className=""></div>
+      {
+        !readonly && (
+          <>
+            <div className="flex justify-end mt-6 gap-2">
+              <Button
+                loading={submitLoading}
+                type="submit"
+                variant="main"
+                onClick={handleUpdate}
+                disabled={submitLoading}
+              >
+                Update Data
+              </Button>
+            </div>
+          </>
+        )
+      }
     </div>
 
     {/* center using flex */}
@@ -377,7 +659,7 @@ export default function PhotoSection({
                 setShowInvoice(false);
               }
             }}>
-              <div id="invoice" className="invoice w-4/6 min-w-xl max-h-screen overflow-auto">
+              <div id="invoice" className="invoice w-5/6 min-w-xl max-h-screen overflow-auto">
                 {/* header */}
                 <div className="bg-mainColor p-4 flex items-center justify-between rounded-t-lg">
                   <h2 className="font-semibold text-mainDark">Invoice</h2>
@@ -456,8 +738,8 @@ export default function PhotoSection({
                           {/* cleaning list */}
                           {cleaningStaffList.length > 0 ? (
                             cleaningStaffList.map((staff) => (
-                              <div key={staff.id} className="bg-mainColor/15 px-4 py-1 mx-1 rounded-full flex justify-center items-center text-center">
-                                {staff.fullname}
+                              <div key={staff.lookupKey} className="bg-mainColor/15 px-4 py-1 mx-1 rounded-full flex justify-center items-center text-center">
+                                {staff.lookupValue}
                               </div>
                             ))
                           ) : (

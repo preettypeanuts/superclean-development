@@ -1,7 +1,7 @@
 import { Button } from "@ui-components/components/ui/button";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTrigger } from "@ui-components/components/ui/dialog";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FaEye } from "react-icons/fa";
 import { FaX } from "react-icons/fa6";
 
@@ -13,6 +13,26 @@ interface AttachmentImageProps {
   src?: string;
   width?: number;
   height?: number;
+  onChange?: (file: File) => void;
+  onDelete?: () => void;
+  readonly?: boolean
+}
+
+const useImageLoaded = (): [React.RefObject<HTMLImageElement>, boolean, () => void] => {
+  const [loaded, setLoaded] = useState(false)
+  const ref = useRef() as React.RefObject<HTMLImageElement>
+
+  const onLoad = () => {
+    setLoaded(true)
+  }
+
+  useEffect(() => {
+    if (ref.current && ref.current.complete) {
+      onLoad()
+    }
+  })
+
+  return [ref, loaded, onLoad]
 }
 
 function AttachmentImage({
@@ -22,13 +42,17 @@ function AttachmentImage({
   allowUpload = true,
   src = "",
   width = 200,
-  height = 200
+  height = 200,
+  onChange = () => { },
+  onDelete = () => { },
+  readonly = false
 }: AttachmentImageProps) {
   const [imageSrc, setImageSrc] = useState<string>(src);
   const [showPreview, setShowPreview] = useState<boolean>(false);
 
+  const [ref, isLoaded, onLoad] = useImageLoaded()
+
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(event.target.files);
     const file = event.target.files?.[0];
     if (file) {
       // Set file URI to preview image
@@ -36,9 +60,14 @@ function AttachmentImage({
       // @ts-ignore
       src = fileUrl;
       setImageSrc(fileUrl);
-
+      onChange(file);
     }
   };
+
+  useEffect(() => {
+    setImageSrc(src);
+  }, [src]);
+
 
   return (
     <>
@@ -48,7 +77,10 @@ function AttachmentImage({
           {imageSrc ? (
             <div className="flex items-center justify-center h-full">
               <Image
-                src={imageSrc}
+                ref={ref}
+                onLoad={onLoad}
+                onError={onLoad}
+                src={"https://placehold.co/400x400"}
                 alt={label}
                 width={width}
                 height={height}
@@ -56,18 +88,26 @@ function AttachmentImage({
               />
 
               {/* preview hover */}
-              <div className="invisible group-hover:visible flex absolute inset-0 bg-black/30 items-center justify-center text-white text-sm font-semibold cursor-pointer"
-                onClick={() => setShowPreview(true)}
-              >
-                <span>Lihat Foto</span>
-                <FaEye className="ml-1" />
-              </div>
+              {
+                !isLoaded ? (
+                  <div className="flex absolute inset-0 bg-black/30 items-center justify-center text-white text-sm font-semibold cursor-pointer">
+                    <span>Loading...</span>
+                  </div>
+                ) : (
+                    <div className="invisible group-hover:visible flex absolute inset-0 bg-black/30 items-center justify-center text-white text-sm font-semibold cursor-pointer"
+                      onClick={() => setShowPreview(true)}
+                    >
+                      <span>Lihat Foto</span>
+                      <FaEye className="ml-1" />
+                    </div>
+                )
+              }
             </div>
           ) : (
             <div className="flex items-center justify-center h-full">
               <p className="text-center">{label}</p>
 
-              {allowUpload && (
+                {allowUpload && !readonly && (
                 <input type="file" accept="image/*" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer aspect-square"
                   onChange={handleFileChange} />
               )}
@@ -75,13 +115,14 @@ function AttachmentImage({
           )}
 
           {/* delete button */}
-          {imageSrc && (
+          {imageSrc && isLoaded && !readonly && (
             <Button
               variant="destructive"
               size="icon"
               className="absolute -translate-y-1/2 translate-x-1/2 top-2 right-0 rounded-full bg-white border border-gray-300 hover:bg-gray-100 text-red-300 hover:text-red-500"
               onClick={() => {
                 setImageSrc("");
+                onDelete();
                 // onUpload(null);
               }}
             >
@@ -89,25 +130,27 @@ function AttachmentImage({
               <FaX />
             </Button>
           )}
-        </div>
+        </div >
 
 
-      </div>
+      </div >
 
       {/* preview modal */}
-      {showPreview && (
-        <Dialog open={showPreview} onOpenChange={setShowPreview} >
-          <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
-            <Image
-              src={imageSrc}
-              alt={label}
-              width={width}
-              height={height}
-              className="w-full h-auto object-cover"
-            />
-          </DialogContent>
-        </Dialog>
-      )}
+      {
+        showPreview && (
+          <Dialog open={showPreview} onOpenChange={setShowPreview} >
+            <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+              <Image
+                src={imageSrc}
+                alt={label}
+                width={width}
+                height={height}
+                className="w-full h-auto object-cover"
+              />
+            </DialogContent>
+          </Dialog>
+        )
+      }
     </>
   );
 }

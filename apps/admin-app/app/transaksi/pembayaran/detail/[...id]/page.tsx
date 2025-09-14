@@ -788,7 +788,7 @@ export default function PembayaranDetail() {
               locationLabels={locationLabels}
               cleaningStaffList={selectedLockedCleaningStaffList}
               blowerStaffList={selectedLockedBlowerStaffList}
-              spkItems={[]}
+              spkItems={spkItems}
               totals={{
                 totalPrice: totals.totalPrice,
                 totalPromo: totals.totalPromo,
