@@ -8,7 +8,6 @@ export default async function Index() {
     <main className="pb-[20vh] space-y-7">
       <HomeBanner />
       <OngoingTask />
-      <HistoryTask />
       <TotalRating />
     </main>
   );
