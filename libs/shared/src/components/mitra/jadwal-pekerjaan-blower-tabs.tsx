@@ -95,7 +95,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
   };
 
   return (
-    <Link href={`/jadwal-pekerjaan/${task.trxNumber}`}>
+    <Link href={`/jadwal-pekerjaan/${encodeURIComponent(task.trxNumber)}`}>
       <div className="w-full bg-white p-3 rounded-lg border hover:shadow-md transition-shadow cursor-pointer">
         <div className="grid grid-cols-5 pb-3 border-b border-bottom-dash">
           <div className="col-span-4">
@@ -188,11 +188,11 @@ export const JadwalPekerjaanBlowerTabs = () => {
   const [pengantaranTasks, setPengantaranTasks] = useState<BlowerTaskData[]>([]);
   const [pengambilanTasks, setPengambilanTasks] = useState<BlowerTaskData[]>([]);
   const [riwayatTasks, setRiwayatTasks] = useState<BlowerTaskData[]>([]);
-  
+
   const [loadingPengantaran, setLoadingPengantaran] = useState(true);
   const [loadingPengambilan, setLoadingPengambilan] = useState(false);
   const [loadingRiwayat, setLoadingRiwayat] = useState(false);
-  
+
   const [errorPengantaran, setErrorPengantaran] = useState<string | null>(null);
   const [errorPengambilan, setErrorPengambilan] = useState<string | null>(null);
   const [errorRiwayat, setErrorRiwayat] = useState<string | null>(null);
@@ -204,7 +204,7 @@ export const JadwalPekerjaanBlowerTabs = () => {
       setErrorPengantaran(null);
 
       const response: BlowerApiResponse = await api.get('/transaction/page/spk/blower?tab=1&page=1&limit=10');
-      
+
       if (response && response.status === "success" && response.data) {
         // Handle the nested array structure [BlowerTaskData[], number]
         const taskData = response.data[0] || [];
@@ -228,7 +228,7 @@ export const JadwalPekerjaanBlowerTabs = () => {
       setErrorPengambilan(null);
 
       const response: BlowerApiResponse = await api.get('/transaction/page/spk/blower?tab=2&page=1&limit=10');
-      
+
       if (response && response.status === "success" && response.data) {
         const taskData = response.data[0] || [];
         setPengambilanTasks(taskData);
@@ -251,7 +251,7 @@ export const JadwalPekerjaanBlowerTabs = () => {
       setErrorRiwayat(null);
 
       const response: BlowerApiResponse = await api.get('/transaction/page/spk/blower?tab=3&page=1&limit=10');
-      
+
       if (response && response.status === "success" && response.data) {
         const taskData = response.data[0] || [];
         setRiwayatTasks(taskData);
@@ -284,8 +284,8 @@ export const JadwalPekerjaanBlowerTabs = () => {
   return (
     <div className="">
       <main className="flex items-center justify-center mx-5 -mt-12">
-        <Tabs 
-          defaultValue="pengantaran" 
+        <Tabs
+          defaultValue="pengantaran"
           className="flex flex-col items-center justify-center w-full"
           onValueChange={handleTabChange}
         >

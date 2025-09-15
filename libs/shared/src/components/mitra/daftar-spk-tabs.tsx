@@ -98,7 +98,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
   };
 
   return (
-    <Link href={`/detail-spk/${task.id}`}>
+    <Link href={`/detail-spk/${encodeURIComponent(task.id)}`}>
       <div className="w-full bg-white p-3 rounded-lg border hover:shadow-md transition-shadow cursor-pointer">
         <div className="grid grid-cols-5 pb-3 border-b border-bottom-dash">
           <div className="col-span-4">
@@ -202,7 +202,7 @@ export const DaftarSPKTabs = () => {
       setErrorOngoing(null);
 
       const response = await api.get('/transaction/page/spk/ongoing?page=1&limit=10');
-      
+
       if (response && response.status) {
         // Handle nested array structure as shown in original code
         const taskData = response.data?.data || [];
@@ -233,7 +233,7 @@ export const DaftarSPKTabs = () => {
 
       // Fetch completed tasks from the correct endpoint
       const response = await api.get('/transaction/page/spk/complete?page=1&limit=10');
-      
+
       if (response && response.status) {
         const taskData = response.data?.data || [];
         if (Array.isArray(taskData) && taskData.length > 0) {
@@ -269,8 +269,8 @@ export const DaftarSPKTabs = () => {
   return (
     <div>
       <main className="flex items-center justify-center mx-5 !-mt-12">
-        <Tabs 
-          defaultValue="ongoing" 
+        <Tabs
+          defaultValue="ongoing"
           className="flex flex-col items-center justify-center w-full"
           onValueChange={handleTabChange}
         >
