@@ -1,67 +1,39 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
-import { Wrapper } from "@shared/components/Wrapper";
+import { DialogTitle } from "@radix-ui/react-dialog";
 import { Header } from "@shared/components/Header";
-import { Label } from "libs/ui-components/src/components/ui/label";
+import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
+import { Wrapper } from "@shared/components/Wrapper";
+import { useCategoryStore, useServiceLookup } from "@shared/utils/useCategoryStore";
+import { DatePicker } from "@ui-components/components/date-picker";
+import MultiSelect from "@ui-components/components/multi-select";
+import { RupiahInput } from "@ui-components/components/rupiah-input";
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTrigger } from "@ui-components/components/ui/dialog";
+import { RadioGroup, RadioGroupItem } from "@ui-components/components/ui/radio-group";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@ui-components/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@ui-components/components/ui/tabs";
+import { useToast } from "@ui-components/hooks/use-toast";
+import { PromoResponse, SPKItem } from "apps/admin-app/app/transaksi/spk/baru/page";
+import PhotoSection from "apps/admin-app/app/transaksi/spk/photoSection";
+import { DialogWrapper } from "libs/ui-components/src/components/dialog-wrapper";
+import { SPKTableDetail } from "libs/ui-components/src/components/spk-table-detail";
 import { Button } from "libs/ui-components/src/components/ui/button";
 import { Input } from "libs/ui-components/src/components/ui/input";
+import { Label } from "libs/ui-components/src/components/ui/label";
 import { Textarea } from "libs/ui-components/src/components/ui/textarea";
 import { api } from "libs/utils/apiClient";
-import { TbArrowBack, TbArrowBigRightFilled, TbSignRight } from "react-icons/tb";
-import { formatDate, formatDateInput } from "libs/utils/formatDate";
+import { formatDateInput } from "libs/utils/formatDate";
 import { formatRupiah } from "libs/utils/formatRupiah";
-import { SPKTableDetail } from "libs/ui-components/src/components/spk-table-detail";
-import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@ui-components/components/ui/tabs";
-import { PiWarningCircleFill } from "react-icons/pi";
 import { useTransactionHistory } from "libs/utils/useTransactionHistory";
-import { useTransactionDetail } from "libs/utils/useTransactionDetail";
-import { LuPlus } from "react-icons/lu";
-import MultiSelect from "@ui-components/components/multi-select";
-import { PromoResponse, SPKItem } from "apps/admin-app/app/transaksi/spk/baru/page";
-import { StarRating } from "@ui-components/components/star-rating";
-import { AttachmentImage } from "@ui-components/components/attachment-image";
-import { RupiahInput } from "@ui-components/components/rupiah-input";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@ui-components/components/ui/select";
-import { RadioGroup, RadioGroupItem } from "@ui-components/components/ui/radio-group";
-import { DialogWrapper } from "libs/ui-components/src/components/dialog-wrapper";
-import { useCategoryStore, useServiceLookup } from "@shared/utils/useCategoryStore";
-import { useToast } from "@ui-components/hooks/use-toast";
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTrigger } from "@ui-components/components/ui/dialog";
-import { IoMdTrash } from "react-icons/io";
-import { DialogTitle } from "@radix-ui/react-dialog";
-import html2canvas from "html2canvas";
-import { DatePicker } from "@ui-components/components/date-picker";
 import { AlertTriangle } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 import { BsInfoCircleFill } from "react-icons/bs";
-import PhotoSection from "apps/admin-app/app/transaksi/spk/photoSection";
+import { IoMdTrash } from "react-icons/io";
+import { LuPlus } from "react-icons/lu";
+import { PiWarningCircleFill } from "react-icons/pi";
+import { TbArrowBack, TbArrowBigRightFilled } from "react-icons/tb";
 
-
-function Invoice() {
-  return <Dialog open={true} onOpenChange={() => { }} >
-    <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
-      {/* header */}
-      <div className="bg-mainColor/15 p-4 flex items-center justify-between">
-        <h2 className="text-lg font-semibold">Invoice</h2>
-      </div>
-
-      {/* transaction summary */}
-      <div className="">
-        {/* left content */}
-        {/* right content */}
-      </div>
-    </DialogContent>
-  </Dialog>
-}
-
-const statusMapping = {
-  3: "Menunggu Pembayaran",
-  4: "Sudah DiBayar",
-  5: "Selesai",
-  6: "Dikerjakan Kembali"
-};
 
 // Updated Transaction interface
 export interface Transaction {
@@ -593,7 +565,7 @@ export default function TransactionDetail() {
           pickupDate: undefined,
         };
       });
-    } else if (selectedStaffIds.length > 0 && transaction?.deliveryDate == null) {
+    } else if (selectedStaffIds.length > 0) {
       const defaultDate = transaction?.trxDate || new Date().toISOString();
       setTransaction(prev => {
         if (!prev) return null;
@@ -892,6 +864,12 @@ export default function TransactionDetail() {
     );
   }
 
+  function formatTime(dateString: string) {
+    const date = new Date(dateString);
+    // make only format with hh:mm:ss
+    return date.toString().split(' ')[4];
+  }
+
   return (
     <>
       <Breadcrumbs label={`Ubah SPK`} />
@@ -989,6 +967,20 @@ export default function TransactionDetail() {
                     <div className="flex items-center space-x-4">
                       <Label className="w-[40%] font-semibold">Tanggal Pengerjaan</Label>
                       <DatePicker
+                        withTime
+                        defaultTime={transaction?.trxDate ? `${formatTime(transaction.trxDate)}` : "08:00"}
+                        onChangeTime={(time) => {
+                          if (time && transaction?.trxDate) {
+                            const date = new Date(transaction.trxDate);
+                            const [hours, minutes] = time.split(':').map(Number);
+                            date.setHours(hours, minutes);
+
+                            setTransaction((prev) => ({
+                              ...prev,
+                              trxDate: date.toISOString()
+                            } as Transaction));
+                          }
+                        }}
                         startFrom={new Date(transaction?.trxDate)}
                         value={transaction.trxDate ? new Date(transaction.trxDate) : null}
                         onChange={(date) => {
@@ -1030,6 +1022,20 @@ export default function TransactionDetail() {
                             <Label className="w-[40%] font-semibold">Tanggal Pengantaran</Label>
                             <DatePicker
                               startFrom={new Date(transaction?.trxDate)}
+                              withTime
+                              defaultTime={transaction?.deliveryDate ? `${formatTime(transaction.deliveryDate)}` : formatTime(transaction?.trxDate || new Date().toISOString())}
+                              onChangeTime={(time) => {
+                                if (time && transaction?.deliveryDate) {
+                                  const date = new Date(transaction.deliveryDate);
+                                  const [hours, minutes] = time.split(':').map(Number);
+                                  date.setHours(hours, minutes);
+
+                                  setTransaction(prev => ({
+                                    ...prev,
+                                    deliveryDate: date.toISOString()
+                                  } as Transaction));
+                                }
+                              }}
                               value={transaction.deliveryDate ? new Date(transaction.deliveryDate) : new Date(transaction.trxDate)}
                               onChange={(date) => {
                                 if (date) {
@@ -1045,6 +1051,8 @@ export default function TransactionDetail() {
                           <div className="flex items-center space-x-4">
                             <Label className="w-[40%] font-semibold">Tanggal Pengambilan</Label>
                             <DatePicker
+                              withTime
+                              defaultTime={transaction?.pickupDate ? `${formatTime(transaction.pickupDate)}` : formatTime(transaction?.trxDate || new Date().toISOString())}
                               startFrom={new Date(transaction?.trxDate)}
                               value={transaction.pickupDate ? new Date(transaction.pickupDate) : new Date(transaction.trxDate)}
                               onChange={(date) => {
@@ -1052,6 +1060,18 @@ export default function TransactionDetail() {
                                   setTransaction(prev => ({
                                     ...prev,
                                     pickupDate: formatDateInput(date.toISOString())
+                                  } as Transaction));
+                                }
+                              }}
+                              onChangeTime={(time) => {
+                                if (time) {
+                                  const date = new Date(transaction.pickupDate || transaction.trxDate);
+                                  const [hours, minutes] = time.split(':').map(Number);
+                                  date.setHours(hours, minutes);
+
+                                  setTransaction(prev => ({
+                                    ...prev,
+                                    pickupDate: date.toISOString()
                                   } as Transaction));
                                 }
                               }}

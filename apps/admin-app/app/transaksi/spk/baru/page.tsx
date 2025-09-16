@@ -1,31 +1,30 @@
 "use client";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { Header } from "@shared/components/Header";
 import { Wrapper } from "@shared/components/Wrapper";
 import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
-import { Input } from "libs/ui-components/src/components/ui/input";
-import { Label } from "libs/ui-components/src/components/ui/label";
-import { Button } from "libs/ui-components/src/components/ui/button";
-import { Textarea } from "libs/ui-components/src/components/ui/textarea";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem, SelectGroup, SelectLabel } from "libs/ui-components/src/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "libs/ui-components/src/components/ui/tabs";
-import { useToast } from "libs/ui-components/src/hooks/use-toast";
-import { api } from "libs/utils/apiClient";
 import { useLocationData } from "@shared/utils/useLocationData";
-import { PiWarningCircleFill } from "react-icons/pi";
-import { LuPlus } from "react-icons/lu";
-import MultiSelect from "libs/ui-components/src/components/multi-select";
-import { formatDateInput } from "libs/utils/formatDate";
-import { SPKTableDetail } from "libs/ui-components/src/components/spk-table-detail";
-import { DialogWrapper } from "libs/ui-components/src/components/dialog-wrapper";
-import { formatRupiah } from "libs/utils/formatRupiah";
-import { useCategoryStore, useServiceLookup } from "libs/utils/useCategoryStore";
+import { DatePicker } from "@ui-components/components/date-picker";
 import { RupiahInput } from "@ui-components/components/rupiah-input";
 import { RadioGroup, RadioGroupItem } from "@ui-components/components/ui/radio-group";
-import { Header } from "@shared/components/Header";
-import { Check, ChevronsUpDown, Cross, Plus, PlusCircle, Search, AlertTriangle } from "lucide-react";
-import { DatePicker } from "@ui-components/components/date-picker";
+import { DialogWrapper } from "libs/ui-components/src/components/dialog-wrapper";
+import MultiSelect from "libs/ui-components/src/components/multi-select";
+import { SPKTableDetail } from "libs/ui-components/src/components/spk-table-detail";
+import { Button } from "libs/ui-components/src/components/ui/button";
+import { Input } from "libs/ui-components/src/components/ui/input";
+import { Label } from "libs/ui-components/src/components/ui/label";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "libs/ui-components/src/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "libs/ui-components/src/components/ui/tabs";
+import { Textarea } from "libs/ui-components/src/components/ui/textarea";
+import { useToast } from "libs/ui-components/src/hooks/use-toast";
+import { api } from "libs/utils/apiClient";
+import { formatDateInput } from "libs/utils/formatDate";
+import { formatRupiah } from "libs/utils/formatRupiah";
+import { useCategoryStore, useServiceLookup } from "libs/utils/useCategoryStore";
+import { AlertTriangle, Check, ChevronsUpDown, Plus, Search } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { BsInfoCircleFill } from "react-icons/bs";
+import { LuPlus } from "react-icons/lu";
 
 // Interface untuk SPK Item (tanpa total)
 export interface SPKItem {
@@ -908,6 +907,18 @@ export default function NewSPK() {
                       <Label className="w-[40%] font-semibold">Tanggal Pengerjaan</Label>
                       <DatePicker
                         startFrom={new Date()}
+                        withTime
+                        onChangeTime={(time) => {
+                          let [hours, minutes] = time.split(':').map(Number);
+
+                          const trxDate = formData.trxDate ? new Date(formData.trxDate) : new Date();
+                          trxDate.setHours(hours, minutes, 0, 0);
+
+                          setFormData(prev => ({
+                            ...prev,
+                            trxDate: trxDate.toISOString(),
+                          }));
+                        }}
                         value={formData.trxDate ? new Date(formData.trxDate) : null}
                         onChange={(date) => {
                           if (date) {
@@ -940,6 +951,18 @@ export default function NewSPK() {
                             <Label className="w-[40%] font-semibold">Tanggal Pengantaran</Label>
                             <DatePicker
                               startFrom={new Date()}
+                              withTime
+                              onChangeTime={(time) => {
+                                let [hours, minutes] = time.split(':').map(Number);
+
+                                const deliveryDate = formData.deliveryDate ? new Date(formData.deliveryDate) : new Date(formData.trxDate);
+                                deliveryDate.setHours(hours, minutes, 0, 0);
+
+                                setFormData(prev => ({
+                                  ...prev,
+                                  deliveryDate: deliveryDate.toISOString(),
+                                }));
+                              }}
                               value={formData.deliveryDate ? new Date(formData.deliveryDate) : new Date(formData.trxDate)}
                               onChange={(date) => {
                                 if (date) {
@@ -952,10 +975,22 @@ export default function NewSPK() {
                             />
                           </div>
 
-                          <div className="flex items-center space-x-4">
+                          {/* <div className="flex items-center space-x-4">
                             <Label className="w-[40%] font-semibold">Tanggal Pengambilan</Label>
                             <DatePicker
                               startFrom={new Date()}
+                              withTime
+                              onChangeTime={(time) => {
+                                let [hours, minutes] = time.split(':').map(Number);
+                                const pickupDate = formData.pickupDate ? new Date(formData.pickupDate) : new Date(formData.trxDate);
+
+                                pickupDate.setHours(hours, minutes, 0, 0);
+
+                                setFormData(prev => ({
+                                  ...prev,
+                                  pickupDate: formatDateInput(pickupDate.toISOString()),
+                                }));
+                              }}
                               value={formData.pickupDate ? new Date(formData.pickupDate) : new Date(formData.trxDate)}
                               onChange={(date) => {
                                 if (date) {
@@ -966,7 +1001,7 @@ export default function NewSPK() {
                                 }
                               }}
                             />
-                          </div>
+                          </div> */}
                         </>
                       )
                     }

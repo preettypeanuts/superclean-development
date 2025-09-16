@@ -1,26 +1,25 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
-import { Wrapper } from "@shared/components/Wrapper";
 import { Header } from "@shared/components/Header";
-import { Label } from "libs/ui-components/src/components/ui/label";
+import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
+import { Wrapper } from "@shared/components/Wrapper";
+import { useTransactionHistory } from "@shared/utils/useTransactionHistory";
+import { DatePicker } from "@ui-components/components/date-picker";
+import { SPKTableDetail } from "@ui-components/components/spk-table-detail";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@ui-components/components/ui/tabs";
+import { LocationData, Transaction, TransactionItem } from "apps/admin-app/app/transaksi/spk/edit/[...id]/page";
+import PhotoSection from "apps/admin-app/app/transaksi/spk/photoSection";
 import { Button } from "libs/ui-components/src/components/ui/button";
 import { Input } from "libs/ui-components/src/components/ui/input";
+import { Label } from "libs/ui-components/src/components/ui/label";
 import { Textarea } from "libs/ui-components/src/components/ui/textarea";
-import { useLocationData } from "libs/utils/useLocationData";
 import { api } from "libs/utils/apiClient";
-import { TbArrowBack } from "react-icons/tb";
-import { formatDate } from "libs/utils/formatDate";
 import { formatRupiah } from "libs/utils/formatRupiah";
-import { PembayaranTableDetail } from "libs/ui-components/src/components/pembayaran-table-detail";
-import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
-import { LocationData, Transaction, TransactionItem } from "apps/admin-app/app/transaksi/spk/edit/[...id]/page";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@ui-components/components/ui/tabs";
-import { useTransactionHistory } from "@shared/utils/useTransactionHistory";
+import { useLocationData } from "libs/utils/useLocationData";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 import { PiWarningCircleFill } from "react-icons/pi";
-import PhotoSection from "apps/admin-app/app/transaksi/spk/photoSection";
-import { SPKTableDetail } from "@ui-components/components/spk-table-detail";
+import { TbArrowBack } from "react-icons/tb";
 
 interface Customer {
   id: string;
@@ -33,15 +32,6 @@ interface Customer {
   subDistrict: string;
 }
 
-// const HeaderPembayaran = [
-//   { key: "id", label: "#" },
-//   { key: "serviceCode", label: "Kode Layanan" },
-//   { key: "serviceCategory", label: "Kategori" },
-//   { key: "serviceType", label: "Jenis Layanan" },
-//   { key: "quantity", label: "Jumlah" },
-//   { key: "servicePrice", label: "Harga" },
-//   { key: "promoAmount", label: "Diskon Promo" }
-// ];
 
 // Mapping untuk status
 const statusMapping = {
@@ -51,12 +41,6 @@ const statusMapping = {
   6: "Dikerjakan Kembali"
 };
 
-// Mapping untuk service type
-// const serviceTypeMapping = {
-//   1: "Regular",
-//   2: "Express",
-//   3: "Premium"
-// };
 
 const formatDetailsForTable = (details: TransactionItem[]) => {
   return details.map((detail, index) => ({
@@ -73,6 +57,12 @@ const formatDetailsForTable = (details: TransactionItem[]) => {
     id: detail.id,
   }));
 };
+
+function formatTime(dateString: string) {
+  const date = new Date(dateString);
+  // make only format with hh:mm:ss
+  return date.toString().split(' ')[4];
+}
 
 
 export default function InquiryTransaksiDetail() {
@@ -442,11 +432,17 @@ export default function InquiryTransaksiDetail() {
 
                   <div className="flex items-center space-x-4">
                     <Label className="w-[40%] font-semibold">Tanggal Pengerjaan</Label>
-                    <Input
+                    <DatePicker
+                      withTime
+                      disabled
+                      value={transaction.trxDate ? new Date(transaction.trxDate) : undefined}
+                      defaultTime={transaction?.trxDate ? `${formatTime(transaction.trxDate)}` : "08:00"}
+                    />
+                    {/* <Input
                       disabled
                       value={formatDate(transaction.trxDate)}
                       className="bg-muted/50 cursor-not-allowed"
-                    />
+                    /> */}
                   </div>
                 </div>
 
@@ -467,22 +463,34 @@ export default function InquiryTransaksiDetail() {
                       <>
                         <div className="flex items-center space-x-4">
                           <Label className="w-[40%] font-semibold">Tanggal Pengantaran</Label>
-                          <Textarea
+                          <DatePicker
+                            withTime
+                            disabled
+                            value={transaction.deliveryDate ? new Date(transaction.deliveryDate) : undefined}
+                            defaultTime={transaction?.deliveryDate ? `${formatTime(transaction.deliveryDate)}` : "08:00"}
+                          />
+                          {/* <Textarea
                             disabled
                             className="resize-none"
                             value={transaction.deliveryDate ? formatDate(transaction.deliveryDate) : "-"}
                             rows={1}
-                          />
+                          /> */}
                         </div>
 
                         <div className="flex items-center space-x-4">
                           <Label className="w-[40%] font-semibold">Tanggal Pengambilan</Label>
-                          <Textarea
+                          <DatePicker
+                            withTime
+                            disabled
+                            value={transaction.pickupDate ? new Date(transaction.pickupDate) : undefined}
+                            defaultTime={transaction?.pickupDate ? `${formatTime(transaction.pickupDate)}` : "08:00"}
+                          />
+                          {/* <Textarea
                             disabled
                             className="resize-none"
                             value={transaction.pickupDate ? formatDate(transaction.pickupDate) : "-"}
                             rows={1}
-                          />
+                          /> */}
                         </div>
                       </>
                     )

@@ -95,12 +95,12 @@ function AttachmentImage({
                     <span>Loading...</span>
                   </div>
                 ) : (
-                    <div className="invisible group-hover:visible flex absolute inset-0 bg-black/30 items-center justify-center text-white text-sm font-semibold cursor-pointer"
-                      onClick={() => setShowPreview(true)}
-                    >
-                      <span>Lihat Foto</span>
-                      <FaEye className="ml-1" />
-                    </div>
+                  <div className="invisible group-hover:visible flex absolute inset-0 bg-black/30 items-center justify-center text-white text-sm font-semibold cursor-pointer"
+                    onClick={() => setShowPreview(true)}
+                  >
+                    <span>Lihat Foto</span>
+                    <FaEye className="ml-1" />
+                  </div>
                 )
               }
             </div>
@@ -108,7 +108,7 @@ function AttachmentImage({
             <div className="flex items-center justify-center h-full">
               <p className="text-center">{label}</p>
 
-                {allowUpload && !readonly && (
+              {allowUpload && !readonly && (
                 <input type="file" accept="image/*" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer aspect-square"
                   onChange={handleFileChange} />
               )}
