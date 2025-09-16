@@ -617,8 +617,15 @@ export default function TransactionDetail() {
         newData.serviceCode = "";
         newData.harga = 0;
         newData.promo = 0;
+        newData.jumlah = "";
         newData.promoCode = "";
         newData.promoType = "";
+
+        // lock type if category is general or blower
+        // set type to cuci
+        if (value === "GENERAL" || value === "BLOWER") {
+          newData.tipe = "cuci";
+        }
       }
 
       // Jika serviceCode berubah, auto-fill harga dari service yang dipilih
