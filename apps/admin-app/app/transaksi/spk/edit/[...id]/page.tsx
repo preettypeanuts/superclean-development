@@ -1539,7 +1539,7 @@ export default function TransactionDetail() {
               <RupiahInput
                 placeholder="Rp. 0"
                 value={formatRupiah(
-                  (Number(formDataTable.harga) || 0) * (Number(formDataTable.jumlah) || 1) - (Number(formDataTable.promoType === "Persentase" ? Number(formDataTable.jumlah) * formDataTable.promo * formDataTable.harga * Number(formDataTable.jumlah) / 100 : formDataTable.promo * Number(formDataTable.jumlah)) || 0)
+                  (Number(formDataTable.harga) || 0) * (Number(formDataTable.jumlah) || 1) - (Number(formDataTable.promoType === "Persentase" ? Number(formDataTable.jumlah) * formDataTable.promo * formDataTable.harga / 100 : formDataTable.promo * Number(formDataTable.jumlah)) || 0)
                 )}
                 className="!border-0 !text-lg font-bold text-right"
                 readOnly
