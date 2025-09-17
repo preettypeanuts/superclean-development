@@ -1,15 +1,15 @@
 "use client"
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { AiFillCalendar, AiFillClockCircle } from "react-icons/ai";
+import { BsClipboard2CheckFill } from "react-icons/bs";
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
 } from "../../../../ui-components/src/components/ui/tabs";
-import { AiFillCalendar, AiFillClockCircle } from "react-icons/ai";
-import { BsClipboard2CheckFill } from "react-icons/bs";
 import { api } from "../../../../utils/apiClient";
 
 // Interface untuk data task
@@ -95,7 +95,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
   };
 
   return (
-    <Link href={`/jadwal-pekerjaan/${encodeURIComponent(task.trxNumber)}`}>
+    <Link href={`/daftar-spk-blower/${encodeURIComponent(task.trxNumber)}`}>
       <div className="w-full bg-white p-3 rounded-lg border hover:shadow-md transition-shadow cursor-pointer">
         <div className="grid grid-cols-5 pb-3 border-b border-bottom-dash">
           <div className="col-span-4">
@@ -124,7 +124,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
           </div>
         </div>
 
-        <div className="flex flex-col gap-2 text-[14px] pt-3">
+        <div className="flex flex-row gap-2 text-[14px] pt-3">
           <div className="flex truncate items-center gap-1 text-gray-600">
             <AiFillCalendar />
             <p>{formatDate(task.trxDate)}</p>

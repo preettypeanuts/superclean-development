@@ -1,5 +1,5 @@
-import { PageBanner } from "libs/shared/src/components/mitra/page-banner"
 import { DaftarSPKTabs } from "libs/shared/src/components/mitra/daftar-spk-tabs"
+import { PageBanner } from "libs/shared/src/components/mitra/page-banner"
 
 export default function DaftarSPK() {
     return (
