@@ -5,6 +5,7 @@ import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { api } from "../../../../utils/apiClient";
+import { useUserProfile } from "../../../../utils/useUserProfile";
 
 // Interface untuk data rating dari API
 interface ReviewData {
@@ -37,6 +38,7 @@ interface RatingStats {
 }
 
 export const TotalRating = () => {
+    const { user } = useUserProfile();
     const [ratingStats, setRatingStats] = useState<RatingStats>({
         averageRating: 0,
         totalReviews: 0,
@@ -44,6 +46,13 @@ export const TotalRating = () => {
     });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+
+    const getRatingPathByRole = () => {
+        if (user?.roleId === "Staff Blower") {
+            return "/rating-blower";
+        }
+        return "/rating";
+    };
 
     useEffect(() => {
         fetchRatingData();
@@ -155,7 +164,7 @@ export const TotalRating = () => {
                     <p className="text-[20px] font-medium tracking-tight">
                         Total Rating
                     </p>
-                    <Link href="/rating">
+                    <Link href={getRatingPathByRole()}>
                         <button className="text-[22px] w-[34px] h-[34px] flex items-center justify-center rounded-full bg-mainColor/20 text-mainDark">
                             <BsArrowRight />
                         </button>
@@ -191,7 +200,7 @@ export const TotalRating = () => {
                     <p className="text-[20px] font-medium tracking-tight">
                         Total Rating
                     </p>
-                    <Link href="/rating">
+                    <Link href={getRatingPathByRole()}>
                         <button className="text-[22px] w-[34px] h-[34px] flex items-center justify-center rounded-full bg-mainColor/20 text-mainDark">
                             <BsArrowRight />
                         </button>
@@ -233,7 +242,7 @@ export const TotalRating = () => {
                 <p className="text-[20px] font-medium tracking-tight">
                     Total Rating
                 </p>
-                <Link href="/rating">
+                <Link href={getRatingPathByRole()}>
                     <button className="text-[22px] w-[34px] h-[34px] flex items-center justify-center rounded-full bg-mainColor/20 text-mainDark">
                         <BsArrowRight />
                     </button>

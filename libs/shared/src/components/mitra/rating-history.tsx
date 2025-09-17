@@ -30,7 +30,11 @@ interface ApiResponse {
     data: [ReviewData[], number];
 }
 
-export const RatingHistory: React.FC = () => {
+interface RatingHistoryProps {
+    blower?: boolean;
+}
+
+export const RatingHistory: React.FC<RatingHistoryProps> = ({ blower = false }) => {
     const [reviews, setReviews] = useState<ReviewData[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -111,10 +115,12 @@ export const RatingHistory: React.FC = () => {
                                         <div className="h-3 bg-gray-300 rounded w-48"></div>
                                     </div>
                                 </div>
-                                <div className="space-y-2">
-                                    <div className="h-4 bg-gray-300 rounded w-16"></div>
-                                    <div className="h-3 bg-gray-300 rounded w-20"></div>
-                                </div>
+                                {!blower && (
+                                    <div className="space-y-2">
+                                        <div className="h-4 bg-gray-300 rounded w-16"></div>
+                                        <div className="h-3 bg-gray-300 rounded w-20"></div>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     ))}
@@ -161,7 +167,7 @@ export const RatingHistory: React.FC = () => {
                         className={`p-3${index !== reviews.length - 1 ? ' border-b' : ''}`}
                     >
                         <div className="flex items-start justify-between">
-                            <div className="flex items-start space-x-3">
+                            <div className={`flex items-start space-x-3 ${blower ? 'w-full' : ''}`}>
                                 <div className={`mt-2 w-[28px] h-[28px] aspect-square rounded-full flex items-center justify-center flex-shrink-0 ${
                                     item.transaction.rating > 0 ? 'bg-yellow-400' : 'bg-gray-300'
                                 }`}>
@@ -202,12 +208,14 @@ export const RatingHistory: React.FC = () => {
                                 </div>
                             </div>
 
-                            <div className="text-right flex-shrink-0">
-                                <p className="text-sm text-gray-500 mb-1 text-left">Uang Tip</p>
-                                <p className="text-xs font-bold text-green-600">
-                                    + {formatCurrency(item.insentive.amount)}
-                                </p>
-                            </div>
+                            {!blower && (
+                                <div className="text-right flex-shrink-0">
+                                    <p className="text-sm text-gray-500 mb-1 text-left">Uang Tip</p>
+                                    <p className="text-xs font-bold text-green-600">
+                                        + {formatCurrency(item.insentive.amount)}
+                                    </p>
+                                </div>
+                            )}
                         </div>
                     </div>
                 ))}

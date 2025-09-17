@@ -26,15 +26,15 @@ interface ApiResponse {
     data: [ReviewData[], number];
 }
 
-export const TipWidget = () => {
+interface TipWidgetProps {
+    blower?: boolean;
+}
+
+export const TipWidget = ({ blower = false }: TipWidgetProps) => {
     const [totalTip, setTotalTip] = useState(0);
     const [averageRating, setAverageRating] = useState(0);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-
-    useEffect(() => {
-        fetchTipData();
-    }, []);
 
     const fetchTipData = async () => {
         try {
@@ -46,9 +46,11 @@ export const TipWidget = () => {
             if (response && response.status === "success") {
                 const reviews = response.data[0];
                 
-                // Calculate total tip amount
-                const totalTipAmount = reviews.reduce((sum, item) => sum + item.insentive.amount, 0);
-                setTotalTip(totalTipAmount);
+                // Calculate total tip amount (only for non-blower mode)
+                if (!blower) {
+                    const totalTipAmount = reviews.reduce((sum, item) => sum + item.insentive.amount, 0);
+                    setTotalTip(totalTipAmount);
+                }
                 
                 // Calculate average rating (only for reviews with rating > 0)
                 const validRatings = reviews.filter(item => item.transaction.rating > 0);
@@ -66,6 +68,11 @@ export const TipWidget = () => {
             setLoading(false);
         }
     };
+
+    useEffect(() => {
+        fetchTipData();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const formatCurrency = (amount: number) => {
         return new Intl.NumberFormat('id-ID', {
@@ -111,8 +118,12 @@ export const TipWidget = () => {
                         <div className="h-3 bg-white/20 rounded w-40"></div>
                         <div className="w-4 h-4 bg-white/20 rounded-full"></div>
                     </div>
-                    <div className="h-8 bg-white/20 rounded w-32"></div>
-                    <div className="w-full h-[1px] bg-white/40"></div>
+                    {!blower && (
+                        <>
+                            <div className="h-8 bg-white/20 rounded w-32"></div>
+                            <div className="w-full h-[1px] bg-white/40"></div>
+                        </>
+                    )}
                     <div className="space-y-2">
                         <div className="h-3 bg-white/20 rounded w-20"></div>
                         <div className="flex items-center justify-between">
@@ -152,14 +163,20 @@ export const TipWidget = () => {
             <section className="w-full h-full bg-gradient-to-b from-mainColor to-mainDark rounded-lg p-2 space-y-2">
                 <div className="w-full flex items-center justify-between">
                     <p className="font-[400] text-[12px] text-white">
-                        Total Uang Tip - {getCurrentMonthYear()}
+                        {blower ? `Total Rating - ${getCurrentMonthYear()}` : `Total Uang Tip - ${getCurrentMonthYear()}`}
                     </p>
                     <AiFillInfoCircle className="text-white" />
                 </div>
-                <h1 className="font-semibold text-2xl text-white">
-                    {formatCurrency(totalTip)}
-                </h1>
-                <div className="w-full h-[1px] bg-white/40"></div>
+                
+                {!blower && (
+                    <>
+                        <h1 className="font-semibold text-2xl text-white">
+                            {formatCurrency(totalTip)}
+                        </h1>
+                        <div className="w-full h-[1px] bg-white/40"></div>
+                    </>
+                )}
+                
                 <div className="space-y-2">
                     <p className="font-[400] text-[12px] text-white">
                         Total Poin

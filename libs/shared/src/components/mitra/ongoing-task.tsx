@@ -86,7 +86,7 @@ export const OngoingTask = () => {
 
     const getPathByRole = () => {
         if (user?.roleId === "Staff Blower") {
-            return "/jadwal-pekerjaan";
+            return "/daftar-spk-blower";
         }
         return "/daftar-spk";
     };

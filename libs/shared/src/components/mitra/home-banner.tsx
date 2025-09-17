@@ -11,6 +11,20 @@ import { IoPersonCircleSharp } from "react-icons/io5";
 export const HomeBanner = () => {
     const { user, loading, error } = useUserProfile();
 
+    const getPathByRole = () => {
+        if (user?.roleId === "Staff Blower") {
+            return "/daftar-spk-blower";
+        }
+        return "/daftar-spk";
+    };
+
+    const getRatingPathByRole = () => {
+        if (user?.roleId === "Staff Blower") {
+            return "/rating-blower";
+        }
+        return "/rating";
+    };
+
     return (
         <main className="min-h-[300px]">
             <section className="w-full h-[23vh] bg-gradient-to-r from-mainColor from-10% to-mainDark to-110% rounded-b-2xl flex items-center relative">
@@ -53,7 +67,7 @@ export const HomeBanner = () => {
                 {/* Action buttons section */}
                 <section className="absolute -bottom-[80px] left-1/2 -translate-x-1/2 w-full">
                     <div className="flex justify-around">
-                        <Link href="/daftar-spk">
+                        <Link href={getPathByRole()}>
                             <button className="space-y-[8px]">
                                 <div className="rounded-full w-[60px] h-[60px] flex items-center justify-center bg-thirdColor text-white ring-[3px] ring-white">
                                     <IoIosListBox size={35} />
@@ -66,7 +80,7 @@ export const HomeBanner = () => {
                             </button>
                         </Link>
 
-                        <Link href="/daftar-spk">
+                        <Link href={getPathByRole()}>
                             <button className="space-y-3">
                                 <div className="rounded-full w-[60px] h-[60px] flex items-center justify-center bg-thirdColor text-white ring-[3px] ring-white">
                                     <RiFolderHistoryFill size={35} />
@@ -79,7 +93,7 @@ export const HomeBanner = () => {
                             </button>
                         </Link>
 
-                        <Link href="/rating">
+                        <Link href={getRatingPathByRole()}>
                             <button className="space-y-3 flex flex-col">
                                 <div className="rounded-full w-[60px] h-[60px] flex items-center justify-center bg-thirdColor text-white ring-[3px] ring-white">
                                     <AiFillStar size={35} />
