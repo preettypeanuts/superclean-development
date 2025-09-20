@@ -197,6 +197,27 @@ export const JadwalPekerjaanBlowerTabs = () => {
   const [errorPengambilan, setErrorPengambilan] = useState<string | null>(null);
   const [errorRiwayat, setErrorRiwayat] = useState<string | null>(null);
 
+  // get query params tab
+  const queryParams = new URLSearchParams(window.location.search);
+  const initialTab = queryParams.get('tab') || 'pengantaran';
+
+  const [tab, setTab] = useState(initialTab);
+
+  useEffect(() => {
+    setTab(initialTab);
+  }, [initialTab]);
+
+  useEffect(() => {
+    if (tab === 'pengantaran') {
+      fetchPengantaranTasks();
+    } else if (tab === 'pengambilan') {
+      fetchPengambilanTasks();
+    }
+    else if (tab === 'riwayat') {
+      fetchRiwayatTasks();
+    }
+  }, [tab]);
+
   // Fetch pengantaran tasks (tab=1)
   const fetchPengantaranTasks = async () => {
     try {
@@ -269,23 +290,23 @@ export const JadwalPekerjaanBlowerTabs = () => {
 
   // Load pengantaran tasks on component mount
   useEffect(() => {
-    fetchPengantaranTasks();
   }, []);
 
   // Handle tab change to load data
   const handleTabChange = (value: string) => {
-    if (value === "pengambilan" && pengambilanTasks.length === 0 && !loadingPengambilan && !errorPengambilan) {
-      fetchPengambilanTasks();
-    } else if (value === "riwayat" && riwayatTasks.length === 0 && !loadingRiwayat && !errorRiwayat) {
-      fetchRiwayatTasks();
-    }
+    setTab(value);
+    // set query params
+    const params = new URLSearchParams(window.location.search);
+    params.set('tab', value);
+    window.history.replaceState({}, '', `${window.location.pathname}?${params}`);
   };
+
 
   return (
     <div className="">
       <main className="flex items-center justify-center mx-5 -mt-12">
         <Tabs
-          defaultValue="pengantaran"
+          value={tab}
           className="flex flex-col items-center justify-center w-full"
           onValueChange={handleTabChange}
         >
