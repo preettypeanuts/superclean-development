@@ -41,6 +41,7 @@ export interface SPKItem {
   promoCode?: string;
   promoType?: string;
   totalHarga?: number; // Optional, hanya untuk display di tabel
+  isOriginal?: boolean; // menandakan data asli dari server
 }
 
 // Interface untuk promo response

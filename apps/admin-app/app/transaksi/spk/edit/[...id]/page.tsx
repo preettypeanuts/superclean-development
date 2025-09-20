@@ -116,7 +116,7 @@ export interface LocationData {
 }
 
 // Format transaction details for table
-const formatDetailsForTable = (details: TransactionItem[]) => {
+const formatDetailsForTable = (details: TransactionItem[], isOriginal: boolean = false) => {
   return details.map((detail, index) => ({
     no: index + 1,
     kode: detail.serviceCode,
@@ -129,6 +129,7 @@ const formatDetailsForTable = (details: TransactionItem[]) => {
     totalHarga: detail.totalPrice,
     promo: detail.promoPrice / Number(detail.quantity || 1),
     id: detail.id,
+    isOriginal: isOriginal,
   }));
 };
 
@@ -250,8 +251,8 @@ export default function TransactionDetail() {
         }
 
         if (transactionData?.details.length) {
-          setSPKItems(formatDetailsForTable(transactionData.details));
-          setOriginalSPKItems(formatDetailsForTable(transactionData.details));
+          setSPKItems(formatDetailsForTable(transactionData.details, true));
+          setOriginalSPKItems(formatDetailsForTable(transactionData.details, true));
         }
 
       } catch (error) {
@@ -385,8 +386,6 @@ export default function TransactionDetail() {
       second: '2-digit'
     });
   };
-
-
 
   // handleEditSPKItem function
   const handleEditSPKItem = (item: SPKItem) => {
@@ -840,6 +839,12 @@ export default function TransactionDetail() {
     }
   }
 
+  const formatTime = (dateString: string) => {
+    const date = new Date(dateString);
+    // make only format with hh:mm:ss
+    return date.toString().split(' ')[4];
+  }
+
   if (loading) {
     return (
       <Wrapper>
@@ -864,11 +869,8 @@ export default function TransactionDetail() {
     );
   }
 
-  function formatTime(dateString: string) {
-    const date = new Date(dateString);
-    // make only format with hh:mm:ss
-    return date.toString().split(' ')[4];
-  }
+  const isEditingOriginal = (editMode && originalSPKItems.some(item => item.id === editMode)) as boolean;
+
 
   return (
     <>
@@ -1427,7 +1429,7 @@ export default function TransactionDetail() {
               <Select
                 onValueChange={(value) => handleChangeTable("category", value)}
                 value={formDataTable.category}
-                disabled={loadingParams}
+                disabled={loadingParams || isEditingOriginal}
               >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Pilih Kategori" />
@@ -1458,7 +1460,7 @@ export default function TransactionDetail() {
               <Select
                 onValueChange={(value) => handleChangeTable("serviceCode", value)}
                 value={formDataTable.serviceCode}
-                disabled={loadingServices || !formDataTable.category || formDataTable.category === ""}
+                disabled={loadingServices || !formDataTable.category || formDataTable.category === "" || isEditingOriginal}
               >
                 <SelectTrigger className="w-full">
                   <SelectValue
