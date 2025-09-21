@@ -101,13 +101,6 @@ interface TransactionItemService {
   updatedBy: string;
 }
 
-// Staff interface
-interface Staff {
-  id: string;
-  fullname: string;
-  username: string;
-}
-
 // Location interface
 export interface LocationData {
   id: string;
@@ -145,6 +138,8 @@ export default function TransactionDetail() {
   // States
   const [transaction, setTransaction] = useState<Transaction | null>(null);
   const [customer, setCustomer] = useState<Customer | null>(null);
+
+  const [originalTransactionDate, setOriginalTransactionDate] = useState<string>("");
 
 
   const [loading, setLoading] = useState(true);
@@ -238,6 +233,8 @@ export default function TransactionDetail() {
           pickupDate,
           deliveryDate
         });
+
+        setOriginalTransactionDate(transactionData.trxDate);
 
         const totalDiscount = transactionData.discountPrice || 0;
         const totalPromo = transactionData.promoPrice || 0;
@@ -983,7 +980,7 @@ export default function TransactionDetail() {
                             } as Transaction));
                           }
                         }}
-                        startFrom={new Date(transaction?.trxDate)}
+                        startFrom={new Date(originalTransactionDate)}
                         value={transaction.trxDate ? new Date(transaction.trxDate) : null}
                         onChange={(date) => {
                           if (date) {
