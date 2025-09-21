@@ -1395,8 +1395,8 @@ export default function TransactionDetail() {
               transaction={transaction}
               customer={customer}
               locationLabels={locationLabels}
-              cleaningStaffList={cleaningStaffList}
-              blowerStaffList={blowerStaffList}
+              cleaningStaffList={cleaningStaffList.filter(staff => transaction.assigns.includes(staff.lookupKey))}
+              blowerStaffList={blowerStaffList.filter(staff => transaction.blowers.includes(staff.lookupKey))}
               spkItems={spkItems}
               totals={totals}
             />

@@ -1,19 +1,19 @@
 "use client";
 
-import { Label } from "libs/ui-components/src/components/ui/label";
-import { Button } from "libs/ui-components/src/components/ui/button";
-import { Textarea } from "libs/ui-components/src/components/ui/textarea";
-import { StarRating } from "@ui-components/components/star-rating";
-import { AttachmentImage } from "@ui-components/components/attachment-image";
-import { useEffect, useState } from "react";
-import { Customer, Transaction } from "apps/admin-app/app/transaksi/spk/edit/[...id]/page";
-import { formatDate } from "@shared/utils/formatDate";
-import { SPKItem } from "apps/admin-app/app/transaksi/spk/baru/page";
-import { formatRupiah } from "@shared/utils/formatRupiah";
-import html2canvas from "html2canvas";
-import { useToast } from "@ui-components/hooks/use-toast";
 import { api } from "@shared/utils/apiClient";
-import { apiFormdata } from '@shared/utils/apiFormdataClient'
+import { apiFormdata } from '@shared/utils/apiFormdataClient';
+import { formatDate } from "@shared/utils/formatDate";
+import { formatRupiah } from "@shared/utils/formatRupiah";
+import { AttachmentImage } from "@ui-components/components/attachment-image";
+import { StarRating } from "@ui-components/components/star-rating";
+import { useToast } from "@ui-components/hooks/use-toast";
+import { SPKItem } from "apps/admin-app/app/transaksi/spk/baru/page";
+import { Customer, Transaction } from "apps/admin-app/app/transaksi/spk/edit/[...id]/page";
+import html2canvas from "html2canvas";
+import { Button } from "libs/ui-components/src/components/ui/button";
+import { Label } from "libs/ui-components/src/components/ui/label";
+import { Textarea } from "libs/ui-components/src/components/ui/textarea";
+import { useEffect, useState } from "react";
 
 export type PhotoSectionProps = {
   transaction: Transaction;
@@ -28,7 +28,10 @@ export type PhotoSectionProps = {
     lookupKey: string;
     lookupValue: string;
   }[];
-  blowerStaffList?: { id: string; fullname: string }[];
+  blowerStaffList?: {
+    lookupKey: string;
+    lookupValue: string;
+  }[];
   spkItems: SPKItem[];
   totals: {
     totalPrice: number;
@@ -734,11 +737,11 @@ export default function PhotoSection({
                       <div className="flex mb-5 items-center space-x-4 justify-start">
                         <p className="flex-1 font-semibold ">Petugas Cleaning</p>
                         <p className="font-semibold">:</p>
-                        <div className="flex-1 flex ">
+                        <div className="flex-1">
                           {/* cleaning list */}
                           {cleaningStaffList.length > 0 ? (
                             cleaningStaffList.map((staff) => (
-                              <div key={staff.lookupKey} className="bg-mainColor/15 px-4 py-1 mx-1 rounded-full flex justify-center items-center text-center">
+                              <div key={staff.lookupKey} className="inline-block m-1 bg-baseLight/50  text-teal-800 border-mainColor border mx-1 rounded-full px-2 py-0.5 flex-shrink-0">
                                 {staff.lookupValue}
                               </div>
                             ))
@@ -760,12 +763,12 @@ export default function PhotoSection({
                       <div className="flex mb-5 items-center space-x-4 justify-start">
                         <p className="flex-1 font-semibold">Petugas Blower</p>
                         <p className="font-semibold">:</p>
-                        <div className="flex-1 flex ">
+                        <div className="flex-1">
                           {/* cleaning list */}
                           {blowerStaffList.length > 0 ? (
                             blowerStaffList.map((staff) => (
-                              <div key={staff.id} className="bg-mainColor/15 flex justify-center items-center px-4 py-1 mx-1 rounded-full text-center">
-                                {staff.fullname}
+                              <div key={staff.lookupKey} className="inline-block m-1 bg-baseLight/50  text-teal-800 border-mainColor border mx-1 rounded-full px-2 py-0.5 flex-shrink-0">
+                                {staff.lookupValue}
                               </div>
                             ))
                           ) : (
