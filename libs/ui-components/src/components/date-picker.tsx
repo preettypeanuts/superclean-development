@@ -55,7 +55,7 @@ export function DatePicker({ label, value, onChange, startFrom, endTo, withTime,
         <div className="flex flex-col gap-3">
           <Input
             disabled={disabled}
-            className='w-max [&::-webkit-calendar-picker-indicator]:bg-black [&::-webkit-calendar-picker-indicator]:cursor-pointer'
+            className='w-max dark:[&::-webkit-calendar-picker-indicator]:bg-black [&::-webkit-calendar-picker-indicator]:bg-white [&::-webkit-calendar-picker-indicator]:cursor-pointer'
             defaultValue={defaultTime}
             onChange={(e) => {
               if (onChangeTime) {
