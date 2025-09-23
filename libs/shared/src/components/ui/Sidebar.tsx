@@ -45,7 +45,7 @@ export const Sidebar = () => {
 
     const processedRole = user?.roleId ? getRoleAbbreviation(user.roleId) : "UN";
 
-    const noNavigation = ["/login", "/forgot-password", "/reset-password", "/invoice", "/rating"];
+    const noNavigation = ["/login", "/forgot-password", "/reset-password", "/invoice/[id]", "/rating"];
 
     const toggleSidebar = () => {
         setIsExpanded((prev) => {
@@ -82,7 +82,7 @@ export const Sidebar = () => {
     }, [path]);
 
     return (
-        <nav className={`${isExpanded ? "w-64" : "w-[79px]"} ${noNavigation.includes(path) && "hidden"} sticky top-0 h-screen flex transition-all duration-300 z-[100]`}>
+        <nav className={`${isExpanded ? "w-64" : "w-[79px]"} ${noNavigation.includes(path) && "hidden"} ${path.startsWith("/invoice") && "hidden"} sticky top-0 h-screen flex transition-all duration-300 z-[100]`}>
             <div className={`w-full grow bg-mainColor/30 dark:bg-mainColor/20 rounded-lg my-2 ml-2 flex flex-col relative shadow-mainShadow border border-white/50 dark:border-neutral-500/50 ${!isExpanded && "items-center"}`}>
                 {/* Header */}
                 <div className={`${!isExpanded ? "border rounded-2xl border-neutral-500/10 bg-mainColor/20 mx-[7px] mt-2 w-fit p-3" : "py-2 pl-0 pr-[15px] w-full"} z-[666] absolute flex justify-between items-center gap-2 mb-3 cursor-pointer group`}>

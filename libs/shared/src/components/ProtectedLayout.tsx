@@ -4,15 +4,29 @@ import { useEffect, useState } from "react";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_APIURL || "http://localhost:3000";
 
-
 // List halaman yang tidak butuh proteksi
-const PUBLIC_ROUTES = ["/login", "/register", "/about", "/invoice", "/rating"];
+const PUBLIC_ROUTES = ["/login", "/register", "/about", "/rating"];
 
 const ProtectedRoutes = ({ children }: { children: React.ReactNode }) => {
     const router = useRouter();
     const pathname = usePathname();
     const [isLoaded, setIsLoaded] = useState(false);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+    // Function to check if current path is public
+    const isPublicRoute = (path: string): boolean => {
+        // Check static public routes
+        if (PUBLIC_ROUTES.includes(path)) {
+            return true;
+        }
+        
+        // Check if it's any invoice route (all invoice pages are public)
+        if (path.startsWith("/invoice")) {
+            return true;
+        }
+        
+        return false;
+    };
 
     const validateToken = async (): Promise<boolean> => {
         const token = localStorage.getItem("access_token");
@@ -22,7 +36,7 @@ const ProtectedRoutes = ({ children }: { children: React.ReactNode }) => {
         }
 
         try {
-          const response = await fetch(`${API_BASE_URL}/auth/whoAmI`, {
+            const response = await fetch(`${API_BASE_URL}/auth/whoAmI`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -49,7 +63,7 @@ const ProtectedRoutes = ({ children }: { children: React.ReactNode }) => {
     useEffect(() => {
         const checkAuth = async () => {
             // Jika halaman ini adalah public route, langsung load
-            if (PUBLIC_ROUTES.includes(pathname)) {
+            if (isPublicRoute(pathname)) {
                 setIsLoaded(true);
                 setIsAuthenticated(false);
                 return;
@@ -78,14 +92,14 @@ const ProtectedRoutes = ({ children }: { children: React.ReactNode }) => {
                 if (!event.newValue) {
                     // Token dihapus
                     setIsAuthenticated(false);
-                    if (!PUBLIC_ROUTES.includes(pathname)) {
+                    if (!isPublicRoute(pathname)) {
                         router.push("/login");
                     }
                 } else {
                     // Token baru ditambahkan, validasi ulang
                     validateToken().then((isValid) => {
                         setIsAuthenticated(isValid);
-                        if (!isValid && !PUBLIC_ROUTES.includes(pathname)) {
+                        if (!isValid && !isPublicRoute(pathname)) {
                             router.push("/login");
                         }
                     });
@@ -104,7 +118,7 @@ const ProtectedRoutes = ({ children }: { children: React.ReactNode }) => {
     // useEffect(() => {
     //     const handleLocalStorageChange = () => {
     //         const token = localStorage.getItem("access_token");
-    //         if (!token && !PUBLIC_ROUTES.includes(pathname)) {
+    //         if (!token && !isPublicRoute(pathname)) {
     //             setIsAuthenticated(false);
     //             router.push("/login");
     //         }
@@ -113,7 +127,7 @@ const ProtectedRoutes = ({ children }: { children: React.ReactNode }) => {
     // Polling sederhana untuk detect perubahan localStorage di tab yang sama
     //     const interval = setInterval(() => {
     //         const currentToken = localStorage.getItem("access_token");
-    //         if (!currentToken && isAuthenticated && !PUBLIC_ROUTES.includes(pathname)) {
+    //         if (!currentToken && isAuthenticated && !isPublicRoute(pathname)) {
     //             setIsAuthenticated(false);
     //             router.push("/login");
     //         }
@@ -132,7 +146,7 @@ const ProtectedRoutes = ({ children }: { children: React.ReactNode }) => {
     }
 
     // Untuk public routes, selalu tampilkan children
-    if (PUBLIC_ROUTES.includes(pathname)) {
+    if (isPublicRoute(pathname)) {
         return children;
     }
 
