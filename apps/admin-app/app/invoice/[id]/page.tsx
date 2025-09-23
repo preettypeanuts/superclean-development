@@ -1,13 +1,10 @@
 "use client"
 
-import Image from "next/image";
 import { HeaderMobile } from "@shared/components/Header";
 import { WrapperMobile } from "@shared/components/Wrapper";
 import { Button } from "@ui-components/components/ui/button";
 import { Label } from "@ui-components/components/ui/label";
 import { BsClockHistory } from "react-icons/bs";
-import { FaRegCheckCircle } from "react-icons/fa";
-import { FaCloudArrowUp } from "react-icons/fa6";
 import { IoMdStar } from "react-icons/io";
 import { Input } from "@ui-components/components/ui/input";
 import { Textarea } from "@ui-components/components/ui/textarea";

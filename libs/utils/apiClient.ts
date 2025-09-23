@@ -7,7 +7,6 @@ const PUBLIC_ENDPOINTS = [
   "/auth/forgot-password",
   "/auth/reset-password",
   "/invoice", // untuk public invoice endpoints
-  "/rating",
   "/public", // general public endpoints
 ];
 
@@ -23,7 +22,7 @@ const isPublicRoute = (): boolean => {
   if (typeof window === 'undefined') return false;
   
   const pathname = window.location.pathname;
-  const publicRoutes = ["/login", "/register", "/about", "/rating"];
+  const publicRoutes = ["/login", "/register", "/about"];
   
   // Check static public routes
   if (publicRoutes.includes(pathname)) {
@@ -49,7 +48,7 @@ export const apiClient = async (
     const isOnPublicRoute = isPublicRoute();
     
     // Ambil token dari localStorage hanya jika diperlukan
-    let accessToken = null;
+    let accessToken: string | null = null;
     if (needsAuth || !isOnPublicRoute) {
       accessToken = localStorage.getItem("access_token");
     }
@@ -61,7 +60,7 @@ export const apiClient = async (
 
     // Tambahkan Authorization header hanya jika ada token dan diperlukan
     if (accessToken && needsAuth) {
-      (defaultHeaders as any).Authorization = `Bearer ${accessToken}`;
+      (defaultHeaders as Record<string, string>).Authorization = `Bearer ${accessToken}`;
     }
 
     // Opsi fetch
@@ -139,4 +138,19 @@ export const api = {
     delete: (endpoint: string, config: RequestInit = {}) => 
       apiClient(endpoint, { method: "DELETE", requireAuth: false, ...config }),
   }
+};
+
+// Helper function untuk invoice API calls (always public)
+export const invoiceApi = {
+  getInvoice: (invoiceId: string) => 
+    api.public.get(`/invoice/${invoiceId}`),
+    
+  updatePaymentStatus: (invoiceId: string, paymentData: any) => 
+    api.public.post(`/invoice/${invoiceId}/payment`, paymentData),
+    
+  uploadPaymentProof: (invoiceId: string, proofData: any) => 
+    api.public.post(`/invoice/${invoiceId}/payment/proof`, proofData),
+    
+  getPaymentQR: (invoiceId: string) => 
+    api.public.get(`/invoice/${invoiceId}/payment/qr`),
 };

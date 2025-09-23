@@ -1,7 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { IoIosArrowBack } from "react-icons/io";
-import { IoArrowBack } from "react-icons/io5";
 
 type HeaderProps = {
     label: string;
