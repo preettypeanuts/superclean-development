@@ -3,7 +3,7 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_APIURL || "http://localhost:3000";
 // List endpoint yang tidak memerlukan token authentication
 const PUBLIC_ENDPOINTS = [
   "/auth/login",
-  "/auth/register", 
+  "/auth/register",
   "/auth/forgot-password",
   "/auth/reset-password",
   "/invoice", // untuk public invoice endpoints
@@ -12,7 +12,7 @@ const PUBLIC_ENDPOINTS = [
 
 // Function to check if endpoint is public
 const isPublicEndpoint = (endpoint: string): boolean => {
-  return PUBLIC_ENDPOINTS.some(publicEndpoint => 
+  return PUBLIC_ENDPOINTS.some(publicEndpoint =>
     endpoint.startsWith(publicEndpoint)
   );
 };
@@ -20,20 +20,20 @@ const isPublicEndpoint = (endpoint: string): boolean => {
 // Function to check if we're on a public route (client-side)
 const isPublicRoute = (): boolean => {
   if (typeof window === 'undefined') return false;
-  
+
   const pathname = window.location.pathname;
   const publicRoutes = ["/login", "/register", "/about"];
-  
+
   // Check static public routes
   if (publicRoutes.includes(pathname)) {
     return true;
   }
-  
+
   // Check if it's any invoice route
-  if (pathname.startsWith("/invoice")) {
+  if (pathname.startsWith("/invoice") || pathname.startsWith("/payment")) {
     return true;
   }
-  
+
   return false;
 };
 
@@ -46,7 +46,7 @@ export const apiClient = async (
     // Determine if this endpoint needs authentication
     const needsAuth = requireAuth && !isPublicEndpoint(endpoint);
     const isOnPublicRoute = isPublicRoute();
-    
+
     // Ambil token dari localStorage hanya jika diperlukan
     let accessToken: string | null = null;
     if (needsAuth || !isOnPublicRoute) {
@@ -86,7 +86,7 @@ export const apiClient = async (
           // Don't throw error for public routes, just return the error result
           return { error: true, message: result.message || "Unauthorized", status: 401 };
         }
-        
+
         throw new Error(result.message || "Something went wrong");
       }
     }
@@ -98,7 +98,7 @@ export const apiClient = async (
       console.warn("Auth error on public route (expected):", error.message);
       return { error: true, message: error.message, status: 401 };
     }
-    
+
     console.error("API Error:", error);
     throw error;
   }
@@ -106,51 +106,51 @@ export const apiClient = async (
 
 // Fungsi khusus untuk metode HTTP tertentu
 export const api = {
-  get: (endpoint: string, config: RequestInit & { requireAuth?: boolean } = {}) => 
+  get: (endpoint: string, config: RequestInit & { requireAuth?: boolean } = {}) =>
     apiClient(endpoint, { method: "GET", ...config }),
-    
-  post: (endpoint: string, body: any, config: RequestInit & { requireAuth?: boolean } = {}) => 
+
+  post: (endpoint: string, body: any, config: RequestInit & { requireAuth?: boolean } = {}) =>
     apiClient(endpoint, { method: "POST", body, ...config }),
-    
-  put: (endpoint: string, body: any, config: RequestInit & { requireAuth?: boolean } = {}) => 
+
+  put: (endpoint: string, body: any, config: RequestInit & { requireAuth?: boolean } = {}) =>
     apiClient(endpoint, { method: "PUT", body, ...config }),
-    
-  patch: (endpoint: string, body: any, config: RequestInit & { requireAuth?: boolean } = {}) => 
+
+  patch: (endpoint: string, body: any, config: RequestInit & { requireAuth?: boolean } = {}) =>
     apiClient(endpoint, { method: "PATCH", body, ...config }),
-    
-  delete: (endpoint: string, config: RequestInit & { requireAuth?: boolean } = {}) => 
+
+  delete: (endpoint: string, config: RequestInit & { requireAuth?: boolean } = {}) =>
     apiClient(endpoint, { method: "DELETE", ...config }),
 
   // Fungsi khusus untuk public endpoints
   public: {
-    get: (endpoint: string, config: RequestInit = {}) => 
+    get: (endpoint: string, config: RequestInit = {}) =>
       apiClient(endpoint, { method: "GET", requireAuth: false, ...config }),
-      
-    post: (endpoint: string, body: any, config: RequestInit = {}) => 
+
+    post: (endpoint: string, body: any, config: RequestInit = {}) =>
       apiClient(endpoint, { method: "POST", body, requireAuth: false, ...config }),
-      
-    put: (endpoint: string, body: any, config: RequestInit = {}) => 
+
+    put: (endpoint: string, body: any, config: RequestInit = {}) =>
       apiClient(endpoint, { method: "PUT", body, requireAuth: false, ...config }),
-      
-    patch: (endpoint: string, body: any, config: RequestInit = {}) => 
+
+    patch: (endpoint: string, body: any, config: RequestInit = {}) =>
       apiClient(endpoint, { method: "PATCH", body, requireAuth: false, ...config }),
-      
-    delete: (endpoint: string, config: RequestInit = {}) => 
+
+    delete: (endpoint: string, config: RequestInit = {}) =>
       apiClient(endpoint, { method: "DELETE", requireAuth: false, ...config }),
   }
 };
 
 // Helper function untuk invoice API calls (always public)
 export const invoiceApi = {
-  getInvoice: (invoiceId: string) => 
+  getInvoice: (invoiceId: string) =>
     api.public.get(`/invoice/${invoiceId}`),
-    
-  updatePaymentStatus: (invoiceId: string, paymentData: any) => 
+
+  updatePaymentStatus: (invoiceId: string, paymentData: any) =>
     api.public.post(`/invoice/${invoiceId}/payment`, paymentData),
-    
-  uploadPaymentProof: (invoiceId: string, proofData: any) => 
+
+  uploadPaymentProof: (invoiceId: string, proofData: any) =>
     api.public.post(`/invoice/${invoiceId}/payment/proof`, proofData),
-    
-  getPaymentQR: (invoiceId: string) => 
+
+  getPaymentQR: (invoiceId: string) =>
     api.public.get(`/invoice/${invoiceId}/payment/qr`),
 };

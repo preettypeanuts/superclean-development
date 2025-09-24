@@ -8,156 +8,156 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_APIURL || "http://localhost:3000";
 const PUBLIC_ROUTES = ["/login", "/register", "/about", "/rating"];
 
 const ProtectedRoutes = ({ children }: { children: React.ReactNode }) => {
-    const router = useRouter();
-    const pathname = usePathname();
-    const [isLoaded, setIsLoaded] = useState(false);
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const router = useRouter();
+  const pathname = usePathname();
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-    // Function to check if current path is public
-    const isPublicRoute = (path: string): boolean => {
-        // Check static public routes
-        if (PUBLIC_ROUTES.includes(path)) {
-            return true;
-        }
-        
-        // Check if it's any invoice route (all invoice pages are public)
-        if (path.startsWith("/invoice")) {
-            return true;
-        }
-        
+  // Function to check if current path is public
+  const isPublicRoute = (path: string): boolean => {
+    // Check static public routes
+    if (PUBLIC_ROUTES.includes(path)) {
+      return true;
+    }
+
+    // Check if it's any invoice route (all invoice pages are public)
+    if (path.startsWith("/invoice") || path.startsWith("/payment")) {
+      return true;
+    }
+
+    return false;
+  };
+
+  const validateToken = async (): Promise<boolean> => {
+    const token = localStorage.getItem("access_token");
+
+    if (!token) {
+      return false;
+    }
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/whoAmI`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const userData = await response.json();
+        return !!userData; // Return true jika ada user data
+      } else {
+        // Token tidak valid atau expired
+        localStorage.removeItem("access_token");
         return false;
+      }
+    } catch (error) {
+      console.error('Error validating token:', error);
+      // Jika ada error network, anggap token tidak valid untuk keamanan
+      localStorage.removeItem("access_token");
+      return false;
+    }
+  };
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      // Jika halaman ini adalah public route, langsung load
+      if (isPublicRoute(pathname)) {
+        setIsLoaded(true);
+        setIsAuthenticated(false);
+        return;
+      }
+
+      // Untuk protected routes, validasi token
+      const isValid = await validateToken();
+
+      if (isValid) {
+        setIsAuthenticated(true);
+        setIsLoaded(true);
+      } else {
+        setIsAuthenticated(false);
+        setIsLoaded(true);
+        router.push("/login");
+      }
     };
 
-    const validateToken = async (): Promise<boolean> => {
-        const token = localStorage.getItem("access_token");
+    checkAuth();
+  }, [pathname, router]);
 
-        if (!token) {
-            return false;
-        }
-
-        try {
-            const response = await fetch(`${API_BASE_URL}/auth/whoAmI`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
-            });
-
-            if (response.ok) {
-                const userData = await response.json();
-                return !!userData; // Return true jika ada user data
-            } else {
-                // Token tidak valid atau expired
-                localStorage.removeItem("access_token");
-                return false;
+  // Listen untuk perubahan localStorage
+  useEffect(() => {
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === "access_token") {
+        if (!event.newValue) {
+          // Token dihapus
+          setIsAuthenticated(false);
+          if (!isPublicRoute(pathname)) {
+            router.push("/login");
+          }
+        } else {
+          // Token baru ditambahkan, validasi ulang
+          validateToken().then((isValid) => {
+            setIsAuthenticated(isValid);
+            if (!isValid && !isPublicRoute(pathname)) {
+              router.push("/login");
             }
-        } catch (error) {
-            console.error('Error validating token:', error);
-            // Jika ada error network, anggap token tidak valid untuk keamanan
-            localStorage.removeItem("access_token");
-            return false;
+          });
         }
+      }
     };
 
-    useEffect(() => {
-        const checkAuth = async () => {
-            // Jika halaman ini adalah public route, langsung load
-            if (isPublicRoute(pathname)) {
-                setIsLoaded(true);
-                setIsAuthenticated(false);
-                return;
-            }
+    window.addEventListener("storage", handleStorageChange);
 
-            // Untuk protected routes, validasi token
-            const isValid = await validateToken();
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, [pathname, router]);
 
-            if (isValid) {
-                setIsAuthenticated(true);
-                setIsLoaded(true);
-            } else {
-                setIsAuthenticated(false);
-                setIsLoaded(true);
-                router.push("/login");
-            }
-        };
+  // Listen untuk perubahan token di tab yang sama
+  // useEffect(() => {
+  //     const handleLocalStorageChange = () => {
+  //         const token = localStorage.getItem("access_token");
+  //         if (!token && !isPublicRoute(pathname)) {
+  //             setIsAuthenticated(false);
+  //             router.push("/login");
+  //         }
+  //     };
 
-        checkAuth();
-    }, [pathname, router]);
+  // Polling sederhana untuk detect perubahan localStorage di tab yang sama
+  //     const interval = setInterval(() => {
+  //         const currentToken = localStorage.getItem("access_token");
+  //         if (!currentToken && isAuthenticated && !isPublicRoute(pathname)) {
+  //             setIsAuthenticated(false);
+  //             router.push("/login");
+  //         }
+  //     }, 1000);
 
-    // Listen untuk perubahan localStorage
-    useEffect(() => {
-        const handleStorageChange = (event: StorageEvent) => {
-            if (event.key === "access_token") {
-                if (!event.newValue) {
-                    // Token dihapus
-                    setIsAuthenticated(false);
-                    if (!isPublicRoute(pathname)) {
-                        router.push("/login");
-                    }
-                } else {
-                    // Token baru ditambahkan, validasi ulang
-                    validateToken().then((isValid) => {
-                        setIsAuthenticated(isValid);
-                        if (!isValid && !isPublicRoute(pathname)) {
-                            router.push("/login");
-                        }
-                    });
-                }
-            }
-        };
+  //     return () => clearInterval(interval);
+  // }, [isAuthenticated, pathname, router]);
 
-        window.addEventListener("storage", handleStorageChange);
+  // Tampilkan loading atau konten
+  if (!isLoaded) {
+    return (
+      <div className="flex items-center justify-center min-h-screen w-screen">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+      </div>
+    );
+  }
 
-        return () => {
-            window.removeEventListener("storage", handleStorageChange);
-        };
-    }, [pathname, router]);
+  // Untuk public routes, selalu tampilkan children
+  if (isPublicRoute(pathname)) {
+    return children;
+  }
 
-    // Listen untuk perubahan token di tab yang sama
-    // useEffect(() => {
-    //     const handleLocalStorageChange = () => {
-    //         const token = localStorage.getItem("access_token");
-    //         if (!token && !isPublicRoute(pathname)) {
-    //             setIsAuthenticated(false);
-    //             router.push("/login");
-    //         }
-    //     };
+  // Untuk protected routes, hanya tampilkan jika authenticated
+  if (isAuthenticated) {
+    return children;
+  }
 
-    // Polling sederhana untuk detect perubahan localStorage di tab yang sama
-    //     const interval = setInterval(() => {
-    //         const currentToken = localStorage.getItem("access_token");
-    //         if (!currentToken && isAuthenticated && !isPublicRoute(pathname)) {
-    //             setIsAuthenticated(false);
-    //             router.push("/login");
-    //         }
-    //     }, 1000);
-
-    //     return () => clearInterval(interval);
-    // }, [isAuthenticated, pathname, router]);
-
-    // Tampilkan loading atau konten
-    if (!isLoaded) {
-        return (
-            <div className="flex items-center justify-center min-h-screen w-screen">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-            </div>
-        );
-    }
-
-    // Untuk public routes, selalu tampilkan children
-    if (isPublicRoute(pathname)) {
-        return children;
-    }
-
-    // Untuk protected routes, hanya tampilkan jika authenticated
-    if (isAuthenticated) {
-        return children;
-    }
-
-    // Jika tidak authenticated dan bukan public route, return null
-    // (karena sudah redirect ke login)
-    return null;
+  // Jika tidak authenticated dan bukan public route, return null
+  // (karena sudah redirect ke login)
+  return null;
 };
 
 export default ProtectedRoutes;
