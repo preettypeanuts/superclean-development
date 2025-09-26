@@ -98,7 +98,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
   };
 
   return (
-    <Link href={`/daftar-spk/${encodeURIComponent(task.id)}`}>
+    <Link href={`/daftar-spk/${encodeURIComponent(task.trxNumber)}`}>
       <div className="w-full bg-white p-3 rounded-lg border hover:shadow-md transition-shadow cursor-pointer">
         <div className="grid grid-cols-5 pb-3 border-b border-bottom-dash">
           <div className="col-span-4">
@@ -195,6 +195,18 @@ export const DaftarSPKTabs = () => {
   const [errorOngoing, setErrorOngoing] = useState<string | null>(null);
   const [errorCompleted, setErrorCompleted] = useState<string | null>(null);
 
+
+  // get query params tab
+  const queryParams = new URLSearchParams(window.location.search);
+  const initialTab = queryParams.get('tab') || 'ongoing';
+
+  const [tab, setTab] = useState(initialTab);
+
+  useEffect(() => {
+    setTab(initialTab);
+  }, [initialTab]);
+
+
   // Fetch ongoing tasks
   const fetchOngoingTasks = async () => {
     try {
@@ -203,16 +215,31 @@ export const DaftarSPKTabs = () => {
 
       const response = await api.get('/transaction/page/spk/ongoing?page=1&limit=10');
 
+
       if (response && response.status) {
         // Handle nested array structure as shown in original code
-        const taskData = response.data?.data || [];
+        const taskData = response.data[0] || [];
+        const totalData = response.data[1] || 0;
+
         if (Array.isArray(taskData) && taskData.length > 0) {
-          // If data is nested in arrays like taskData[0][0], flatten it
+          // Flatten the nested arrays
           const flattenedData = taskData.flat();
           setOngoingTasks(flattenedData);
         } else {
           setOngoingTasks([]);
         }
+        // setOngoingTasks(taskData);
+        // setTotalOngoing(totalData);
+
+
+        // if (Array.isArray(taskData) && taskData.length > 0) {
+        //   // If data is nested in arrays like taskData[0][0], flatten it
+        //   const flattenedData = taskData.flat();
+
+        //   setOngoingTasks(flattenedData);
+        // } else {
+        //   setOngoingTasks([]);
+        // }
       } else {
         setOngoingTasks([]);
       }
@@ -235,7 +262,9 @@ export const DaftarSPKTabs = () => {
       const response = await api.get('/transaction/page/spk/complete?page=1&limit=10');
 
       if (response && response.status) {
-        const taskData = response.data?.data || [];
+        const taskData = response.data[0] || [];
+        const totalData = response.data[1] || 0;
+
         if (Array.isArray(taskData) && taskData.length > 0) {
           const flattenedData = taskData.flat();
           setCompletedTasks(flattenedData);
@@ -256,12 +285,26 @@ export const DaftarSPKTabs = () => {
 
   // Load ongoing tasks on component mount
   useEffect(() => {
-    fetchOngoingTasks();
-  }, []);
+    if (tab === "ongoing") {
+      fetchOngoingTasks();
+    } else if (tab === "riwayat") {
+      fetchCompletedTasks();
+    }
+  }, [tab]);
 
   // Handle tab change to load completed tasks
   const handleTabChange = (value: string) => {
-    if (value === "history" && completedTasks.length === 0 && !loadingCompleted && !errorCompleted) {
+    setTab(value);
+    const params = new URLSearchParams(window.location.search);
+    params.set('tab', value);
+    const newUrl = `${window.location.pathname}?${params.toString()}`;
+    window.history.replaceState({}, '', newUrl);
+
+    if (value === "ongoing" && ongoingTasks.length === 0 && !loadingOngoing && !errorOngoing) {
+      fetchOngoingTasks();
+    }
+
+    if (value === "riwayat" && completedTasks.length === 0 && !loadingCompleted && !errorCompleted) {
       fetchCompletedTasks();
     }
   };
@@ -271,6 +314,7 @@ export const DaftarSPKTabs = () => {
       <main className="flex items-center justify-center mx-5 !-mt-12">
         <Tabs
           defaultValue="ongoing"
+          value={tab}
           className="flex flex-col items-center justify-center w-full"
           onValueChange={handleTabChange}
         >
@@ -278,7 +322,7 @@ export const DaftarSPKTabs = () => {
             <TabsTrigger className="w-full text-[16px]" value="ongoing">
               Pekerjaan Berlangsung
             </TabsTrigger>
-            <TabsTrigger className="w-full text-[16px]" value="history">
+            <TabsTrigger className="w-full text-[16px]" value="riwayat">
               Riwayat Pekerjaan
             </TabsTrigger>
           </TabsList>
@@ -309,7 +353,7 @@ export const DaftarSPKTabs = () => {
           </TabsContent>
 
           {/* Completed Tasks Tab */}
-          <TabsContent className="!mt-0 w-full" value="history">
+          <TabsContent className="!mt-0 w-full" value="riwayat">
             <div className="w-full space-y-3">
               {loadingCompleted ? (
                 // Show loading cards

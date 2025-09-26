@@ -1,35 +1,33 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
-import { Wrapper } from "@shared/components/Wrapper";
+import { DialogTitle } from "@radix-ui/react-dialog";
 import { Header } from "@shared/components/Header";
-import { Label } from "libs/ui-components/src/components/ui/label";
+import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
+import { Wrapper } from "@shared/components/Wrapper";
+import { useCategoryStore, useServiceLookup } from "@shared/utils/useCategoryStore";
+import { RupiahInput } from "@ui-components/components/rupiah-input";
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTrigger } from "@ui-components/components/ui/dialog";
+import { RadioGroup, RadioGroupItem } from "@ui-components/components/ui/radio-group";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@ui-components/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@ui-components/components/ui/tabs";
+import { useToast } from "@ui-components/hooks/use-toast";
+import { PromoResponse, SPKItem } from "apps/admin-app/app/transaksi/spk/baru/page";
+import { DialogWrapper } from "libs/ui-components/src/components/dialog-wrapper";
+import { SPKTableDetail } from "libs/ui-components/src/components/spk-table-detail";
 import { Button } from "libs/ui-components/src/components/ui/button";
 import { Input } from "libs/ui-components/src/components/ui/input";
+import { Label } from "libs/ui-components/src/components/ui/label";
 import { Textarea } from "libs/ui-components/src/components/ui/textarea";
 import { api } from "libs/utils/apiClient";
-import { TbArrowBack, TbArrowBigRightFilled, TbSignRight } from "react-icons/tb";
-import { formatDate, formatDateInput } from "libs/utils/formatDate";
+import { formatDate } from "libs/utils/formatDate";
 import { formatRupiah } from "libs/utils/formatRupiah";
-import { SPKTableDetail } from "libs/ui-components/src/components/spk-table-detail";
-import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@ui-components/components/ui/tabs";
-import { PiWarningCircleFill } from "react-icons/pi";
 import { useTransactionHistory } from "libs/utils/useTransactionHistory";
-import { useTransactionDetail } from "libs/utils/useTransactionDetail";
-import { LuPlus } from "react-icons/lu";
-import MultiSelect from "@ui-components/components/multi-select";
-import { PromoResponse, SPKItem } from "apps/admin-app/app/transaksi/spk/baru/page";
-import { RupiahInput } from "@ui-components/components/rupiah-input";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@ui-components/components/ui/select";
-import { RadioGroup, RadioGroupItem } from "@ui-components/components/ui/radio-group";
-import { DialogWrapper } from "libs/ui-components/src/components/dialog-wrapper";
-import { useCategoryStore, useServiceLookup } from "@shared/utils/useCategoryStore";
-import { useToast } from "@ui-components/hooks/use-toast";
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTrigger } from "@ui-components/components/ui/dialog";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 import { IoMdTrash } from "react-icons/io";
-import { DialogTitle } from "@radix-ui/react-dialog";
+import { LuPlus } from "react-icons/lu";
+import { PiWarningCircleFill } from "react-icons/pi";
+import { TbArrowBack, TbArrowBigRightFilled } from "react-icons/tb";
 
 
 // Updated Transaction interface
@@ -675,9 +673,6 @@ export default function TransactionDetail() {
             quantity: item.jumlah,
           }
 
-          console.log("Creating new item:", payload, spkItems);
-
-
           await api.post(`/transaction-detail/${transaction?.id}/`, payload);
         });
       }
@@ -696,6 +691,7 @@ export default function TransactionDetail() {
           }
 
           // delete first and then create new
+          // todo: change to update if endpoint is available
           await api.delete(`/transaction-detail/${transaction?.id}/${item.id}`);
           await api.post(`/transaction-detail/${transaction?.id}/`, payload);
         });

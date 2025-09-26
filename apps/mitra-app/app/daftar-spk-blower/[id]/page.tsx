@@ -80,7 +80,6 @@ const TimelineIcon = ({ taskIndex, currentTaskIndex }: {
 };
 
 const TimelineItemCompleted = () => {
-
   const transaction = React.useContext(TransactionContext);
 
   const TASK_INDEX = 3;
@@ -392,9 +391,7 @@ const TaskTimeline = ({ tasks }: { tasks: Task[] }) => {
   return (
     <ol className="relative border-s border-gray-200 dark:border-gray-700">
       <TimelineItemPending />
-
       <TimelineItemInProgress />
-
       <TimelineItemCompleted />
     </ol>
   );
@@ -402,13 +399,9 @@ const TaskTimeline = ({ tasks }: { tasks: Task[] }) => {
 
 const DetailTab = ({
   tasks,
-  transactionDetail,
-  customerDetail
 }:
   {
     tasks: Task[],
-    transactionDetail: MitraSPKDetail,
-    customerDetail: MitraCustomerDetail
   }) => {
   return (
     <>
@@ -430,6 +423,7 @@ export interface MitraSPKDetail {
   trxDate: string;
   deliveryDate: string;
   deliveryStatus: number;
+  status: number;
   additionalFee: number;
   notes: string;
   details: MitraSPKItemDetail[];
@@ -607,7 +601,7 @@ export default function PekerjaanBerlangsung() {
             {/* Summary */}
             <div className="flex items-center justify-between p-4">
               <div className="mr-4">
-                <p className="text-lg font-bold">Dewi Gita Putri</p>
+                <p className="text-lg font-bold">{customerDetail.fullname}</p>
                 <p className="text-sm text-orange-400">Nomor Transaksi: {trxNumber}</p>
                 <p className="text-sm line-clamp-1">
                   {customerDetail.address}, {customerDetail.subDistrict}, {customerDetail.district}, {customerDetail.city}, {customerDetail.province}
@@ -665,7 +659,7 @@ export default function PekerjaanBerlangsung() {
 
           {/* Content */}
           <div className="mt-2 p-4">
-            <DetailTab tasks={tasks} transactionDetail={transactionDetail} customerDetail={customerDetail} />
+            <DetailTab tasks={tasks} />
           </div>
         </div>
       </main>

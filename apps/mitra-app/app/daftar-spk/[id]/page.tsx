@@ -2,34 +2,60 @@
 
 import { PageBanner } from "@shared/components/mitra/page-banner";
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  SelectGroup,
-  SelectLabel
-} from "@ui-components/components/ui/select";
-import { CheckIcon, ChevronDown, ChevronUp, LucideListFilter, PenLine, Trash2Icon, XIcon } from "lucide-react";
-import { Dispatch, useContext, useEffect, useMemo, useState } from "react";
-import { AiFillCalendar, AiFillClockCircle } from "react-icons/ai";
-import { BsClipboard2CheckFill } from "react-icons/bs";
-import { DialogWrapper } from "libs/ui-components/src/components/dialog-wrapper";
 import { Header } from "@shared/components/Header";
-import { Label } from "libs/ui-components/src/components/ui/label";
-import { Service, useCategoryStore, usePromoLookup, useServiceLookup } from "libs/utils/useCategoryStore";
+import { api } from "@shared/utils/apiClient";
+import { formatRupiah } from "@shared/utils/formatRupiah";
+import { RupiahInput } from "@ui-components/components/rupiah-input";
+import { Button } from "@ui-components/components/ui/button";
 import { DialogDescription, DialogTitle } from "@ui-components/components/ui/dialog";
 import { Input } from "@ui-components/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@ui-components/components/ui/radio-group";
-import { RupiahInput } from "@ui-components/components/rupiah-input";
-import { formatRupiah } from "@shared/utils/formatRupiah";
-import { Button } from "@ui-components/components/ui/button";
-import Image from "next/image";
-import { FaX } from "react-icons/fa6";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue
+} from "@ui-components/components/ui/select";
 import { cn } from "@ui-components/utils";
+import { LocationData, MitraCustomerDetail, MitraSPKDetail, MitraSPKItemDetail } from "apps/mitra-app/app/daftar-spk-blower/[id]/page";
+import { DialogWrapper } from "libs/ui-components/src/components/dialog-wrapper";
+import { Label } from "libs/ui-components/src/components/ui/label";
+import { useCategoryStore, usePromoLookup, useServiceLookup } from "libs/utils/useCategoryStore";
+import { CheckIcon, ChevronDown, ChevronUp, PenLine, Trash2Icon } from "lucide-react";
+import { useParams } from "next/navigation";
+import React, { useContext, useEffect, useMemo, useState } from "react";
+import { AiFillCalendar, AiFillClockCircle } from "react-icons/ai";
+import { BsClipboard2CheckFill } from "react-icons/bs";
+import { FaX } from "react-icons/fa6";
 
 type statusName = "pending" | "in_progress" | "completed";
+
+const findStatusLabel = (status: number) => {
+  switch (status) {
+    case 0:
+      return "Baru";
+    case 1:
+      return "Proses";
+    case 1.5: // dummy status for "in progress"
+      return "Proses";
+    case 2:
+      return "Batal";
+    case 3:
+      return "Menunggu Bayar";
+    case 4:
+      return "Sudah Bayar";
+    case 5:
+      return "Selesai";
+    case 6:
+      return "Dikerjakan Ulang";
+
+    default:
+      return "Unknown";
+  }
+}
 
 type Task = {
   date: string;
@@ -39,35 +65,50 @@ type Task = {
 };
 
 type Item = {
-  id: number;
+  id: string;
   category: string;
   service: string;
   quantity: number;
   price: number;
   type: "vakum" | "cuci";
   totalPrice: number;
+  promoCode?: string;
+  promoType?: "Nominal" | "Persentase";
+  promoAmount?: number;
 }
 
 type EditItemModalProps = {
   isOpen?: boolean;
-  item: Item | null;
-  handleEditItem: (item: Item) => void;
+  item: MitraSPKItemDetail | null;
   onClose?: () => void;
 };
 
-const EditItemModal = ({ isOpen = false, item, onClose = () => { }, handleEditItem }: EditItemModalProps) => {
-  const itemId = item?.id || 0;
-  const isEdit = itemId > 0;
+const EditItemModal = ({ isOpen = false, item, onClose = () => { } }: EditItemModalProps) => {
+  const context = useContext(TransactionContext);
+  const handleAddItem = context.handleAddItem!;
+  const handleEditItem = context.handleEditItem!;
 
-  const [formData, setFormData] = useState<Item>({
-    id: item?.id || 0,
-    category: item?.category || "",
-    service: item?.service || "",
-    quantity: item?.quantity || 1,
-    type: item?.type || "vakum",
-    price: item?.price || 0,
-    totalPrice: item?.totalPrice || 0,
-  });
+  const itemId = item?.id || "";
+  const isEdit = itemId !== "";
+
+  const [formData, setFormData] = useState<Item>({} as Item);
+
+
+  useEffect(() => {
+    if (item) {
+      setFormData({
+        id: item?.id || "",
+        category: item?.serviceCategory || "",
+        service: item?.serviceCode || "",
+        quantity: item?.quantity || 1,
+        price: item.servicePrice,
+        type: item?.serviceType == 1 ? "vakum" : "cuci",
+        totalPrice: item?.totalPrice || 0,
+      } as Item);
+    } else {
+      setFormData({} as Item);
+    }
+  }, [item]);
 
   const handleChangeTable = (field: keyof Item, value: string | number) => {
     let type = formData.type;
@@ -88,13 +129,10 @@ const EditItemModal = ({ isOpen = false, item, onClose = () => { }, handleEditIt
       return;
     }
 
-
     if (field === "service") {
       const service = services.find((s) => s.serviceCode === value);
       if (service) {
         const price = type === "vakum" ? service.vacuumPrice : service.cleanPrice;
-        console.log("Selected service:", service, "Price:", price);
-
         setFormData((prev) => ({
           ...prev,
           service: service.serviceCode,
@@ -131,6 +169,40 @@ const EditItemModal = ({ isOpen = false, item, onClose = () => { }, handleEditIt
   const { services, loading: loadingServices } = useServiceLookup(formData.category);
   const { promo, loading: loadingPromo, error: promoError } = usePromoLookup(formData.service, formData.quantity);
 
+
+  useEffect(() => {
+    // set prices when edit
+    if (item && services.length > 0) {
+      setFormData((prev) => {
+        const service = services.find((s) => s.serviceCode === item.serviceCode);
+        const price = item.serviceType == 1 ? service?.vacuumPrice : service?.cleanPrice;
+
+        if (service) {
+          return {
+            ...prev,
+            price: price || 0,
+            totalPrice: (price || 0) * prev.quantity,
+          }
+        }
+        else {
+          return prev;
+        }
+      });
+    }
+  }, [item, services]);
+
+  useEffect(() => {
+    // set promo data to form
+    if (promo) {
+      setFormData((prev) => ({
+        ...prev,
+        promoCode: promo.code,
+        promoType: promo.type,
+        promoAmount: promo.amount,
+      }));
+    }
+  }, [promo])
+
   const totals = useMemo(() => {
     // total price calculation
     const price = formData.price || 0
@@ -146,24 +218,22 @@ const EditItemModal = ({ isOpen = false, item, onClose = () => { }, handleEditIt
     if (promoType === "Persentase") {
       totalPromo = (totalPrice * promoAmount) / 100;
     } else if (promoType === "Nominal") {
-      totalPromo = promoAmount;
+      totalPromo = promoAmount * quantity;
     }
 
     const endPrice = totalPrice - totalPromo;
-    setFormData((prev) => ({
-      ...prev,
-      totalPrice: endPrice,
-    }));
 
     return {
       totalPrice,
       totalPromo,
       endPrice
     }
-  }, [formData.quantity, formData.price, promo]);
+  }, [formData.quantity, formData.price, promo, formData.service]);
+
+  const [submitLoading, setSubmitLoading] = useState(false);
 
   const loading = useMemo(() => {
-    return loadingCat || loadingServices || loadingPromo;
+    return loadingCat || loadingServices || loadingPromo || submitLoading;
   }, [loadingCat, loadingServices, loadingPromo]);
 
   const isValid = useMemo(() => {
@@ -173,20 +243,42 @@ const EditItemModal = ({ isOpen = false, item, onClose = () => { }, handleEditIt
       totals.endPrice >= 0;
   }, [formData, totals]);
 
-  // reset form data when modal opens
-  useEffect(() => {
-    if (isOpen) {
-      setFormData({
-        id: item?.id || 0,
-        category: item?.category || "",
-        service: item?.service || "",
-        quantity: item?.quantity || 1,
-        type: item?.type || "vakum",
-        price: item?.price || 0,
-        totalPrice: item?.totalPrice || 0,
-      });
+  const handleSave = async () => {
+    if (isValid) {
+      try {
+        setSubmitLoading(true);
+
+        if (isEdit) {
+          await handleEditItem(itemId, formData);
+        } else {
+          await handleAddItem(formData);
+        }
+
+        onClose();
+      }
+      catch (error) {
+
+      }
+      finally {
+        setSubmitLoading(false);
+      }
     }
-  }, [isOpen, item]);
+  };
+
+  // reset form data when modal opens
+  // useEffect(() => {
+  //   if (isOpen) {
+  //     setFormData({
+  //       id: item?.id || "",
+  //       category: item?.category || "",
+  //       service: item?.service || "",
+  //       quantity: item?.quantity || 1,
+  //       type: item?.type || "vakum",
+  //       price: item?.price || 0,
+  //       totalPrice: item?.totalPrice || 0,
+  //     });
+  //   }
+  // }, [isOpen, item]);
 
   return (
     <>
@@ -281,7 +373,7 @@ const EditItemModal = ({ isOpen = false, item, onClose = () => { }, handleEditIt
             <div className="space-y-2">
               <Label htmlFor="jumlah" className="w-1/4 font-semibold">Jumlah</Label>
               <Input
-                min={1}
+                min={0}
                 placeholder="Masukkan Jumlah"
                 type="number"
                 value={formData.quantity}
@@ -341,6 +433,7 @@ const EditItemModal = ({ isOpen = false, item, onClose = () => { }, handleEditIt
         </div>
         <div className="flex mt-6 gap-2 py-2">
           <Button
+            loading={loading}
             className="flex-1" onClick={() => { onClose() }} variant="outline2">
             Kembali
           </Button>
@@ -348,8 +441,9 @@ const EditItemModal = ({ isOpen = false, item, onClose = () => { }, handleEditIt
             className="flex-1"
             type="submit"
             variant="main"
-            onClick={() => { onClose(); handleEditItem(formData); }}
+            onClick={() => { handleSave() }}
             disabled={!isValid}
+            loading={loading}
           >
             Simpan
           </Button>
@@ -359,15 +453,36 @@ const EditItemModal = ({ isOpen = false, item, onClose = () => { }, handleEditIt
   )
 }
 
-
 type DeleteItemModalProps = {
   isOpen: boolean;
-  item: Item | null;
-  handleDeleteItem: (item: Item) => void;
+  itemId: string;
   onClose: () => void;
 };
 
-const DeleteItemModal = ({ isOpen, onClose, handleDeleteItem, item }: DeleteItemModalProps) => {
+const DeleteItemModal = ({
+  isOpen,
+  onClose,
+  itemId
+}: DeleteItemModalProps) => {
+  const context = useContext(TransactionContext);
+  const handleDelete = context.handleDeleteItem!;
+
+  const [loading, setLoading] = useState(false);
+
+  const onDelete = async () => {
+    setLoading(true);
+    try {
+      await handleDelete(itemId)
+      onClose();
+    }
+    catch (error) {
+
+    }
+    finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <>
       <DialogWrapper
@@ -384,8 +499,8 @@ const DeleteItemModal = ({ isOpen, onClose, handleDeleteItem, item }: DeleteItem
         </div>
         <DialogTitle className="text-center line-clamp-2 mx-10">Kamu yakin menghapus item?</DialogTitle>
         <div className="flex mt-4">
-          <Button className="flex-1 mx-2" variant="outline2" onClick={onClose}>Batal</Button>
-          <Button className="flex-1 mx-2" variant="destructive" onClick={() => { onClose(); handleDeleteItem(item as Item); }}>Hapus</Button>
+          <Button className="flex-1 mx-2" disabled={loading} variant="outline2" onClick={onClose}>Batal</Button>
+          <Button className="flex-1 mx-2" disabled={loading} loading={loading} variant="destructive" onClick={() => { onDelete() }}>Hapus</Button>
         </div>
       </DialogWrapper>
     </>
@@ -415,7 +530,9 @@ const JobCompletedModal = ({ isOpen, onClose }: JobCompletedModalProps) => {
           Terima Kasih
         </DialogDescription>
         <div className="flex">
-          <Button className="flex-1 mx-2" variant="main" onClick={onClose}>Kembali ke Dashboard</Button>
+          <Button className="flex-1 mx-2" variant="main" onClick={() => {
+            history.back();
+          }}>Kembali ke Dashboard</Button>
         </div>
       </DialogWrapper>
     </>
@@ -453,28 +570,64 @@ const TimelineIcon = ({ taskIndex, currentTaskIndex }: { taskIndex: number; curr
 }
 
 const TimelineItemCompleted = ({
-  task,
-  currentTaskIndex = 0,
-  completeTask = () => { }
 }: {
-  task: Task;
-  currentTaskIndex: number;
-  completeTask: () => void;
-}) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const TASK_INDEX = 2;
-  const isOpenable = TASK_INDEX == currentTaskIndex;
+  }) => {
+  const transaction = React.useContext(TransactionContext);
+  const setTransaction = transaction.setTransactionDetail!;
+
+  const TASK_INDEX = 1.5;
+  const isOpenable = TASK_INDEX <= transaction.transactionDetail?.status!;
+  const isCurrent = TASK_INDEX === transaction.transactionDetail?.status!;
 
   const [jobCompleted, setJobCompleted] = useState(false);
+
+  const [loading, setLoading] = useState(false);
+  const [isOpen, setIsOpen] = useState(isCurrent);
+
+  useEffect(() => {
+    setIsOpen(isCurrent);
+  }, [isCurrent]);
+
+  const handleBackTask = async () => {
+    try {
+      setLoading(true);
+
+      setTransaction((prev) => ({
+        ...prev,
+        status: 1, // back to in progress
+      }));
+    } catch (error) {
+      console.error('Error going back task:', error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+
+  const handleCompleteTask = async () => {
+    try {
+      setLoading(true);
+      const response = await api.put(`/transaction/${transaction.transactionDetail?.id}/status`, {
+        status: 3, // completed
+      });
+
+      // simulate waiting for 2 seconds
+      setJobCompleted(true);
+      // Simulate API call
+    } catch (error) {
+      console.error('Error completing task:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <>
       <li className="mb-10 ms-4 flex">
         <div className="">
-          <TimelineIcon taskIndex={TASK_INDEX} currentTaskIndex={currentTaskIndex} />
+          <TimelineIcon taskIndex={TASK_INDEX} currentTaskIndex={transaction.transactionDetail?.status!} />
         </div>
         <div className="flex-1">
-          <time className="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">({task.date} - {task.time})</time>
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Selesai & Diterima Pelanggan</h3>
           {
             isOpen && (
@@ -487,12 +640,16 @@ const TimelineItemCompleted = ({
                   <p className="text-sm mb-4">Jika pelanggan sudah puas dan pekerjaan sudah selesai, mohon untuk klik tombol <span>"Selesai"</span></p>
 
                   <div className="flex">
-                    <Button className="flex-1 mx-2" variant="outline2" onClick={() => { }}>Kembali</Button>
-                    <Button className="flex-1 mx-2" variant="main" onClick={() => {
-                      setJobCompleted(true);
-                      completeTask();
-                      setIsOpen(false);
-                    }}>Selesai</Button>
+                    <Button className="flex-1 mx-2" variant="outline2" onClick={() => {
+                      handleBackTask();
+                    }}>Kembali</Button>
+                    <Button
+                      disabled={
+                        !isCurrent || loading
+                      }
+                      className="flex-1 mx-2" variant="main" onClick={() => {
+                        handleCompleteTask();
+                      }}>Selesai</Button>
                   </div>
                 </div>
 
@@ -513,7 +670,10 @@ const TimelineItemCompleted = ({
 
       <JobCompletedModal
         isOpen={jobCompleted}
-        onClose={() => setJobCompleted(false)}
+        onClose={() => {
+          setJobCompleted(false);
+          window.location.reload();
+        }}
       />
 
     </>
@@ -521,31 +681,52 @@ const TimelineItemCompleted = ({
 }
 
 const TimelineItemInProgress = ({
-  task,
-  itemList = [],
   onEditItem,
   onDeleteItem,
-  currentTaskIndex = 0,
-  completeTask = () => { }
 }: {
-  task: Task;
-  itemList?: Item[];
-  onEditItem: (item?: Item) => void;
-  onDeleteItem: (item?: Item) => void;
-  currentTaskIndex: number;
-  completeTask: () => void;
+    onEditItem: (item?: MitraSPKItemDetail) => void;
+    onDeleteItem: (item?: MitraSPKItemDetail) => void;
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const transaction = React.useContext(TransactionContext);
+  const setTransaction = transaction.setTransactionDetail!;
+  const transactionItems = transaction.transactionDetail?.details || [];
+
   const TASK_INDEX = 1;
-  const isOpenable = TASK_INDEX == currentTaskIndex;
+  const isCurrent = TASK_INDEX === transaction.transactionDetail?.status!;
+  const isOpenable = TASK_INDEX <= transaction.transactionDetail?.status!;
+
+  const [isOpen, setIsOpen] = useState(isCurrent);
+  const [isLoading, setIsLoading] = useState(false);
+
+
+  useEffect(() => {
+    setIsOpen(isCurrent);
+  }, [isCurrent]);
+
+  const handleCompleteTask = async () => {
+    try {
+      setTransaction((prev) => ({
+        ...prev,
+        status: 1.5, // dummy status for "in progress"
+      }));
+
+    } catch (error) {
+      console.error('Error completing task:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
 
   return (
     <li className="mb-10 ms-4 flex">
       <div className="">
-        <TimelineIcon taskIndex={TASK_INDEX} currentTaskIndex={currentTaskIndex} />
+        <TimelineIcon taskIndex={TASK_INDEX}
+          currentTaskIndex={transaction.transactionDetail?.status!}
+        />
       </div>
       <div className="flex-1">
-        <time className="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">({task.date} - {task.time})</time>
+        {/* <time className="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">({task.date} - {task.time})</time> */}
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Dalam Proses Pengerjaan</h3>
         {
           isOpen && (
@@ -555,46 +736,50 @@ const TimelineItemInProgress = ({
 
               {/* additional details */}
               <div className="mt-2 text-sm text-gray-600">
-                {/* preview information */}
                 <p className="my-4 font-medium">List item yang harus segera dikerjakan dan diselesaikan</p>
-                <p className="font-bold text-base text-black">Alamat</p>
-                <p className="mt-3 text-sm font-medium mb-4">Jl. Cimanuk No.1A, Citarum, Kec. Bandung Wetan, Kota Bandung, Jawa Barat 40115</p>
-
                 {/* item list */}
                 <div>
                   {/* item list header */}
                   <div className="flex">
                     <p className="flex-1 font-semibold text-black text-base">List Item Pengerjaan:</p>
-                    <p onClick={() => {
-                      onEditItem();
-                    }}
-                      className="flex text-blue-500 font-semibold text-base">+ <span className="underline ml-1">Tambah Item</span></p>
+                    {
+                      isCurrent && (
+                        <p onClick={() => {
+                          onEditItem();
+                        }}
+                          className="flex text-blue-500 font-semibold text-base">+ <span className="underline ml-1">Tambah Item</span></p>
+                      )
+                    }
                   </div>
 
                   {/* item list content */}
                   <div className="mt-3">
-                    {itemList.map((item, index) => {
-                      const isOriginal = item.id !== 0; // Assuming id 0 is the original item
-
+                    {transactionItems.map((item, index) => {
                       return (
                         <div key={index} className="py-2 flex justify-center items-center">
                           <p className="flex flex-1 gap-1">
                             <span>{item.quantity}x </span> -
-                            <span className="max-w-[120px] block overflow-hidden whitespace-nowrap text-ellipsis"> {item.service}</span> -
-                            <span> Rp. {item.totalPrice.toLocaleString()} </span>
+                            <span className="max-w-[120px] block overflow-hidden whitespace-nowrap text-ellipsis"> {item.service.name}</span> -
+                            <span> Rp. {(item.totalPrice - item.promoPrice).toLocaleString()} </span>
                           </p>
 
-                          {!isOriginal && (
-                            <div className="flex">
-                              <button onClick={() => onDeleteItem(item)} className="text-red-500 p-2 mx-2 bg-red-500/10 rounded-md hover:bg-red-500/20 transition-colors">
-                                <Trash2Icon className="w-4 h-4" />
-                              </button>
+                          {
+                            isCurrent && (
+                              <div className="flex">
+                                <button
+                                  onClick={() => onDeleteItem(item)}
+                                  className="text-red-500 p-2 mx-2 bg-red-500/10 rounded-md hover:bg-red-500/20 transition-colors">
+                                  <Trash2Icon className="w-4 h-4" />
+                                </button>
 
-                              <button onClick={() => onEditItem(item)} className="text-blue-600 p-2 bg-blue-500/10 rounded-md hover:bg-blue-500/20 transition-colors">
-                                <PenLine className="w-4 h-4" />
-                              </button>
-                            </div>
-                          )}
+                                <button
+                                  onClick={() => onEditItem(item)}
+                                  className="text-blue-600 p-2 bg-blue-500/10 rounded-md hover:bg-blue-500/20 transition-colors">
+                                  <PenLine className="w-4 h-4" />
+                                </button>
+                              </div>
+                            )
+                          }
                         </div>
                       )
                     })}
@@ -603,7 +788,10 @@ const TimelineItemInProgress = ({
 
                 {/* action button */}
                 <div className="mt-4 flex justify-end">
-                  <button onClick={() => { setIsOpen(false); completeTask(); }} className="px-4 py-2 bg-mainColor text-white rounded-md hover:bg-mainColor/80 transition-colors">
+                  <button
+                    onClick={() => { handleCompleteTask(); }}
+                    disabled={isLoading || !isCurrent}
+                    className="px-4 py-2 bg-mainColor text-white rounded-md hover:bg-mainColor/80 disabled:bg-mainColor/40 transition-colors">
                     Pekerjaan Selesai
                   </button>
                 </div>
@@ -629,33 +817,49 @@ const TimelineItemInProgress = ({
 }
 
 const TimelineItemPending = ({
-  task,
-  itemList = [],
   onEditItem,
   onDeleteItem,
-  currentTaskIndex = 0,
-  completeTask = () => { }
 }: {
-  task: Task;
-  itemList: Item[];
-  onEditItem: (item?: Item) => void;
-  onDeleteItem: (item?: Item) => void;
-  currentTaskIndex: number;
-  completeTask: () => void;
+    onEditItem: (item?: MitraSPKItemDetail) => void;
+    onDeleteItem: (item?: MitraSPKItemDetail) => void;
 }) => {
+  const transaction = React.useContext(TransactionContext);
+  const transactionItems = transaction.transactionDetail?.details || [];
 
-  const [isOpen, setIsOpen] = useState(false);
   const TASK_INDEX = 0;
-  const isOpenable = TASK_INDEX == currentTaskIndex;
+  const isOpenable = TASK_INDEX <= transaction.transactionDetail?.status!;
+  const isCurrent = TASK_INDEX === transaction.transactionDetail?.status!;
+
+  const [isOpen, setIsOpen] = useState(isCurrent);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const trxId = transaction.transactionDetail?.id; // replace with actual trxId from props or state
+
+  const handleCompleteTask = async () => {
+    try {
+      setIsLoading(true);
+      const response = await api.put(`/transaction/${trxId}/status`, {
+        status: 1, // in progress
+      });
+
+      window.location.reload();
+
+    } catch (error) {
+      console.error('Error completing task:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
   return (
     <li className="mb-10 ms-4 flex">
       <div className="">
-        <TimelineIcon taskIndex={TASK_INDEX} currentTaskIndex={currentTaskIndex} />
+        <TimelineIcon taskIndex={TASK_INDEX}
+          currentTaskIndex={transaction.transactionDetail?.status!}
+        />
       </div>
       <div className="flex-1">
-        <time className="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">({task.date} - {task.time})</time>
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Terjadwal</h3>
+        <h3 className="text-lg font-semibold text-gray-900" onClick={() => isOpenable && setIsOpen(!isOpen)}>Terjadwal</h3>
         {
           isOpen && (
             <>
@@ -667,39 +871,53 @@ const TimelineItemPending = ({
                 {/* preview information */}
                 <p className="my-4 font-medium">Jadwal pengerjaan yang harus diselesaikan</p>
                 <p className="font-bold text-base text-black">Alamat</p>
-                <p className="mt-3 text-sm font-medium mb-4">Jl. Cimanuk No.1A, Citarum, Kec. Bandung Wetan, Kota Bandung, Jawa Barat 40115</p>
+                <p className="mt-3 text-sm font-medium mb-4">
+                  {transaction.customerDetail?.address}, {transaction.customerDetail?.subDistrict}, {transaction.customerDetail?.district}, {transaction.customerDetail?.city}, {transaction.customerDetail?.province}
+                </p>
 
                 {/* item list */}
                 <div>
                   {/* item list header */}
                   <div className="flex">
                     <p className="flex-1 font-semibold text-black text-base">List Item Pengerjaan:</p>
-                    <p onClick={() => {
-                      onEditItem();
-                    }}
-                      className="flex text-blue-500 font-semibold text-base">+ <span className="underline ml-1">Tambah Item</span></p>
+                    {
+                      isCurrent && (
+                        <p onClick={() => {
+                          onEditItem();
+                        }}
+                          className="flex text-blue-500 font-semibold text-base">+ <span className="underline ml-1">Tambah Item</span></p>
+                      )
+                    }
                   </div>
 
                   {/* item list content */}
                   <div className="mt-3">
-                    {itemList.map((item, index) => {
+                    {transactionItems.map((item, index) => {
                       return (
                         <div key={index} className="py-2 flex justify-center items-center">
                           <p className="flex flex-1 gap-1">
                             <span>{item.quantity}x </span> -
-                            <span className="max-w-[120px] block overflow-hidden whitespace-nowrap text-ellipsis"> {item.service}</span> -
-                            <span> Rp. {item.totalPrice.toLocaleString()} </span>
+                            <span className="max-w-[120px] block overflow-hidden whitespace-nowrap text-ellipsis"> {item.service.name}</span> -
+                            <span> Rp. {(item.totalPrice - item.promoPrice).toLocaleString()} </span>
                           </p>
 
-                          <div className="flex">
-                            <button onClick={() => onDeleteItem(item)} className="text-red-500 p-2 mx-2 bg-red-500/10 rounded-md hover:bg-red-500/20 transition-colors">
-                              <Trash2Icon className="w-4 h-4" />
-                            </button>
+                          {
+                            isCurrent && (
+                              <div className="flex">
+                                <button
+                                  onClick={() => onDeleteItem(item)}
+                                  className="text-red-500 p-2 mx-2 bg-red-500/10 rounded-md hover:bg-red-500/20 transition-colors">
+                                  <Trash2Icon className="w-4 h-4" />
+                                </button>
 
-                            <button onClick={() => onEditItem(item)} className="text-blue-600 p-2 bg-blue-500/10 rounded-md hover:bg-blue-500/20 transition-colors">
-                              <PenLine className="w-4 h-4" />
-                            </button>
-                          </div>
+                                <button
+                                  onClick={() => onEditItem(item)}
+                                  className="text-blue-600 p-2 bg-blue-500/10 rounded-md hover:bg-blue-500/20 transition-colors">
+                                  <PenLine className="w-4 h-4" />
+                                </button>
+                              </div>
+                            )
+                          }
                         </div>
                       )
                     })}
@@ -708,7 +926,10 @@ const TimelineItemPending = ({
 
                 {/* action button */}
                 <div className="mt-4 flex justify-end">
-                  <button onClick={() => { setIsOpen(false); completeTask(); }} className="px-4 py-2 bg-mainColor text-white rounded-md hover:bg-mainColor/80 transition-colors">
+                  <button
+                    onClick={() => { setIsOpen(false); handleCompleteTask(); }} className="px-4 py-2 bg-mainColor text-white rounded-md hover:bg-mainColor/80 disabled:opacity-50 transition-colors"
+                    disabled={isLoading || !isCurrent}
+                  >
                     Mulai Pengerjaan
                   </button>
                 </div>
@@ -733,117 +954,54 @@ const TimelineItemPending = ({
   );
 }
 
-
 const TaskTimeline = ({
-  tasks,
-  itemList,
   setEditItem,
   setDeleteItem
 }: {
-  tasks: Task[];
-  itemList: Item[];
-  setEditItem: (item: Item | null) => void;
-  setDeleteItem: (item: Item | null) => void;
-}) => {
-  const [currentIndex, setCurrentIndex] = useState(tasks.findIndex(task => task.isCurrent));
-
-  const completeTask = () => {
-    tasks[currentIndex].isCurrent = false;
-    if (currentIndex < tasks.length - 1)
-      tasks[currentIndex + 1].isCurrent = true;
-
-    setCurrentIndex(currentIndex + 1);
-  }
+    setEditItem: (item: MitraSPKItemDetail | null) => void;
+    setDeleteItem: (item: MitraSPKItemDetail | null) => void;
+  }) => {
 
   return (
     <>
       <ol className="relative border-s border-black/40 dark:border-gray-700">
         <TimelineItemPending
-          task={tasks[0]}
-          itemList={itemList}
           onEditItem={(editItem) => {
-            const item = editItem || {} as Item;
+            const item = editItem || {} as MitraSPKItemDetail;
             setEditItem(item);
           }}
           onDeleteItem={(item) => {
             setDeleteItem(item || null);
           }}
-          currentTaskIndex={currentIndex}
-          completeTask={completeTask}
         />
 
         <TimelineItemInProgress
-          task={tasks[1]}
-          itemList={itemList}
+          // itemList={itemList}
           onEditItem={(editItem) => {
-            const item = editItem || { id: 0 } as Item;
+            const item = editItem || {} as MitraSPKItemDetail;
             setEditItem(item);
           }}
           onDeleteItem={(item) => {
             setDeleteItem(item || null);
           }}
-          currentTaskIndex={currentIndex}
-          completeTask={completeTask}
         />
 
-        <TimelineItemCompleted
-          task={tasks[2]}
-          currentTaskIndex={currentIndex}
-          completeTask={completeTask}
-        />
+        <TimelineItemCompleted />
       </ol>
     </>
   );
 }
 
-const DetailTab = ({
-  tasks,
-  itemList,
-  setItemList,
-}: {
-  tasks: Task[];
-  itemList: Item[];
-  setItemList: Dispatch<React.SetStateAction<Item[]>>;
-}) => {
-
-  const [editItem, setEditItem] = useState<Item | null>(null);
-  const [deleteItem, setDeleteItem] = useState<Item | null>(null);
-
-  const handleEditItem = (item?: Item) => {
-    const isNew = !item || item.id === 0;
-    const newItem: Item = {
-      id: isNew ? 0 : item.id,
-      category: item?.category || "",
-      service: item?.service || "",
-      quantity: item?.quantity || 1,
-      type: item?.type || "vakum",
-      price: item?.price || 0,
-      totalPrice: item?.totalPrice || 0,
-    };
-
-    setItemList((prev) => {
-      if (isNew) {
-        return [...prev, newItem];
-      } else {
-        return prev.map((i) => (i.id === item?.id ? newItem : i));
-      }
-    });
-  };
-
-  const handleDeleteItem = (item?: Item) => {
-    if (!item) return;
-
-    setItemList((prev) => prev.filter((i) => i.id !== item.id));
-  };
-
+const DetailTab = () => {
+  const [editItem, setEditItem] = useState<MitraSPKItemDetail | null>(null);
+  const [deleteItem, setDeleteItem] = useState<MitraSPKItemDetail | null>(null);
 
   return (
     <>
       <p className="mb-6 font-bold text-lg">Status Pengerjaan</p>
-      <TaskTimeline tasks={tasks} itemList={itemList} setDeleteItem={setDeleteItem} setEditItem={setEditItem} />
-
-      <EditItemModal handleEditItem={handleEditItem} isOpen={!!editItem} onClose={() => setEditItem(null)} item={editItem} />
-      <DeleteItemModal isOpen={!!deleteItem} onClose={() => setDeleteItem(null)} handleDeleteItem={handleDeleteItem} item={deleteItem} />
+      <TaskTimeline setDeleteItem={setDeleteItem} setEditItem={setEditItem} />
+      <EditItemModal isOpen={!!editItem} onClose={() => setEditItem(null)} item={editItem} />
+      <DeleteItemModal isOpen={!!deleteItem} onClose={() => setDeleteItem(null)} itemId={deleteItem?.id!} />
     </>
   );
 }
@@ -857,7 +1015,6 @@ interface AttachmentImageProps {
   width?: number;
   height?: number;
 }
-
 
 const UploadPhoto = ({
   onUpload = () => { },
@@ -976,109 +1133,264 @@ const FotoTab = () => {
   </>
 }
 
+const TransactionContext = React.createContext<{
+  transactionDetail: MitraSPKDetail | null;
+  customerDetail: MitraCustomerDetail | null;
+  setTransactionDetail?: React.Dispatch<React.SetStateAction<MitraSPKDetail>>;
+  handleAddItem?: (item: Item) => Promise<void>;
+  handleDeleteItem?: (id: string) => Promise<void>;
+  handleEditItem?: (id: string, item: Item) => Promise<void>;
+}>({
+  transactionDetail: null,
+  customerDetail: null,
+  setTransactionDetail: () => { },
+  handleAddItem: async (item) => { },
+  handleDeleteItem: async (id) => { },
+  handleEditItem: async (id, item) => { }
+});
+
 export default function PekerjaanBerlangsung() {
-  const tasks: Task[] = [
-    { date: "20/03/2025", time: "10:00 WIB", status: "pending", isCurrent: true },
-    { date: "20/03/2025", time: "11:00 WIB", status: "in_progress", isCurrent: false },
-    { date: "20/03/2025", time: "12:00 WIB", status: "completed", isCurrent: false },
-  ];
-
-  const [itemList, setItemList] = useState<Item[]>([
-    { id: 1, type: "cuci", category: "", service: "Cuci Sofa", quantity: 1, price: 20000, totalPrice: 20000 },
-    { id: 2, type: "cuci", category: "", service: "Cuci Bantal", quantity: 1, price: 20000, totalPrice: 20000 },
-    { id: 3, type: "cuci", category: "", service: "Cuci Kasur", quantity: 1, price: 30000, totalPrice: 30000 },
-  ]);
-
   type TabType = "detail" | "riwayat" | "foto";
   const [currentTab, setCurrentTab] = useState<TabType>("detail");
+
   const tabs: { id: TabType; label: string }[] = [
     { id: "detail", label: "Detail" },
     { id: "riwayat", label: "Riwayat" },
     { id: "foto", label: "Foto" },
   ];
 
+  const params = useParams();
+  const [trxNumber, setTrxNumber] = useState("");
+
+  const [transactionDetail, setTransactionDetail] = useState<MitraSPKDetail>(null as any);
+
+  const [customerDetail, setCustomerDetail] = useState<MitraCustomerDetail>(null as any);
+
+  // get params from url
+  useEffect(() => {
+    if (!params || !params.id) return;
+    const { id } = params; // Access the dynamic route parameter 'id'
+
+    const trxNumberRaw = id?.toString() as string;
+    const trxNumber = decodeURIComponent(trxNumberRaw);
+    setTrxNumber(trxNumber);
+  }, [params]);
+
+  // get transaction detail from api
+  useEffect(() => {
+    if (!trxNumber) return;
+
+    const fetchTransactionDetail = async () => {
+      try {
+        const response = await api.get(`/transaction/detail?trxNumber=${trxNumber}`);
+        setTransactionDetail(response.data as MitraSPKDetail);
+      } catch (error) {
+        console.error("Error fetching transaction detail:", error);
+      }
+    };
+
+    fetchTransactionDetail();
+
+  }, [trxNumber]);
+
+  // get customer detail from api
+  useEffect(() => {
+    if (!transactionDetail) return;
+
+    const fetchCustomerDetail = async () => {
+      try {
+        const response = await api.get(`/customer/id/${transactionDetail.customerId}`);
+        const customerDetailResponse = response.data as MitraCustomerDetail;
+
+        const [provinceRes, cityRes, districtRes, subDistrictRes] = await Promise.all([
+          api.get(`/parameter/provinces`),
+          api.get(`/parameter/cities?province=${customerDetailResponse.province}`),
+          api.get(`/parameter/districts?province=${customerDetailResponse.province}&city=${customerDetailResponse.city}`),
+          api.get(`/parameter/sub-districts?province=${customerDetailResponse.province}&city=${customerDetailResponse.city}&district=${customerDetailResponse.district}`)
+        ]);
+
+        const findLabel = (items: LocationData[], code: string) => {
+          const item = items.find(item => item.paramKey === code);
+          return item ? item.paramValue : code;
+        };
+
+        customerDetailResponse.province = findLabel(provinceRes.data, customerDetailResponse.province);
+        customerDetailResponse.city = findLabel(cityRes.data, customerDetailResponse.city);
+        customerDetailResponse.district = findLabel(districtRes.data, customerDetailResponse.district);
+        customerDetailResponse.subDistrict = findLabel(subDistrictRes.data, customerDetailResponse.subDistrict);
+
+        setCustomerDetail(customerDetailResponse);
+
+      } catch (error) {
+        console.error("Error fetching customer detail:", error);
+      }
+    };
+
+    fetchCustomerDetail();
+  }, [transactionDetail]);
+
+  if (!transactionDetail || !customerDetail) {
+    return (
+      <main className="pb-[20vh] relative">
+        Memuat...
+      </main>
+    );
+  }
+
+  const handleAddItem = async (item: Item) => {
+    // api post to add item to transaction
+    try {
+      const payload = {
+        serviceCategory: item.category,
+        serviceCode: item.service,
+        serviceType: item.type === "vakum" ? 1 : 2,
+        servicePrice: item.price,
+        promoCode: item.promoCode || "",
+        promoType: item.promoType || "",
+        promoAmount: item.promoAmount || 0,
+        quantity: Number(item.quantity) || 1
+      }
+
+      await api.post(`/transaction-detail/${transactionDetail.id}`, payload);
+      // refresh transaction detail
+      const updatedTransaction = await api.get(`/transaction/detail?trxNumber=${trxNumber}`);
+      setTransactionDetail(updatedTransaction.data as MitraSPKDetail);
+
+    } catch (error) {
+      console.error("Error adding item:", error);
+    }
+  }
+
+  const handleDeleteItem = async (id: string) => {
+    // api delete to delete item from transaction
+    try {
+      await api.delete(`/transaction-detail/${transactionDetail.id}/${id}`);
+      // refresh transaction detail
+      const updatedTransaction = await api.get(`/transaction/detail?trxNumber=${trxNumber}`);
+      setTransactionDetail(updatedTransaction.data as MitraSPKDetail);
+    } catch (error) {
+      console.error("Error deleting item:", error);
+    }
+  }
+
+  const handleEditItem = async (id: string, item: Item) => {
+    // api put to edit item from transaction
+    try {
+      const payload = {
+        serviceCategory: item.category,
+        serviceCode: item.service,
+        serviceType: item.type === "vakum" ? 1 : 2,
+        servicePrice: item.price,
+        promoCode: item.promoCode || "",
+        promoType: item.promoType || "",
+        promoAmount: item.promoAmount || 0,
+        quantity: Number(item.quantity) || 1
+      }
+
+      // delete and add new item
+      await api.delete(`/transaction-detail/${transactionDetail.id}/${id}`);
+      await api.post(`/transaction-detail/${transactionDetail.id}`, payload);
+      // refresh transaction detail
+
+      const updatedTransaction = await api.get(`/transaction/detail?trxNumber=${trxNumber}`);
+      setTransactionDetail(updatedTransaction.data as MitraSPKDetail);
+
+    }
+    catch (error) {
+      console.error("Error editing item:", error);
+    }
+  }
+
   return (
-    <main className="pb-[20vh] relative">
-      <PageBanner
-        title="Pekerjaan Berlangsung"
-      />
-      <div className="bg-white dark:bg-slate-800 mx-4 rounded-md -m-8 z-30 relative">
-        {/* preview */}
-        <div>
-          {/* summary */}
-          <div className="flex items-center justify-between p-4">
-            {/* left content */}
-            <div className="mr-4">
-              <p className="text-lg">Dewi Gita Putri</p>
-              <p className="text-sm">Nomor Transaksi: TRX-005</p>
-              <p className="text-sm line-clamp-1">Alamat: Jl. Raya No. 123 TEETETETET TEETETETET TEETETETET TEETETETET TEETETETET TEETETETET</p>
+    <TransactionContext.Provider value={{ transactionDetail, customerDetail, setTransactionDetail, handleAddItem, handleDeleteItem, handleEditItem }}>
+      <main className="pb-[20vh] relative">
+        <PageBanner
+          title="Pekerjaan Berlangsung"
+        />
+        <div className="bg-white dark:bg-slate-800 mx-4 rounded-md -m-8 z-30 relative">
+          {/* preview */}
+          <div>
+            {/* summary */}
+            <div className="flex items-center justify-between p-4">
+              <div className="mr-4">
+                <p className="text-lg font-bold">{customerDetail.fullname}</p>
+                <p className="text-sm text-orange-400">Nomor Transaksi: {trxNumber}</p>
+                <p className="text-sm line-clamp-1">
+                  {customerDetail.address}, {customerDetail.subDistrict}, {customerDetail.district}, {customerDetail.city}, {customerDetail.province}
+                </p>
+              </div>
+
+              <div className="flex items-center justify-center">
+                <div className="w-16 h-16 bg-mainColor flex items-center justify-center rounded-md">
+                  <div className="w-10 h-10">
+                    <img src="/assets/mitra-icon.png" className="w-full h-full" alt="Mitra" />
+                  </div>
+                </div>
+              </div>
             </div>
 
-            {/* right content */}
-            <div className="flex items-center justify-center">
-              <div className="w-16 h-16 bg-mainColor flex items-center justify-center rounded-md">
-                <div className="w-10 h-10">
-                  <img src="/assets/mitra-icon.png" className="w-full h-full" />
-                </div>
+            {/* map */}
+            <div className="flex w-full px-4 max-h-48 justify-between">
+              <iframe
+                src={`https://maps.google.com/maps?q=${customerDetail.latitude},${customerDetail.longitude}&z=14&output=embed`}
+                loading="lazy"
+                className="w-full h-48 rounded-md"
+                allowFullScreen
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+            </div>
+
+            {/* divider */}
+            <div className="grid grid-cols-5 pb-3 border-b border-bottom-dash border-gray-500"></div>
+
+            {/* Dates and status */}
+            <div className="flex mt-4 text-sm justify-around">
+              <div className="flex items-center gap-1">
+                <AiFillCalendar />
+                <p>{new Date(transactionDetail.trxDate).toLocaleDateString('en-GB')}</p>
+              </div>
+              <div className="flex items-center gap-1">
+                <AiFillClockCircle />
+                <p>{new Date(transactionDetail.trxDate).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })} WIB</p>
+              </div>
+              <div className="flex items-center gap-1 text-[#0369A1]">
+                <BsClipboard2CheckFill />
+                <p>{findStatusLabel(transactionDetail.status)}</p>
               </div>
             </div>
           </div>
 
-          {/* map */}
-          <div className="flex w-full px-4 max-h-48 justify-between">
-            <img src="/assets/sample-map.png" className="rounded-lg w-full object-cover" alt="" />
-          </div>
-
-          {/* divider */}
-          <div className="grid grid-cols-5 pb-3 border-b border-bottom-dash border-gray-500"></div>
-
-          {/* Dates and status */}
-          <div className="flex mt-4 text-sm justify-around">
-            <div className="flex items-center gap-1">
-              <AiFillCalendar />
-              <p>20/03/2025</p>
-            </div>
-            <div className="flex items-center gap-1">
-              <AiFillClockCircle />
-              <p>10:00 WIB</p>
-            </div>
-            <div className="flex items-center gap-1 text-[#0369A1]">
-              <BsClipboard2CheckFill />
-              <p>Menunggu Proses</p>
+          {/* tabs */}
+          <div className="mt-6 mx-4 bg-mainColor/20 p-2 rounded-md">
+            <div className="flex space-x-3">
+              {tabs.map((tab, index) => {
+                if (tab.id == currentTab) {
+                  return <button key={index} className="py-[5px] px-3 font-medium bg-white text-black dark:bg-mainColor dark:text-white rounded-md">{tab.label}</button>
+                }
+                else {
+                  return <button key={index} onClick={() => setCurrentTab(tab.id)} className="py-[5px] px-3 font-medium bg-slate-400/10 dark:bg-gray-700 rounded-md">{tab.label}</button>
+                }
+              })}
             </div>
           </div>
-        </div>
 
-        {/* tabs */}
-        <div className="mt-6 mx-4 bg-mainColor/20 p-2 rounded-md">
-          <div className="flex space-x-3">
-            {tabs.map((tab, index) => {
-              if (tab.id == currentTab) {
-                return <button key={index} className="py-[5px] px-3 font-medium bg-white text-black dark:bg-mainColor dark:text-white rounded-md">{tab.label}</button>
-              }
-              else {
-                return <button key={index} onClick={() => setCurrentTab(tab.id)} className="py-[5px] px-3 font-medium bg-slate-400/10 dark:bg-gray-700 rounded-md">{tab.label}</button>
-              }
-            })}
+          {/* content */}
+          <div className="mt-2 p-4">
+            {/* content based on current tab */}
+            {currentTab === "detail" && (
+              <DetailTab />
+            )}
+            {currentTab === "riwayat" && (
+              <p>Riwayat Pekerjaan akan ditampilkan di sini.</p>
+            )}
+            {currentTab === "foto" && (
+              <FotoTab />
+            )}
           </div>
         </div>
 
-        {/* content */}
-        <div className="mt-2 p-4">
-          {/* content based on current tab */}
-          {currentTab === "detail" && (
-            <DetailTab tasks={tasks} itemList={itemList} setItemList={setItemList} />
-          )}
-          {currentTab === "riwayat" && (
-            <p>Riwayat Pekerjaan akan ditampilkan di sini.</p>
-          )}
-          {currentTab === "foto" && (
-            <FotoTab />
-          )}
-        </div>
-      </div>
 
-
-    </main>
+      </main>
+    </TransactionContext.Provider>
   );
 }

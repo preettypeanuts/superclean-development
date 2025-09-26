@@ -59,7 +59,6 @@ export const OngoingTask = () => {
         if (response && response.status) {
           // Cek apakah data ada dan merupakan array
           const taskData = response.data || response.data || [];
-          console.log(taskData[0][0], "<<");
 
 
           if (Array.isArray(taskData) && taskData.length > 0) {
