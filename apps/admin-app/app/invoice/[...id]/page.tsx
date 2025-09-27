@@ -3,6 +3,7 @@
 import { HeaderMobile } from "@shared/components/Header";
 import { WrapperMobile } from "@shared/components/Wrapper";
 import { api } from "@shared/utils/apiClient";
+import { apiFormdata } from "@shared/utils/apiFormdataClient";
 import { formatRupiah } from "@shared/utils/formatRupiah";
 import { Button } from "@ui-components/components/ui/button";
 import { Input } from "@ui-components/components/ui/input";
@@ -17,6 +18,7 @@ import { FaInfoCircle, FaRegCheckCircle } from "react-icons/fa";
 import { FaCloudArrowUp } from "react-icons/fa6";
 import { IoMdStar } from "react-icons/io";
 
+const AUTH_REQUEST_ID = process.env.NEXT_PUBLIC_AUTH_HEADER;
 
 interface Review {
   rating: number;
@@ -431,18 +433,37 @@ export default function InvoicePage() {
     await api.put(`/transaction/${transaction.id}/review`, reviewPayload);
 
     // todo: send payment proof
+    if (reviewData.paymentProof) {
+      const formData = new FormData();
+      formData.append("file", reviewData.paymentProof);
+      formData.append("docType", "PAYMENT");
+
+      await apiFormdata.post(`/transaction/${transaction.id}/documents`, formData);
+    }
 
     // todo: update transaction status to completed
+    await api.put(`/transaction/${transaction.id}/status`, {
+      status: 4, // payment complete
+    }, {
+      headers: {
+        "X-Auth-Request-Id": AUTH_REQUEST_ID || "",
+      }
+    });
 
   }
 
   const searchParams = useSearchParams();
   const step: "" | "payment" | "complete" = searchParams.get('step') as any || '';
 
-  if (step === 'payment' && reviewData.rating === 0) {
+  if (step !== 'complete' && transaction?.status === 4) {
+    // redirect to complete if transaction already paid
+    const newUrl = `${pathname}?step=complete`;
+    window.history.replaceState(null, '', newUrl);
+  }
+  else if (step !== '' && reviewData.rating === 0 && transaction?.status !== 4) {
     // reset query param
     const newUrl = pathname;
-    // window.history.replaceState(null, '', newUrl);
+    window.history.replaceState(null, '', newUrl);
   }
 
   // Fetch transaction data
