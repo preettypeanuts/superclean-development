@@ -7,7 +7,7 @@ export const apiClient = async (
 ) => {
   try {
     // Ambil token dari localStorage
-    let accessToken = localStorage.getItem("access_token");
+    const accessToken = localStorage.getItem("access_token");
 
     // Headers default
     const defaultHeaders: HeadersInit = {
@@ -25,10 +25,15 @@ export const apiClient = async (
 
     // Request ke API
     const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
-    const result = await response.json();
 
-    if (!response.ok) {
-      throw new Error(result.message || "Something went wrong");
+    let result: any
+
+    if (response.status !== 204) {
+      result = await response.json();
+
+      if (!response?.ok) {
+        throw new Error(result.message || "Something went wrong");
+      }
     }
 
     return result;

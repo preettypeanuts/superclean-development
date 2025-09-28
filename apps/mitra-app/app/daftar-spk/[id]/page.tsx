@@ -4,6 +4,7 @@ import { PageBanner } from "@shared/components/mitra/page-banner";
 
 import { Header } from "@shared/components/Header";
 import { api } from "@shared/utils/apiClient";
+import { apiFormdata } from "@shared/utils/apiFormdataClient";
 import { formatRupiah } from "@shared/utils/formatRupiah";
 import { RupiahInput } from "@ui-components/components/rupiah-input";
 import { Button } from "@ui-components/components/ui/button";
@@ -958,9 +959,9 @@ const TaskTimeline = ({
   setEditItem,
   setDeleteItem
 }: {
-    setEditItem: (item: MitraSPKItemDetail | null) => void;
-    setDeleteItem: (item: MitraSPKItemDetail | null) => void;
-  }) => {
+  setEditItem: (item: MitraSPKItemDetail | null) => void;
+  setDeleteItem: (item: MitraSPKItemDetail | null) => void;
+}) => {
 
   return (
     <>
@@ -1006,33 +1007,127 @@ const DetailTab = () => {
   );
 }
 
+interface History {
+  id: string;
+  trxNumber: string;
+  notes: string;  // example: <b>Super Admin</b> melakukan perubahan detail transaksi pada <b>21 September 2025 22:33</b>
+  logDate: string // example: 2025-09-21T15:33:00.000Z
+}
+
+const RiwayatTab = () => {
+  const transaction = React.useContext(TransactionContext);
+
+  const [history, setHistory] = useState<History[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (transaction.transactionDetail) {
+      const fetchHistory = async () => {
+        try {
+          setLoading(true);
+          const response = await api.get(`/transaction/history?trxNumber=${transaction.transactionDetail?.trxNumber}`);
+          setHistory(response.data);
+        } catch (error) {
+          console.error("Error fetching history:", error);
+        }
+        finally {
+          setLoading(false);
+        }
+      };
+
+      fetchHistory();
+    }
+  }, [transaction.transactionDetail]);
+
+  if (loading) {
+    return <div className="text-center text-gray-400">
+      <p>Memuat riwayat...</p>
+    </div>
+  }
+
+  if (history.length > 0) {
+    return <>
+      <p className="mb-6 font-bold text-lg">Riwayat</p>
+      <ol className="relative border-s border-black/40 dark:border-gray-700">
+        {history.map((task, index) => (
+          <li key={index} className="mb-10 ms-4">
+            <div className="absolute w-3 h-3 bg-mainColor rounded-full mt-1.5 -start-1.5  dark:border-mainDark dark:bg-mainDark flex items-center justify-center">
+              <CheckIcon className="text-white" />
+            </div>
+            <div className="flex-1">
+              <time className="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">
+                ({new Date(task.logDate).toLocaleDateString()} - {new Date(task.logDate).toLocaleTimeString()})
+              </time>
+              <h3
+                className="text-lg font-semibold text-gray-900 dark:text-white"
+              >
+                {task.notes.replace(/<[^>]*>/g, "")}
+              </h3>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </>
+  }
+
+  return <>
+    <p className="mb-6 font-bold text-lg">Riwayat Pengerjaan</p>
+    <div className="text-center text-gray-400">
+      <p>Belum ada riwayat pengerjaan</p>
+    </div>
+  </>
+}
+
+
 interface AttachmentImageProps {
   onUpload?: (file: File) => void;
+  onDelete?: () => void;
   label?: string;
   className?: string;
   allowUpload?: boolean;
   src?: string;
   width?: number;
   height?: number;
+  loading?: boolean;
 }
 
 const UploadPhoto = ({
   onUpload = () => { },
+  onDelete = () => { },
   label = "Upload Image",
   className = "",
   allowUpload = true,
   src = "",
   width = 200,
-  height = 200
+  height = 200,
+  loading = false
 }: AttachmentImageProps) => {
-  const [imageSrc, setImageSrc] = useState<string>(src)
+  const [imageSrc, setImageSrc] = useState<string>(src);
+  const [currentLoading, setCurrentLoading] = useState<boolean>(loading);
+
+  useEffect(() => {
+    setImageSrc(src);
+  }, [src]);
+
+  useEffect(() => {
+    setCurrentLoading(loading);
+  }, [loading]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const fileUrl = URL.createObjectURL(file);
       setImageSrc(fileUrl);
+      onUpload(file);
     }
+  }
+
+  if (currentLoading) {
+    return <div className={cn(className, "flex items-center justify-center relative w-full h-full aspect-square rounded-md overflow-hidden")}>
+      <div className="flex-1 aspect-square border-2 border-dashed border-gray-300 hover:border-gray-400 bg-gray-400/10 rounded-md flex items-center justify-center">
+        <div className="inline-block w-8 h-8 border-4 border-gray-300 border-t-mainColor rounded-full animate-spin" />
+      </div>
+    </div>
   }
 
 
@@ -1064,7 +1159,7 @@ const UploadPhoto = ({
           className="absolute !p-1 top-2 right-3 rounded-lg bg-mainColor/80 border border-gray-300 hover:bg-gray-100/10 text-white hover:text-red-500"
           onClick={() => {
             setImageSrc("");
-            // onUpload(null);
+            onDelete();
           }}
         >
           {/* cross icon */}
@@ -1076,7 +1171,144 @@ const UploadPhoto = ({
 
 }
 
+interface TransactionDocument {
+  id: string;
+  createdAt: string;
+  createdBy: string;
+  updatedAt: string | null;
+  updatedBy: string | null;
+  trxNumber: string;
+  docType: "BEFORE" | "AFTER";
+  docUrl: string;
+  loading?: boolean;
+}
+
 const FotoTab = () => {
+  const [beforeImages, setBeforeImages] = useState<Array<TransactionDocument>>([]); // Replace with actual before images array
+  const [afterImages, setAfterImages] = useState<Array<TransactionDocument>>([]); // Replace with actual after images array
+
+  const transaction = React.useContext(TransactionContext);
+  const trxId = transaction.transactionDetail?.id; // replace with actual trxId from props or state
+
+  useEffect(() => {
+    if (trxId) {
+      getImages("before");
+      getImages("after");
+    }
+  }, [trxId]);
+
+  // const imageRowCount = Math.ceil(Math.max(beforeImages.length + 1, afterImages.length + 1) / 3)
+  const imageBeforeRowCount = Math.ceil(Math.max(beforeImages.length + 1, afterImages.length + 1) / 3)
+  const imageAfterRowCount = Math.ceil(Math.max(afterImages.length + 1, afterImages.length + 1) / 3)
+
+  const handleUploadImage = async (file: File, type: "before" | "after") => {
+    const newImageObj = {
+      id: "",
+      createdAt: "",
+      createdBy: "",
+      updatedAt: null,
+      updatedBy: null,
+      trxNumber: trxId!,
+      docType: type === "before" ? "BEFORE" : "AFTER",
+      docUrl: URL.createObjectURL(file),
+      loading: true
+    } as TransactionDocument;
+
+    let index = 0;
+    if (type == 'before') {
+      index = beforeImages.length;
+    } else {
+      index = afterImages.length;
+    }
+
+    try {
+      if (!file) return;
+      if (!trxId) {
+        alert("Transaksi belum disimpan. Silakan simpan transaksi terlebih dahulu sebelum mengunggah gambar.");
+        return;
+      }
+
+      if (type === "before") {
+        setBeforeImages((prev) => [...prev, newImageObj]);
+      } else if (type === "after") {
+        setAfterImages((prev) => [...prev, newImageObj]);
+      }
+
+      // upload image to server
+      const formData = new FormData();
+      formData.append("file", file as File);
+      formData.append("docType", type === "before" ? "BEFORE" : "AFTER");
+
+      await apiFormdata.post(`/transaction/${trxId}/documents`, formData);
+      await getImages(type);
+    }
+    catch (error) {
+      console.error("Error uploading image:", error);
+      alert("Gagal mengunggah gambar. Silakan coba lagi.");
+    }
+    finally {
+      // refresh images
+      if (type === "before") {
+        // find by index and change loading to false
+        setBeforeImages((prev) => prev.map((img, i) => i === index ? { ...img, loading: false } : img));
+      }
+
+      if (type === "after") {
+        setAfterImages((prev) => prev.map((img, i) => i === index ? { ...img, loading: false } : img));
+      }
+    }
+  }
+
+  const handleDeleteImage = async (id: string, type: "before" | "after") => {
+    if (!id) return;
+    // update image to loading state
+    if (type === "before") {
+      setBeforeImages((prev) => prev.map((img) => img.id === id ? { ...img, loading: true } : img));
+    }
+    if (type === "after") {
+      setAfterImages((prev) => prev.map((img) => img.id === id ? { ...img, loading: true } : img));
+    }
+
+    try {
+      await api.delete(`/transaction/documents/${id}`);
+      await getImages(type);
+    }
+    catch (error) {
+      console.error("Error deleting image:", error);
+      alert("Gagal menghapus gambar. Silakan coba lagi.");
+    }
+    finally {
+      // remove image from state
+      if (type === "before") {
+        setBeforeImages((prev) => prev.filter((img) => img.id !== id));
+      }
+      if (type === "after") {
+        setAfterImages((prev) => prev.filter((img) => img.id !== id));
+      }
+    }
+
+  }
+
+  const getImages = async (type: "before" | "after" = "before") => {
+    let url = `/transaction/${trxId}/documents?docType=`;
+    if (type === "before") {
+      url += "BEFORE";
+    } else {
+      url += "AFTER";
+    }
+
+    const response = await api.get(url);
+    const images: TransactionDocument[] = response.data || [];
+
+    if (type === "before") {
+      setBeforeImages(images);
+    }
+
+    if (type === "after") {
+      setAfterImages(images);
+    }
+  }
+
   return <>
     <div className="bg-mainColor/20 p-2 rounded-md">
       <p>Bukti Pengerjaan</p>
@@ -1087,48 +1319,156 @@ const FotoTab = () => {
       {/* foto sebelum */}
       <p className="mb-3">1. Foto Sebelum</p>
 
-      {/* 3x3 photo grid */}
-      <div className="flex flex-col gap-y-3">
-        {[1, 2, 3].map((_, index1) => {
-          return (
-            <div key={index1} className="flex-1 flex">
-              {[1, 2, 3].map((_, index2) => {
-                const key = index1 * 3 + index2;
-                return (
-                  <UploadPhoto key={key}
-                    className="max-w-[33%] px-1"
-                  // src="assets/mitra-icon.png"
-                  />
-                )
-              })}
-            </div>
-          )
-        })}
-      </div>
+      {/* 3x3 before photo grid */}
+      {
+        [0].map(() => {
+          let beforePlaceHolderUsed = false;
+
+          return Array.from({ length: imageBeforeRowCount }).map((_, rowIndex) => {
+            const startIndex = rowIndex * 3;
+            const endIndex = startIndex + 3;
+
+            const beforeRowImages = beforeImages.slice(startIndex, endIndex);
+
+            return (
+              <div className="flex flex-row gap-y-3">
+                {[0, 1, 2].map((image, index) => {
+                  const img = beforeRowImages[index];
+
+                  if (!img) {
+                    if (!beforePlaceHolderUsed) {
+                      beforePlaceHolderUsed = true;
+                      return (
+                        <UploadPhoto key={index}
+                          className="max-w-[33%] px-1"
+                          onUpload={(file) => {
+                            handleUploadImage(file, "before");
+                          }}
+                          onDelete={() => {
+                            setBeforeImages((prev) => prev.filter((_, i) => i !== index));
+                          }}
+                        />
+                      )
+                    }
+
+                    return (
+                      <div key={index} className="max-w-[33%] px-1" />
+                    )
+                  }
+
+                  return (
+                    <UploadPhoto key={index}
+                      className="max-w-[33%] px-1"
+                      src={img.docUrl}
+                      loading={img.loading}
+                      onUpload={(file) => {
+                        if (file) {
+                          setBeforeImages((prev) => [...prev, {
+                            id: "",
+                            createdAt: "",
+                            createdBy: "",
+                            updatedAt: null,
+                            updatedBy: null,
+                            trxNumber: trxId!,
+                            docType: "BEFORE",
+                            docUrl: URL.createObjectURL(file),
+                            loading: true
+                          }]);
+
+                          handleUploadImage(file, "before");
+                        }
+                      }}
+                      onDelete={() => {
+                        handleDeleteImage(img.id, "before");
+                      }}
+                    />
+                  )
+                })}
+              </div>
+            )
+          })
+        })
+      }
+
+
+
+
     </div>
 
     <div className="mt-4">
       {/* foto sebelum */}
       <p className="mb-3">2. Foto Setelah</p>
 
-      {/* 3x3 photo grid */}
-      <div className="flex flex-col gap-y-3">
-        {[1, 2, 3].map((_, index1) => {
-          return (
-            <div key={index1} className="flex-1 flex">
-              {[1, 2, 3].map((_, index2) => {
-                const key = index1 * 3 + index2;
-                return (
-                  <UploadPhoto key={key}
-                    className="max-w-[33%] px-1"
-                  // src="assets/mitra-icon.png"
-                  />
-                )
-              })}
-            </div>
-          )
-        })}
-      </div>
+      {/* 3x3 after photo grid */}
+      {
+        [0].map((_, indexY) => {
+          let afterPlaceHolderUsed = false;
+
+          return Array.from({ length: imageAfterRowCount }).map((_, rowIndex) => {
+            const startIndex = rowIndex * 3;
+            const endIndex = startIndex + 3;
+
+            const afterRowImages = afterImages.slice(startIndex, endIndex);
+
+            return (
+              <div className="flex flex-row gap-y-3">
+                {[0, 1, 2].map((image, index) => {
+                  const img = afterRowImages[index];
+                  if (!img) {
+                    if (!afterPlaceHolderUsed) {
+                      afterPlaceHolderUsed = true;
+                      return (
+                        <UploadPhoto key={index}
+                          className="max-w-[33%] px-1"
+                          onUpload={(file) => {
+                            handleUploadImage(file, "after");
+                          }}
+                          onDelete={() => {
+                            setAfterImages((prev) => prev.filter((_, i) => i !== index));
+                          }}
+                        />
+                      )
+                    }
+
+
+                    return (
+                      <div key={index} className="max-w-[33%] px-1" />
+                    )
+                  }
+
+                  return (
+                    <UploadPhoto key={index}
+                      className="max-w-[33%] px-1"
+                      src={img.docUrl}
+                      loading={img.loading}
+                      onUpload={(file) => {
+                        if (file) {
+                          setAfterImages((prev) => [...prev, {
+                            id: "",
+                            createdAt: "",
+                            createdBy: "",
+                            updatedAt: null,
+                            updatedBy: null,
+                            trxNumber: trxId!,
+                            docType: "AFTER",
+                            docUrl: URL.createObjectURL(file),
+                            loading: true
+                          }]);
+
+                          handleUploadImage(file, "after");
+                        }
+                      }}
+                      onDelete={() => {
+                        handleDeleteImage(img.id, "after");
+                      }}
+                    />
+                  )
+                })}
+              </div>
+            )
+          })
+        })
+      }
     </div>
   </>
 }
@@ -1151,7 +1491,7 @@ const TransactionContext = React.createContext<{
 
 export default function PekerjaanBerlangsung() {
   type TabType = "detail" | "riwayat" | "foto";
-  const [currentTab, setCurrentTab] = useState<TabType>("detail");
+  const [currentTab, setCurrentTab] = useState<TabType>("foto");
 
   const tabs: { id: TabType; label: string }[] = [
     { id: "detail", label: "Detail" },
@@ -1163,8 +1503,8 @@ export default function PekerjaanBerlangsung() {
   const [trxNumber, setTrxNumber] = useState("");
 
   const [transactionDetail, setTransactionDetail] = useState<MitraSPKDetail>(null as any);
-
   const [customerDetail, setCustomerDetail] = useState<MitraCustomerDetail>(null as any);
+  const [extendAddress, setExtendAddress] = useState<boolean>(false);
 
   // get params from url
   useEffect(() => {
@@ -1315,7 +1655,7 @@ export default function PekerjaanBerlangsung() {
               <div className="mr-4">
                 <p className="text-lg font-bold">{customerDetail.fullname}</p>
                 <p className="text-sm text-orange-400">Nomor Transaksi: {trxNumber}</p>
-                <p className="text-sm line-clamp-1">
+                <p className={cn("text-sm mt-2 cursor-pointer", extendAddress ? "line-clamp-none" : "line-clamp-1")} onClick={() => setExtendAddress(!extendAddress)}>
                   {customerDetail.address}, {customerDetail.subDistrict}, {customerDetail.district}, {customerDetail.city}, {customerDetail.province}
                 </p>
               </div>
@@ -1381,7 +1721,7 @@ export default function PekerjaanBerlangsung() {
               <DetailTab />
             )}
             {currentTab === "riwayat" && (
-              <p>Riwayat Pekerjaan akan ditampilkan di sini.</p>
+              <RiwayatTab />
             )}
             {currentTab === "foto" && (
               <FotoTab />
