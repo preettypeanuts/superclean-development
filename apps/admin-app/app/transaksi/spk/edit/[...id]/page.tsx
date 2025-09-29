@@ -144,6 +144,7 @@ export default function TransactionDetail() {
 
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const [locationLabels, setLocationLabels] = useState({
     provinceName: "",
@@ -216,55 +217,55 @@ export default function TransactionDetail() {
   };
   const totals = calculateTotals();
 
-  // Fetch transaction data
   useEffect(() => {
-    const fetchTransaction = async () => {
-      try {
-        const result = await api.get(`/transaction/detail?trxNumber=${id}`);
-        const transactionData = result.data as Transaction
-        let { trxDate, pickupDate, deliveryDate } = transactionData;
-        if (!pickupDate) {
-          pickupDate = trxDate
-        }
-        if (!deliveryDate) {
-          deliveryDate = trxDate
-        }
-
-        setTransaction({
-          ...transactionData,
-          pickupDate,
-          deliveryDate
-        });
-
-        setOriginalTransactionDate(transactionData.trxDate);
-
-        const totalDiscount = transactionData.discountPrice || 0;
-        const totalPromo = transactionData.promoPrice || 0;
-
-        setManualDiscount(totalDiscount - totalPromo);
-        setAdditionalFee(transactionData.additionalFee || 0);
-
-        // Fetch customer data
-        if (transactionData.customerId) {
-          await fetchCustomerData(transactionData.customerId);
-        }
-
-        if (transactionData?.details.length) {
-          setSPKItems(formatDetailsForTable(transactionData.details, true));
-          setOriginalSPKItems(formatDetailsForTable(transactionData.details, true));
-        }
-
-      } catch (error) {
-        console.error("Gagal mengambil data transaksi:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     if (id) {
       fetchTransaction();
     }
   }, [id]);
+
+  // Fetch transaction data
+  const fetchTransaction = async () => {
+    try {
+      const result = await api.get(`/transaction/detail?trxNumber=${id}`);
+      const transactionData = result.data as Transaction
+      let { trxDate, pickupDate, deliveryDate } = transactionData;
+      if (!pickupDate) {
+        pickupDate = trxDate
+      }
+      if (!deliveryDate) {
+        deliveryDate = trxDate
+      }
+
+      setTransaction({
+        ...transactionData,
+        pickupDate,
+        deliveryDate
+      });
+
+      setOriginalTransactionDate(transactionData.trxDate);
+
+      const totalDiscount = transactionData.discountPrice || 0;
+      const totalPromo = transactionData.promoPrice || 0;
+
+      setManualDiscount(totalDiscount - totalPromo);
+      setAdditionalFee(transactionData.additionalFee || 0);
+
+      // Fetch customer data
+      if (transactionData.customerId) {
+        await fetchCustomerData(transactionData.customerId);
+      }
+
+      if (transactionData?.details.length) {
+        setSPKItems(formatDetailsForTable(transactionData.details, true));
+        setOriginalSPKItems(formatDetailsForTable(transactionData.details, true));
+      }
+
+    } catch (error) {
+      console.error("Gagal mengambil data transaksi:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Fetch customer data
   const fetchCustomerData = async (customerId: string) => {
@@ -386,10 +387,12 @@ export default function TransactionDetail() {
     });
   };
 
-  // handleEditSPKItem function
-  const handleEditSPKItem = (item: SPKItem) => {
+  // handleOpenEditSPKItem function
+  const handleOpenEditSPKItem = (item: SPKItem) => {
+    const selectedCategory = Object.entries(catLayananMapping).find(([key, value]) => value === item.kategoriCode);
+
     setFormDataTable({
-      category: item.kategoriCode,
+      category: selectedCategory ? selectedCategory[0] : item.kategoriCode,
       serviceCode: item.kode,
       jumlah: item.jumlah.toString(),
       tipe: item.tipe || "vakum",
@@ -416,106 +419,6 @@ export default function TransactionDetail() {
       promoType: "",
     });
     setEditMode(null);
-  };
-
-  const handleAddSPKItem = () => {
-    // Validasi form
-    if (!formDataTable.category || !formDataTable.serviceCode || !formDataTable.jumlah) {
-      toast({
-        title: "Peringatan",
-        description: "Harap lengkapi semua field yang wajib diisi",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    const quantity = parseInt(formDataTable.jumlah);
-    const totalHargaSebelumPromo = formDataTable.harga * quantity;
-
-    // Validasi: promo tidak boleh lebih besar dari total harga item
-    if (formDataTable.promo > totalHargaSebelumPromo) {
-      toast({
-        title: "Peringatan",
-        description: "Promo tidak boleh lebih besar dari total harga item",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (editMode) {
-      // Mode edit - update existing item
-      const selectedService = services.find(service => service.serviceCode === formDataTable.serviceCode);
-
-      setSPKItems(prev => prev.map(item =>
-        item.id === editMode
-          ? {
-            ...item,
-            kode: formDataTable.serviceCode,
-            layanan: selectedService?.serviceName || formDataTable.serviceCode,
-            kategori: catLayananMapping[formDataTable.category] || formDataTable.category,
-            kategoriCode: formDataTable.category,
-            jumlah: quantity,
-            satuan: selectedService?.unit || "PCS",
-            harga: formDataTable.harga,
-            promo: formDataTable.promo,
-            tipe: formDataTable.tipe,
-            promoCode: formDataTable.promoCode,
-            promoType: formDataTable.promoType,
-            totalHarga: totalHargaSebelumPromo - (formDataTable.promo * quantity)
-          }
-          : item
-      ));
-
-      toast({
-        title: "Berhasil",
-        description: "Item SPK berhasil diperbarui",
-        variant: "default",
-      });
-    } else {
-      // Mode tambah - add new item
-      const newId = Date.now().toString();
-      const selectedService = services.find(service => service.serviceCode === formDataTable.serviceCode);
-
-      const newItem = {
-        id: newId,
-        kode: formDataTable.serviceCode,
-        layanan: selectedService?.serviceName || formDataTable.serviceCode,
-        kategori: catLayananMapping[formDataTable.category] || formDataTable.category,
-        kategoriCode: formDataTable.category,
-        jumlah: quantity,
-        satuan: selectedService?.unit || "PCS",
-        harga: formDataTable.harga,
-        promo: formDataTable.promo,
-        tipe: formDataTable.tipe,
-        promoCode: formDataTable.promoCode,
-        promoType: formDataTable.promoType,
-        totalHarga: totalHargaSebelumPromo
-      };
-
-      setSPKItems(prev => {
-        return [...prev, newItem];
-      });
-
-      setTransaction(prev => {
-        if (!prev) return null;
-
-        return {
-          ...prev,
-          totalPrice: prev.totalPrice + totalHargaSebelumPromo - formDataTable.promo,
-          promoPrice: prev.promoPrice + formDataTable.promo,
-          finalPrice: prev.finalPrice + totalHargaSebelumPromo - formDataTable.promo
-        };
-      });
-
-      toast({
-        title: "Berhasil",
-        description: "Item SPK berhasil ditambahkan",
-        variant: "default",
-      });
-    }
-
-    resetFormDialog();
-    setOpenDialog(false);
   };
 
   const handleCleaningStaffChange = (selectedStaffIds: string[]) => {
@@ -652,28 +555,149 @@ export default function TransactionDetail() {
     }, 100);
   };
 
-  // Function untuk menghapus SPK item
-  const handleDeleteSPKItem = (id: string) => {
-    setSPKItems(prev => prev.filter(item => item.id !== id));
-    toast({
-      title: "Berhasil",
-      description: "Item SPK berhasil dihapus",
-      variant: "default",
-    });
-  };
+  // function untuk menambah / mengedit SPK item
+  const handleSubmitSPKItem = async () => {
+    console.log("Submitting SPK Item:", formDataTable, "Edit Mode:", editMode);
 
-  const handleUpdate = async (e: React.FormEvent) => {
-    e.preventDefault();
 
-    // Validasi dasar
-    if (spkItems.length === 0) {
+    // Validasi form
+    if (!formDataTable.category || !formDataTable.serviceCode || !formDataTable.jumlah) {
       toast({
         title: "Peringatan",
-        description: "Harap tambahkan minimal satu item SPK",
+        description: "Harap lengkapi semua field yang wajib diisi",
         variant: "destructive",
       });
       return;
     }
+
+    const quantity = parseInt(formDataTable.jumlah);
+    const totalHargaSebelumPromo = formDataTable.harga * quantity;
+
+    // Validasi: promo tidak boleh lebih besar dari total harga item
+    if (formDataTable.promo > totalHargaSebelumPromo) {
+      toast({
+        title: "Peringatan",
+        description: "Promo tidak boleh lebih besar dari total harga item",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (editMode) {
+      try {
+        setSubmitting(true);
+
+        // Mode edit - update existing item
+        const payload = {
+          serviceCategory: catLayananMapping[formDataTable.category] || formDataTable.category,
+          serviceCode: formDataTable.serviceCode,
+          serviceType: formDataTable.tipe === "vakum" ? 1 : 2,
+          servicePrice: formDataTable.harga,
+          promoCode: formDataTable.promoCode,
+          promoType: formDataTable.promoType,
+          promoAmount: formDataTable.promo,
+          quantity: Number(formDataTable.jumlah),
+        }
+
+        // delete first and then create new
+        await api.delete(`/transaction-detail/${transaction?.id}/${editMode}`);
+        await api.post(`/transaction-detail/${transaction?.id}/`, payload);
+
+        toast({
+          title: "Berhasil",
+          description: "Item SPK berhasil diperbarui",
+          variant: "default",
+        });
+
+        // reload
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      }
+      catch (error) {
+        toast({
+          title: "Gagal",
+          description: "Terjadi kesalahan saat memperbarui item SPK.",
+          variant: "destructive",
+        })
+      }
+      finally {
+        // setSubmitting(false);
+      }
+    } else {
+      try {
+        // Mode tambah - add new item
+        setSubmitting(true);
+
+        const payload = {
+          serviceCategory: catLayananMapping[formDataTable.category] || formDataTable.category,
+          serviceCode: formDataTable.serviceCode,
+          serviceType: formDataTable.tipe === "vakum" ? 1 : 2,
+          servicePrice: formDataTable.harga,
+          promoCode: formDataTable.promoCode,
+          promoType: formDataTable.promoType || "Nominal",
+          promoAmount: formDataTable.promo,
+          quantity: Number(formDataTable.jumlah),
+        }
+
+        await api.post(`/transaction-detail/${transaction?.id}/`, payload);
+
+        toast({
+          title: "Berhasil",
+          description: "Item SPK berhasil ditambahkan",
+          variant: "default",
+        });
+
+        // reload
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      }
+      catch (error) {
+        toast({
+          title: "Gagal",
+          description: "Terjadi kesalahan saat menambahkan item SPK.",
+          variant: "destructive",
+        })
+      }
+      finally {
+        // setSubmitting(false);
+      }
+    }
+
+    // resetFormDialog();
+    // setOpenDialog(false);
+  };
+
+
+  // Function untuk menghapus SPK item
+  const handleDeleteSPKItem = async (itemId: string) => {
+    try {
+      await api.delete(`/transaction-detail/${transaction?.id}/${itemId}`);
+      setSPKItems(prev => prev.filter(item => item.id !== id));
+      toast({
+        title: "Berhasil",
+        description: "Item SPK berhasil dihapus",
+        variant: "default",
+      });
+
+      // reload
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    }
+    catch (error) {
+      toast({
+        title: "Gagal",
+        description: "Terjadi kesalahan saat menghapus item SPK.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Function untuk update detail SPK
+  const handleUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
 
     if (transaction?.assigns.length === 0 && transaction?.blowers.length === 0) {
       toast({
@@ -705,68 +729,8 @@ export default function TransactionDetail() {
       notes: transaction?.notes || "",
     };
 
-    const deletedItems = originalSPKItems.filter(item => !spkItems.some(i => i.id === item.id));
-    const changedItems = spkItems.filter(item => {
-      const originalItem = originalSPKItems.find(i => i.id === item.id);
-      return originalItem && (
-        originalItem.kode !== item.kode ||
-        originalItem.layanan !== item.layanan ||
-        originalItem.kategori !== item.kategori ||
-        originalItem.jumlah !== item.jumlah ||
-        originalItem.satuan !== item.satuan ||
-        originalItem.harga !== item.harga ||
-        originalItem.promo !== item.promo ||
-        originalItem.tipe !== item.tipe ||
-        originalItem.promoCode !== item.promoCode ||
-        originalItem.promoType !== item.promoType
-      );
-    });
-
-    const newItems = spkItems.filter(item => !originalSPKItems.some(i => i.id === item.id));
-
     try {
       setUpdating(true);
-      if (deletedItems.length > 0) {
-        await Promise.all(deletedItems.map(async (item) => {
-          await api.delete(`/transaction-detail/${transaction?.id}/${item.id}`);
-        }));
-      }
-
-      if (newItems.length > 0) {
-        await Promise.all(newItems.map(async (item) => {
-          const payload = {
-            serviceCategory: item.kategoriCode,
-            serviceCode: item.kode,
-            serviceType: item.tipe === "vakum" ? 1 : 2,
-            servicePrice: item.harga,
-            promoCode: item.promoCode,
-            promoType: item.promoType || "Nominal",
-            promoAmount: item.promo,
-            quantity: item.jumlah,
-          }
-
-          await api.post(`/transaction-detail/${transaction?.id}/`, payload);
-        }));
-      }
-
-      if (changedItems.length > 0) {
-        await Promise.all(changedItems.map(async (item) => {
-          const payload = {
-            serviceCategory: item.kategoriCode,
-            serviceCode: item.layanan,
-            serviceType: item.tipe === "vakum" ? 1 : 2,
-            servicePrice: item.harga,
-            promoCode: item.promoCode,
-            promoType: item.promoType,
-            promoAmount: item.promo,
-            quantity: item.jumlah,
-          }
-
-          // delete first and then create new
-          await api.delete(`/transaction-detail/${transaction?.id}/${item.id}`);
-          await api.post(`/transaction-detail/${transaction?.id}/`, payload);
-        }));
-      }
 
       await api.put(`/transaction/${transaction?.id}/update`, updateData);
 
@@ -1122,7 +1086,7 @@ export default function TransactionDetail() {
                   fetchData={() => {
                     console.log("Fetching data...");
                   }}
-                  onEdit={handleEditSPKItem}
+                  onEdit={handleOpenEditSPKItem}
                   onDelete={handleDeleteSPKItem}
                 />
               </div>
@@ -1177,26 +1141,6 @@ export default function TransactionDetail() {
 
                   {!IS_CANCELLED && (
                     <>
-                      {/* <div className="flex items-center space-x-4">
-                        <Label className="w-[40%] font-semibold">Diskon Manual</Label>
-                        <RupiahInput
-                          placeholder="Rp. 0"
-                          value={formatRupiah(manualDiscount)}
-                          onValueChange={(e) => {
-                            if (e > (totals.finalPrice as number)) {
-                              toast({
-                                title: "Peringatan",
-                                description: "Diskon manual tidak boleh lebih besar dari total akhir",
-                                variant: "destructive",
-                              });
-
-                              // setManualDiscount((totals?.finalPrice as number) || 0);
-                            }
-                            setManualDiscount(e);
-                          }}
-                          className="text-right"
-                        />
-                      </div> */}
                       <div className="flex items-center space-x-4">
                         <Label className="w-[40%] font-semibold flex items-center gap-1">
                           <span>Diskon Manual</span>
@@ -1424,173 +1368,182 @@ export default function TransactionDetail() {
           </>
         }
       >
-        <div className="mx-2">
-          <div className="space-y-4">
-            <div className="flex items-center space-x-4">
-              <Label htmlFor="category" className="w-1/4">
-                Kategori
-              </Label>
-              <Select
-                onValueChange={(value) => handleChangeTable("category", value)}
-                value={formDataTable.category}
-                disabled={loadingParams || isEditingOriginal}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Pilih Kategori" />
-                </SelectTrigger>
-                <SelectContent className="z-[999]">
-                  <SelectGroup>
-                    <SelectLabel>Kategori</SelectLabel>
-                    {loadingParams ? (
-                      <SelectItem value="loading" disabled>
-                        Loading...
-                      </SelectItem>
-                    ) : (
-                      Object.keys(catLayananMapping).map((key) => (
-                        <SelectItem key={key} value={key}>
-                          {catLayananMapping[key]}
+        <form onSubmit={(e) => {
+          e.preventDefault();
+          if (submitting) return;
+          if (formDataTable.category && formDataTable.serviceCode) {
+            handleSubmitSPKItem();
+          }
+        }}>
+          <div className="mx-2">
+            <div className="space-y-4">
+              <div className="flex items-center space-x-4">
+                <Label htmlFor="category" className="w-1/4">
+                  Kategori
+                </Label>
+                <Select
+                  onValueChange={(value) => handleChangeTable("category", value)}
+                  value={formDataTable.category}
+                  disabled={loadingParams || isEditingOriginal}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Pilih Kategori" />
+                  </SelectTrigger>
+                  <SelectContent className="z-[999]">
+                    <SelectGroup>
+                      <SelectLabel>Kategori</SelectLabel>
+                      {loadingParams ? (
+                        <SelectItem value="loading" disabled>
+                          Loading...
                         </SelectItem>
-                      ))
-                    )}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
+                      ) : (
+                        Object.keys(catLayananMapping).map((key) => (
+                          <SelectItem key={key} value={key}>
+                            {catLayananMapping[key]}
+                          </SelectItem>
+                        ))
+                      )}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
 
-            <div className="flex items-center space-x-4">
-              <Label htmlFor="unit" className="w-1/4">
-                Layanan
-              </Label>
-              <Select
-                onValueChange={(value) => handleChangeTable("serviceCode", value)}
-                value={formDataTable.serviceCode}
-                disabled={loadingServices || !formDataTable.category || formDataTable.category === "" || isEditingOriginal}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue
-                    placeholder={
-                      !formDataTable.category
-                        ? "Pilih kategori terlebih dahulu"
-                        : loadingServices
-                          ? "Loading..."
-                          : "Pilih Layanan"
-                    }
-                  />
-                </SelectTrigger>
-                <SelectContent className="z-[999]">
-                  <SelectGroup>
-                    <SelectLabel>Layanan</SelectLabel>
-                    {loadingServices ? (
-                      <SelectItem value="loading" disabled>
-                        Loading...
-                      </SelectItem>
-                    ) : services.length === 0 ? (
-                      <SelectItem value="no-data" disabled>
-                        Tidak ada layanan untuk kategori ini
-                      </SelectItem>
-                    ) : (
-                      services.map((service) => (
-                        <SelectItem key={service.serviceCode} value={service.serviceCode}>
-                          {service.serviceName}
+              <div className="flex items-center space-x-4">
+                <Label htmlFor="unit" className="w-1/4">
+                  Layanan
+                </Label>
+                <Select
+                  onValueChange={(value) => handleChangeTable("serviceCode", value)}
+                  value={formDataTable.serviceCode}
+                  disabled={loadingServices || !formDataTable.category || formDataTable.category === "" || isEditingOriginal}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue
+                      placeholder={
+                        !formDataTable.category
+                          ? "Pilih kategori terlebih dahulu"
+                          : loadingServices
+                            ? "Loading..."
+                            : "Pilih Layanan"
+                      }
+                    />
+                  </SelectTrigger>
+                  <SelectContent className="z-[999]">
+                    <SelectGroup>
+                      <SelectLabel>Layanan</SelectLabel>
+                      {loadingServices ? (
+                        <SelectItem value="loading" disabled>
+                          Loading...
                         </SelectItem>
-                      ))
+                      ) : services.length === 0 ? (
+                        <SelectItem value="no-data" disabled>
+                          Tidak ada layanan untuk kategori ini
+                        </SelectItem>
+                      ) : (
+                        services.map((service) => (
+                          <SelectItem key={service.serviceCode} value={service.serviceCode}>
+                            {service.serviceName}
+                          </SelectItem>
+                        ))
+                      )}
+                    </SelectGroup>
+                  </SelectContent>
+
+                </Select>
+              </div>
+
+              <div className="flex items-center space-x-4">
+                <Label htmlFor="jumlah" className="w-1/4 font-semibold">Jumlah</Label>
+                <Input
+                  placeholder="Masukkan Jumlah"
+                  type="number"
+                  min={1}
+                  value={formDataTable.jumlah}
+                  onChange={(e) => handleChangeTable("jumlah", e.target.value)}
+                />
+              </div>
+
+              <div className="flex items-center space-x-4">
+                <Label htmlFor="tipe" className="w-[20%] font-semibold">Tipe</Label>
+                <RadioGroup
+                  value={formDataTable.tipe}
+                  onValueChange={(value) => handleChangeTable("tipe", value)}
+                  className="flex items-center gap-5"
+                  disabled={!(formDataTable.category !== "GENERAL" && formDataTable.category !== "BLOWER")}
+                >
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="vakum" id="vakum" />
+                    <Label htmlFor="vakum">Vakum</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="cuci" id="cuci" />
+                    <Label htmlFor="cuci">Cuci</Label>
+                  </div>
+                </RadioGroup>
+              </div>
+
+              <div className="flex items-center space-x-4">
+                <Label htmlFor="harga" className="w-1/4 font-semibold">Harga</Label>
+                <RupiahInput
+                  disabled
+                  placeholder="Rp. 0"
+                  value={formatRupiah(formDataTable.harga * Number(formDataTable.jumlah || 1))}
+                  onValueChange={(value) => handleChangeTable("harga", value)}
+                />
+              </div>
+
+              <div className="flex items-center space-x-4">
+                <Label htmlFor="promo" className="w-1/4 font-semibold">Promo</Label>
+                <div className="flex items-center space-x-2 w-full">
+                  <div className="relative flex-1">
+                    <Input
+                      value={formatRupiah(formDataTable.promoType === 'Persentase' ? formDataTable.promo * formDataTable.harga * Number(formDataTable.jumlah) / 100 : formDataTable.promo * Number(formDataTable.jumlah))}
+                      className="bg-muted/50 cursor-not-allowed text-right"
+                      readOnly
+                      placeholder="Rp. 0"
+                    />
+                    {loadingPromo && (
+                      <div className="absolute inset-0 bg-background/50 flex items-center justify-center rounded-md">
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                      </div>
                     )}
-                  </SelectGroup>
-                </SelectContent>
-
-              </Select>
-            </div>
-
-            <div className="flex items-center space-x-4">
-              <Label htmlFor="jumlah" className="w-1/4 font-semibold">Jumlah</Label>
-              <Input
-                placeholder="Masukkan Jumlah"
-                type="number"
-                min={1}
-                value={formDataTable.jumlah}
-                onChange={(e) => handleChangeTable("jumlah", e.target.value)}
-              />
-            </div>
-
-            <div className="flex items-center space-x-4">
-              <Label htmlFor="tipe" className="w-[20%] font-semibold">Tipe</Label>
-              <RadioGroup
-                value={formDataTable.tipe}
-                onValueChange={(value) => handleChangeTable("tipe", value)}
-                className="flex items-center gap-5"
-                disabled={!(formDataTable.category !== "GENERAL" && formDataTable.category !== "BLOWER")}
-              >
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="vakum" id="vakum" />
-                  <Label htmlFor="vakum">Vakum</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="cuci" id="cuci" />
-                  <Label htmlFor="cuci">Cuci</Label>
-                </div>
-              </RadioGroup>
-            </div>
-
-            <div className="flex items-center space-x-4">
-              <Label htmlFor="harga" className="w-1/4 font-semibold">Harga</Label>
-              <RupiahInput
-                disabled
-                placeholder="Rp. 0"
-                value={formatRupiah(formDataTable.harga * Number(formDataTable.jumlah || 1))}
-                onValueChange={(value) => handleChangeTable("harga", value)}
-              />
-            </div>
-
-            <div className="flex items-center space-x-4">
-              <Label htmlFor="promo" className="w-1/4 font-semibold">Promo</Label>
-              <div className="flex items-center space-x-2 w-full">
-                <div className="relative flex-1">
-                  <Input
-                    value={formatRupiah(formDataTable.promoType === 'Persentase' ? formDataTable.promo * formDataTable.harga * Number(formDataTable.jumlah) / 100 : formDataTable.promo * Number(formDataTable.jumlah))}
-                    className="bg-muted/50 cursor-not-allowed text-right"
-                    readOnly
-                    placeholder="Rp. 0"
-                  />
-                  {loadingPromo && (
-                    <div className="absolute inset-0 bg-background/50 flex items-center justify-center rounded-md">
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
-                    </div>
-                  )}
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div className="flex items-center space-x-4">
-              <Label htmlFor="subtotal" className="w-1/4 font-bold text-lg">Subtotal</Label>
-              <RupiahInput
-                placeholder="Rp. 0"
-                value={formatRupiah(
-                  (Number(formDataTable.harga) || 0) * (Number(formDataTable.jumlah) || 1) - (Number(formDataTable.promoType === "Persentase" ? Number(formDataTable.jumlah) * formDataTable.promo * formDataTable.harga / 100 : formDataTable.promo * Number(formDataTable.jumlah)) || 0)
-                )}
-                className="!border-0 !text-lg font-bold text-right"
-                readOnly
-              />
+              <div className="flex items-center space-x-4">
+                <Label htmlFor="subtotal" className="w-1/4 font-bold text-lg">Subtotal</Label>
+                <RupiahInput
+                  placeholder="Rp. 0"
+                  value={formatRupiah(
+                    (Number(formDataTable.harga) || 0) * (Number(formDataTable.jumlah) || 1) - (Number(formDataTable.promoType === "Persentase" ? Number(formDataTable.jumlah) * formDataTable.promo * formDataTable.harga / 100 : formDataTable.promo * Number(formDataTable.jumlah)) || 0)
+                  )}
+                  className="!border-0 !text-lg font-bold text-right"
+                  readOnly
+                />
+              </div>
             </div>
           </div>
-        </div>
-        <div className="flex justify-end gap-2 mt-4">
-          <Button
-            variant="outline2"
-            onClick={() => {
-              setOpenDialog(false);
-              resetFormDialog();
-            }}
-          >
-            Kembali
-          </Button>
-          <Button
-            disabled={!formDataTable.category || !formDataTable.serviceCode || !formDataTable.jumlah || !formDataTable.harga}
-            variant="main"
-            onClick={handleAddSPKItem}
-          >
-            {editMode ? "Perbarui" : "Tambah"}
-          </Button>
-        </div>
+          <div className="flex justify-end gap-2 mt-4">
+            <Button
+              variant="outline2"
+              onClick={() => {
+                setOpenDialog(false);
+                resetFormDialog();
+              }}
+            >
+              Kembali
+            </Button>
+            <Button
+              disabled={!formDataTable.category || !formDataTable.serviceCode || !formDataTable.jumlah || !formDataTable.harga || submitting}
+              variant="main"
+              onClick={handleSubmitSPKItem}
+              loading={submitting}
+            >
+              {editMode ? "Perbarui" : "Tambah"}
+            </Button>
+          </div>
+        </form>
       </DialogWrapper >
     </>
   );

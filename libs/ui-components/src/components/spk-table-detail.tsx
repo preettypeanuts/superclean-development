@@ -1,7 +1,8 @@
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
-import { Button } from "./ui/button";
+import { useToast } from "libs/ui-components/src/hooks/use-toast";
+import { formatRupiah } from "libs/utils/formatRupiah";
+import { HiMiniPencilSquare } from "react-icons/hi2";
 import { IoMdTrash } from "react-icons/io";
-import { useToast } from "libs/ui-components/src/hooks/use-toast"
+import { Button } from "./ui/button";
 import {
   Dialog,
   DialogClose,
@@ -11,8 +12,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "./ui/dialog";
-import { formatRupiah } from "libs/utils/formatRupiah";
-import { HiMiniPencilSquare } from "react-icons/hi2";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
 
 interface TableHeader {
   key: string;
@@ -81,7 +81,7 @@ export const SPKTableDetail: React.FC<DataTableProps> = ({
   };
 
   // Render value berdasarkan column key
-  const renderCellValue = (item: SPKItem, columnKey: string, index: number) => {
+  const renderCellValue = (item: SPKItem, columnKey: string, index: number, disabled = false) => {
     switch (columnKey) {
       case "no":
         return index + 1; // Nomor urut mulai dari 1
@@ -111,6 +111,7 @@ export const SPKTableDetail: React.FC<DataTableProps> = ({
                 <Button
                   size="icon"
                   variant="destructive"
+                  disabled={disabled}
                 >
                   <IoMdTrash />
                 </Button>
@@ -186,7 +187,7 @@ export const SPKTableDetail: React.FC<DataTableProps> = ({
                     key={header.key}
                     className={`${header.key === "menu" ? "!w-fit" : ""}`}
                   >
-                    {renderCellValue(item, header.key, rowIndex)}
+                    {renderCellValue(item, header.key, rowIndex, data.length <= 1)}
                   </TableCell>
                 )
               })}
