@@ -551,29 +551,29 @@ export default function TransactionDetail() {
   };
 
   const handleBlowerStaffChange = (selectedStaffIds: string[]) => {
-    if (selectedStaffIds.length == 0) {
+    if (selectedStaffIds.length === 0) {
       setTransaction(prev => {
         if (!prev) return null;
         return {
           ...prev,
-          blowers: selectedStaffIds,
+          blowers: [],
           deliveryDate: undefined,
           pickupDate: undefined,
         };
       });
-    } else if (selectedStaffIds.length > 0) {
+    } else {
       const defaultDate = transaction?.trxDate || new Date().toISOString();
       setTransaction(prev => {
         if (!prev) return null;
         return {
           ...prev,
           blowers: selectedStaffIds,
-          deliveryDate: defaultDate,
-          pickupDate: defaultDate,
+          deliveryDate: prev.deliveryDate || defaultDate,
+          pickupDate: prev.pickupDate || defaultDate,
         };
       });
-    };
-  }
+    }
+  };
 
   // Updated handleChangeTable function untuk handle promo fetching
   const handleChangeTable = async (field: string, value: any) => {
@@ -693,13 +693,18 @@ export default function TransactionDetail() {
 
     // Prepare data sesuai expected request body
     const updateData = {
-      discountPrice: manualDiscount, // diskon manual
+      discountPrice: manualDiscount,
       additionalFee: additionalFee,
-      trxDate: transaction?.trxDate ? new Date(transaction?.trxDate).toISOString() : "",
-      deliveryDate: transaction?.deliveryDate ? new Date(transaction?.deliveryDate).toISOString() : "",
-      pickupDate: transaction?.pickupDate ? new Date(transaction?.pickupDate).toISOString() : "",
-      assigns: transaction?.assigns,
-      blowers: transaction?.blowers,
+      trxDate: transaction?.trxDate ? new Date(transaction.trxDate).toISOString() : new Date().toISOString(),
+      // Ubah bagian ini - set null jika tidak ada blower
+      deliveryDate: transaction?.deliveryDate && transaction.blowers.length > 0
+        ? new Date(transaction.deliveryDate).toISOString()
+        : null,
+      pickupDate: transaction?.pickupDate && transaction.blowers.length > 0
+        ? new Date(transaction.pickupDate).toISOString()
+        : null,
+      assigns: transaction?.assigns || [],
+      blowers: transaction?.blowers || [],
       notes: transaction?.notes || "",
     };
 

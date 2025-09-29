@@ -181,8 +181,8 @@ export function ChartKaryawan() {
               </h2>
               <div className="space-y-2">
                 {employees.map((el, idx) => (
-                  <div className="">
-                    <div key={idx} className={`${el.fill} flex items-center gap-4 rounded-t-md bg-opacity-50 px-3 py-3`}>
+                  <div key={idx}>
+                    <div className={`${el.fill} flex items-center gap-4 rounded-t-md bg-opacity-50 px-3 py-3`}>
                       <div className="w-190 h-9 aspect-square flex items-center justify-center rounded-full bg-white text-gray-800 font-semibold border border-darkColor dark:border-lightColor">
                         {getInitials(el.fullname)}
                       </div>
