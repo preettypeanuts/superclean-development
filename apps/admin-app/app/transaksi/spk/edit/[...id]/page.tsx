@@ -143,6 +143,8 @@ export default function TransactionDetail() {
 
 
   const [loading, setLoading] = useState(true);
+  const [updating, setUpdating] = useState(false);
+
   const [locationLabels, setLocationLabels] = useState({
     provinceName: "",
     cityName: "",
@@ -723,6 +725,7 @@ export default function TransactionDetail() {
     const newItems = spkItems.filter(item => !originalSPKItems.some(i => i.id === item.id));
 
     try {
+      setUpdating(true);
       if (deletedItems.length > 0) {
         await Promise.all(deletedItems.map(async (item) => {
           await api.delete(`/transaction-detail/${transaction?.id}/${item.id}`);
@@ -785,6 +788,9 @@ export default function TransactionDetail() {
         description: "Terjadi kesalahan saat menambahkan SPK.",
         variant: "destructive",
       });
+    }
+    finally {
+      setUpdating(false);
     }
   };
 
@@ -1284,7 +1290,8 @@ export default function TransactionDetail() {
                       type="submit"
                       variant="main"
                       onClick={handleUpdate}
-                      disabled={totals.isInvalidTotal}
+                      disabled={totals.isInvalidTotal || updating}
+                      loading={updating}
                     >
                       Update Data
                     </Button>
