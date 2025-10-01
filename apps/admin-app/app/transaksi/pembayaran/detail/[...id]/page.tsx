@@ -293,7 +293,7 @@ export default function PembayaranDetail() {
 
   const calculateTotals = () => {
     const totalPrice = transaction?.details.reduce((sum, item) => sum + item.servicePrice * item.quantity, 0) || 0;
-    const totalPromo = transaction?.details.reduce((sum, item) => sum + item.promoAmount, 0) || 0;
+    const totalPromo = transaction?.details.reduce((sum, item) => sum + item.promoPrice, 0) || 0;
 
     const manualDiscount = transaction?.discountPrice || 0;
     const additionalFee = transaction?.additionalFee || 0;
@@ -410,7 +410,7 @@ export default function PembayaranDetail() {
 
   return (
     <>
-      <Breadcrumbs label={`Detail Pembayaran - ${transaction.trxNumber}`} />
+      <Breadcrumbs label={`Detail Pembayaran`} />
       <Wrapper className="relative">
         <Tabs defaultValue="detail" className="-mt-2">
           <TabsList>
