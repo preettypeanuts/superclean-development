@@ -510,7 +510,7 @@ export default function PhotoSection({
                               return (<AttachmentImage
                                 readonly={readonly}
                                 key={`before-${startIndex + index}`}
-                                className="flex-1 aspect-square min-w-[200px] mr-6"
+                                className="flex-1 aspect-square mr-6"
                                 label={`Upload Foto Sebelum`}
                                 width={200}
                                 height={200}
@@ -538,7 +538,7 @@ export default function PhotoSection({
                               />)
                             }
                             return (
-                              <div className="flex-1 aspect-square min-w-[200px] mr-6"></div>
+                              <div className="flex-1 aspect-square mr-6"></div>
                             );
                           }
 
@@ -547,7 +547,7 @@ export default function PhotoSection({
                               readonly={readonly}
                               key={`before-${startIndex + index}`}
                               src={`${beforeRowImages[index]?.docUrl}`}
-                              className="flex-1 aspect-square min-w-[200px] mr-6"
+                              className="flex-1 aspect-square mr-6"
                               label={`Foto Sebelum`}
                               width={200}
                               height={200}
@@ -573,7 +573,7 @@ export default function PhotoSection({
                               return (<AttachmentImage
                                 readonly={readonly}
                                 key={`after-${startIndex + index}`}
-                                className="flex-1 aspect-square min-w-[200px] mr-6"
+                                className="flex-1 aspect-square mr-6"
                                 label={`Upload Foto Sesudah`}
                                 width={200}
                                 height={200}
@@ -601,7 +601,7 @@ export default function PhotoSection({
                               />)
                             }
                             return (
-                              <div className="flex-1 aspect-square min-w-[200px] mr-6"></div>
+                              <div className="flex-1 aspect-square mr-6"></div>
                             );
                           }
 
@@ -610,7 +610,7 @@ export default function PhotoSection({
                               readonly={readonly}
                               key={`before-${startIndex + index}`}
                               src={afterRowImages[index]?.docUrl}
-                              className="flex-1 aspect-square min-w-[200px] mr-6"
+                              className="flex-1 aspect-square mr-6"
                               label={`Foto Sesudah`}
                               width={200}
                               height={200}
