@@ -15,11 +15,13 @@ interface AuthLayoutProps {
 
 export const AuthLayout: React.FC<AuthLayoutProps> = ({ headline, tagline, bgImage }) => {
   const [visibleInputs, setVisibleInputs] = useState<Record<string, boolean>>({});
-  const [username, serUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState<string | null>(null);
+  const [password, setPassword] = useState<string | null>(null);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const [showError, setShowError] = useState(false);
 
   const router = useRouter();
 
@@ -83,6 +85,13 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({ headline, tagline, bgIma
     }
   }, [router]);
 
+
+  useEffect(() => {
+    if (error) {
+      setShowError(true);
+    };
+  }, [error]);
+
   return (
     <section className="w-full h-screen max-h-screen relative">
       <div className="absolute w-full h-full">
@@ -116,8 +125,11 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({ headline, tagline, bgIma
 
             {/* Form */}
             <form onSubmit={handleLogin} className="w-full">
-              {error && (
-                <p className="text-red-500 text-sm mb-2">{"Username atau password salah"}</p>
+              {error && showError && (
+                <div className="flex bg-red-400/10 border border-red-400/40 rounded-lg p-3 mt-2 items-center animate-fadeInDown dark:border-red-400/70 dark:bg-red-400/20">
+                  <p className="text-red-500 text-sm">{"Username atau password salah"}</p>
+                  <span className="ml-auto cursor-pointer" onClick={() => setShowError(false)}>✕</span>
+                </div>
               )}
 
               <label className="form-control w-full my-2">
@@ -127,11 +139,19 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({ headline, tagline, bgIma
                 <input
                   type="text"
                   required
-                  value={username}
-                  onChange={(e) => serUsername(e.target.value)}
+                  value={username || ""}
+                  onChange={(e) => setUsername(e.target.value)}
+                  onBlur={(e) => {
+                    setUsername(e.target.value.trim() ? e.target.value.trim() : "");
+                  }}
                   placeholder="Masukkan Username Anda"
                   className="input bg-white dark:bg-black placeholder:text-neutral-400 dark:placeholder:text-neutral-600 w-full rounded-lg placeholder:text-sm"
                 />
+                {
+                  username === "" ? (
+                    <span className="text-red-500 text-sm mt-1">Username tidak boleh kosong</span>
+                  ) : null
+                }
               </label>
 
               <div className="label">
@@ -142,8 +162,11 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({ headline, tagline, bgIma
                   type={visibleInputs["password"] ? "text" : "password"}
                   className="grow placeholder:text-neutral-400 dark:placeholder:text-neutral-600 placeholder:text-sm"
                   required
-                  value={password}
+                  value={password || ""}
                   onChange={(e) => setPassword(e.target.value)}
+                  onBlur={(e) => {
+                    setPassword(e.target.value.trim() ? e.target.value.trim() : "");
+                  }}
                   placeholder="Masukkan Password Anda"
                   name="password"
                 />
@@ -155,6 +178,12 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({ headline, tagline, bgIma
                   {visibleInputs["password"] ? <IoMdEyeOff /> : <IoMdEye />}
                 </button>
               </label>
+
+              {
+                password === "" ? (
+                  <span className="text-red-500 text-sm mt-1">Password tidak boleh kosong</span>
+                ) : null
+              }
 
               <div className="mt-8">
                 {/* <button className="btn w-full rounded-lg border-none bg-mainColor text-white">
