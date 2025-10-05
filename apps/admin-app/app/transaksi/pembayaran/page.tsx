@@ -1,22 +1,22 @@
 "use client";
-import { useEffect, useState } from "react";
-import { PembayaranTable } from "libs/ui-components/src/components/pembayaran-table";
-import { DatePicker } from "libs/ui-components/src/components/date-picker";
-import { Wrapper } from "libs/shared/src/components/Wrapper";
-import { Input } from "libs/ui-components/src/components/ui/input";
-import { Button } from "libs/ui-components/src/components/ui/button";
-import { LuPlus } from "react-icons/lu";
-import { Search } from "lucide-react";
-import { SelectData } from "libs/ui-components/src/components/select-data";
-import { PaginationNumber } from "libs/ui-components/src/components/pagination-number";
+import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
+import { GroupFilter } from "@ui-components/components/group-filter";
 import { Label } from "@ui-components/components/ui/label";
-import { IoClose } from "react-icons/io5";
+import { Wrapper } from "libs/shared/src/components/Wrapper";
+import { DatePicker } from "libs/ui-components/src/components/date-picker";
+import { PaginationNumber } from "libs/ui-components/src/components/pagination-number";
+import { PembayaranTable } from "libs/ui-components/src/components/pembayaran-table";
+import { SelectData } from "libs/ui-components/src/components/select-data";
+import { SelectFilter } from "libs/ui-components/src/components/select-filter";
+import { Button } from "libs/ui-components/src/components/ui/button";
+import { Input } from "libs/ui-components/src/components/ui/input";
 import { apiClient } from "libs/utils/apiClient";
 import { formatDateAPI } from "libs/utils/formatDate";
 import { useParameterStore } from "libs/utils/useParameterStore";
-import { GroupFilter } from "@ui-components/components/group-filter";
-import { SelectFilter } from "libs/ui-components/src/components/select-filter"
-import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
+import { Search } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { IoClose } from "react-icons/io5";
 
 const DataHeaderSettlement = [
   { key: "id", label: "#" },
@@ -61,6 +61,14 @@ export default function SettlementPage() {
     subDistrict: string;
   }
 
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  const search = searchParams.get("search") || "";
+  const status = parseInt(searchParams.get("status") || "-1", 10);
+  const branch = searchParams.get("branchId") || "";
+  const include = parseInt(searchParams.get("includeBlower") || "1", 10);
+
   const [dataSettlement, setDataSettlement] = useState<SettlementData[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState<{
@@ -73,22 +81,22 @@ export default function SettlementPage() {
   const [totalData, setTotalData] = useState(0);
   const [limit, setLimit] = useState(10);
 
-  const [searchQuery, setSearchQuery] = useState("");
-  const [tempSearchQuery, setTempSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState(search);
+  const [tempSearchQuery, setTempSearchQuery] = useState(search);
 
   // filter aktif
-  const [statusFilter, setStatusFilter] = useState<number>(-1);
-  const [branchFilter, setBranchFilter] = useState<string>("");
+  const [statusFilter, setStatusFilter] = useState<number>(status);
+  const [branchFilter, setBranchFilter] = useState<string>(branch);
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
-  const [includeBlower, setIncludeBlower] = useState<number>(-1);
+  const [includeBlower, setIncludeBlower] = useState<number>(include);
 
   // filter sementara
-  const [tempStatus, setTempStatus] = useState<number>(-1);
-  const [tempBranch, setTempBranch] = useState<string>("");
+  const [tempStatus, setTempStatus] = useState<number>(status);
+  const [tempBranch, setTempBranch] = useState<string>(branch);
   const [tempStartDate, setTempStartDate] = useState<Date>();
   const [tempEndDate, setTempEndDate] = useState<Date>();
-  const [tempIncludeBlower, setTempIncludeBlower] = useState<number>(1);
+  const [tempIncludeBlower, setTempIncludeBlower] = useState<number>(include);
 
   const { branchMapping, loading: loadingParams } = useParameterStore();
 
@@ -111,6 +119,18 @@ export default function SettlementPage() {
       start = tempStartDate;
       end = tempEndDate;
       include = tempIncludeBlower;
+
+      const queryParams = new URLSearchParams();
+      if (search) queryParams.append("search", search);
+      if (status > -1) queryParams.append("status", status.toString());
+      if (branch) queryParams.append("branchId", branch);
+      if (start) queryParams.append("startDate", formatDateAPI(start));
+      if (end) queryParams.append("endDate", formatDateAPI(end));
+      if (include) queryParams.append("includeBlower", include.toString());
+
+      const queryString = queryParams.toString();
+      const newPath = `/transaksi/pembayaran${queryString ? `?${queryString}` : ""}`;
+      router.replace(newPath);
 
       setCurrentPage({
         page: page,
@@ -149,33 +169,20 @@ export default function SettlementPage() {
     if (currentPage.reset) return;
     fetchSettlement();
   }, [
-    // searchQuery,
-    // statusFilter,
-    // branchFilter,
     currentPage,
     limit,
-    // startDate,
-    // endDate
   ]);
 
   const handleSearch = () => {
     fetchSettlement(true)
-    // setSearchQuery(searchInput);
-    // setCurrentPage(1);
   };
 
   const resetSearch = () => {
     setTempSearchQuery("");
     setSearchQuery("");
-    // setCurrentPage(1);
   };
 
   const handleApplyFilters = () => {
-    // setStatusFilter(tempStatus);
-    // setBranchFilter(tempBranch);
-    // setStartDate(tempStartDate);
-    // setEndDate(tempEndDate);
-    // setCurrentPage(1);
   };
 
   const handleResetFilters = () => {
@@ -186,10 +193,6 @@ export default function SettlementPage() {
   };
 
   const handleCancelFilters = () => {
-    // setTempStatus(statusFilter);
-    // setTempBranch(branchFilter);
-    // setTempStartDate(startDate);
-    // setTempEndDate(endDate);
   };
 
   const processedSettlement = dataSettlement.map((item) => ({
@@ -210,9 +213,6 @@ export default function SettlementPage() {
                   placeholder="Cari No Transaksi, Nama, No. Whatsapp"
                   value={tempSearchQuery}
                   onChange={(e) => setTempSearchQuery(e.target.value)}
-                  onKeyDown={(i) => {
-                    // if (i.key === "Enter") handleSearch();
-                  }}
                   className="w-[30lvw]"
                   icon={<Search size={16} />}
                 />
