@@ -4,9 +4,8 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
-  CardTitle,
+  CardTitle
 } from "../../../ui-components/src/components/ui/card";
 import { Progress } from "../../../ui-components/src/components/ui/progress";
 import { apiClient } from "../../../utils/apiClient";
@@ -156,7 +155,7 @@ export function ChartKaryawan() {
 
   return (
     <Card className="flex flex-col h-full relative">
-      <div className="absolute top-0 gradient-blur-to-b h-[25%] bg-gradient-to-b from-white/50 via-white/30 dark:from-black/50 dark:via-black/30 to-transparent z-20 rounded-t-md"></div>
+      <div className="absolute top-0 gradient-blur-to-b h-[20%] bg-gradient-to-b from-white/50 via-white/30 dark:from-black/50 dark:via-black/30 to-transparent z-20 rounded-t-md"></div>
 
       <CardHeader className="z-30 absolute top-0 w-full">
         <CardTitle className="text-[18px] font-bold">Ringkasan Target Teknisi</CardTitle>
