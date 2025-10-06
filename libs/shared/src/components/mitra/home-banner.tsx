@@ -58,7 +58,9 @@ export const HomeBanner = () => {
                     {user?.fullname || "User"}
                   </h1>
                 )}
+                <Link href="/profil">
                 <BiSolidPencil className="text-[23px] text-white" />
+                </Link>
               </div>
             </div>
           </div>
