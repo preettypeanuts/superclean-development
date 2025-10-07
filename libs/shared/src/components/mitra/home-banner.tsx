@@ -26,7 +26,7 @@ export const HomeBanner = () => {
   };
 
   return (
-    <main className="min-h-[300px]">
+    <main className="min-h-[250px]">
       <section className="w-full h-[23vh] bg-gradient-to-r from-mainColor from-10% to-mainDark to-110% rounded-b-2xl flex items-center relative">
         <div className="mx-5 w-full">
           <div className="flex items-center gap-3 w-full">
