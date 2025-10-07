@@ -1,13 +1,13 @@
 "use client"
-import { useState, useEffect } from "react";
-import { WidgetMatrix } from "@shared/components/WidgetMatrix";
+import { BirthdayReminder } from "@shared/components/BirthdayReminder";
 import { ChartKaryawan } from "@shared/components/ChartKaryawan";
 import { SalesChart } from "@shared/components/SalesChart";
-import { TiCancel } from "react-icons/ti";
-import { FaClipboardCheck, FaClipboardList } from "react-icons/fa";
-import { FaPersonRunning, FaMoneyBillTransfer } from "react-icons/fa6";
-import { BirthdayReminder } from "@shared/components/BirthdayReminder";
 import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
+import { WidgetMatrix } from "@shared/components/WidgetMatrix";
+import { useEffect, useState } from "react";
+import { FaClipboardCheck, FaClipboardList } from "react-icons/fa";
+import { FaMoneyBillTransfer, FaPersonRunning } from "react-icons/fa6";
+import { TiCancel } from "react-icons/ti";
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { api } from "libs/utils/apiClient";
 
@@ -54,7 +54,7 @@ export default function Dashboard() {
 
     const totalSPK = [
       {
-        redirect: "/transaksi/spk",
+        redirect: "/laporan/inquiry-transaksi",
         title: "Total SPK",
         value: transactionData.all,
         lastWeek: null,
@@ -65,7 +65,7 @@ export default function Dashboard() {
 
     const doneOrder = [
       {
-        redirect: "/transaksi/spk",
+        redirect: "/transaksi/pembayaran?status=4",
         title: "Order Diselesaikan",
         value: transactionData.done,
         lastWeek: null,
@@ -76,7 +76,7 @@ export default function Dashboard() {
 
     const cancelOrder = [
       {
-        redirect: "/transaksi/spk",
+        redirect: "/transaksi/spk?status=2",
         title: "Order Dibatalkan",
         value: transactionData.cancel,
         lastWeek: null,
@@ -87,7 +87,7 @@ export default function Dashboard() {
 
     const onGoingOrder = [
       {
-        redirect: "/transaksi/spk",
+        redirect: "/transaksi/spk?status=1",
         title: "Order Berjalan",
         value: transactionData.ongoing,
         lastWeek: null,
@@ -98,7 +98,7 @@ export default function Dashboard() {
 
     const waitPayment = [
       {
-        redirect: "/transaksi/spk",
+        redirect: "/transaksi/pembayaran?status=3",
         title: "Menunggu Pembayaran",
         value: transactionData.payment,
         lastWeek: null,
