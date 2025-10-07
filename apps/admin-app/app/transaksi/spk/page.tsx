@@ -300,7 +300,9 @@ export default function SPKPage() {
               key={`${currentPage}-${limit}`}
               currentPage={currentPage.page}
               limit={limit}
-              fetchData={() => { }}
+                  fetchData={() => {
+                    fetchSPK();
+                  }}
             />
           )}
         </div>

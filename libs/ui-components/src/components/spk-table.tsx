@@ -1,15 +1,15 @@
-import Link from "next/link";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
-import { Button } from "./ui/button";
-import { HiMiniPencilSquare } from "react-icons/hi2";
-import { IoMdTrash } from "react-icons/io";
+import { useToast } from "libs/ui-components/src/hooks/use-toast";
 import { api } from "libs/utils/apiClient";
-import { useToast } from "libs/ui-components/src/hooks/use-toast"
-import { formatRupiah } from "libs/utils/formatRupiah";
 import { formatDate } from "libs/utils/formatDate";
-import { TrxStatus } from "../../../shared/src/data/system"
-import { DeleteDialog } from "./delete-dialog";
+import { formatRupiah } from "libs/utils/formatRupiah";
+import Link from "next/link";
 import { useState } from "react";
+import { HiOutlineX } from "react-icons/hi";
+import { HiMiniPencilSquare } from "react-icons/hi2";
+import { TrxStatus } from "../../../shared/src/data/system";
+import { DeleteDialog } from "./delete-dialog";
+import { Button } from "./ui/button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
 
 interface TableHeader {
   key: string;
@@ -45,23 +45,32 @@ export const SPKTable: React.FC<DataTableProps> = ({ data, columns, currentPage,
   const [selectedSPK, setSelectedSPK] = useState<SPK | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const handleDelete = async (id: string, customerName: string) => {
+  const handleDelete = async () => {
+    console.log(selectedSPK);
+
     try {
-      const response = await api.delete(`/user/${id}`);
+      const response = await api.put(`/transaction/${selectedSPK?.id}/status`, {
+        status: TrxStatus.CANCEL
+      });
 
       if (response.status === 'success') {
         toast({
           title: "Sukses!",
-          description: `SPK ${customerName} berhasil dihapus.`,
+          description: `SPK ${selectedSPK?.trxNumber} berhasil dibatalkan.`,
         });
         fetchData();
       } else {
         toast({
           title: "Gagal!",
-          description: "Terjadi kesalahan saat menghapus SPK.",
+          description: "Terjadi kesalahan saat membatalkan SPK.",
           variant: "destructive",
         });
       }
+
+      setTimeout(() => {
+        fetchData();
+      }, 500);
+
     } catch (error) {
       toast({
         title: "Error!",
@@ -108,22 +117,26 @@ export const SPKTable: React.FC<DataTableProps> = ({ data, columns, currentPage,
               {columns.map((header) => (
                 <TableCell key={header.key} className={header.key === "menu" ? "!w-fit" : ""}>
                   {header.key === "menu" ? (
-                    <div className="w-fit flex gap-2">
+                    <div className="w-fit flex gap-2 items-center">
                       <Link href={`/transaksi/spk/edit/${spk.trxNumber}`}>
                         <Button size="icon" variant="main">
                           <HiMiniPencilSquare />
                         </Button>
                       </Link>
-                      <Button
-                        size="icon"
-                        variant="destructive"
-                        onClick={() => {
-                          setSelectedSPK(spk);
-                          setIsDialogOpen(true);
-                        }}
-                      >
-                        <IoMdTrash />
-                      </Button>
+                      {
+                        spk.status !== TrxStatus.CANCEL && (
+                          <Button
+                            size="icon"
+                            variant="destructive"
+                            onClick={() => {
+                              setSelectedSPK(spk);
+                              setIsDialogOpen(true);
+                            }}
+                          >
+                            <HiOutlineX className="h-6 w-6 text-white" />
+                          </Button>
+                        )
+                      }
                     </div>
                   ) : header.key === "status" ? (
                       <p className={`badge rounded-md !font-medium border-0 ${statusColors[
@@ -148,40 +161,40 @@ export const SPKTable: React.FC<DataTableProps> = ({ data, columns, currentPage,
                     </p>
                   ) : header.key === "id" ? (
                     <p>{(currentPage - 1) * limit + rowIndex + 1}</p>
-                      ) : header.key === "cleaner" ? (
-                        <p className="cursor-default" title={spk.cleaner}>
-                          {spk.cleaner.length > 30
-                            ? spk.cleaner.slice(0, 30) + "..."
-                            : spk.cleaner}
-                        </p>
-                        ) : header.key === "includeBlower" ? (
-                          <p>{spk.includeBlower === 1 ? "Ya" : "Tidak"}</p>
-                        ) :
-                          header.key === "noWhatsapp" ? (
-                    <p>{spk.noWhatsapp}</p>
-                  ) : header.key === "finalPrice" ? (
-                    <p>{formatRupiah(Number(spk.finalPrice))}</p>
-                  ) : header.key === "trxDate" ? (
-                    <p>{formatDate(spk.trxDate)}</p>
-                  ) : header.key === "trxNumber" ? (
-                    <div className="flex items-center">
-                                    <div className={`mr-2 rounded-full w-[6px] h-[6px] ${pingColor[
-                                      (() => {
-                                        switch (spk.status) {
-                                          case TrxStatus.TODO: return "Baru";
-                                          case TrxStatus.ACCEPT: return "Proses";
-                                          case TrxStatus.CANCEL: return "Batal";
-                                          default: return spk.status;
-                                        }
-                                      })()
-                                    ]
-                        }`}
-                      ></div>
-                      <p>{spk.trxNumber}</p>
-                    </div>
-                  ) : (
-                    spk[header.key as keyof SPK]
-                  )}
+                  ) : header.key === "cleaner" ? (
+                    <p className="cursor-default" title={spk.cleaner}>
+                      {spk.cleaner.length > 30
+                        ? spk.cleaner.slice(0, 30) + "..."
+                        : spk.cleaner}
+                    </p>
+                  ) : header.key === "includeBlower" ? (
+                    <p>{spk.includeBlower === 1 ? "Ya" : "Tidak"}</p>
+                  ) :
+                    header.key === "noWhatsapp" ? (
+                      <p>{spk.noWhatsapp}</p>
+                    ) : header.key === "finalPrice" ? (
+                      <p>{formatRupiah(Number(spk.finalPrice))}</p>
+                    ) : header.key === "trxDate" ? (
+                      <p>{formatDate(spk.trxDate)}</p>
+                    ) : header.key === "trxNumber" ? (
+                      <div className="flex items-center">
+                        <div className={`mr-2 rounded-full w-[6px] h-[6px] ${pingColor[
+                          (() => {
+                            switch (spk.status) {
+                              case TrxStatus.TODO: return "Baru";
+                              case TrxStatus.ACCEPT: return "Proses";
+                              case TrxStatus.CANCEL: return "Batal";
+                              default: return spk.status;
+                            }
+                          })()
+                        ]
+                          }`}
+                        ></div>
+                        <p>{spk.trxNumber}</p>
+                      </div>
+                    ) : (
+                      spk[header.key as keyof SPK]
+                    )}
                 </TableCell>
               ))}
             </TableRow>
@@ -193,12 +206,13 @@ export const SPKTable: React.FC<DataTableProps> = ({ data, columns, currentPage,
         <DeleteDialog
           open={isDialogOpen}
           onOpenChange={setIsDialogOpen}
-          onConfirm={() => handleDelete(selectedSPK.id, selectedSPK.customerName)}
+          onConfirm={() => handleDelete()}
           isLoading={false}
-          title={`Kamu yakin menghapus SPK ${selectedSPK.trxNumber}?`}
+          icon={<HiOutlineX className="h-6 w-6 text-white" />}
+          title={`Kamu yakin membatalkan SPK ${selectedSPK.trxNumber}?`}
           itemName={selectedSPK.customerName}
           cancelLabel="Batal"
-          confirmLabel="Hapus"
+          confirmLabel="Ya, Batalkan SPK"
         />
       )}
     </>
