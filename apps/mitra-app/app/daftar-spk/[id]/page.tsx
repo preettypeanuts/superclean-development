@@ -692,6 +692,10 @@ const TimelineItemInProgress = ({
   const setTransaction = transaction.setTransactionDetail!;
   const transactionItems = transaction.transactionDetail?.details || [];
 
+  const beforeImages = transaction.beforeImages || [];
+  const afterImages = transaction.afterImages || [];
+  const showUploadAfter = transaction.showUploadAfter;
+
   const TASK_INDEX = 1;
   const isCurrent = TASK_INDEX === transaction.transactionDetail?.status!;
   const isOpenable = TASK_INDEX <= transaction.transactionDetail?.status!;
@@ -705,6 +709,11 @@ const TimelineItemInProgress = ({
   }, [isCurrent]);
 
   const handleCompleteTask = async () => {
+    if (afterImages.length === 0 || beforeImages.length === 0) {
+      showUploadAfter();
+      return;
+    }
+
     try {
       setTransaction((prev) => ({
         ...prev,
@@ -827,6 +836,9 @@ const TimelineItemPending = ({
   const transaction = React.useContext(TransactionContext);
   const transactionItems = transaction.transactionDetail?.details || [];
 
+  const beforeImages = transaction.beforeImages || [];
+  const showUploadBefore = transaction.showUploadBefore;
+
   const TASK_INDEX = 0;
   const isOpenable = TASK_INDEX <= transaction.transactionDetail?.status!;
   const isCurrent = TASK_INDEX === transaction.transactionDetail?.status!;
@@ -837,121 +849,131 @@ const TimelineItemPending = ({
   const trxId = transaction.transactionDetail?.id; // replace with actual trxId from props or state
 
   const handleCompleteTask = async () => {
+    if (beforeImages.length === 0) {
+      showUploadBefore();
+      return;
+    }
+
     try {
       setIsLoading(true);
+
       const response = await api.put(`/transaction/${trxId}/status`, {
         status: 1, // in progress
       });
+
+      setIsOpen(false);
 
       window.location.reload();
 
     } catch (error) {
       console.error('Error completing task:', error);
     } finally {
-      setIsLoading(false);
+      // setIsLoading(false);
     }
   }
 
   return (
-    <li className="mb-10 ms-4 flex">
-      <div className="">
-        <TimelineIcon taskIndex={TASK_INDEX}
-          currentTaskIndex={transaction.transactionDetail?.status!}
-        />
-      </div>
-      <div className="flex-1">
-        <h3 className="text-lg font-semibold text-gray-900" onClick={() => isOpenable && setIsOpen(!isOpen)}>Terjadwal</h3>
-        {
-          isOpen && (
-            <>
-              {/* top divider */}
-              <div className="border-b border-gray-200 dark:border-gray-700 my-2"></div>
+    <>
+      <li className="mb-10 ms-4 flex">
+        <div className="">
+          <TimelineIcon taskIndex={TASK_INDEX}
+            currentTaskIndex={transaction.transactionDetail?.status!}
+          />
+        </div>
+        <div className="flex-1">
+          <h3 className="text-lg font-semibold text-gray-900" onClick={() => isOpenable && setIsOpen(!isOpen)}>Terjadwal</h3>
+          {
+            isOpen && (
+              <>
+                {/* top divider */}
+                <div className="border-b border-gray-200 dark:border-gray-700 my-2"></div>
 
-              {/* additional details */}
-              <div className="mt-2 text-sm text-gray-600">
-                {/* preview information */}
-                <p className="my-4 font-medium">Jadwal pengerjaan yang harus diselesaikan</p>
-                <p className="font-bold text-base text-black">Alamat</p>
-                <p className="mt-3 text-sm font-medium mb-4">
-                  {transaction.customerDetail?.address}, {transaction.customerDetail?.subDistrict}, {transaction.customerDetail?.district}, {transaction.customerDetail?.city}, {transaction.customerDetail?.province}
-                </p>
+                {/* additional details */}
+                <div className="mt-2 text-sm text-gray-600">
+                  {/* preview information */}
+                  <p className="my-4 font-medium">Jadwal pengerjaan yang harus diselesaikan</p>
+                  <p className="font-bold text-base text-black">Alamat</p>
+                  <p className="mt-3 text-sm font-medium mb-4">
+                    {transaction.customerDetail?.address}, {transaction.customerDetail?.subDistrict}, {transaction.customerDetail?.district}, {transaction.customerDetail?.city}, {transaction.customerDetail?.province}
+                  </p>
 
-                {/* item list */}
-                <div>
-                  {/* item list header */}
-                  <div className="flex">
-                    <p className="flex-1 font-semibold text-black text-base">List Item Pengerjaan:</p>
-                    {
-                      isCurrent && (
-                        <p onClick={() => {
-                          onEditItem();
-                        }}
-                          className="flex text-blue-500 font-semibold text-base">+ <span className="underline ml-1">Tambah Item</span></p>
-                      )
-                    }
+                  {/* item list */}
+                  <div>
+                    {/* item list header */}
+                    <div className="flex">
+                      <p className="flex-1 font-semibold text-black text-base">List Item Pengerjaan:</p>
+                      {
+                        isCurrent && (
+                          <p onClick={() => {
+                            onEditItem();
+                          }}
+                            className="flex text-blue-500 font-semibold text-base">+ <span className="underline ml-1">Tambah Item</span></p>
+                        )
+                      }
+                    </div>
+
+                    {/* item list content */}
+                    <div className="mt-3">
+                      {transactionItems.map((item, index) => {
+                        return (
+                          <div key={index} className="py-2 flex justify-center items-center">
+                            <p className="flex flex-1 gap-1">
+                              <span>{item.quantity}x </span> -
+                              <span className="max-w-[120px] block overflow-hidden whitespace-nowrap text-ellipsis"> {item.service.name}</span> -
+                              <span> Rp. {(item.totalPrice - item.promoPrice).toLocaleString()} </span>
+                            </p>
+
+                            {
+                              isCurrent && (
+                                <div className="flex">
+                                  <button
+                                    onClick={() => onDeleteItem(item)}
+                                    className="text-red-500 p-2 mx-2 bg-red-500/10 rounded-md hover:bg-red-500/20 transition-colors">
+                                    <Trash2Icon className="w-4 h-4" />
+                                  </button>
+
+                                  <button
+                                    onClick={() => onEditItem(item)}
+                                    className="text-blue-600 p-2 bg-blue-500/10 rounded-md hover:bg-blue-500/20 transition-colors">
+                                    <PenLine className="w-4 h-4" />
+                                  </button>
+                                </div>
+                              )
+                            }
+                          </div>
+                        )
+                      })}
+                    </div>
                   </div>
 
-                  {/* item list content */}
-                  <div className="mt-3">
-                    {transactionItems.map((item, index) => {
-                      return (
-                        <div key={index} className="py-2 flex justify-center items-center">
-                          <p className="flex flex-1 gap-1">
-                            <span>{item.quantity}x </span> -
-                            <span className="max-w-[120px] block overflow-hidden whitespace-nowrap text-ellipsis"> {item.service.name}</span> -
-                            <span> Rp. {(item.totalPrice - item.promoPrice).toLocaleString()} </span>
-                          </p>
-
-                          {
-                            isCurrent && (
-                              <div className="flex">
-                                <button
-                                  onClick={() => onDeleteItem(item)}
-                                  className="text-red-500 p-2 mx-2 bg-red-500/10 rounded-md hover:bg-red-500/20 transition-colors">
-                                  <Trash2Icon className="w-4 h-4" />
-                                </button>
-
-                                <button
-                                  onClick={() => onEditItem(item)}
-                                  className="text-blue-600 p-2 bg-blue-500/10 rounded-md hover:bg-blue-500/20 transition-colors">
-                                  <PenLine className="w-4 h-4" />
-                                </button>
-                              </div>
-                            )
-                          }
-                        </div>
-                      )
-                    })}
+                  {/* action button */}
+                  <div className="mt-4 flex justify-end">
+                    <button
+                      onClick={() => { handleCompleteTask(); }} className="px-4 py-2 bg-mainColor text-white rounded-md hover:bg-mainColor/80 disabled:opacity-50 transition-colors"
+                      disabled={isLoading || !isCurrent}
+                    >
+                      Mulai Pengerjaan
+                    </button>
                   </div>
                 </div>
 
-                {/* action button */}
-                <div className="mt-4 flex justify-end">
-                  <button
-                    onClick={() => { setIsOpen(false); handleCompleteTask(); }} className="px-4 py-2 bg-mainColor text-white rounded-md hover:bg-mainColor/80 disabled:opacity-50 transition-colors"
-                    disabled={isLoading || !isCurrent}
-                  >
-                    Mulai Pengerjaan
-                  </button>
-                </div>
-              </div>
+                {/* bottom divider */}
+                <div className="border-b border-gray-200 dark:border-gray-700 my-2"></div>
+              </>
+            )
+          }
+        </div>
 
-              {/* bottom divider */}
-              <div className="border-b border-gray-200 dark:border-gray-700 my-2"></div>
-            </>
-          )
-        }
-      </div>
-
-      <div className="">
-        {/* dropdown chevron */}
-        {isOpen ? (
-          <ChevronUp className="w-4 h-4 text-gray-400" onClick={() => isOpenable && setIsOpen(!isOpen)} />
-        ) : (
+        <div className="">
+          {/* dropdown chevron */}
+          {isOpen ? (
+            <ChevronUp className="w-4 h-4 text-gray-400" onClick={() => isOpenable && setIsOpen(!isOpen)} />
+          ) : (
             <ChevronDown className="w-4 h-4 text-gray-400" onClick={() => isOpenable && setIsOpen(!isOpen)} />
-        )}
-      </div>
-    </li>
+          )}
+        </div>
+      </li>
+    </>
   );
 }
 
@@ -1184,18 +1206,13 @@ interface TransactionDocument {
 }
 
 const FotoTab = () => {
-  const [beforeImages, setBeforeImages] = useState<Array<TransactionDocument>>([]); // Replace with actual before images array
-  const [afterImages, setAfterImages] = useState<Array<TransactionDocument>>([]); // Replace with actual after images array
-
   const transaction = React.useContext(TransactionContext);
   const trxId = transaction.transactionDetail?.id; // replace with actual trxId from props or state
 
-  useEffect(() => {
-    if (trxId) {
-      getImages("before");
-      getImages("after");
-    }
-  }, [trxId]);
+  const beforeImages = transaction.beforeImages!;
+  const afterImages = transaction.afterImages!;
+  const setBeforeImages = transaction.setBeforeImages!;
+  const setAfterImages = transaction.setAfterImages!;
 
   // const imageRowCount = Math.ceil(Math.max(beforeImages.length + 1, afterImages.length + 1) / 3)
   const imageBeforeRowCount = Math.ceil(Math.max(beforeImages.length + 1, afterImages.length + 1) / 3)
@@ -1240,7 +1257,7 @@ const FotoTab = () => {
       formData.append("docType", type === "before" ? "BEFORE" : "AFTER");
 
       await apiFormdata.post(`/transaction/${trxId}/documents`, formData);
-      await getImages(type);
+      // await getImages(type);
     }
     catch (error) {
       console.error("Error uploading image:", error);
@@ -1271,7 +1288,7 @@ const FotoTab = () => {
 
     try {
       await api.delete(`/transaction/documents/${id}`);
-      await getImages(type);
+      // await getImages(type);
     }
     catch (error) {
       console.error("Error deleting image:", error);
@@ -1285,27 +1302,6 @@ const FotoTab = () => {
       if (type === "after") {
         setAfterImages((prev) => prev.filter((img) => img.id !== id));
       }
-    }
-
-  }
-
-  const getImages = async (type: "before" | "after" = "before") => {
-    let url = `/transaction/${trxId}/documents?docType=`;
-    if (type === "before") {
-      url += "BEFORE";
-    } else {
-      url += "AFTER";
-    }
-
-    const response = await api.get(url);
-    const images: TransactionDocument[] = response.data || [];
-
-    if (type === "before") {
-      setBeforeImages(images);
-    }
-
-    if (type === "after") {
-      setAfterImages(images);
     }
   }
 
@@ -1350,7 +1346,6 @@ const FotoTab = () => {
                         />
                       )
                     }
-
                     return (
                       <div key={index} className="max-w-[33%] px-1" />
                     )
@@ -1480,18 +1475,30 @@ const TransactionContext = React.createContext<{
   handleAddItem?: (item: Item) => Promise<void>;
   handleDeleteItem?: (id: string) => Promise<void>;
   handleEditItem?: (id: string, item: Item) => Promise<void>;
+  showUploadBefore: () => void;
+  showUploadAfter: () => void;
+  beforeImages?: Array<TransactionDocument>;
+  afterImages?: Array<TransactionDocument>;
+  setBeforeImages?: React.Dispatch<React.SetStateAction<Array<TransactionDocument>>>;
+  setAfterImages?: React.Dispatch<React.SetStateAction<Array<TransactionDocument>>>;
 }>({
   transactionDetail: null,
   customerDetail: null,
   setTransactionDetail: () => { },
   handleAddItem: async (item) => { },
   handleDeleteItem: async (id) => { },
-  handleEditItem: async (id, item) => { }
+  handleEditItem: async (id, item) => { },
+  showUploadBefore: () => { },
+  showUploadAfter: () => { },
+  beforeImages: [],
+  afterImages: [],
+  setBeforeImages: () => { },
+  setAfterImages: () => { },
 });
 
 export default function PekerjaanBerlangsung() {
   type TabType = "detail" | "riwayat" | "foto";
-  const [currentTab, setCurrentTab] = useState<TabType>("foto");
+  const [currentTab, setCurrentTab] = useState<TabType>("detail");
 
   const tabs: { id: TabType; label: string }[] = [
     { id: "detail", label: "Detail" },
@@ -1505,6 +1512,12 @@ export default function PekerjaanBerlangsung() {
   const [transactionDetail, setTransactionDetail] = useState<MitraSPKDetail>(null as any);
   const [customerDetail, setCustomerDetail] = useState<MitraCustomerDetail>(null as any);
   const [extendAddress, setExtendAddress] = useState<boolean>(false);
+
+  const [showUploadBefore, setShowUploadBefore] = useState<boolean>(false);
+  const [showUploadAfter, setShowUploadAfter] = useState<boolean>(false);
+
+  const [beforeImages, setBeforeImages] = useState<Array<TransactionDocument>>([]); // Replace with actual before images array
+  const [afterImages, setAfterImages] = useState<Array<TransactionDocument>>([]); // Replace with actual after images array
 
   // get params from url
   useEffect(() => {
@@ -1569,6 +1582,33 @@ export default function PekerjaanBerlangsung() {
     fetchCustomerDetail();
   }, [transactionDetail]);
 
+  // get photos
+  useEffect(() => {
+    const getImages = async (type: "before" | "after" = "before") => {
+      let url = `/transaction/${transactionDetail.id}/documents?docType=`;
+      if (type === "before") {
+        url += "BEFORE";
+      } else {
+        url += "AFTER";
+      }
+
+      const response = await api.get(url);
+      const images: TransactionDocument[] = response.data || [];
+
+      if (type === "before") {
+        setBeforeImages(images);
+      }
+
+      if (type === "after") {
+        setAfterImages(images);
+      }
+    }
+
+    if (transactionDetail) {
+      getImages("before");
+      getImages("after");
+    }
+  }, [transactionDetail]);
   if (!transactionDetail || !customerDetail) {
     return (
       <main className="pb-[20vh] relative">
@@ -1641,8 +1681,30 @@ export default function PekerjaanBerlangsung() {
     }
   }
 
+  const toggleUploadBefore = () => {
+    setShowUploadBefore(!showUploadBefore);
+  }
+
+  const toggleUploadAfter = () => {
+    setShowUploadAfter(!showUploadAfter);
+  }
+
   return (
-    <TransactionContext.Provider value={{ transactionDetail, customerDetail, setTransactionDetail, handleAddItem, handleDeleteItem, handleEditItem }}>
+    <TransactionContext.Provider value={{
+      transactionDetail,
+      customerDetail,
+      setTransactionDetail,
+      handleAddItem,
+      handleDeleteItem,
+      handleEditItem,
+      showUploadBefore: toggleUploadBefore,
+      showUploadAfter: toggleUploadAfter,
+      beforeImages,
+      afterImages,
+      setBeforeImages,
+      setAfterImages
+
+    }}>
       <main className="pb-[20vh] relative">
         <PageBanner
           title="Pekerjaan Berlangsung"
@@ -1728,9 +1790,60 @@ export default function PekerjaanBerlangsung() {
             )}
           </div>
         </div>
-
-
       </main>
+      <DialogWrapper
+        className="w-10/12"
+        open={showUploadBefore}
+        onOpenChange={() => {
+          setShowUploadBefore(false);
+        }}
+      >
+        <DialogTitle title="Detail Item Pengerjaan" />
+        <div className="p-2 flex flex-col items-center justify-center">
+          <img src="/assets/upload.png" className="max-w-1/2" alt="Upload" />
+          <p className="font-semibold my-2">Upload Foto</p>
+          <p className="text-sm text-gray-500 mb-4">Unggah foto sebelum mulai pengerjaan</p>
+
+          <button
+            className="bg-mainColor text-white w-full py-2 px-4 rounded-md"
+            onClick={() => {
+              setCurrentTab("foto");
+              setShowUploadBefore(false);
+            }}
+          >
+            Unggah Sekarang
+          </button>
+
+        </div>
+
+      </DialogWrapper>
+
+      <DialogWrapper
+        className="w-10/12"
+        open={showUploadAfter}
+        onOpenChange={() => {
+          setShowUploadBefore(false);
+        }}
+      >
+        <DialogTitle title="Detail Item Pengerjaan" />
+        <div className="p-2 flex flex-col items-center justify-center">
+          <img src="/assets/upload.png" className="max-w-1/2" alt="Upload" />
+          <p className="font-semibold my-2">Upload Foto</p>
+          <p className="text-sm text-gray-500 mb-4">Unggah foto sesudah pengerjaan</p>
+
+          <button
+            className="bg-mainColor text-white w-full py-2 px-4 rounded-md"
+            onClick={() => {
+              setCurrentTab("foto");
+              setShowUploadAfter(false);
+            }}
+          >
+            Unggah Sekarang
+          </button>
+
+        </div>
+
+      </DialogWrapper>
     </TransactionContext.Provider>
   );
 }
