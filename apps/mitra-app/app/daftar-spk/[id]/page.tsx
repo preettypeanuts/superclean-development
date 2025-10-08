@@ -685,8 +685,8 @@ const TimelineItemInProgress = ({
   onEditItem,
   onDeleteItem,
 }: {
-    onEditItem: (item?: MitraSPKItemDetail) => void;
-    onDeleteItem: (item?: MitraSPKItemDetail) => void;
+  onEditItem: (item?: MitraSPKItemDetail) => void;
+  onDeleteItem: (item?: MitraSPKItemDetail) => void;
 }) => {
   const transaction = React.useContext(TransactionContext);
   const setTransaction = transaction.setTransactionDetail!;
@@ -830,8 +830,8 @@ const TimelineItemPending = ({
   onEditItem,
   onDeleteItem,
 }: {
-    onEditItem: (item?: MitraSPKItemDetail) => void;
-    onDeleteItem: (item?: MitraSPKItemDetail) => void;
+  onEditItem: (item?: MitraSPKItemDetail) => void;
+  onDeleteItem: (item?: MitraSPKItemDetail) => void;
 }) => {
   const transaction = React.useContext(TransactionContext);
   const transactionItems = transaction.transactionDetail?.details || [];
@@ -892,9 +892,14 @@ const TimelineItemPending = ({
                 <div className="mt-2 text-sm text-gray-600">
                   {/* preview information */}
                   <p className="my-4 font-medium">Jadwal pengerjaan yang harus diselesaikan</p>
-                  <p className="font-bold text-base text-black">Alamat</p>
+                  <p className="font-bold text-base text-black">Alamat: </p>
                   <p className="mt-3 text-sm font-medium mb-4">
                     {transaction.customerDetail?.address}, {transaction.customerDetail?.subDistrict}, {transaction.customerDetail?.district}, {transaction.customerDetail?.city}, {transaction.customerDetail?.province}
+                  </p>
+
+                  <p className="font-bold text-base text-black">Catatan:</p>
+                  <p className="mt-3 text-sm font-medium mb-4">
+                    {transaction.transactionDetail?.notes}
                   </p>
 
                   {/* item list */}
