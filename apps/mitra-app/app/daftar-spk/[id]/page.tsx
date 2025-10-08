@@ -640,18 +640,22 @@ const TimelineItemCompleted = ({
                 <div>
                   <p className="text-sm mb-4">Jika pelanggan sudah puas dan pekerjaan sudah selesai, mohon untuk klik tombol <span>"Selesai"</span></p>
 
-                  <div className="flex">
-                    <Button className="flex-1 mx-2" variant="outline2" onClick={() => {
-                      handleBackTask();
-                    }}>Kembali</Button>
-                    <Button
-                      disabled={
-                        !isCurrent || loading
-                      }
-                      className="flex-1 mx-2" variant="main" onClick={() => {
-                        handleCompleteTask();
-                      }}>Selesai</Button>
-                  </div>
+                  {
+                    isCurrent && (
+                      <div className="flex">
+                        <Button className="flex-1 mx-2" variant="outline2" onClick={() => {
+                          handleBackTask();
+                        }}>Kembali</Button>
+                        <Button
+                          disabled={
+                            !isCurrent || loading
+                          }
+                          className="flex-1 mx-2" variant="main" onClick={() => {
+                            handleCompleteTask();
+                          }}>Selesai</Button>
+                      </div>
+                    )
+                  }
                 </div>
 
               </>
@@ -797,18 +801,19 @@ const TimelineItemInProgress = ({
                 </div>
 
                 {/* action button */}
-                <div className="mt-4 flex justify-end">
-                  <button
-                    onClick={() => { handleCompleteTask(); }}
-                    disabled={isLoading || !isCurrent}
-                    className="px-4 py-2 bg-mainColor text-white rounded-md hover:bg-mainColor/80 disabled:bg-mainColor/40 transition-colors">
-                    Pekerjaan Selesai
-                  </button>
-                </div>
+                {
+                  isCurrent && (
+                    <div className="mt-4 flex justify-end">
+                      <button
+                        onClick={() => { handleCompleteTask(); }}
+                        disabled={isLoading}
+                        className="px-4 py-2 bg-mainColor text-white rounded-md hover:bg-mainColor/80 disabled:bg-mainColor/40 transition-colors">
+                        Pekerjaan Selesai
+                      </button>
+                    </div>
+                  )
+                }
               </div>
-
-              {/* bottom divider */}
-              <div className="border-b border-gray-200 dark:border-gray-700 my-2"></div>
             </>
           )
         }
@@ -952,18 +957,19 @@ const TimelineItemPending = ({
                   </div>
 
                   {/* action button */}
-                  <div className="mt-4 flex justify-end">
-                    <button
-                      onClick={() => { handleCompleteTask(); }} className="px-4 py-2 bg-mainColor text-white rounded-md hover:bg-mainColor/80 disabled:opacity-50 transition-colors"
-                      disabled={isLoading || !isCurrent}
-                    >
-                      Mulai Pengerjaan
-                    </button>
-                  </div>
+                  {
+                    isCurrent && (
+                      <div className="mt-4 flex justify-end">
+                        <button
+                          onClick={() => { handleCompleteTask(); }} className="px-4 py-2 bg-mainColor text-white rounded-md hover:bg-mainColor/80 disabled:opacity-50 transition-colors"
+                          disabled={isLoading || transactionItems.length === 0}
+                        >
+                          Mulai Pengerjaan
+                        </button>
+                      </div>
+                    )
+                  }
                 </div>
-
-                {/* bottom divider */}
-                <div className="border-b border-gray-200 dark:border-gray-700 my-2"></div>
               </>
             )
           }
