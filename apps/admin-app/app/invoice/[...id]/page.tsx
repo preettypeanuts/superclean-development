@@ -1,5 +1,6 @@
 "use client"
 
+import { CopyIcon } from "@radix-ui/react-icons";
 import { HeaderMobile } from "@shared/components/Header";
 import { WrapperMobile } from "@shared/components/Wrapper";
 import { api } from "@shared/utils/apiClient";
@@ -9,12 +10,14 @@ import { Button } from "@ui-components/components/ui/button";
 import { Input } from "@ui-components/components/ui/input";
 import { Label } from "@ui-components/components/ui/label";
 import { Textarea } from "@ui-components/components/ui/textarea";
+import { Parameter } from "apps/admin-app/app/pengaturan/page";
 import { Transaction } from "apps/admin-app/app/transaksi/spk/edit/[...id]/page";
+import { ChevronUp } from "lucide-react";
 import Image from "next/image";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
 import { BsClockHistory } from "react-icons/bs";
-import { FaInfoCircle, FaRegCheckCircle } from "react-icons/fa";
+import { FaRegCheckCircle } from "react-icons/fa";
 import { FaCloudArrowUp } from "react-icons/fa6";
 import { IoMdStar } from "react-icons/io";
 
@@ -31,12 +34,14 @@ interface Review {
 function InvoicePreview({
   transaction,
   reviewData,
-  setReviewData
+  setReviewData,
 }: {
   transaction: Transaction,
   reviewData: Review,
-  setReviewData: Dispatch<SetStateAction<Review>>
+    setReviewData: Dispatch<SetStateAction<Review>>,
 }) {
+  const [isOpen, setIsOpen] = useState(false);
+
   const handleStarChange = (newStarRating: number) => {
     setReviewData(prev => ({
       ...prev,
@@ -96,14 +101,6 @@ function InvoicePreview({
           </div>
           <div className="flex items-center justify-between">
             <Label>
-              Tanggal transaksi
-            </Label>
-            <Label className="font-semibold">
-              {new Date(transaction?.trxDate).toLocaleDateString('en-GB')}
-            </Label>
-          </div>
-          <div className="flex items-center justify-between">
-            <Label>
               Nominal
             </Label>
             <Label className="font-semibold">
@@ -117,10 +114,69 @@ function InvoicePreview({
               Tip
             </Label>
             <Label className="font-semibold">
-              RP 10.000
+              {reviewData.tip?.toLocaleString('id-ID', {
+                style: 'currency', currency: 'IDR', minimumFractionDigits: 0, maximumFractionDigits: 0
+              })}
             </Label>
           </div> */}
+          <div className="flex items-center justify-between">
+            <Label>
+              Tanggal transaksi
+            </Label>
+            <Label className="font-semibold">
+              {new Date(transaction?.trxDate).toLocaleDateString('en-GB')}
+            </Label>
+          </div>
         </div>
+
+        {/* list item */}
+        <div>
+          <div className="flex justify-between items-center mb-2">
+            <p className="text-sm font-semibold text-secondaryColorDark">
+              List Item Pengerjaan
+            </p>
+
+            <div>
+              {
+                isOpen ? (
+                  <ChevronUp className="w-4 h-4 text-secondaryColorDark" onClick={() => setIsOpen(!isOpen)} />
+                ) : (
+                  <ChevronUp className="w-4 h-4 text-secondaryColorDark rotate-180" onClick={() => setIsOpen(!isOpen)} />
+                )
+              }
+            </div>
+          </div>
+
+          {isOpen && (
+            <div className="space-y-2">
+              {transaction.details.map((detail, index) => (
+                <div key={index} className="flex items-center justify-between">
+                  <div className="flex flex-col">
+                    <p className="text-sm font-semibold">
+                      {detail.service.name}
+                    </p>
+                    <p className="text-xs text-secondaryColorDark">
+                      {detail.quantity} {detail.service.unit}
+                    </p>
+                  </div>
+                  <p className="text-sm font-semibold">
+                    {detail.totalPrice.toLocaleString('id-ID', {
+                      style: 'currency', currency: 'IDR', minimumFractionDigits: 0, maximumFractionDigits: 0
+                    })}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* petugas */}
+        {/* <div className="flex items-center gap-3">
+          <p className="text-sm font-semibold text-secondaryColorDark">
+            Petugas Cleaning
+          </p>
+        </div> */}
+
 
         <div className="space-y-3 bg-baseLight/50 p-4 rounded-md">
           <p className="text-sm font-semibold">
@@ -210,14 +266,17 @@ function PaymentPreview({
   reviewData,
   setReviewData,
   handleComplete,
+  parameters
 }: {
   transaction: Transaction,
   reviewData: Review,
-  setReviewData: Dispatch<SetStateAction<Review>>
-  handleComplete: () => Promise<any>
+    setReviewData: Dispatch<SetStateAction<Review>>,
+    handleComplete: () => Promise<any>,
+    parameters: Parameter[]
 }) {
   const [loading, setLoading] = useState<boolean>(false);
   const [paymentProof, setPaymentProof] = useState<File | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     paymentProof && setReviewData(prev => ({ ...prev, paymentProof: paymentProof }))
@@ -249,6 +308,18 @@ function PaymentPreview({
     }
   }
 
+  console.log(parameters);
+
+
+  const bankAccountParam = parameters.find(param => param.paramKey === "BANK_ACCOUNT_NUMBER");
+  const bankAccount = bankAccountParam ? bankAccountParam.paramValue : "0000000000";
+
+  const bankAccountNameParam = parameters.find(param => param.paramKey === "BANK_ACCOUNT_NAME");
+  const bankAccountName = bankAccountNameParam ? bankAccountNameParam.paramValue : "Nama Bank";
+
+  const bankNameParam = parameters.find(param => param.paramKey === "BANK_NAME");
+  const bankName = bankNameParam ? bankNameParam.paramValue : "Bank";
+
   return (
     <>
       <HeaderMobile label="Pembayaran" />
@@ -271,16 +342,6 @@ function PaymentPreview({
           </div>
           <div className="flex items-center justify-between">
             <Label>
-              Tanggal transaksi
-            </Label>
-            <Label className="font-semibold">
-              {new Date(transaction?.trxDate).toLocaleDateString('en-GB')}
-            </Label>
-          </div>
-        </div>
-        <div className="space-y-2 p-2 bg-baseLight/50 rounded-md">
-          <div className="flex items-center justify-between">
-            <Label>
               Nominal
             </Label>
             <Label className="font-semibold">
@@ -299,22 +360,75 @@ function PaymentPreview({
               })}
             </Label>
           </div>
-          <div className="flex items-center justify-between border-t pt-2">
-            <div className="flex items-center gap-2">
-              <FaInfoCircle />
-              <Label className="font-bold uppercase">
-                Total Pembayaran
-              </Label>
-            </div>
-            <Label className="font-bold">
-              {(transaction.finalPrice + (reviewData.tip || 0))?.toLocaleString('id-ID', {
-                style: 'currency', currency: 'IDR', minimumFractionDigits: 0, maximumFractionDigits: 0
-              })}
+          <div className="flex items-center justify-between">
+            <Label>
+              Tanggal transaksi
+            </Label>
+            <Label className="font-semibold">
+              {new Date(transaction?.trxDate).toLocaleDateString('en-GB')}
             </Label>
           </div>
         </div>
 
-        <div className="flex flex-col items-center justify-center gap-3 w-full">
+        {/* list item */}
+        <div>
+          <div className="flex justify-between items-center mb-2">
+            <p className="text-sm font-semibold text-secondaryColorDark">
+              List Item Pengerjaan
+            </p>
+
+            <div>
+              {
+                isOpen ? (
+                  <ChevronUp className="w-4 h-4 text-secondaryColorDark" onClick={() => setIsOpen(!isOpen)} />
+                ) : (
+                  <ChevronUp className="w-4 h-4 text-secondaryColorDark rotate-180" onClick={() => setIsOpen(!isOpen)} />
+                )
+              }
+            </div>
+          </div>
+
+          {isOpen && (
+            <div className="space-y-2">
+              {transaction.details.map((detail, index) => (
+                <div key={index} className="flex items-center justify-between">
+                  <div className="flex flex-col">
+                    <p className="text-sm font-semibold">
+                      {detail.service.name}
+                    </p>
+                    <p className="text-xs text-secondaryColorDark">
+                      {detail.quantity} {detail.service.unit}
+                    </p>
+                  </div>
+                  <p className="text-sm font-semibold">
+                    {detail.totalPrice.toLocaleString('id-ID', {
+                      style: 'currency', currency: 'IDR', minimumFractionDigits: 0, maximumFractionDigits: 0
+                    })}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* dotted divider with gap of 2px */}
+        <div className="grid grid-cols-5 pb-3 border-b border-bottom-dash border-gray-500"></div>
+
+
+        <div className="flex flex-col justify-between border-dotted pt-2">
+          <div className="flex items-center gap-2">
+            <Label className="font-bold uppercase text-mainDark">
+              Total Pembayaran
+            </Label>
+          </div>
+          <Label className="font-bold text-right text-2xl text-mainDark">
+            {(transaction.finalPrice + (reviewData.tip || 0))?.toLocaleString('id-ID', {
+              style: 'currency', currency: 'IDR', minimumFractionDigits: 0, maximumFractionDigits: 0
+            })}
+          </Label>
+        </div>
+
+        <div className="flex flex-col justify-center gap-3 w-full">
           <div className="p-2 w-full md:max-w-md">
             <Image
               width={500}
@@ -324,6 +438,24 @@ function PaymentPreview({
               alt="Qris barcode"
             />
           </div>
+
+          <div className="flex flex-1 flex-col">
+            <p className="font-light mb-1">Nomor Rekening</p>
+
+            <div className="flex" onClick={() => {
+              navigator.clipboard.writeText(bankAccount);
+              alert("Nomor rekening berhasil disalin");
+            }}>
+              <div className="flex flex-1 flex-col">
+                <p className="font-bold flex-1">{bankAccount}</p>
+                <p className="text-xs text-secondaryColorDark">({bankName}) {bankAccountName}</p>
+              </div>
+              <p className="text-right">
+                <CopyIcon className="ml-2 cursor-pointer font-bold" />
+              </p>
+            </div>
+          </div>
+
           <Label className="text-xs text-secondaryColorDark">
             Setelah melakukan pembayaran mohon untuk unggah bukti pembayaran
           </Label>
@@ -379,7 +511,7 @@ function PaymentPreview({
   );
 }
 
-function PaymentStatus({ }) {
+function PaymentStatus() {
   return (
     <>
       <HeaderMobile withBackButton={false} label="Pembayaran" />
@@ -409,6 +541,7 @@ export default function InvoicePage() {
   }, []);
 
   const [transaction, setTransaction] = useState<Transaction>(null as any);
+  const [parameters, setParameters] = useState<Parameter[]>([]);
   const [loading, setLoading] = useState(false);
 
   const [reviewData, setReviewData] = useState<Review>({
@@ -463,7 +596,7 @@ export default function InvoicePage() {
   else if (step !== '' && reviewData.rating === 0 && transaction?.status !== 4) {
     // reset query param
     const newUrl = pathname;
-    window.history.replaceState(null, '', newUrl);
+    // window.history.replaceState(null, '', newUrl);
   }
 
   // Fetch transaction data
@@ -481,13 +614,31 @@ export default function InvoicePage() {
       }
     };
 
+    const fetchBankAccount = async () => {
+      try {
+        const result = await api.get(`/parameter/app-settings`);
+        const parameters = result.data as Array<Parameter>;
+
+        if (parameters && parameters.length > 0) {
+          setParameters(parameters);
+        }
+      } catch (error) {
+        console.error("Gagal mengambil data rekening bank:", error);
+      }
+    }
+
     if (id) {
       fetchTransaction();
+      fetchBankAccount();
     }
   }, [id]);
 
   if (loading || !transaction) {
-    return <div>Loading...</div>;
+    return <>
+      <div className="flex items-center justify-center h-screen">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-mainColor"></div>
+      </div>;
+    </>
   }
 
   if (step === 'payment') {
@@ -497,6 +648,7 @@ export default function InvoicePage() {
         reviewData={reviewData}
         setReviewData={setReviewData}
         handleComplete={handleComplete}
+        parameters={parameters}
       />
     )
   }

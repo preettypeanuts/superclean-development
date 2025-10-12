@@ -29,7 +29,7 @@ const PARAMS = {
   TARGET_HO: "TARGET_HO",
 }
 
-interface Parameter {
+export interface Parameter {
   paramKey: string;
   paramValue: string;
 }

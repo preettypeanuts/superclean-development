@@ -79,6 +79,7 @@ export default function InquiryTransaksiDetail() {
     return pathname.split("/laporan/inquiry-transaksi/detail/").pop();
   }, [])
   const { history, loading: historyLoading, error: historyError, refetch: refetchHistory } = useTransactionHistory(id);
+  const reversedHistory = history ? [...history].reverse() : [];
 
   // Format date with time
   const formatDateTime = (dateString: string) => {
@@ -657,7 +658,7 @@ export default function InquiryTransaksiDetail() {
 
               {!historyLoading && !historyError && history.length > 0 && (
                 <div className="space-y-4">
-                  {history.map((item, index) => (
+                  {reversedHistory.map((item, index) => (
                     <div
                       key={item.id}
                       className="border rounded-lg p-4 bg-white hover:bg-gray-50 transition-colors"
@@ -665,7 +666,7 @@ export default function InquiryTransaksiDetail() {
                       <div className="flex justify-between items-start mb-2">
                         <div className="flex items-center">
                           <div className="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-semibold mr-3">
-                            {index + 1}
+                            {reversedHistory.length - index}
                           </div>
                           <div>
                             <p className="font-medium text-gray-900">
