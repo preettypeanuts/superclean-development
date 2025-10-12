@@ -578,9 +578,12 @@ export default function PekerjaanBerlangsung() {
 
   if (!transactionDetail || !customerDetail) {
     return (
-      <main className="pb-[20vh] relative">
-        Memuat...
-      </main>
+      <div className="flex items-center justify-center h-[100vh]">
+        <div className="inline-block w-8 h-8 border-4 border-gray-300 border-t-mainColor rounded-full animate-spin" />
+      </div>
+      // <main className="pb-[20vh] relative">
+      //   Memuat...
+      // </main>
     );
   }
 
