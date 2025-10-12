@@ -1100,17 +1100,24 @@ export default function TransactionDetail() {
                     <Label className="w-[40%] font-semibold flex items-center mt-2">
                       Catatan
                     </Label>
-                    <Textarea
-                      id="notes"
-                      value={transaction.notes || ""}
-                      placeholder="Masukkan catatan anda disini"
-                      rows={5}
-                      className="resize-none"
-                      onChange={(e) => setTransaction(prev => ({
-                        ...prev,
-                        notes: e.target.value
-                      } as Transaction))}
-                    />
+                    <div className="w-full">
+                      <Textarea
+                        id="notes"
+                        value={transaction.notes || ""}
+                        placeholder="Masukkan catatan anda disini"
+                        rows={5}
+                        className="resize-none"
+                        maxLength={255}
+                        onChange={(e) => setTransaction(prev => ({
+                          ...prev,
+                          notes: e.target.value
+                        } as Transaction))}
+                      />
+
+                      <div className="text-xs mt-1 text-muted-foreground">
+                        Maksimal 255 karakter
+                      </div>
+                    </div>
                   </div>
                 </div>
 

@@ -1045,14 +1045,20 @@ export default function NewSPK() {
                     <Label className="w-[40%] font-semibold flex items-center mt-2">
                       Catatan
                     </Label>
-                    <Textarea
-                      id="notes"
-                      value={formData.notes}
-                      placeholder="Masukkan catatan anda disini"
-                      rows={5}
-                      className="resize-none"
-                      onChange={(e) => handleChange("notes", e.target.value)}
-                    />
+                    <div className="w-full">
+                      <Textarea
+                        id="notes"
+                        value={formData.notes}
+                        placeholder="Masukkan catatan anda disini"
+                        maxLength={255}
+                        rows={5}
+                        className="resize-none"
+                        onChange={(e) => handleChange("notes", e.target.value)}
+                      />
+                      <div className="text-xs mt-1 text-muted-foreground">
+                        Maksimal 255 karakter
+                      </div>
+                    </div>
                   </div>
                 </div>
                 <div className="col-span-1 space-y-4">
