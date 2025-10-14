@@ -212,6 +212,11 @@ export default function SettlementPage() {
                   type="text"
                   placeholder="Cari No Transaksi, Nama, No. Whatsapp"
                   value={tempSearchQuery}
+                  onKeyDown={(i) => {
+                    if (i.key === "Enter") {
+                      handleSearch();
+                    }
+                  }}
                   onChange={(e) => setTempSearchQuery(e.target.value)}
                   className="w-[30lvw]"
                   icon={<Search size={16} />}

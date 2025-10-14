@@ -202,6 +202,11 @@ export default function SPKPage() {
                   placeholder="Cari No. Transaksi, Nama, No. Whatsapp"
                   value={tempSearchQuery}
                   onChange={(e) => setTempSearchQuery(e.target.value)}
+                  onKeyDown={(i) => {
+                    if (i.key === "Enter") {
+                      handleSearch();
+                    }
+                  }}
                   className="w-[30lvw]"
                   icon={<Search size={16} />}
                 />

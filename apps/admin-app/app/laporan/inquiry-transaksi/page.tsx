@@ -1,24 +1,24 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
-import { useState, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
-import { InquiryTransaksiTable } from "@ui-components/components/inquiry-transaksi-table";
-import { DatePicker } from "@ui-components/components/date-picker";
-import { Wrapper } from "@shared/components/Wrapper";
-import { Input } from "@ui-components/components/ui/input";
-import { Button } from "@ui-components/components/ui/button";
 import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
-import { Search } from "lucide-react";
-import { SelectData } from "@ui-components/components/select-data";
-import { PaginationNumber } from "@ui-components/components/pagination-number";
-import { Label } from "@ui-components/components/ui/label";
-import { IoClose } from "react-icons/io5";
-import { GroupFilter } from "@ui-components/components/group-filter";
-import { SelectFilter } from "@ui-components/components/select-filter";
-import { PiExportFill } from "react-icons/pi";
+import { Wrapper } from "@shared/components/Wrapper";
 import { apiClient } from "@shared/utils/apiClient";
 import { formatDateAPI } from "@shared/utils/formatDate";
 import { useParameterStore } from "@shared/utils/useParameterStore";
+import { DatePicker } from "@ui-components/components/date-picker";
+import { GroupFilter } from "@ui-components/components/group-filter";
+import { InquiryTransaksiTable } from "@ui-components/components/inquiry-transaksi-table";
+import { PaginationNumber } from "@ui-components/components/pagination-number";
+import { SelectData } from "@ui-components/components/select-data";
+import { SelectFilter } from "@ui-components/components/select-filter";
+import { Button } from "@ui-components/components/ui/button";
+import { Input } from "@ui-components/components/ui/input";
+import { Label } from "@ui-components/components/ui/label";
+import { Search } from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { IoClose } from "react-icons/io5";
+import { PiExportFill } from "react-icons/pi";
 
 const columns = [
   { key: "id", label: "#" },
@@ -366,7 +366,12 @@ export default function InquiryTransaksiPage() {
               <div className="relative">
                 <Input
                   type="text"
-                  placeholder="No Transaksi, Nama Pelanggan, No. Whatsapp"
+                  placeholder="Cari No Transaksi, Nama Pelanggan, No. Whatsapp"
+                  onKeyDown={(i) => {
+                    if (i.key === "Enter") {
+                      handleSearch();
+                    }
+                  }}
                   value={tempSearchQuery}
                   onChange={(e) => setTempSearchQuery(e.target.value)}
                   className="w-[30lvw]"

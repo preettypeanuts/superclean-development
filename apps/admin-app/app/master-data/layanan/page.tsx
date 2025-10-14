@@ -1,20 +1,20 @@
 "use client";
+import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
+import { FilterCategoryLayanan } from "@superclean-workspace/ui-components/components/filter-category-layanan";
+import { FilterStatus } from "@superclean-workspace/ui-components/components/filter-status";
+import { Label } from "@ui-components/components/ui/label";
+import { Wrapper } from "libs/shared/src/components/Wrapper";
+import { TableLayanan } from "libs/ui-components/src/components/layanan-table";
+import { PaginationNumber } from "libs/ui-components/src/components/pagination-number";
+import { SelectData } from "libs/ui-components/src/components/select-data";
+import { Button } from "libs/ui-components/src/components/ui/button";
+import { Input } from "libs/ui-components/src/components/ui/input";
+import { apiClient } from "libs/utils/apiClient";
+import { Search } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { apiClient } from "libs/utils/apiClient";
-import { TableLayanan } from "libs/ui-components/src/components/layanan-table";
-import { Wrapper } from "libs/shared/src/components/Wrapper";
-import { Input } from "libs/ui-components/src/components/ui/input";
-import { Button } from "libs/ui-components/src/components/ui/button";
-import { FilterStatus } from "@superclean-workspace/ui-components/components/filter-status";
-import { FilterCategoryLayanan } from "@superclean-workspace/ui-components/components/filter-category-layanan";
-import { LuPlus } from "react-icons/lu";
-import { Search } from "lucide-react";
-import { SelectData } from "libs/ui-components/src/components/select-data";
-import { PaginationNumber } from "libs/ui-components/src/components/pagination-number";
-import { Label } from "@ui-components/components/ui/label";
 import { IoClose } from "react-icons/io5";
-import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
+import { LuPlus } from "react-icons/lu";
 
 const DataHeaderLayanan = [
   { key: "id", label: "#" },
@@ -142,9 +142,9 @@ export default function LayananPage() {
                   value={tempSearchQuery}
                   onChange={(e) => setTempSearchQuery(e.target.value)}
                   onKeyDown={(e) => {
-                    // if (e.key === "Enter") {
-                    //   handleSearch();
-                    // }
+                    if (e.key === "Enter") {
+                      handleSearch();
+                    }
                   }}
                   className="w-[30lvw]"
                   icon={<Search size={16} />}

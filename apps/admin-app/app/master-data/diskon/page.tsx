@@ -1,19 +1,18 @@
 "use client"
+import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
+import { Wrapper } from "@shared/components/Wrapper";
+import { Label } from "@ui-components/components/ui/label";
+import { DiscountTable } from "libs/ui-components/src/components/discount-table";
+import { PaginationNumber } from "libs/ui-components/src/components/pagination-number";
+import { SelectData } from "libs/ui-components/src/components/select-data";
+import { Button } from "libs/ui-components/src/components/ui/button";
+import { Input } from "libs/ui-components/src/components/ui/input";
+import { apiClient } from "libs/utils/apiClient";
+import { Search } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { apiClient } from "libs/utils/apiClient";
-import { Header } from "@shared/components/Header";
-import { Wrapper } from "@shared/components/Wrapper";
-import { Input } from "libs/ui-components/src/components/ui/input";
-import { Button } from "libs/ui-components/src/components/ui/button";
-import { LuPlus } from "react-icons/lu";
-import { Search } from "lucide-react";
 import { IoClose } from "react-icons/io5";
-import { SelectData } from "libs/ui-components/src/components/select-data";
-import { PaginationNumber } from "libs/ui-components/src/components/pagination-number";
-import { DiscountTable } from "libs/ui-components/src/components/discount-table";
-import { Label } from "@ui-components/components/ui/label";
-import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
+import { LuPlus } from "react-icons/lu";
 
 const DataHeaderPromo = [
   { key: "id", label: "#" },
@@ -109,9 +108,9 @@ export default function PromoPage() {
                   value={tempSearchQuery}
                   onChange={(e) => setTempSearchQuery(e.target.value)}
                   onKeyDown={(i) => {
-                    // if (i.key === "Enter") {
-                    //   handleSearch();
-                    // }
+                    if (i.key === "Enter") {
+                      handleSearch();
+                    }
                   }}
                   className="w-[30lvw]"
                   icon={<Search size={16} />}
