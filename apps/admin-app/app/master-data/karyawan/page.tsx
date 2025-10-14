@@ -1,21 +1,21 @@
 "use client"
+import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
+import { Label } from "@ui-components/components/ui/label";
+import { Wrapper } from "libs/shared/src/components/Wrapper";
+import { GroupFilter } from "libs/ui-components/src/components/group-filter";
+import { TableKaryawan } from "libs/ui-components/src/components/karyawan-table";
+import { PaginationNumber } from "libs/ui-components/src/components/pagination-number";
+import { SelectData } from "libs/ui-components/src/components/select-data";
+import { SelectFilter } from "libs/ui-components/src/components/select-filter";
+import { Button } from "libs/ui-components/src/components/ui/button";
+import { Input } from "libs/ui-components/src/components/ui/input";
+import { apiClient } from "libs/utils/apiClient";
+import { useParameterStore } from "libs/utils/useParameterStore";
+import { Search } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { apiClient } from "libs/utils/apiClient";
-import { TableKaryawan } from "libs/ui-components/src/components/karyawan-table";
-import { Wrapper } from "libs/shared/src/components/Wrapper";
-import { Input } from "libs/ui-components/src/components/ui/input";
-import { Button } from "libs/ui-components/src/components/ui/button";
-import { LuPlus } from "react-icons/lu";
-import { Search } from "lucide-react";
-import { SelectData } from "libs/ui-components/src/components/select-data";
-import { PaginationNumber } from "libs/ui-components/src/components/pagination-number";
-import { useParameterStore } from "libs/utils/useParameterStore";
-import { Label } from "@ui-components/components/ui/label";
 import { IoClose } from "react-icons/io5";
-import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
-import { GroupFilter } from "libs/ui-components/src/components/group-filter"
-import { SelectFilter } from "libs/ui-components/src/components/select-filter"
+import { LuPlus } from "react-icons/lu";
 
 const DataHeaderPelanggan = [
   { key: "id", label: "#" },
@@ -40,7 +40,7 @@ interface Karyawan {
   noWhatsapp: string;
   branchId: number;
   roleId: string;
-  
+
   status: number;
   birthDate: string;
 }
@@ -174,6 +174,11 @@ export default function KaryawanPage() {
                   type="text"
                   placeholder="Cari nama karyawan..."
                   value={searchInput}
+                  onKeyDown={(i) => {
+                    if (i.key === "Enter") {
+                      handleSearch();
+                    }
+                  }}
                   onChange={(e) => setSearchInput(e.target.value)}
                   className="w-[30lvw]"
                   icon={<Search size={16} />}
