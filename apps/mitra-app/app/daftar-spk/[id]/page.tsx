@@ -32,6 +32,22 @@ import { AiFillCalendar, AiFillClockCircle } from "react-icons/ai";
 import { BsClipboard2CheckFill } from "react-icons/bs";
 import { FaX } from "react-icons/fa6";
 
+const SPK_STATUS = {
+  BARU: 0,
+  PROSES: 1,
+  BATAL: 2,
+  MENUNGGU_BAYAR: 3,
+  SUDAH_BAYAR: 4,
+  SELESAI: 5,
+}
+
+const SPK_STATUS_PROSES = {
+  TERJADWAL: 0,
+  PENGERJAAN: 1,
+  SELESAI_PENGERJAAN: 2,
+  SELESAI: 3,
+}
+
 type statusName = "pending" | "in_progress" | "completed";
 
 const findStatusLabel = (status: number) => {
@@ -574,11 +590,12 @@ const TimelineItemCompleted = ({
 }: {
   }) => {
   const transaction = React.useContext(TransactionContext);
+  const trxId = transaction.transactionDetail?.id; // replace with actual trxId from props or state
   const setTransaction = transaction.setTransactionDetail!;
 
-  const TASK_INDEX = 1.5;
-  const isOpenable = TASK_INDEX <= transaction.transactionDetail?.status!;
-  const isCurrent = TASK_INDEX === transaction.transactionDetail?.status!;
+  const TASK_INDEX = 2;
+  const isOpenable = TASK_INDEX <= transaction.transactionDetail?.stateProcess!;
+  const isCurrent = TASK_INDEX === transaction.transactionDetail?.stateProcess!;
 
   const [jobCompleted, setJobCompleted] = useState(false);
 
@@ -593,10 +610,6 @@ const TimelineItemCompleted = ({
     try {
       setLoading(true);
 
-      setTransaction((prev) => ({
-        ...prev,
-        status: 1, // back to in progress
-      }));
     } catch (error) {
       console.error('Error going back task:', error);
     } finally {
@@ -604,13 +617,23 @@ const TimelineItemCompleted = ({
     }
   }
 
-
   const handleCompleteTask = async () => {
     try {
       setLoading(true);
-      const response = await api.put(`/transaction/${transaction.transactionDetail?.id}/status`, {
-        status: 3, // completed
+
+      await api.put(`/transaction/${trxId}/state-process`, {
+        stateProcess: SPK_STATUS_PROSES.SELESAI,
       });
+
+      await api.put(`/transaction/${trxId}/status`, {
+        status: SPK_STATUS.MENUNGGU_BAYAR,
+      });
+
+      setTransaction((prev) => ({
+        ...prev,
+        stateProcess: SPK_STATUS_PROSES.SELESAI,
+        status: SPK_STATUS.MENUNGGU_BAYAR,
+      }));
 
       // simulate waiting for 2 seconds
       setJobCompleted(true);
@@ -626,7 +649,7 @@ const TimelineItemCompleted = ({
     <>
       <li className="mb-10 ms-4 flex">
         <div className="">
-          <TimelineIcon taskIndex={TASK_INDEX} currentTaskIndex={transaction.transactionDetail?.status!} />
+          <TimelineIcon taskIndex={TASK_INDEX} currentTaskIndex={transaction.transactionDetail?.stateProcess!} />
         </div>
         <div className="flex-1">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Selesai & Diterima Pelanggan</h3>
@@ -643,9 +666,9 @@ const TimelineItemCompleted = ({
                   {
                     isCurrent && (
                       <div className="flex">
-                        <Button className="flex-1 mx-2" variant="outline2" onClick={() => {
+                        {/* <Button className="flex-1 mx-2" variant="outline2" onClick={() => {
                           handleBackTask();
-                        }}>Kembali</Button>
+                        }}>Kembali</Button> */}
                         <Button
                           disabled={
                             !isCurrent || loading
@@ -677,7 +700,6 @@ const TimelineItemCompleted = ({
         isOpen={jobCompleted}
         onClose={() => {
           setJobCompleted(false);
-          window.location.reload();
         }}
       />
 
@@ -693,6 +715,8 @@ const TimelineItemInProgress = ({
   onDeleteItem: (item?: MitraSPKItemDetail) => void;
 }) => {
   const transaction = React.useContext(TransactionContext);
+  const trxId = transaction.transactionDetail?.id; // replace with actual trxId from props or state
+
   const setTransaction = transaction.setTransactionDetail!;
   const transactionItems = transaction.transactionDetail?.details || [];
 
@@ -701,8 +725,8 @@ const TimelineItemInProgress = ({
   const showUploadAfter = transaction.showUploadAfter;
 
   const TASK_INDEX = 1;
-  const isCurrent = TASK_INDEX === transaction.transactionDetail?.status!;
-  const isOpenable = TASK_INDEX <= transaction.transactionDetail?.status!;
+  const isCurrent = TASK_INDEX === transaction.transactionDetail?.stateProcess!;
+  const isOpenable = TASK_INDEX <= transaction.transactionDetail?.stateProcess!;
 
   const [isOpen, setIsOpen] = useState(isCurrent);
   const [isLoading, setIsLoading] = useState(false);
@@ -713,16 +737,22 @@ const TimelineItemInProgress = ({
   }, [isCurrent]);
 
   const handleCompleteTask = async () => {
-    if (afterImages.length === 0 || beforeImages.length === 0) {
-      showUploadAfter();
-      return;
-    }
-
     try {
+      setIsLoading(true);
+
+      // update stateProcess to "in progress" first
+      await api.put(`/transaction/${trxId}/state-process`, {
+        stateProcess: SPK_STATUS_PROSES.SELESAI_PENGERJAAN,
+      });
+
       setTransaction((prev) => ({
         ...prev,
-        status: 1.5, // dummy status for "in progress"
+        stateProcess: SPK_STATUS_PROSES.SELESAI_PENGERJAAN,
       }));
+
+      if (afterImages.length === 0 || beforeImages.length === 0) {
+        showUploadAfter();
+      }
 
     } catch (error) {
       console.error('Error completing task:', error);
@@ -736,7 +766,7 @@ const TimelineItemInProgress = ({
     <li className="mb-10 ms-4 flex">
       <div className="">
         <TimelineIcon taskIndex={TASK_INDEX}
-          currentTaskIndex={transaction.transactionDetail?.status!}
+          currentTaskIndex={transaction.transactionDetail?.stateProcess!}
         />
       </div>
       <div className="flex-1">
@@ -839,14 +869,15 @@ const TimelineItemPending = ({
   onDeleteItem: (item?: MitraSPKItemDetail) => void;
 }) => {
   const transaction = React.useContext(TransactionContext);
+  const setTransaction = transaction.setTransactionDetail!;
   const transactionItems = transaction.transactionDetail?.details || [];
 
   const beforeImages = transaction.beforeImages || [];
   const showUploadBefore = transaction.showUploadBefore;
 
   const TASK_INDEX = 0;
-  const isOpenable = TASK_INDEX <= transaction.transactionDetail?.status!;
-  const isCurrent = TASK_INDEX === transaction.transactionDetail?.status!;
+  const isOpenable = TASK_INDEX <= transaction.transactionDetail?.stateProcess!;
+  const isCurrent = TASK_INDEX === transaction.transactionDetail?.stateProcess!;
 
   const [isOpen, setIsOpen] = useState(isCurrent);
   const [isLoading, setIsLoading] = useState(false);
@@ -854,26 +885,28 @@ const TimelineItemPending = ({
   const trxId = transaction.transactionDetail?.id; // replace with actual trxId from props or state
 
   const handleCompleteTask = async () => {
-    if (beforeImages.length === 0) {
-      showUploadBefore();
-      return;
-    }
-
     try {
       setIsLoading(true);
 
-      const response = await api.put(`/transaction/${trxId}/status`, {
-        status: 1, // in progress
+      const response = await api.put(`/transaction/${trxId}/state-process`, {
+        stateProcess: SPK_STATUS_PROSES.PENGERJAAN,
       });
+
+      if (beforeImages.length === 0) {
+        showUploadBefore();
+      }
 
       setIsOpen(false);
 
-      window.location.reload();
+      setTransaction((prev) => ({
+        ...prev,
+        stateProcess: SPK_STATUS_PROSES.PENGERJAAN,
+      }));
 
     } catch (error) {
       console.error('Error completing task:', error);
     } finally {
-      // setIsLoading(false);
+      setIsLoading(false);
     }
   }
 
@@ -882,7 +915,7 @@ const TimelineItemPending = ({
       <li className="mb-10 ms-4 flex">
         <div className="">
           <TimelineIcon taskIndex={TASK_INDEX}
-            currentTaskIndex={transaction.transactionDetail?.status!}
+            currentTaskIndex={transaction.transactionDetail?.stateProcess!}
           />
         </div>
         <div className="flex-1">
@@ -1544,6 +1577,7 @@ export default function PekerjaanBerlangsung() {
   useEffect(() => {
     if (!trxNumber) return;
 
+    // fetch transaction detail from api
     const fetchTransactionDetail = async () => {
       try {
         const response = await api.get(`/transaction/detail?trxNumber=${trxNumber}`);
@@ -1836,7 +1870,7 @@ export default function PekerjaanBerlangsung() {
         className="w-10/12"
         open={showUploadAfter}
         onOpenChange={() => {
-          setShowUploadBefore(false);
+          setShowUploadAfter(false);
         }}
       >
         <DialogTitle title="Detail Item Pengerjaan" />

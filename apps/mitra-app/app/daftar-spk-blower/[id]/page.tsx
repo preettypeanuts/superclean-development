@@ -424,6 +424,7 @@ export interface MitraSPKDetail {
   deliveryDate: string;
   deliveryStatus: number;
   status: number;
+  stateProcess: number;
   additionalFee: number;
   notes: string;
   details: MitraSPKItemDetail[];
