@@ -847,9 +847,6 @@ export default function PhotoSection({
                       <div className="">
                         <p className="font-semibold">Nama Rekening & No Rekening</p>
                         <p className=" text-gray-600 mb-4">a/n ({bankName}) {bankAccountName} - {bankAccount}</p>
-
-                        <p className="font-semibold">No Whatsapp</p>
-                        <p className=" text-gray-600">08123456789</p>
                       </div>
 
                     </div>
