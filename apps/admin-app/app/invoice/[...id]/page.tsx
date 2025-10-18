@@ -38,7 +38,7 @@ function InvoicePreview({
 }: {
   transaction: Transaction,
   reviewData: Review,
-    setReviewData: Dispatch<SetStateAction<Review>>,
+  setReviewData: Dispatch<SetStateAction<Review>>,
 }) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -270,9 +270,9 @@ function PaymentPreview({
 }: {
   transaction: Transaction,
   reviewData: Review,
-    setReviewData: Dispatch<SetStateAction<Review>>,
-    handleComplete: () => Promise<any>,
-    parameters: Parameter[]
+  setReviewData: Dispatch<SetStateAction<Review>>,
+  handleComplete: () => Promise<any>,
+  parameters: Parameter[]
 }) {
   const [loading, setLoading] = useState<boolean>(false);
   const [paymentProof, setPaymentProof] = useState<File | null>(null);
@@ -307,9 +307,6 @@ function PaymentPreview({
       setLoading(false)
     }
   }
-
-  console.log(parameters);
-
 
   const bankAccountParam = parameters.find(param => param.paramKey === "BANK_ACCOUNT_NUMBER");
   const bankAccount = bankAccountParam ? bankAccountParam.paramValue : "0000000000";
@@ -482,7 +479,15 @@ function PaymentPreview({
             <input type="file" accept="image/*" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer aspect-square"
               onChange={() => {
                 const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+
+                const ALLOWED_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+
                 if (fileInput && fileInput.files && fileInput.files[0]) {
+                  if (fileInput.files[0].size > ALLOWED_FILE_SIZE) {
+                    alert("Ukuran file terlalu besar. Maksimal ukuran file adalah 5MB.");
+                    return;
+                  }
+
                   setPaymentProof(fileInput.files[0]);
                 }
               }} />

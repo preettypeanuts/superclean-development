@@ -6,6 +6,7 @@ import { useLocationData } from "@shared/utils/useLocationData";
 import { DatePicker } from "@ui-components/components/date-picker";
 import { RupiahInput } from "@ui-components/components/rupiah-input";
 import { RadioGroup, RadioGroupItem } from "@ui-components/components/ui/radio-group";
+import { LookupUser } from "apps/admin-app/app/transaksi/spk/edit/[...id]/page";
 import { DialogWrapper } from "libs/ui-components/src/components/dialog-wrapper";
 import MultiSelect from "libs/ui-components/src/components/multi-select";
 import { SPKTableDetail } from "libs/ui-components/src/components/spk-table-detail";
@@ -215,8 +216,8 @@ export default function NewSPK() {
   const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
 
   // State untuk staff data
-  const [cleaningStaffList, setCleaningStaffList] = useState<any[]>([]);
-  const [blowerStaffList, setBlowerStaffList] = useState<any[]>([]);
+  const [cleaningStaffList, setCleaningStaffList] = useState<LookupUser[]>([]);
+  const [blowerStaffList, setBlowerStaffList] = useState<LookupUser[]>([]);
   const [loadingCleaningStaff, setLoadingCleaningStaff] = useState(false);
   const [loadingBlowerStaff, setLoadingBlowerStaff] = useState(false);
 
@@ -896,7 +897,7 @@ export default function NewSPK() {
                     <div className="flex items-center space-x-4">
                       <Label className="w-[40%] font-semibold">Petugas Cleaning</Label>
                       <MultiSelect
-                        staffList={cleaningStaffList}
+                        staffList={cleaningStaffList.sort((a, b) => a.lookupValue.localeCompare(b.lookupValue))}
                         selected={formData.cleaningStaff}
                         onSelectionChange={handleCleaningStaffChange}
                         placeholder="Pilih petugas cleaning"
@@ -937,7 +938,7 @@ export default function NewSPK() {
                     <div className="flex items-center space-x-4">
                       <Label className="w-[40%] font-semibold">Petugas Blower</Label>
                       <MultiSelect
-                        staffList={blowerStaffList}
+                        staffList={blowerStaffList.sort((a, b) => a.lookupValue.localeCompare(b.lookupValue))}
                         selected={formData.blowerStaff}
                         onSelectionChange={handleBlowerStaffChange}
                         placeholder="Pilih petugas blower"

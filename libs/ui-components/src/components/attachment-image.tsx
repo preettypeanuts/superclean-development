@@ -1,5 +1,5 @@
 import { Button } from "@ui-components/components/ui/button";
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTrigger } from "@ui-components/components/ui/dialog";
+import { Dialog, DialogContent } from "@ui-components/components/ui/dialog";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { FaEye } from "react-icons/fa";
@@ -47,6 +47,8 @@ function AttachmentImage({
   onDelete = () => { },
   readonly = false
 }: AttachmentImageProps) {
+  const ALLOWED_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+
   const [imageSrc, setImageSrc] = useState<string>(src);
   const [showPreview, setShowPreview] = useState<boolean>(false);
 
@@ -57,6 +59,13 @@ function AttachmentImage({
     if (file) {
       // Set file URI to preview image
       const fileUrl = URL.createObjectURL(file);
+
+      // check if filesize is allowed
+      if (file.size > ALLOWED_FILE_SIZE) {
+        alert("Ukuran file terlalu besar. Maksimal ukuran file adalah 5MB.");
+        return;
+      }
+
       // @ts-ignore
       src = fileUrl;
       setImageSrc(fileUrl);

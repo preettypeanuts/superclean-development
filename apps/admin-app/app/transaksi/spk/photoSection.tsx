@@ -7,6 +7,7 @@ import { formatRupiah } from "@shared/utils/formatRupiah";
 import { AttachmentImage } from "@ui-components/components/attachment-image";
 import { StarRating } from "@ui-components/components/star-rating";
 import { useToast } from "@ui-components/hooks/use-toast";
+import { Parameter } from "apps/admin-app/app/pengaturan/page";
 import { SPKItem } from "apps/admin-app/app/transaksi/spk/baru/page";
 import { Customer, Transaction } from "apps/admin-app/app/transaksi/spk/edit/[...id]/page";
 import html2canvas from "html2canvas";
@@ -146,6 +147,8 @@ export default function PhotoSection({
   const [originalBeforeImages, setOriginalBeforeImages] = useState<TransactionReviewImage[]>([]);
   const [originalAfterImages, setOriginalAfterImages] = useState<TransactionReviewImage[]>([]);
 
+  const [parameters, setParameters] = useState<Parameter[]>([]);
+
   // reload indicator
   const [reload, setReload] = useState(false)
 
@@ -231,6 +234,20 @@ export default function PhotoSection({
       }
     };
 
+    const fetchParameters = async () => {
+      setLoading(true);
+
+      try {
+        const response = await api.get(`/parameter/app-settings`);
+        const settings = response.data as Parameter[];
+
+        setParameters(settings);
+      }
+      catch (error) {
+        console.error("Error fetching parameters:", error);
+      }
+    };
+
     if (!transaction || !transaction.id) return;
 
     const promises = [
@@ -238,6 +255,7 @@ export default function PhotoSection({
       fetchTransactionReviewImages("PAYMENT"),
       fetchTransactionReviewImages("BEFORE"),
       fetchTransactionReviewImages("AFTER"),
+      fetchParameters(),
     ]
 
     Promise.all(promises)
@@ -306,17 +324,6 @@ export default function PhotoSection({
       }
     });
 
-    // afterImages.forEach((img) => {
-    //   if (!originalAfterImages.find((oImg) => oImg.id === img.id)) {
-    //     imagesToUpload.push(img);
-    //   }
-
-    //   if (originalAfterImages.find((oImg) => oImg.id === img.id)) {
-    //     imagesToDelete.push(img.id);
-    //   }
-    // });
-
-
     const promises: Promise<any>[] = [];
 
     console.log(imagesToDelete, imagesToUpload);
@@ -360,11 +367,22 @@ export default function PhotoSection({
 
   const imageRowCount = Math.ceil(Math.max(beforeImages.length + 1, afterImages.length + 1) / 3)
 
+
   if (loading) {
     return (
       <p className="text-center py-8">Memuat data...</p>
     );
   }
+
+  const bankAccountParam = parameters.find(param => param.paramKey === "BANK_ACCOUNT_NUMBER");
+  const bankAccount = bankAccountParam ? bankAccountParam.paramValue : "0000000000";
+
+  const bankAccountNameParam = parameters.find(param => param.paramKey === "BANK_ACCOUNT_NAME");
+  const bankAccountName = bankAccountNameParam ? bankAccountNameParam.paramValue : "Nama Bank";
+
+  const bankNameParam = parameters.find(param => param.paramKey === "BANK_NAME");
+  const bankName = bankNameParam ? bankNameParam.paramValue : "Bank";
+
 
   return <>
     <div className="space-y-8">
@@ -828,10 +846,7 @@ export default function PhotoSection({
                       <img src="/assets/image.png" alt="Logo" width={200} height={100} />
                       <div className="">
                         <p className="font-semibold">Nama Rekening & No Rekening</p>
-                        <p className=" text-gray-600 mb-4">a/n Superclean - 1234567890</p>
-
-                        <p className="font-semibold">No Whatsapp</p>
-                        <p className=" text-gray-600">08123456789</p>
+                        <p className=" text-gray-600 mb-4">a/n ({bankName}) {bankAccountName} - {bankAccount}</p>
                       </div>
 
                     </div>
