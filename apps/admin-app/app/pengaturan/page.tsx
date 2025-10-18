@@ -48,7 +48,7 @@ export default function PengaturanPage() {
   const oldData = useRef({} as Record<string, string>);
   const [updating, setUpdating] = useState(false);
 
-  const fetchTransaction = async () => {
+  const fetchParameters = async () => {
     try {
       const response = await api.get("/parameter/app-settings");
       return response.data as Parameter[];
@@ -65,7 +65,7 @@ export default function PengaturanPage() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const data = await fetchTransaction();
+      const data = await fetchParameters();
 
       // Store the initial state in oldData
       oldData.current = getParamsAsObject(data);
