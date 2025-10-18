@@ -99,7 +99,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
 
   return (
     <Link href={`/daftar-spk/${encodeURIComponent(task.trxNumber)}`}>
-      <div className="w-full bg-white p-3 rounded-lg border hover:shadow-md transition-shadow cursor-pointer">
+      <div className="w-full bg-white p-3 mb-3 rounded-lg border hover:shadow-md transition-shadow cursor-pointer">
         <div className="grid grid-cols-5 pb-3 border-b border-bottom-dash">
           <div className="col-span-4">
             <h1 className="text-[20px] font-semibold mb-1">
