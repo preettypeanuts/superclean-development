@@ -1168,6 +1168,8 @@ const UploadPhoto = ({
   height = 200,
   loading = false
 }: AttachmentImageProps) => {
+  const ALLOWED_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+
   const [imageSrc, setImageSrc] = useState<string>(src);
   const [currentLoading, setCurrentLoading] = useState<boolean>(loading);
 
@@ -1183,6 +1185,13 @@ const UploadPhoto = ({
     const file = e.target.files?.[0];
     if (file) {
       const fileUrl = URL.createObjectURL(file);
+
+      // check if filesize is allowed
+      if (file.size > ALLOWED_FILE_SIZE) {
+        alert("Ukuran file terlalu besar. Maksimal ukuran file adalah 5MB.");
+        return;
+      }
+
       setImageSrc(fileUrl);
       onUpload(file);
     }
