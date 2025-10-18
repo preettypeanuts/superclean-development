@@ -108,6 +108,11 @@ export interface LocationData {
   paramValue: string;
 }
 
+export interface LookupUser {
+  lookupKey: string
+  lookupValue: string
+}
+
 // Format transaction details for table
 const formatDetailsForTable = (details: TransactionItem[], isOriginal: boolean = false) => {
   return details.map((detail, index) => ({
@@ -160,8 +165,8 @@ export default function TransactionDetail() {
   const [additionalFee, setAdditionalFee] = useState<number>(0);
   const [loadingPromo, setLoadingPromo] = useState(false);
 
-  const [cleaningStaffList, setCleaningStaffList] = useState<any[]>([]);
-  const [blowerStaffList, setBlowerStaffList] = useState<any[]>([]);
+  const [cleaningStaffList, setCleaningStaffList] = useState<LookupUser[]>([]);
+  const [blowerStaffList, setBlowerStaffList] = useState<LookupUser[]>([]);
   const [loadingCleaningStaff, setLoadingCleaningStaff] = useState(false);
   const [loadingBlowerStaff, setLoadingBlowerStaff] = useState(false);
 
@@ -291,7 +296,7 @@ export default function TransactionDetail() {
     setLoading(true);
     try {
       const response = await api.get(`/user/lookup?roleId=${roleId}&city=${city}`);
-      setStaffList(response?.data || []);
+      setStaffList(response?.data as LookupUser[] || []);
     } catch (error) {
       setStaffList([]);
       toast({
@@ -926,7 +931,7 @@ export default function TransactionDetail() {
                     <div className="flex items-center space-x-4">
                       <Label className="w-[40%] font-semibold">Petugas Cleaning</Label>
                       <MultiSelect
-                        staffList={cleaningStaffList}
+                        staffList={cleaningStaffList.sort((a, b) => a.lookupValue.localeCompare(b.lookupValue))}
                         selected={transaction?.assigns || []}
                         onSelectionChange={handleCleaningStaffChange}
                         placeholder="Pilih petugas cleaning"
@@ -968,16 +973,9 @@ export default function TransactionDetail() {
                   {/* Kolom Kanan */}
                   <div className="col-span-1 space-y-4">
                     <div className="flex items-center space-x-4">
-                      {/* <Label className="w-[40%] font-semibold">Petugas Blower</Label>
-                      <Textarea
-                        disabled
-                        className="resize-none"
-                        value={blowerStaffList.map(staff => staff.fullname).join(", ") || "-"}
-                        rows={2}
-                      /> */}
                       <Label className="w-[40%] font-semibold">Petugas Blower</Label>
                       <MultiSelect
-                        staffList={blowerStaffList}
+                        staffList={blowerStaffList.sort((a, b) => a.lookupValue.localeCompare(b.lookupValue))}
                         selected={transaction?.blowers || []}
                         onSelectionChange={handleBlowerStaffChange}
                         placeholder="Pilih petugas blower"
