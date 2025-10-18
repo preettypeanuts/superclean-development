@@ -282,21 +282,6 @@ const EditItemModal = ({ isOpen = false, item, onClose = () => { } }: EditItemMo
     }
   };
 
-  // reset form data when modal opens
-  // useEffect(() => {
-  //   if (isOpen) {
-  //     setFormData({
-  //       id: item?.id || "",
-  //       category: item?.category || "",
-  //       service: item?.service || "",
-  //       quantity: item?.quantity || 1,
-  //       type: item?.type || "vakum",
-  //       price: item?.price || 0,
-  //       totalPrice: item?.totalPrice || 0,
-  //     });
-  //   }
-  // }, [isOpen, item]);
-
   return (
     <>
       <DialogWrapper

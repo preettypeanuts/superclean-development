@@ -1,23 +1,24 @@
 "use client"
-import Image from "next/image"
+import { DialogTitle } from "@radix-ui/react-dialog"
+import { DialogWrapper } from "@ui-components/components/dialog-wrapper"
 import { PageBanner } from "libs/shared/src/components/mitra/page-banner"
+import { DatePickerInput } from "libs/ui-components/src/components/date-picker-input"
+import { ConfirmSaveDialog } from "libs/ui-components/src/components/save-dialog"
 import { Button } from "libs/ui-components/src/components/ui/button"
 import { Input } from "libs/ui-components/src/components/ui/input"
 import { Label } from "libs/ui-components/src/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "libs/ui-components/src/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "libs/ui-components/src/components/ui/tabs"
-import { LogOut, Calendar, Eye, EyeOff } from "lucide-react"
-import { useEffect, useState } from "react"
-import { RiLogoutBoxFill } from "react-icons/ri"
-import { AiFillCamera } from "react-icons/ai"
-import { Dialog, DialogContent } from "libs/ui-components/src/components/ui/dialog"
 import { useToast } from "libs/ui-components/src/hooks/use-toast"
 import { api, apiClient } from "libs/utils/apiClient"
-import { useParameterStore } from "libs/utils/useParameterStore"
 import { formatDateInput } from 'libs/utils/formatDate'
-import { ConfirmSaveDialog } from "libs/ui-components/src/components/save-dialog"
-import { DatePickerInput } from "libs/ui-components/src/components/date-picker-input";
+import { useParameterStore } from "libs/utils/useParameterStore"
+import { Eye, EyeOff } from "lucide-react"
+import Image from "next/image"
 import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
+import { AiFillCamera } from "react-icons/ai"
+import { RiLogoutBoxFill } from "react-icons/ri"
 
 // Interface untuk data user dari API
 interface UserData {
@@ -40,63 +41,41 @@ type LogoutDialogProps = {
 
 const LogoutDialog = ({ isOpen, onClose, onConfirm }: LogoutDialogProps) => {
     return (
-        <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="max-w-sm w-full">
-                <div className="text-center">
-                    {/* Illustration */}
-                    <div className="mb-6 flex justify-center">
-                        <div className="relative">
-                            {/* Door */}
-                            <div className="w-20 h-24 bg-mainColor rounded-r-lg relative">
-                                {/* Door handle */}
-                                <div className="absolute right-1 top-10 w-1 h-2 bg-mainColor rounded-full"></div>
-                            </div>
+        <>
+            <DialogWrapper
+                className="w-10/12"
+                open={isOpen}
+                onOpenChange={() => {
+                    onClose();
+                }}
+            >
+                <DialogTitle title="Detail Item Pengerjaan" />
 
-                            {/* Person figure */}
-                            <div className="absolute -left-8 top-2">
-                                {/* Head */}
-                                <div className="w-6 h-6 bg-white border-2 border-gray-800 rounded-full mb-1"></div>
-                                {/* Body */}
-                                <div className="w-4 h-8 bg-white border-2 border-gray-800 rounded-sm mx-1"></div>
-                                {/* Arms */}
-                                <div className="absolute top-6 -left-1 w-2 h-4 bg-white border-2 border-gray-800 rounded-sm transform rotate-12"></div>
-                                <div className="absolute top-6 right-1 w-2 h-4 bg-white border-2 border-gray-800 rounded-sm transform -rotate-45"></div>
-                                {/* Legs */}
-                                <div className="absolute top-12 left-0 w-1.5 h-6 bg-white border-2 border-gray-800 rounded-sm"></div>
-                                <div className="absolute top-12 right-0.5 w-1.5 h-6 bg-white border-2 border-gray-800 rounded-sm"></div>
-                            </div>
-                        </div>
-                    </div>
+                <div className="text-center">
+                    <img src="/assets/logout.png" className="max-w-1/2 max-h-[200px] m-auto" alt="Upload" />
 
                     {/* Message */}
                     <p className="text-gray-800 text-base font-medium mb-6">
-                        Apakah anda yakin ingin keluar applikasi?
+                        Apakah anda yakin ingin keluar aplikasi?
                     </p>
 
                     {/* Buttons */}
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="">
                         {/* Logout Button */}
                         <Button
                             onClick={onConfirm}
-                            variant={"destructive"}
+                            variant={"main"}
                             className="w-full"
                         >
-                            <RiLogoutBoxFill className="mr-1 h-4 w-4" />
                             Log Out
                         </Button>
 
-                        {/* Cancel Button */}
-                        <Button
-                            variant="outline"
-                            onClick={onClose}
-                            className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-3 px-4 rounded-lg transition-colors border-gray-200"
-                        >
-                            Batal
-                        </Button>
+
                     </div>
                 </div>
-            </DialogContent>
-        </Dialog>
+
+            </DialogWrapper>
+        </>
     );
 };
 
