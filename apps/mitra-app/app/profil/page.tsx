@@ -14,10 +14,8 @@ import { api, apiClient } from "libs/utils/apiClient"
 import { formatDateInput } from 'libs/utils/formatDate'
 import { useParameterStore } from "libs/utils/useParameterStore"
 import { Eye, EyeOff } from "lucide-react"
-import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
-import { AiFillCamera } from "react-icons/ai"
 import { RiLogoutBoxFill } from "react-icons/ri"
 
 // Interface untuk data user dari API
@@ -283,7 +281,7 @@ export default function ProfilSayaPage() {
 
             <div className="px-5 space-y-6">
                 {/* Profile Picture */}
-                <div className="flex justify-center">
+                {/* <div className="flex justify-center">
                     <div className="relative">
                         <Image
                             width={80}
@@ -298,7 +296,7 @@ export default function ProfilSayaPage() {
                             </span>
                         </div>
                     </div>
-                </div>
+                </div> */}
 
                 {/* Tabs */}
                 <Tabs defaultValue="data-diri" className="w-full">
