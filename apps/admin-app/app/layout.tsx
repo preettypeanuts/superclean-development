@@ -1,9 +1,12 @@
-import { Figtree, Plus_Jakarta_Sans, Roboto_Mono } from "next/font/google";
-import { ThemeProvider } from 'next-themes';
-import { Sidebar } from "@shared/components/ui/Sidebar"
-import { Toaster } from "libs/ui-components/src/components/ui/toaster"
-import ProtectedLayout from "@shared/components/ProtectedLayout"
+"use client";
+
+import ProtectedLayout from "@shared/components/ProtectedLayout";
+import { Sidebar } from "@shared/components/ui/Sidebar";
 import '@superclean-workspace/shared/styles';
+import { Toaster } from "libs/ui-components/src/components/ui/toaster";
+import { ThemeProvider } from 'next-themes';
+import { Figtree, Plus_Jakarta_Sans } from "next/font/google";
+import { useState } from "react";
 
 const fightree = Figtree({
   subsets: ["latin"],
@@ -15,16 +18,18 @@ const jakartaSans = Plus_Jakarta_Sans({
   weight: ["200", "300", "400", "500", "600", "700", "800"]
 });
 
-export const metadata = {
-  title: 'Superclean',
-  description: 'Superclean Backoffice',
-};
+// export const metadata = {
+//   title: 'Superclean',
+//   description: 'Superclean Backoffice',
+// };
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const [isExpanded, setIsExpanded] = useState(true);
+
   return (
     <html lang="en" suppressHydrationWarning className='scroll-smooth'>
       <head>
@@ -38,8 +43,11 @@ export default function RootLayout({
       >
         <ThemeProvider enableSystem={false} defaultTheme='light' attribute="class">
           <ProtectedLayout>
-            <Sidebar />
-            <section className='flex flex-col max-h-[98lvh] h-[98lvh] w-full min-h-0'>
+            <Sidebar
+              isExpanded={isExpanded}
+              setIsExpanded={setIsExpanded}
+            />
+            <section className={`flex-1 ${isExpanded ? 'max-w-[calc(100vw-256px)]' : 'max-w-[calc(100vw-79px)]'}`}>
               <Toaster />
               <main className='flex-grow min-h-0'>
                 {children}

@@ -1,18 +1,18 @@
 "use client";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { IoIosArrowDown } from "react-icons/io";
 import { IoReloadOutline } from "react-icons/io5";
 import { RiLogoutCircleFill, RiUserFill } from "react-icons/ri";
 import { TbLayoutSidebarLeftExpandFilled, TbLayoutSidebarRightExpandFilled } from "react-icons/tb";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
 } from "../../../../ui-components/src/components/ui/dropdown-menu";
 import { useUserProfile } from "../../../../utils/useUserProfile";
 import { navigationItems } from "../../data/system";
@@ -20,11 +20,16 @@ import { ThemeSwitch } from "./ThemeSwitch";
 
 import Image from "next/image";
 
-export const Sidebar = () => {
+export const Sidebar = ({
+    isExpanded,
+    setIsExpanded,
+}: {
+    isExpanded: boolean;
+    setIsExpanded: Dispatch<SetStateAction<boolean>>;
+}) => {
     const path = usePathname();
     const router = useRouter();
 
-    const [isExpanded, setIsExpanded] = useState(true);
     const [openSubmenus, setOpenSubmenus] = useState<{ [key: string]: boolean }>({});
     const { user, loading: loadingUser } = useUserProfile();
 
