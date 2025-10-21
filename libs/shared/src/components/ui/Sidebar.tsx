@@ -1,18 +1,18 @@
 "use client";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { IoIosArrowDown } from "react-icons/io";
 import { IoReloadOutline } from "react-icons/io5";
 import { RiLogoutCircleFill, RiUserFill } from "react-icons/ri";
 import { TbLayoutSidebarLeftExpandFilled, TbLayoutSidebarRightExpandFilled } from "react-icons/tb";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
 } from "../../../../ui-components/src/components/ui/dropdown-menu";
 import { useUserProfile } from "../../../../utils/useUserProfile";
 import { navigationItems } from "../../data/system";
@@ -20,11 +20,16 @@ import { ThemeSwitch } from "./ThemeSwitch";
 
 import Image from "next/image";
 
-export const Sidebar = () => {
+export const Sidebar = ({
+    isExpanded,
+    setIsExpanded,
+}: {
+    isExpanded: boolean;
+    setIsExpanded: Dispatch<SetStateAction<boolean>>;
+}) => {
     const path = usePathname();
     const router = useRouter();
 
-    const [isExpanded, setIsExpanded] = useState(true);
     const [openSubmenus, setOpenSubmenus] = useState<{ [key: string]: boolean }>({});
     const { user, loading: loadingUser } = useUserProfile();
 
@@ -45,7 +50,7 @@ export const Sidebar = () => {
 
     const processedRole = user?.roleId ? getRoleAbbreviation(user.roleId) : "UN";
 
-  const noNavigation = ["/login", "/forgot-password", "/reset-password", "/invoice/[id]", "/rating", "payment/[id]"];
+    const noNavigation = ["/login", "/forgot-password", "/reset-password", "/invoice/[id]", "/rating", "payment/[id]"];
 
     const toggleSidebar = () => {
         setIsExpanded((prev) => {
@@ -82,7 +87,7 @@ export const Sidebar = () => {
     }, [path]);
 
     return (
-      <nav className={`${isExpanded ? "w-64" : "w-[79px]"} ${noNavigation.includes(path) && "hidden"} ${path.startsWith("/invoice") && "hidden"}  ${path.startsWith("/payment") && "hidden"} sticky top-0 h-screen flex transition-all duration-300 z-[100]`}>
+        <nav className={`${isExpanded ? "w-64" : "w-[79px]"} ${noNavigation.includes(path) && "hidden"} ${path.startsWith("/invoice") && "hidden"}  ${path.startsWith("/payment") && "hidden"} sticky top-0 h-screen flex transition-all duration-300 z-[100]`}>
             <div className={`w-full grow bg-mainColor/30 dark:bg-mainColor/20 rounded-lg my-2 ml-2 flex flex-col relative shadow-mainShadow border border-white/50 dark:border-neutral-500/50 ${!isExpanded && "items-center"}`}>
                 {/* Header */}
                 <div className={`${!isExpanded ? "border rounded-2xl border-neutral-500/10 bg-mainColor/20 mx-[7px] mt-2 w-fit p-3" : "py-2 pl-0 pr-[15px] w-full"} z-[666] absolute flex justify-between items-center gap-2 mb-3 cursor-pointer group`}>
@@ -143,7 +148,7 @@ export const Sidebar = () => {
                                             {!item.subs?.length ? (
                                                 <Link
                                                     href={item.path}
-                                          className={`capitalize font-semibold py-2 px-3 rounded-lg hover:bg-mainColor/50 duration-150 flex items-center gap-2 w-full
+                                                    className={`capitalize font-semibold py-2 px-3 rounded-lg hover:bg-mainColor/50 duration-150 flex items-center gap-2 w-full
                                                                 ${path === item.path ? "bg-mainColor/50 dark:bg-mainColor/30" : ""}
                                                                 ${!isExpanded ? "justify-center w-9 h-9 p-5 mx-auto" : "justify-start"}`}
                                                 >
@@ -159,7 +164,7 @@ export const Sidebar = () => {
                                                         e.preventDefault();
                                                         toggleSubmenu(item.label);
                                                     }}
-                                            className={`${path.startsWith(item.path) && "bg-mainColor/50 dark:bg-mainColor/30"} font-semibold capitalize group py-2 px-3 rounded-lg hover:bg-mainColor/50 duration-150 flex items-center gap-2 w-full
+                                                    className={`${path.startsWith(item.path) && "bg-mainColor/50 dark:bg-mainColor/30"} font-semibold capitalize group py-2 px-3 rounded-lg hover:bg-mainColor/50 duration-150 flex items-center gap-2 w-full
                                                               ${!isExpanded ? "justify-center w-9 h-9 p-5 mx-auto" : "justify-between"}`}
                                                 >
                                                     <div className={` flex items-center gap-2 relative`}>
@@ -172,7 +177,7 @@ export const Sidebar = () => {
 
                                                     {item.subs.length > 1 && (
                                                         <IoIosArrowDown
-                                                className={`text-darkColor dark:text-lightColor transition-transform duration-200
+                                                            className={`text-darkColor dark:text-lightColor transition-transform duration-200
                                                                         ${openSubmenus[item.label] ? "rotate-180" : ""} ${!isExpanded ? "hidden" : "block"}`}
                                                         />
                                                     )}

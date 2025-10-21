@@ -1,6 +1,6 @@
 "use client";
-import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
 import { TbMoonFilled, TbSunFilled } from "react-icons/tb";
 
 interface ThemeSwitchProps {
@@ -50,7 +50,7 @@ export const ThemeSwitch = ({ isExpanded }: ThemeSwitchProps) => {
           <TbMoonFilled className="text-md" />
         </button>
         <div
-          className={`absolute z-10 h-6 w-[92px] bg-mainColor/50 rounded-md transition-transform duration-300 ${currentTheme === 'dark' ? 'translate-x-full' : ''}`}
+          className={`absolute z-10 h-6 w-[110px] bg-mainColor/50 rounded-md transition-transform duration-300 ${currentTheme === 'dark' ? 'translate-x-full' : ''}`}
         />
       </div>
 
