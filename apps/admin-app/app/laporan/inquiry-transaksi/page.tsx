@@ -91,11 +91,17 @@ export default function InquiryTransaksiPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [tempSearchQuery, setTempSearchQuery] = useState("");
 
+  const [employeeOptions, setEmployeeOptions] = useState<{ label: string; value: string }[]>([]);
+
   // Filter aktif
   const [statusFilter, setStatusFilter] = useState<number>(-1);
   const [branchFilter, setBranchFilter] = useState<string>("");
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
+  const [selectedEmployee, setSelectedEmployee] = useState<string>("");
+  const [includeBlower, setIncludeBlower] = useState<number>(-1);
+
+
 
   // Filter sementara
   const [tempStatus, setTempStatus] = useState<number>(-1);
@@ -103,14 +109,15 @@ export default function InquiryTransaksiPage() {
   const [tempStartDate, setTempStartDate] = useState<Date>();
   const [tempEndDate, setTempEndDate] = useState<Date>();
   const [tempIncludeBlower, setTempIncludeBlower] = useState<number>(1);
+  const [tempSelectedEmployee, setTempSelectedEmployee] = useState<string>("");
+
+  console.log(selectedEmployee, tempSelectedEmployee);
+
 
   // Detail state
-  const [selectedEmployee, setSelectedEmployee] = useState<string>("");
-  const [tempSelectedEmployee, setTempSelectedEmployee] = useState<string>("");
   const [pdfData, setPdfData] = useState<string>("");
   const [isLoadingDetail, setIsLoadingDetail] = useState(false);
   const [showDetail, setShowDetail] = useState(false);
-  const [includeBlower, setIncludeBlower] = useState<number>(-1);
 
   const { branchMapping, loading: loadingParams } = useParameterStore();
 
@@ -132,6 +139,7 @@ export default function InquiryTransaksiPage() {
     let start = startDate;
     let end = endDate;
     let include = includeBlower;
+    let selectedEmp = selectedEmployee;
 
     if (reset) {
       page = 1;
@@ -141,6 +149,7 @@ export default function InquiryTransaksiPage() {
       start = tempStartDate;
       end = tempEndDate;
       include = tempIncludeBlower;
+      selectedEmp = tempSelectedEmployee;
 
       setCurrentPage({
         page: page,
@@ -152,6 +161,7 @@ export default function InquiryTransaksiPage() {
       setStartDate(tempStartDate)
       setEndDate(tempEndDate)
       setIncludeBlower(tempIncludeBlower)
+      setSelectedEmployee(tempSelectedEmployee)
     }
 
     setLoading(true);
@@ -163,6 +173,9 @@ export default function InquiryTransaksiPage() {
       if (end) url += `&endDate=${formatDateAPI(end)}`;
       if (include) {
         url += `&includeBlower=${include === 2 ? "true" : "false"}`;
+      }
+      if (selectedEmp) {
+        // url += `&cleaner=${selectedEmp}`; // todo: uncomment when API supports filtering by cleaner
       }
 
       const result = await apiClient(url);
@@ -189,7 +202,6 @@ export default function InquiryTransaksiPage() {
     setIsLoadingDetail(true);
     try {
       const url = `https://murafly.my.id/report/kinerja/detail?username=${username}&type=pdf&startDate=${formatDateAPI(effectiveStartDate)}&endDate=${formatDateAPI(effectiveEndDate)}`;
-      console.log("Fetching employee detail:", url);
 
       const result = await apiClient(url);
 
@@ -259,6 +271,28 @@ export default function InquiryTransaksiPage() {
     }
   };
 
+  const fetchEmployeesByBranch = async (branchId?: string) => {
+    try {
+      let url = `/user/page?roleId=Cleaner%2C%20Blower&page=1&limit=100`;
+      if (branchId) {
+        url += `&branchId=${branchId}`;
+      }
+
+      const result = await apiClient(url);
+      const employees = (result.data?.[0] || []).map((emp: any) => {
+        return {
+          label: emp.fullname,
+          value: emp.username,
+        }
+      });
+      setEmployeeOptions(employees);
+    } catch (error) {
+      console.error("Error fetching employees by branch:", error);
+      setEmployeeOptions([]);
+    }
+  }
+
+
   // Fetch data when component mounts or dependencies change
   useEffect(() => {
     if (currentPage.reset) return;
@@ -292,6 +326,14 @@ export default function InquiryTransaksiPage() {
     }
   }, [selectedEmployee, startDate, endDate]);
 
+
+  // auto fetch employees if branch changes
+  useEffect(() => {
+    fetchEmployeesByBranch(tempBranch);
+    setTempSelectedEmployee("");
+  }, [tempBranch]);
+
+
   const handleSearch = () => {
     fetchInquiryTransaksi(true)
     // setSearchQuery(searchInput);
@@ -314,7 +356,6 @@ export default function InquiryTransaksiPage() {
 
     // Langsung fetch detail jika karyawan dan tanggal sudah dipilih
     if (tempSelectedEmployee && tempStartDate && tempEndDate) {
-      console.log("Fetching detail for:", tempSelectedEmployee);
       fetchEmployeeDetail(tempSelectedEmployee, tempStartDate, tempEndDate);
     } else if (tempSelectedEmployee && (!tempStartDate || !tempEndDate)) {
       // Jika karyawan dipilih tapi tanggal belum, reset detail
@@ -419,7 +460,7 @@ export default function InquiryTransaksiPage() {
                   id="employee"
                   placeholder="Pilih Karyawan"
                   value={tempSelectedEmployee}
-                  optionsString={EmployeeOptions}
+                  optionsString={employeeOptions}
                   onChange={setTempSelectedEmployee}
                 />
                 <div className="flex items-center space-x-4">
