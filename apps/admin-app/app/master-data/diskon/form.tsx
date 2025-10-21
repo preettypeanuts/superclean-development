@@ -240,7 +240,7 @@ export default function DiscountForm({
                 <div className="flex items-center relative">
                   <Input
                     className={`text-right placeholder:text-start pr-7 no-spinner ${errors.amount ? 'border-red-500' : ''}`}
-                    placeholder="Masukkan Potongan Persentase"
+                    placeholder=""
                     type="number"
                     id="amount"
                     min="1"
