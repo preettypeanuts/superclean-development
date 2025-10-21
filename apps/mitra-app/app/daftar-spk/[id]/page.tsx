@@ -578,6 +578,9 @@ const TimelineItemCompleted = ({
   const trxId = transaction.transactionDetail?.id; // replace with actual trxId from props or state
   const setTransaction = transaction.setTransactionDetail!;
 
+  const beforeImages = transaction.beforeImages || [];
+  const afterImages = transaction.afterImages || [];
+
   const TASK_INDEX = 2;
   const isOpenable = TASK_INDEX <= transaction.transactionDetail?.stateProcess!;
   const isCurrent = TASK_INDEX === transaction.transactionDetail?.stateProcess!;
@@ -656,7 +659,7 @@ const TimelineItemCompleted = ({
                         }}>Kembali</Button> */}
                         <Button
                           disabled={
-                            !isCurrent || loading
+                            !isCurrent || loading || beforeImages.length === 0 || afterImages.length === 0
                           }
                           className="flex-1 mx-2" variant="main" onClick={() => {
                             handleCompleteTask();
