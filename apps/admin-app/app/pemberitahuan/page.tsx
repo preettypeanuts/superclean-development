@@ -1,20 +1,20 @@
 "use client";
+import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
+import { Wrapper } from "@shared/components/Wrapper";
+import { api } from "@shared/utils/apiClient";
+import { DeleteDialog } from "@ui-components/components/delete-dialog";
+import { Button } from "@ui-components/components/ui/button";
+import { Checkbox } from "@ui-components/components/ui/checkbox";
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
 } from "@ui-components/components/ui/tabs";
-import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
-import { Wrapper } from "@shared/components/Wrapper";
-import { Button } from "@ui-components/components/ui/button";
-import { Checkbox } from "@ui-components/components/ui/checkbox";
+import { useToast } from "@ui-components/hooks/use-toast";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { IoMdTrash } from "react-icons/io";
 import { IoCheckmarkCircle } from "react-icons/io5";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { DeleteDialog } from "@ui-components/components/delete-dialog";
-import { api } from "@shared/utils/apiClient";
-import { useToast } from "@ui-components/hooks/use-toast";
 
 type Notification = {
   id: string;
@@ -170,6 +170,7 @@ export default function PemberitahuanPage() {
   const itemsPerPage = 10;
 
   const [isLoading, setIsLoading] = useState(false);
+  const [currentTab, setCurrentTab] = useState("all");
 
   const resetStates = () => {
     setNotifications([]);
@@ -246,16 +247,21 @@ export default function PemberitahuanPage() {
                 {TabItems.map((tab) => (
                   <TabsTrigger key={tab.value} value={tab.value} onClick={() => {
                     setSelectedIds([]);
+                    setCurrentTab(tab.value);
                   }}>
                     {tab.label}
                   </TabsTrigger>
                 ))}
               </TabsList>
               <div className="space-x-2">
-                <Button loading={submitLoading} disabled={selectedIds.length === 0 || submitLoading} onClick={() => { handleRead(); }}>
-                  <IoCheckmarkCircle />
-                  Tandai Sudah Dibaca
-                </Button>
+                {
+                  currentTab !== "read" && (
+                    <Button loading={submitLoading} disabled={selectedIds.length === 0 || submitLoading} onClick={() => { handleRead(); }}>
+                      <IoCheckmarkCircle />
+                      Tandai Sudah Dibaca
+                    </Button>
+                  )
+                }
                 <Button
                   loading={submitLoading}
                   variant="destructive"
