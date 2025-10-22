@@ -1560,6 +1560,16 @@ export default function PekerjaanBerlangsung() {
   const [beforeImages, setBeforeImages] = useState<Array<TransactionDocument>>([]); // Replace with actual before images array
   const [afterImages, setAfterImages] = useState<Array<TransactionDocument>>([]); // Replace with actual after images array
 
+  const getBannerTitle = useMemo(() => {
+    switch (transactionDetail?.status) {
+      case SPK_STATUS.BARU:
+      case SPK_STATUS.PROSES:
+        return "Pekerjaan Berlangsung";
+      default:
+        return "Riwayat Pekerjaan";
+    }
+  }, [transactionDetail?.status]);
+
   // get params from url
   useEffect(() => {
     if (!params || !params.id) return;
@@ -1734,6 +1744,8 @@ export default function PekerjaanBerlangsung() {
     setShowUploadAfter(!showUploadAfter);
   }
 
+
+
   return (
     <TransactionContext.Provider value={{
       transactionDetail,
@@ -1752,7 +1764,7 @@ export default function PekerjaanBerlangsung() {
     }}>
       <main className="pb-[20vh] relative">
         <PageBanner
-          title="Pekerjaan Berlangsung"
+          title={getBannerTitle}
         />
         <div className="bg-white dark:bg-slate-800 mx-4 rounded-md -m-8 z-30 relative">
           {/* preview */}
