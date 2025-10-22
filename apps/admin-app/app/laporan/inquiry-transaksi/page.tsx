@@ -48,13 +48,13 @@ const TransactionStatus = [
 ];
 
 // Sample employee data - replace with actual API call
-const EmployeeOptions = [
-  { label: "Eko Darma", value: "eko.darma" },
-  { label: "Budi Santoso", value: "budi.santoso" },
-  { label: "Siti Nurhaliza", value: "siti.nurhaliza" },
-  { label: "Ahmad Wijaya", value: "ahmad.wijaya" },
-  { label: "Maya Sari", value: "maya.sari" },
-];
+// const EmployeeOptions = [
+//   { label: "Eko Darma", value: "eko.darma" },
+//   { label: "Budi Santoso", value: "budi.santoso" },
+//   { label: "Siti Nurhaliza", value: "siti.nurhaliza" },
+//   { label: "Ahmad Wijaya", value: "ahmad.wijaya" },
+//   { label: "Maya Sari", value: "maya.sari" },
+// ];
 
 export default function InquiryTransaksiPage() {
   interface TransactionData {
@@ -91,14 +91,14 @@ export default function InquiryTransaksiPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [tempSearchQuery, setTempSearchQuery] = useState("");
 
-  const [employeeOptions, setEmployeeOptions] = useState<{ label: string; value: string }[]>([]);
+  // const [employeeOptions, setEmployeeOptions] = useState<{ label: string; value: string }[]>([]);
 
   // Filter aktif
   const [statusFilter, setStatusFilter] = useState<number>(-1);
   const [branchFilter, setBranchFilter] = useState<string>("");
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
-  const [selectedEmployee, setSelectedEmployee] = useState<string>("");
+  // const [selectedEmployee, setSelectedEmployee] = useState<string>("");
   const [includeBlower, setIncludeBlower] = useState<number>(-1);
 
 
@@ -109,15 +109,12 @@ export default function InquiryTransaksiPage() {
   const [tempStartDate, setTempStartDate] = useState<Date>();
   const [tempEndDate, setTempEndDate] = useState<Date>();
   const [tempIncludeBlower, setTempIncludeBlower] = useState<number>(1);
-  const [tempSelectedEmployee, setTempSelectedEmployee] = useState<string>("");
-
-  console.log(selectedEmployee, tempSelectedEmployee);
-
+  // const [tempSelectedEmployee, setTempSelectedEmployee] = useState<string>("");
 
   // Detail state
-  const [pdfData, setPdfData] = useState<string>("");
-  const [isLoadingDetail, setIsLoadingDetail] = useState(false);
-  const [showDetail, setShowDetail] = useState(false);
+  // const [pdfData, setPdfData] = useState<string>("");
+  // const [isLoadingDetail, setIsLoadingDetail] = useState(false);
+  // const [showDetail, setShowDetail] = useState(false);
 
   const { branchMapping, loading: loadingParams } = useParameterStore();
 
@@ -139,7 +136,7 @@ export default function InquiryTransaksiPage() {
     let start = startDate;
     let end = endDate;
     let include = includeBlower;
-    let selectedEmp = selectedEmployee;
+    // let selectedEmp = selectedEmployee;
 
     if (reset) {
       page = 1;
@@ -149,7 +146,7 @@ export default function InquiryTransaksiPage() {
       start = tempStartDate;
       end = tempEndDate;
       include = tempIncludeBlower;
-      selectedEmp = tempSelectedEmployee;
+      // selectedEmp = tempSelectedEmployee;
 
       setCurrentPage({
         page: page,
@@ -161,7 +158,7 @@ export default function InquiryTransaksiPage() {
       setStartDate(tempStartDate)
       setEndDate(tempEndDate)
       setIncludeBlower(tempIncludeBlower)
-      setSelectedEmployee(tempSelectedEmployee)
+      // setSelectedEmployee(tempSelectedEmployee)
     }
 
     setLoading(true);
@@ -174,9 +171,9 @@ export default function InquiryTransaksiPage() {
       if (include) {
         url += `&includeBlower=${include === 2 ? "true" : "false"}`;
       }
-      if (selectedEmp) {
-        // url += `&cleaner=${selectedEmp}`; // todo: uncomment when API supports filtering by cleaner
-      }
+      // if (selectedEmp) {
+      // url += `&cleaner=${selectedEmp}`; // todo: uncomment when API supports filtering by cleaner
+      // }
 
       const result = await apiClient(url);
       setDataTransaksi(result.data[0] || []);
@@ -190,38 +187,38 @@ export default function InquiryTransaksiPage() {
     }
   };
 
-  const fetchEmployeeDetail = async (username: string, startDateParam?: Date, endDateParam?: Date) => {
-    const effectiveStartDate = startDateParam || startDate;
-    const effectiveEndDate = endDateParam || endDate;
+  // const fetchEmployeeDetail = async (username: string, startDateParam?: Date, endDateParam?: Date) => {
+  //   const effectiveStartDate = startDateParam || startDate;
+  //   const effectiveEndDate = endDateParam || endDate;
 
-    if (!username || !effectiveStartDate || !effectiveEndDate) {
-      console.log("Missing parameters:", { username, effectiveStartDate, effectiveEndDate });
-      return;
-    }
+  //   if (!username || !effectiveStartDate || !effectiveEndDate) {
+  //     console.log("Missing parameters:", { username, effectiveStartDate, effectiveEndDate });
+  //     return;
+  //   }
 
-    setIsLoadingDetail(true);
-    try {
-      const url = `https://murafly.my.id/report/kinerja/detail?username=${username}&type=pdf&startDate=${formatDateAPI(effectiveStartDate)}&endDate=${formatDateAPI(effectiveEndDate)}`;
+  //   setIsLoadingDetail(true);
+  //   try {
+  //     const url = `https://murafly.my.id/report/kinerja/detail?username=${username}&type=pdf&startDate=${formatDateAPI(effectiveStartDate)}&endDate=${formatDateAPI(effectiveEndDate)}`;
 
-      const result = await apiClient(url);
+  //     const result = await apiClient(url);
 
-      if (result.status === "success" && result.data) {
-        setPdfData(result.data);
-        setShowDetail(true);
-        console.log("PDF data received successfully");
-      } else {
-        console.error("No PDF data received", result);
-        setPdfData("");
-        setShowDetail(false);
-      }
-    } catch (error) {
-      console.error("Error fetching employee detail:", error);
-      setPdfData("");
-      setShowDetail(false);
-    } finally {
-      setIsLoadingDetail(false);
-    }
-  };
+  //     if (result.status === "success" && result.data) {
+  //       setPdfData(result.data);
+  //       setShowDetail(true);
+  //       console.log("PDF data received successfully");
+  //     } else {
+  //       console.error("No PDF data received", result);
+  //       setPdfData("");
+  //       setShowDetail(false);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching employee detail:", error);
+  //     setPdfData("");
+  //     setShowDetail(false);
+  //   } finally {
+  //     setIsLoadingDetail(false);
+  //   }
+  // };
 
   const handleExportData = async () => {
     setIsExporting(true);
@@ -271,29 +268,30 @@ export default function InquiryTransaksiPage() {
     }
   };
 
-  const fetchEmployeesByBranch = async (branchId?: string) => {
-    try {
-      let url = `/user/page?roleId=Cleaner%2C%20Blower&page=1&limit=100`;
-      if (branchId) {
-        url += `&branchId=${branchId}`;
-      }
+  // const fetchEmployeesByBranch = async (branchId?: string) => {
+  //   try {
+  //     let url = `/user/page?roleId=Cleaner%2C%20Blower&page=1&limit=100`;
+  //     if (branchId) {
+  //       url += `&branchId=${branchId}`;
+  //     }
 
-      const result = await apiClient(url);
-      const employees = (result.data?.[0] || []).map((emp: any) => {
-        return {
-          label: emp.fullname,
-          value: emp.username,
-        }
-      });
-      setEmployeeOptions(employees);
-    } catch (error) {
-      console.error("Error fetching employees by branch:", error);
-      setEmployeeOptions([]);
-    }
-  }
+  //     const result = await apiClient(url);
+  //     const employees = (result.data?.[0] || []).map((emp: any) => {
+  //       return {
+  //         label: emp.fullname,
+  //         value: emp.username,
+  //       }
+  //     });
+  //     setEmployeeOptions(employees);
+  //   } catch (error) {
+  //     console.error("Error fetching employees by branch:", error);
+  //     setEmployeeOptions([]);
+  //   }
+  // }
 
 
   // Fetch data when component mounts or dependencies change
+
   useEffect(() => {
     if (currentPage.reset) return;
     fetchInquiryTransaksi();
@@ -310,28 +308,28 @@ export default function InquiryTransaksiPage() {
     }
   }, [searchQuery, searchQueryFromUrl]);
 
-  useEffect(() => {
-    // Hanya fetch jika data berubah dari useEffect, bukan dari handleApplyFilters
-    if (selectedEmployee && startDate && endDate) {
-      // Delay sedikit untuk memastikan state sudah ter-update
-      const timeoutId = setTimeout(() => {
-        fetchEmployeeDetail(selectedEmployee);
-      }, 100);
+  // useEffect(() => {
+  //   // Hanya fetch jika data berubah dari useEffect, bukan dari handleApplyFilters
+  //   if (selectedEmployee && startDate && endDate) {
+  //     // Delay sedikit untuk memastikan state sudah ter-update
+  //     const timeoutId = setTimeout(() => {
+  //       fetchEmployeeDetail(selectedEmployee);
+  //     }, 100);
 
-      return () => clearTimeout(timeoutId);
-    } else {
-      // Reset detail jika salah satu parameter hilang
-      setPdfData("");
-      setShowDetail(false);
-    }
-  }, [selectedEmployee, startDate, endDate]);
+  //     return () => clearTimeout(timeoutId);
+  //   } else {
+  //     // Reset detail jika salah satu parameter hilang
+  //     setPdfData("");
+  //     setShowDetail(false);
+  //   }
+  // }, [selectedEmployee, startDate, endDate]);
 
 
   // auto fetch employees if branch changes
-  useEffect(() => {
-    fetchEmployeesByBranch(tempBranch);
-    setTempSelectedEmployee("");
-  }, [tempBranch]);
+  // useEffect(() => {
+  //   fetchEmployeesByBranch(tempBranch);
+  //   setTempSelectedEmployee("");
+  // }, [tempBranch]);
 
 
   const handleSearch = () => {
@@ -355,17 +353,17 @@ export default function InquiryTransaksiPage() {
     // setCurrentPage(1);
 
     // Langsung fetch detail jika karyawan dan tanggal sudah dipilih
-    if (tempSelectedEmployee && tempStartDate && tempEndDate) {
-      fetchEmployeeDetail(tempSelectedEmployee, tempStartDate, tempEndDate);
-    } else if (tempSelectedEmployee && (!tempStartDate || !tempEndDate)) {
-      // Jika karyawan dipilih tapi tanggal belum, reset detail
-      setPdfData("");
-      setShowDetail(false);
-    } else if (!tempSelectedEmployee) {
-      // Jika tidak ada karyawan yang dipilih, sembunyikan detail
-      setPdfData("");
-      setShowDetail(false);
-    }
+    // if (tempSelectedEmployee && tempStartDate && tempEndDate) {
+    //   fetchEmployeeDetail(tempSelectedEmployee, tempStartDate, tempEndDate);
+    // } else if (tempSelectedEmployee && (!tempStartDate || !tempEndDate)) {
+    //   // Jika karyawan dipilih tapi tanggal belum, reset detail
+    //   setPdfData("");
+    //   setShowDetail(false);
+    // } else if (!tempSelectedEmployee) {
+    //   // Jika tidak ada karyawan yang dipilih, sembunyikan detail
+    //   setPdfData("");
+    //   setShowDetail(false);
+    // }
   };
 
   const handleResetFilters = () => {
@@ -373,12 +371,12 @@ export default function InquiryTransaksiPage() {
     setTempBranch("");
     setTempStartDate(undefined);
     setTempEndDate(undefined);
-    setTempSelectedEmployee("");
+    // setTempSelectedEmployee("");
 
     // Reset juga state aktif untuk detail
-    setSelectedEmployee("");
-    setPdfData("");
-    setShowDetail(false);
+    // setSelectedEmployee("");
+    // setPdfData("");
+    // setShowDetail(false);
   };
 
   const handleCancelFilters = () => {
@@ -455,14 +453,14 @@ export default function InquiryTransaksiPage() {
                   optionsNumber={TransactionStatus}
                   onChange={setTempStatus}
                 />
-                <SelectFilter
+                {/* <SelectFilter
                   label="Detail Karyawan"
                   id="employee"
                   placeholder="Pilih Karyawan"
                   value={tempSelectedEmployee}
                   optionsString={employeeOptions}
                   onChange={setTempSelectedEmployee}
-                />
+                /> */}
                 <div className="flex items-center space-x-4">
                   <Label className="w-1/2 font-semibold capitalize">Tanggal awal</Label>
                   <DatePicker
@@ -508,7 +506,7 @@ export default function InquiryTransaksiPage() {
           </div>
 
           {/* Employee Detail Section */}
-          {selectedEmployee && (
+          {/* {selectedEmployee && (
             <div className="border rounded-lg p-4 bg-gray-50">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold">
@@ -523,7 +521,7 @@ export default function InquiryTransaksiPage() {
                   variant="outline"
                   size="sm"
                   onClick={() => {
-                    setSelectedEmployee("");
+                    // setSelectedEmployee("");
                     setTempSelectedEmployee("");
                     setShowDetail(false);
                     setPdfData("");
@@ -571,7 +569,7 @@ export default function InquiryTransaksiPage() {
                 </div>
               )}
             </div>
-          )}
+          )} */}
 
           {loading || loadingParams ? (
             <p className="text-center py-4">Memuat data...</p>
