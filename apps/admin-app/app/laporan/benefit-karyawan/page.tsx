@@ -361,6 +361,7 @@ export default function BenefitKaryawanPage() {
                 onApply={handleApplyFilters}
                 onReset={handleResetFilters}
                 onCancel={handleCancelFilters}
+                hideButtons
               >
                 {/* KaryawanSelect hanya tampil jika reportType adalah "detail" */}
                 {reportType === 'tip' ? (
