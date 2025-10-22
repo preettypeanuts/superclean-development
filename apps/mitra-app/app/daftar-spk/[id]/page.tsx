@@ -1143,6 +1143,7 @@ interface AttachmentImageProps {
   width?: number;
   height?: number;
   loading?: boolean;
+  isReadOnly?: boolean;
 }
 
 const UploadPhoto = ({
@@ -1154,7 +1155,8 @@ const UploadPhoto = ({
   src = "",
   width = 200,
   height = 200,
-  loading = false
+  loading = false,
+  isReadOnly = false
 }: AttachmentImageProps) => {
   const ALLOWED_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
@@ -1210,12 +1212,12 @@ const UploadPhoto = ({
           : (
             <div className="flex-1 aspect-square border-2 border-dashed  border-gray-300 hover:border-gray-400 bg-gray-400/10 rounded-md flex items-center justify-center ">
               {/* invisible file input */}
-              <input type="file" accept="image/*" className="w-full h-full opacity-0 cursor-pointer aspect-square" onChange={handleFileChange} />
+              <input type="file" accept="image/*" className="w-full h-full opacity-0 cursor-pointer aspect-square" onChange={handleFileChange} disabled={isReadOnly} />
             </div>
           )
       }
 
-      {imageSrc && (
+      {imageSrc && !isReadOnly && (
         <Button
           variant="destructive"
           size="icon"
@@ -1257,7 +1259,12 @@ const FotoTab = () => {
 
   // const imageRowCount = Math.ceil(Math.max(beforeImages.length + 1, afterImages.length + 1) / 3)
   const imageBeforeRowCount = Math.ceil(Math.max(beforeImages.length + 1, afterImages.length + 1) / 3)
-  const imageAfterRowCount = Math.ceil(Math.max(afterImages.length + 1, afterImages.length + 1) / 3)
+  const imageAfterRowCount = Math.ceil(Math.max(afterImages.length + 1, afterImages.length + 1) / 3);
+
+  const isReadOnly = useMemo(() => {
+    if (!transaction.transactionDetail) return true;
+    return transaction.transactionDetail.status !== SPK_STATUS.PROSES;
+  }, [transaction.transactionDetail]);
 
   const handleUploadImage = async (file: File, type: "before" | "after") => {
     const newImageObj = {
@@ -1373,7 +1380,7 @@ const FotoTab = () => {
                   const img = beforeRowImages[index];
 
                   if (!img) {
-                    if (!beforePlaceHolderUsed) {
+                    if (!beforePlaceHolderUsed && !isReadOnly) {
                       beforePlaceHolderUsed = true;
                       return (
                         <UploadPhoto key={index}
@@ -1397,6 +1404,7 @@ const FotoTab = () => {
                       className="max-w-[33%] px-1"
                       src={img.docUrl}
                       loading={img.loading}
+                      isReadOnly={isReadOnly}
                       onUpload={(file) => {
                         if (file) {
                           setBeforeImages((prev) => [...prev, {
@@ -1451,7 +1459,7 @@ const FotoTab = () => {
                 {[0, 1, 2].map((image, index) => {
                   const img = afterRowImages[index];
                   if (!img) {
-                    if (!afterPlaceHolderUsed) {
+                    if (!afterPlaceHolderUsed && !isReadOnly) {
                       afterPlaceHolderUsed = true;
                       return (
                         <UploadPhoto key={index}
@@ -1477,6 +1485,7 @@ const FotoTab = () => {
                       className="max-w-[33%] px-1"
                       src={img.docUrl}
                       loading={img.loading}
+                      isReadOnly={isReadOnly}
                       onUpload={(file) => {
                         if (file) {
                           setAfterImages((prev) => [...prev, {
