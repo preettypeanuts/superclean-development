@@ -1,9 +1,9 @@
-import ProtectedLayout from "@shared/components/ProtectedLayout";
 import '@superclean-workspace/shared/styles';
-import { NavigationBar } from "libs/shared/src/components/mitra/navigation-bar";
-import { Toaster } from "libs/ui-components/src/components/ui/toaster";
 import { ThemeProvider } from 'next-themes';
 import { Plus_Jakarta_Sans } from "next/font/google";
+import { NavigationBar } from "libs/shared/src/components/mitra/navigation-bar"
+import ProtectedLayout from "@shared/components/ProtectedLayout"
+import { Toaster } from "libs/ui-components/src/components/ui/toaster"
 
 export const metadata = {
   title: 'Superclean - Mitra Apps',
@@ -22,7 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className='scroll-smooth'>
       <body
-        className={`${jakartaSans.className} antialiased m-auto max-w-[600px] bg-white dark:bg-black text-black dark:text-white`}
+        className={`${jakartaSans.className} antialiased md:flex `}
       >
         <ThemeProvider defaultTheme="light" enableSystem={false} attribute="class">
           <ProtectedLayout>
