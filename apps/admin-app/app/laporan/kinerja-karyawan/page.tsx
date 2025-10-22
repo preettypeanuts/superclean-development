@@ -395,6 +395,7 @@ export default function KinerjaKaryawanPage() {
                 onApply={handleApplyFilters}
                 onReset={handleResetFilters}
                 onCancel={handleCancelFilters}
+                hideButtons
               >
                 {/* KaryawanSelect hanya tampil jika reportType adalah "detail" */}
                 {reportType === 'detail' ? (
