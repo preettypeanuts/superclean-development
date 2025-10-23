@@ -948,7 +948,7 @@ export default function TransactionDetail() {
                       <Label className="w-[40%] font-semibold">Tanggal Pengerjaan</Label>
                       <DatePicker
                         withTime
-                        defaultTime={transaction?.trxDate ? `${formatTime(transaction.trxDate)}` : "08:00"}
+                        defaultTime={new Date(transaction?.trxDate || new Date()).toTimeString().slice(0, 5)}
                         onChangeTime={(time) => {
                           if (time && transaction?.trxDate) {
                             const date = new Date(transaction.trxDate);
@@ -996,7 +996,7 @@ export default function TransactionDetail() {
                             <DatePicker
                               startFrom={new Date(transaction?.trxDate)}
                               withTime
-                              defaultTime={transaction?.deliveryDate ? `${formatTime(transaction.deliveryDate)}` : formatTime(transaction?.trxDate || new Date().toISOString())}
+                              defaultTime={new Date(transaction?.deliveryDate ? transaction.deliveryDate : transaction?.trxDate).toTimeString().slice(0, 5)}
                               onChangeTime={(time) => {
                                 if (time && transaction?.deliveryDate) {
                                   const date = new Date(transaction.deliveryDate);
@@ -1025,7 +1025,7 @@ export default function TransactionDetail() {
                             <Label className="w-[40%] font-semibold">Tanggal Pengambilan</Label>
                             <DatePicker
                               withTime
-                              defaultTime={transaction?.pickupDate ? `${formatTime(transaction.pickupDate)}` : formatTime(transaction?.trxDate || new Date().toISOString())}
+                              defaultTime={new Date(transaction?.pickupDate ? transaction.pickupDate : transaction?.trxDate).toTimeString().slice(0, 5)}
                               startFrom={new Date(transaction?.trxDate)}
                               value={transaction.pickupDate ? new Date(transaction.pickupDate) : new Date(transaction.trxDate)}
                               onChange={(date) => {

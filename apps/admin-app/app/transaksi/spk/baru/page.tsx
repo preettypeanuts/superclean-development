@@ -260,7 +260,7 @@ export default function NewSPK() {
     subDistrict: "",
     cleaningStaff: [],
     blowerStaff: [],
-    trxDate: formatDateInput(new Date().toISOString()),
+    trxDate: new Date().toISOString(),
     deliveryDate: undefined,
     pickupDate: undefined,
     notes: ""
@@ -527,12 +527,15 @@ export default function NewSPK() {
     }
 
     // Prepare data sesuai expected request body
+    const trxDate = new Date(formData.trxDate);
+    trxDate.setHours(trxDate.getHours(), trxDate.getMinutes(), 0, 0);
+
     const submitData = {
       customerId: selectedCustomer.id,
       discountPrice: totals.manualDiscount, // hanya diskon manual
       additionalFee: additionalFee,
       notes: formData.notes,
-      trxDate: new Date(formData.trxDate).toISOString(),
+      trxDate: trxDate.toISOString(),
       assigns: formData.cleaningStaff,
       blowers: formData.blowerStaff,
       details: spkItems.map(item => ({
@@ -548,7 +551,10 @@ export default function NewSPK() {
     };
 
     if (formData.blowerStaff.length > 0) {
-      submitData["deliveryDate"] = formData.deliveryDate ? new Date(formData.deliveryDate).toISOString() : new Date(formData.trxDate).toISOString();
+      const deliveryDate = new Date(formData.deliveryDate || formData.trxDate);
+      deliveryDate.setHours(deliveryDate.getHours(), deliveryDate.getMinutes(), 0, 0);
+
+      submitData["deliveryDate"] = deliveryDate.toISOString();
     }
 
     try {
@@ -921,6 +927,7 @@ export default function NewSPK() {
                             trxDate: trxDate.toISOString(),
                           }));
                         }}
+                        defaultTime={new Date(formData.trxDate).toTimeString().slice(0, 5)}
                         value={formData.trxDate ? new Date(formData.trxDate) : null}
                         onChange={(date) => {
                           if (date) {
@@ -965,6 +972,7 @@ export default function NewSPK() {
                                   deliveryDate: deliveryDate.toISOString(),
                                 }));
                               }}
+                              defaultTime={formData.deliveryDate ? new Date(formData.deliveryDate).toTimeString().slice(0, 5) : new Date(formData.trxDate).toTimeString().slice(0, 5)}
                               value={formData.deliveryDate ? new Date(formData.deliveryDate) : new Date(formData.trxDate)}
                               onChange={(date) => {
                                 if (date) {
