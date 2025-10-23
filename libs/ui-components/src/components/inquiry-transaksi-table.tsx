@@ -1,9 +1,8 @@
 import Link from "next/link";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from "./ui/table";
-import { Button } from "./ui/button";
 import { PiNewspaperFill } from "react-icons/pi";
 import { formatRupiah } from "../../../utils/formatRupiah";
-import { formatDate } from "../../../utils/formatDate";
+import { Button } from "./ui/button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from "./ui/table";
 
 
 interface TableHeader {
@@ -132,7 +131,7 @@ export const InquiryTransaksiTable: React.FC<DataTableProps> = ({
               }
 
               if (header.key === "trxDate") {
-                return <TableCell key="trxDate">{formatDate(String(value))}</TableCell>;
+                return <TableCell key="trxDate">{new Date(item.trxDate).toLocaleDateString('en-GB')}</TableCell>;
               }
 
               if (header.key === "status") {

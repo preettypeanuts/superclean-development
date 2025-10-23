@@ -1,6 +1,5 @@
 import { useToast } from "libs/ui-components/src/hooks/use-toast";
 import { api } from "libs/utils/apiClient";
-import { formatDate } from "libs/utils/formatDate";
 import { formatRupiah } from "libs/utils/formatRupiah";
 import Link from "next/link";
 import { useState } from "react";
@@ -175,7 +174,7 @@ export const SPKTable: React.FC<DataTableProps> = ({ data, columns, currentPage,
                     ) : header.key === "finalPrice" ? (
                       <p>{formatRupiah(Number(spk.finalPrice))}</p>
                     ) : header.key === "trxDate" ? (
-                      <p>{formatDate(spk.trxDate)}</p>
+                                  <p>{new Date(spk.trxDate).toLocaleDateString('en-GB')}</p>
                     ) : header.key === "trxNumber" ? (
                       <div className="flex items-center">
                         <div className={`mr-2 rounded-full w-[6px] h-[6px] ${pingColor[

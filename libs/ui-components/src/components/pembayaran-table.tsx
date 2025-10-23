@@ -1,11 +1,10 @@
-import Link from "next/link";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from "./ui/table";
-import { Button } from "./ui/button";
 import { useToast } from "libs/ui-components/src/hooks/use-toast";
-import { PiNewspaperFill } from "react-icons/pi";
 import { formatRupiah } from "libs/utils/formatRupiah";
-import { formatDate } from "libs/utils/formatDate";
+import Link from "next/link";
+import { PiNewspaperFill } from "react-icons/pi";
 import { TrxStatus } from "../../../shared/src/data/system";
+import { Button } from "./ui/button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, } from "./ui/table";
 
 interface TableHeader {
   key: string;
@@ -120,7 +119,7 @@ export const PembayaranTable: React.FC<DataTableProps> = ({
               }
 
               if (header.key === "trxDate") {
-                return <TableCell key="trxDate">{formatDate(String(value))}</TableCell>;
+                return <TableCell key="trxDate">{new Date(item.trxDate).toLocaleDateString('en-GB')}</TableCell>;
               }
 
               if (header.key === "status") {
