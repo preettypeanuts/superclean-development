@@ -40,7 +40,7 @@ const TransactionStatus = [
   { label: "All", value: -1 },
   { label: "Baru", value: 0 },
   { label: "Proses", value: 1 },
-  { label: "Cancel", value: 2 },
+  { label: "Batal", value: 2 },
   { label: "Menunggu Bayar", value: 3 },
   { label: "Sudah Bayar", value: 4 },
   { label: "Selesai", value: 5 },

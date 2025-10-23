@@ -48,7 +48,7 @@ export const InquiryTransaksiTable: React.FC<DataTableProps> = ({
   const statusLabels: Record<number, string> = {
     0: "Baru",
     1: "Proses",
-    2: "Cancel",
+    2: "Batal",
     3: "Menunggu Bayar",
     4: "Sudah Bayar",
     5: "Selesai",

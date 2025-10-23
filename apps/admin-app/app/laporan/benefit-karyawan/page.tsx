@@ -34,7 +34,7 @@ export default function BenefitKaryawanPage() {
   // filter sementara
   const [tempStatus, setTempStatus] = useState<number>(0);
   const [tempBranch, setTempBranch] = useState<string>('all');
-  const [tempRole, setTempRole] = useState<string>('all');
+  const [tempRole, setTempRole] = useState<string>('');
   const [tempSelectedKaryawan, setTempSelectedKaryawan] = useState<string>('');
   const [tempStartDate, setTempStartDate] = useState<Date>();
   const [tempEndDate, setTempEndDate] = useState<Date>();
@@ -199,7 +199,7 @@ export default function BenefitKaryawanPage() {
   const handleResetFilters = () => {
     setTempStatus(0);
     setTempBranch('all');
-    setTempRole('all');
+    setTempRole('');
     setTempSelectedKaryawan('');
     setTempStartDate(undefined);
     setTempEndDate(undefined);
@@ -215,7 +215,7 @@ export default function BenefitKaryawanPage() {
   const handleCancelFilters = () => {
     setTempStatus(statusFilter);
     setTempBranch(branchFilter || 'all');
-    setTempRole(roleFilter || 'all');
+    setTempRole(roleFilter || '');
     setTempSelectedKaryawan(selectedKaryawan);
     setTempStartDate(startDate);
     setTempEndDate(endDate);
@@ -380,9 +380,10 @@ export default function BenefitKaryawanPage() {
                     <SelectFilter
                       label="Akses Pengguna"
                       id="role"
-                      placeholder="Pilih Role"
-                      value={tempRole || 'all'}
+                      placeholder="Pilih Akses Pengguna"
+                      value={tempRole || ''}
                       optionsString={[
+                        { label: 'Administrator', value: 'ADMIN' },
                         { label: 'Staff Cleaning', value: 'CLEANER' },
                         { label: 'Staff Blower', value: 'BLOWER' },
                       ]}
