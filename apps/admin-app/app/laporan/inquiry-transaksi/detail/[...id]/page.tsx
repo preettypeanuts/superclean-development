@@ -243,7 +243,7 @@ export default function InquiryTransaksiDetail() {
       { key: "satuan", label: "Satuan" },
       { key: "harga", label: "Harga Satuan" },
       // { key: "totalHarga", label: "Total Harga" },
-      { key: "promo", label: "Promo Satuan" },
+      // { key: "promo", label: "Promo Satuan" },
     ];
 
     return columns;

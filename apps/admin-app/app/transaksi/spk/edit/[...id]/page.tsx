@@ -371,7 +371,7 @@ export default function TransactionDetail() {
       { key: "satuan", label: "Satuan" },
       { key: "harga", label: "Harga Satuan" },
       // { key: "totalHarga", label: "Total Harga" },
-      { key: "promo", label: "Promo Satuan" },
+      // { key: "promo", label: "Promo Satuan" },
     ];
 
     if (!IS_CANCELLED) {
