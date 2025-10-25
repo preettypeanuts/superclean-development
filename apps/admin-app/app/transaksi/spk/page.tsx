@@ -32,6 +32,7 @@ const DataHeaderSPK = [
   { key: "trxDate", label: "Tanggal Transaksi" },
   { key: "includeBlower", label: "Include Blower" },
   { key: "status", label: "Status" },
+  { key: "deliveryStatus", label: "Status Pengantaran" },
   { key: "menu", label: "Aksi" },
 ];
 
@@ -52,6 +53,7 @@ export default function SPKPage() {
     finalPrice: number;
     trxDate: string;
     status: number;
+    deliveryStatus: string;
     createdBy: string;
     createdAt: string;
     cleaner: string;

@@ -33,6 +33,7 @@ const columns = [
   { key: "trxDate", label: "Tanggal Transaksi" },
   { key: "includeBlower", label: "Include Blower" },
   { key: "status", label: "Status" },
+  { key: "deliveryStatus", label: "Status Pengantaran" },
   { key: "menu", label: "Aksi" },
 ];
 
