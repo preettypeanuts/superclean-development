@@ -59,7 +59,7 @@ const DataHeaderSPKDetail = [
   { key: "layanan", label: "Layanan" },
   { key: "kategori", label: "Kategori" },
   { key: "jumlah", label: "Jumlah" },
-  { key: "satuan", label: "Satuan" },
+  // { key: "satuan", label: "Satuan" },
   { key: "harga", label: "Harga Satuan" },
   // { key: "totalHarga", label: "Total Harga" },
   // { key: "promo", label: "Promo Satuan" },s
