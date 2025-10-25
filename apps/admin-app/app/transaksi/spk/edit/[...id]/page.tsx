@@ -128,6 +128,7 @@ const formatDetailsForTable = (details: TransactionItem[], isOriginal: boolean =
     promo: detail.promoPrice / Number(detail.quantity || 1),
     id: detail.id,
     isOriginal: isOriginal,
+    tipe: detail.serviceType === 0 ? "vakum" : "cuci",
   }));
 };
 
@@ -400,7 +401,7 @@ export default function TransactionDetail() {
       category: selectedCategory ? selectedCategory[0] : item.kategoriCode,
       serviceCode: item.kode,
       jumlah: item.jumlah.toString(),
-      tipe: item.tipe || "vakum",
+      tipe: item.tipe || "vakum", 
       harga: item.harga,
       promo: item.promo,
       promoCode: item.promoCode || "",
@@ -596,7 +597,7 @@ export default function TransactionDetail() {
         const payload = {
           serviceCategory: catLayananMapping[formDataTable.category] || formDataTable.category,
           serviceCode: formDataTable.serviceCode,
-          serviceType: formDataTable.tipe === "vakum" ? 1 : 2,
+          serviceType: formDataTable.tipe === "vakum" ? 0 : 1,
           servicePrice: formDataTable.harga,
           promoCode: formDataTable.promoCode,
           promoType: formDataTable.promoType,
@@ -637,7 +638,7 @@ export default function TransactionDetail() {
         const payload = {
           serviceCategory: catLayananMapping[formDataTable.category] || formDataTable.category,
           serviceCode: formDataTable.serviceCode,
-          serviceType: formDataTable.tipe === "vakum" ? 1 : 2,
+          serviceType: formDataTable.tipe === "vakum" ? 0 : 1,
           servicePrice: formDataTable.harga,
           promoCode: formDataTable.promoCode,
           promoType: formDataTable.promoType || "Nominal",
@@ -816,11 +817,12 @@ export default function TransactionDetail() {
     }
   }
 
-  const formatTime = (dateString: string) => {
-    const date = new Date(dateString);
-    // make only format with hh:mm:ss
-    return date.toString().split(' ')[4];
-  }
+  // const formatTime = (dateString: string) => {
+  //   const date = new Date(dateString);
+  //   // make only format with hh:mm:ss
+  //   return date.toString().split(' ')[4];
+  // }
+
 
   if (loading) {
     return (
