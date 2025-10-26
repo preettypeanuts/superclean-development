@@ -789,10 +789,14 @@ const TimelineItemInProgress = ({
                     {transactionItems.map((item, index) => {
                       return (
                         <div key={index} className="py-2 flex justify-center items-center">
-                          <p className="flex flex-1 gap-1">
-                            <span>{item.quantity}x </span> -
-                            <span className="max-w-[120px] block overflow-hidden whitespace-nowrap text-ellipsis"> {item.service.name}</span> -
-                            <span> Rp. {(item.totalPrice - item.promoPrice).toLocaleString()} </span>
+                          <p className="flex flex-col flex-1 gap-1">
+                            <div className="flex">
+                              <span className="mr-2">{item.quantity}x </span>
+                              <span className="mr-2"> - </span>
+                              <span className="block overflow-hidden whitespace-nowrap text-ellipsis"> {item.service.name}</span>
+                            </div>
+
+                            <span className="font-bold text-[#72757C]"> Rp. {(item.totalPrice - item.promoPrice).toLocaleString('id-ID')} </span>
                           </p>
 
                           {
@@ -948,10 +952,14 @@ const TimelineItemPending = ({
                       {transactionItems.map((item, index) => {
                         return (
                           <div key={index} className="py-2 flex justify-center items-center">
-                            <p className="flex flex-1 gap-1">
-                              <span>{item.quantity}x </span> -
-                              <span className="max-w-[120px] block overflow-hidden whitespace-nowrap text-ellipsis"> {item.service.name}</span> -
-                              <span> Rp. {(item.totalPrice - item.promoPrice).toLocaleString()} </span>
+                            <p className="flex flex-col flex-1 gap-1">
+                              <div className="flex">
+                                <span className="mr-2">{item.quantity}x </span>
+                                <span className="mr-2"> - </span>
+                                <span className="block overflow-hidden whitespace-nowrap text-ellipsis"> {item.service.name}</span>
+                              </div>
+
+                              <span className="font-bold text-[#72757C]"> Rp. {(item.totalPrice - item.promoPrice).toLocaleString('id-ID')} </span>
                             </p>
 
                             {
