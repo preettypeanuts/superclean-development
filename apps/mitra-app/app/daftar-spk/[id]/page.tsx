@@ -651,6 +651,46 @@ const TimelineItemCompleted = ({
                 <div>
                   <p className="text-sm mb-4">Jika pelanggan sudah puas dan pekerjaan sudah selesai, mohon untuk klik tombol <span>"Selesai"</span></p>
 
+                  <div className="flex flex-col my-2">
+                    <div className="flex my-0.5">
+                      <p className="flex flex-1 font-medium">Total Harga</p>
+                      <p className="flex-1 text-right font-medium text-gray-800 text-lg">
+                        Rp {transaction.transactionDetail?.totalPrice.toLocaleString('id-ID')}
+                      </p>
+                    </div>
+
+                    <div className="flex my-0.5">
+                      <p className="flex flex-1 font-medium">Promo</p>
+                      <p className="flex-1 text-right font-medium text-gray-800 text-lg">
+                        Rp {transaction.transactionDetail?.totalPromoPrice.toLocaleString('id-ID')}
+                      </p>
+                    </div>
+
+                    <div className="flex my-0.5">
+                      <p className="flex flex-1 font-medium">Diskon</p>
+                      <p className="flex-1 text-right font-medium text-gray-800 text-lg">
+                        Rp {transaction.transactionDetail?.discountPrice?.toLocaleString('id-ID') || '0'}
+                      </p>
+                    </div>
+
+                    <div className="flex my-0.5">
+                      <p className="flex flex-1 font-medium">Biaya tambahan</p>
+                      <p className="flex-1 text-right font-medium text-gray-800 text-lg">
+                        Rp {transaction.transactionDetail?.additionalFee?.toLocaleString('id-ID') || '0'}
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-5 mb-2 pb-3 border-b border-bottom-dash border-gray-500"></div>
+
+                    <div className="flex my-0.5">
+                      <p className="flex flex-1 font-medium">Total</p>
+                      <p className="flex-1 text-right font-medium text-gray-800 text-lg">
+                        Rp {transaction.transactionDetail?.finalPrice?.toLocaleString('id-ID') || '0'}
+                      </p>
+                    </div>
+
+                  </div>
+
                   {
                     isCurrent && (
                       <div className="flex">
