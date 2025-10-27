@@ -25,6 +25,7 @@ interface BlowerTaskData {
   createdBy: string;
   createdAt: string;
   address: string;
+  cleaner: string;
   statusLabel: string;
 }
 
@@ -108,6 +109,9 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
               </p>
               <p className="truncate">
                 Alamat: {task.address}
+              </p>
+              <p className="truncate">
+                Petugas: {task.cleaner}
               </p>
             </div>
           </div>
