@@ -20,6 +20,7 @@ interface OngoingTaskData {
   createdBy: string;
   createdAt: string;
   address: string;
+  cleaner: string;
   statusLabel: string;
 }
 
@@ -227,6 +228,9 @@ export const OngoingTask = () => {
                   <p className="truncate truncate-last-1">
                     Alamat: {ongoingTask.address}
                   </p>
+                        <p className="truncate truncate-last-1">
+                          Petugas: {ongoingTask.cleaner}
+                        </p>
                 </div>
               </div>
               <div className="col-span-1 w-full h-full flex items-center justify-end">
