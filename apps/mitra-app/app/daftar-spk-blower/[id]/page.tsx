@@ -87,7 +87,7 @@ const TimelineItemCompleted = () => {
   const isCurrent = TASK_INDEX === transaction.transactionDetail?.deliveryStatus!;
 
 
-  const [isOpen, setIsOpen] = useState(isOpenable);
+  const [isOpen, setIsOpen] = useState(isCurrent);
   const [jobCompleted, setJobCompleted] = useState(false);
 
   const [isLoading, setIsLoading] = useState(false);
@@ -111,97 +111,96 @@ const TimelineItemCompleted = () => {
 
   return (
     <>
-      <li className="mb-4 ms-6">
+      <li className="mb-10 flex items-start relative">
         <TimelineIcon
           taskIndex={TASK_INDEX}
           currentTaskIndex={transaction.transactionDetail?.deliveryStatus!}
         />
-        <div className="flex items-center justify-between">
-          <div className="flex-1">
-            <h3 className="text-lg font-semibold text-gray-900">
-              Selesai & Diterima Pelanggan
-            </h3>
-          </div>
-          <div className="pt-0.5">
-            {isOpen ? (
-              <ChevronUp
-                className={`w-4 h-4 text-gray-400 ${isOpenable ? 'cursor-pointer' : ''}`}
-                onClick={() => isOpenable && setIsOpen(!isOpen)}
-              />
-            ) : (
-              <ChevronDown
-                className={`w-4 h-4 text-gray-400 ${isOpenable ? 'cursor-pointer' : ''}`}
-                onClick={() => isOpenable && setIsOpen(!isOpen)}
-              />
-            )}
-          </div>
+        <div className="flex-1 min-w-0 pt-0.5 !ms-6">
+          <h3 className="text-lg font-semibold text-gray-900" onClick={() => isOpenable && setIsOpen(!isOpen)}>
+            Selesai & Diterima Pelanggan
+          </h3>
+
+          {isOpen && (
+            <>
+              <div className="border-b border-gray-200 my-2"></div>
+              <div>
+                <p className="text-sm mb-4">
+                  Jika pelanggan sudah puas dan pekerjaan sudah selesai,
+                  mohon untuk klik tombol <span className="font-bold">"Selesai"</span>
+                </p>
+
+                <div className="flex flex-col my-2">
+                  <div className="flex my-0.5">
+                    <p className="flex flex-1 font-medium">Total Harga</p>
+                    <p className="flex-1 text-right font-medium text-gray-800 text-lg">
+                      Rp {transaction.transactionDetail?.totalPrice.toLocaleString('id-ID')}
+                    </p>
+                  </div>
+
+                  <div className="flex my-0.5">
+                    <p className="flex flex-1 font-medium">Promo</p>
+                    <p className="flex-1 text-right font-medium text-gray-800 text-lg">
+                      Rp {transaction.transactionDetail?.totalPromoPrice.toLocaleString('id-ID')}
+                    </p>
+                  </div>
+
+                  <div className="flex my-0.5">
+                    <p className="flex flex-1 font-medium">Diskon</p>
+                    <p className="flex-1 text-right font-medium text-gray-800 text-lg">
+                      Rp {transaction.transactionDetail?.discountPrice?.toLocaleString('id-ID') || '0'}
+                    </p>
+                  </div>
+
+                  <div className="flex my-0.5">
+                    <p className="flex flex-1 font-medium">Biaya tambahan</p>
+                    <p className="flex-1 text-right font-medium text-gray-800 text-lg">
+                      Rp {transaction.transactionDetail?.additionalFee?.toLocaleString('id-ID') || '0'}
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-5 mb-2 pb-3 border-b border-bottom-dash border-gray-500"></div>
+
+                  <div className="flex my-0.5">
+                    <p className="flex flex-1 font-medium">Total</p>
+                    <p className="flex-1 text-right font-medium text-gray-800 text-lg">
+                      Rp {transaction.transactionDetail?.finalPrice?.toLocaleString('id-ID') || '0'}
+                    </p>
+                  </div>
+
+                </div>
+
+
+                <div className="flex">
+                  <Button
+                    className="flex-1"
+                    variant="main"
+                    onClick={() => {
+                      handleCompleteTask();
+                    }}
+                    disabled={isLoading || !isCurrent}
+                  >
+                    Selesai
+                  </Button>
+                </div>
+              </div>
+            </>
+          )}
         </div>
 
-        {isOpen && (
-          <>
-            <div className="border-b border-gray-200 my-2"></div>
-            <div>
-              <p className="text-sm mb-4">
-                Jika pelanggan sudah puas dan pekerjaan sudah selesai,
-                mohon untuk klik tombol <span className="font-bold">"Selesai"</span>
-              </p>
-
-              <div className="flex flex-col my-2">
-                <div className="flex my-0.5">
-                  <p className="flex flex-1 font-medium">Total Harga</p>
-                  <p className="flex-1 text-right font-medium text-gray-800 text-lg">
-                    Rp {transaction.transactionDetail?.totalPrice.toLocaleString('id-ID')}
-                  </p>
-                </div>
-
-                <div className="flex my-0.5">
-                  <p className="flex flex-1 font-medium">Promo</p>
-                  <p className="flex-1 text-right font-medium text-gray-800 text-lg">
-                    Rp {transaction.transactionDetail?.totalPromoPrice.toLocaleString('id-ID')}
-                  </p>
-                </div>
-
-                <div className="flex my-0.5">
-                  <p className="flex flex-1 font-medium">Diskon</p>
-                  <p className="flex-1 text-right font-medium text-gray-800 text-lg">
-                    Rp {transaction.transactionDetail?.discountPrice?.toLocaleString('id-ID') || '0'}
-                  </p>
-                </div>
-
-                <div className="flex my-0.5">
-                  <p className="flex flex-1 font-medium">Biaya tambahan</p>
-                  <p className="flex-1 text-right font-medium text-gray-800 text-lg">
-                    Rp {transaction.transactionDetail?.additionalFee?.toLocaleString('id-ID') || '0'}
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-5 mb-2 pb-3 border-b border-bottom-dash border-gray-500"></div>
-
-                <div className="flex my-0.5">
-                  <p className="flex flex-1 font-medium">Total</p>
-                  <p className="flex-1 text-right font-medium text-gray-800 text-lg">
-                    Rp {transaction.transactionDetail?.finalPrice?.toLocaleString('id-ID') || '0'}
-                  </p>
-                </div>
-
-              </div>
-
-
-              <div className="flex">
-                <Button
-                  className="flex-1"
-                  variant="main"
-                  onClick={() => {
-                    handleCompleteTask();
-                  }}
-                  disabled={isLoading || !isCurrent}
-                >
-                  Selesai
-                </Button>
-              </div>
-            </div>
-          </>
-        )}
+        <div className="pt-0.5">
+          {isOpen ? (
+            <ChevronUp
+              className={`w-4 h-4 text-gray-400 ${isOpenable ? 'cursor-pointer' : ''}`}
+              onClick={() => isOpenable && setIsOpen(!isOpen)}
+            />
+          ) : (
+            <ChevronDown
+              className={`w-4 h-4 text-gray-400 ${isOpenable ? 'cursor-pointer' : ''}`}
+              onClick={() => isOpenable && setIsOpen(!isOpen)}
+            />
+          )}
+        </div>
       </li>
 
       <JobCompletedModal
@@ -214,12 +213,13 @@ const TimelineItemCompleted = () => {
 
 const TimelineItemInProgress = () => {
   const transaction = React.useContext(TransactionContext);
+  const transactionItems = transaction.transactionDetail?.details || [];
 
   const TASK_INDEX = 2;
   const isOpenable = TASK_INDEX <= transaction.transactionDetail?.deliveryStatus!;
   const isCurrent = TASK_INDEX === transaction.transactionDetail?.deliveryStatus!;
 
-  const [isOpen, setIsOpen] = useState(isOpenable);
+  const [isOpen, setIsOpen] = useState(isCurrent);
 
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [selectedTime, setSelectedTime] = useState<string | undefined>(undefined);
@@ -264,76 +264,104 @@ const TimelineItemInProgress = () => {
   }
 
   return (
-    <li className="mb-4 ms-6">
+    <li className="mb-10 flex items-start relative">
       <TimelineIcon
         taskIndex={TASK_INDEX}
         currentTaskIndex={transaction.transactionDetail?.deliveryStatus!}
       />
-      <div className="flex items-center justify-between">
-        <div className="flex-1">
-          <h3 className="text-lg font-semibold text-gray-900">
-            Jadwal Pengambilan
-          </h3>
-        </div>
-        <div className="pt-0.5">
-          {isOpen ? (
-            <ChevronUp
-              className={`w-4 h-4 text-gray-400 ${isOpenable ? 'cursor-pointer' : ''}`}
-              onClick={() => isOpenable && setIsOpen(!isOpen)}
-            />
-          ) : (
-            <ChevronDown
-              className={`w-4 h-4 text-gray-400 ${isOpenable ? 'cursor-pointer' : ''}`}
-              onClick={() => isOpenable && setIsOpen(!isOpen)}
-            />
-          )}
-        </div>
+      <div className="flex-1 min-w-0 pt-0.5 !ms-6">
+        <h3 className="text-lg font-semibold text-gray-900" onClick={() => isOpenable && setIsOpen(!isOpen)}> Jadwal Pengambilan</h3>
+
+        {isOpen && (
+          <>
+            <div className="border-b border-gray-200 my-2"></div>
+            <div className="mt-2 text-sm text-gray-600">
+              <p className="my-4 font-sm text-muted-foreground">
+                Tentukan jam pengambilan
+              </p>
+
+              <div className="mb-4">
+                {/* item list header */}
+                <div className="flex">
+                  <p className="flex-1 font-semibold text-black text-base">List Item Blower:</p>
+                </div>
+
+                {/* item list content */}
+                <div className="mt-3">
+                  {transactionItems.map((item, index) => {
+                    return (
+                      <div key={index} className="py-2 flex justify-center items-center">
+                        <p className="flex flex-col flex-1 gap-1">
+                          <div className="flex">
+                            <span className="mr-2">{item.quantity}x </span>
+                            <span className="mr-2"> - </span>
+                            <span className="block overflow-hidden whitespace-nowrap text-ellipsis"> {item.service.name}</span>
+                          </div>
+
+                          <span className="font-bold text-[#72757C]"> Rp. {(item.totalPrice - item.promoPrice).toLocaleString('id-ID')} </span>
+                        </p>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+
+              <DateTimePicker
+                startFrom={new Date()}
+                onChange={({ date, time }) => {
+                  setSelectedDate(date);
+                  setSelectedTime(time);
+                }}
+                disabled={!isCurrent}
+                value={!isCurrent ? { date: selectedDate, time: selectedTime } : undefined}
+              />
+
+              {
+                isCurrent && (
+                  <div className="mt-4 flex justify-end">
+                    <button
+                      disabled={!selectedDate || !selectedTime || isLoading || !isCurrent}
+                      onClick={() => {
+                        handleCompleteTask();
+                      }}
+                      className="px-4 py-2 bg-mainColor text-white rounded-md hover:bg-mainColor/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-mainColor/100"
+                    >
+                      Sudah Diambil
+                    </button>
+                  </div>
+                )
+              }
+            </div>
+          </>
+        )}
       </div>
 
-      {isOpen && (
-        <>
-          <div className="border-b border-gray-200 my-2"></div>
-          <div className="mt-2 text-sm text-gray-600">
-            <p className="my-4 font-sm text-muted-foreground">
-              Tentukan jam pengambilan
-            </p>
-            <DateTimePicker
-              startFrom={new Date()}
-              onChange={({ date, time }) => {
-                setSelectedDate(date);
-                setSelectedTime(time);
-              }}
-              disabled={!isCurrent}
-              value={!isCurrent ? { date: selectedDate, time: selectedTime } : undefined}
-            />
-
-            <div className="mt-4 flex justify-end">
-              <button
-                disabled={!selectedDate || !selectedTime || isLoading || !isCurrent}
-                onClick={() => {
-                  handleCompleteTask();
-                }}
-                className="px-4 py-2 bg-mainColor text-white rounded-md hover:bg-mainColor/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-mainColor/100"
-              >
-                Sudah Diambil
-              </button>
-            </div>
-          </div>
-          <div className="border-b border-gray-200 my-2"></div>
-        </>
-      )}
+      <div className="pt-0.5">
+        {isOpen ? (
+          <ChevronUp
+            className={`w-4 h-4 text-gray-400 ${isOpenable ? 'cursor-pointer' : ''}`}
+            onClick={() => isOpenable && setIsOpen(!isOpen)}
+          />
+        ) : (
+          <ChevronDown
+            className={`w-4 h-4 text-gray-400 ${isOpenable ? 'cursor-pointer' : ''}`}
+            onClick={() => isOpenable && setIsOpen(!isOpen)}
+          />
+        )}
+      </div>
     </li>
   );
 };
 
 const TimelineItemPending = () => {
   const transaction = React.useContext(TransactionContext);
+  const transactionItems = transaction.transactionDetail?.details || [];
 
   const TASK_INDEX = 1;
   const isOpenable = TASK_INDEX <= transaction.transactionDetail?.deliveryStatus!;
   const isCurrent = TASK_INDEX === transaction.transactionDetail?.deliveryStatus!;
 
-  const [isOpen, setIsOpen] = useState(isOpenable);
+  const [isOpen, setIsOpen] = useState(isCurrent);
   const trxId = transaction.transactionDetail?.id; // replace with actual trxId from props or state
 
   const [isLoading, setIsLoading] = useState(false);
@@ -356,7 +384,7 @@ const TimelineItemPending = () => {
   }
 
   return (
-    <li className="mb-4 flex items-start relative">
+    <li className="mb-10 flex items-start relative">
       <div className="relative">
         <TimelineIcon
           taskIndex={TASK_INDEX}
@@ -376,19 +404,53 @@ const TimelineItemPending = () => {
                 {transaction.customerDetail?.address}, {transaction.customerDetail?.subDistrict}, {transaction.customerDetail?.district}, {transaction.customerDetail?.city}, {transaction.customerDetail?.province}
               </p>
 
-              <div className="mt-4 flex justify-end">
-                <button
-                  onClick={() => {
-                    handleCompleteTask();
-                  }}
-                  disabled={isLoading || !isCurrent}
-                  className="px-4 py-2 bg-mainColor text-white rounded-md hover:bg-mainColor/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-mainColor/100"
-                >
-                  Sudah diantar
-                </button>
+              <p className="font-bold text-base text-black">Catatan:</p>
+              <p className="mt-3 text-sm font-medium mb-4">
+                {transaction.transactionDetail?.notes}
+              </p>
+
+              <div>
+                {/* item list header */}
+                <div className="flex">
+                  <p className="flex-1 font-semibold text-black text-base">List Item Blower:</p>
+                </div>
+
+                {/* item list content */}
+                <div className="mt-3">
+                  {transactionItems.map((item, index) => {
+                    return (
+                      <div key={index} className="py-2 flex justify-center items-center">
+                        <p className="flex flex-col flex-1 gap-1">
+                          <div className="flex">
+                            <span className="mr-2">{item.quantity}x </span>
+                            <span className="mr-2"> - </span>
+                            <span className="block overflow-hidden whitespace-nowrap text-ellipsis"> {item.service.name}</span>
+                          </div>
+
+                          <span className="font-bold text-[#72757C]"> Rp. {(item.totalPrice - item.promoPrice).toLocaleString('id-ID')} </span>
+                        </p>
+                      </div>
+                    )
+                  })}
+                </div>
               </div>
+
+              {
+                isCurrent && (
+                  <div className="mt-4 flex justify-end">
+                    <button
+                      onClick={() => {
+                        handleCompleteTask();
+                      }}
+                      disabled={isLoading || !isCurrent}
+                      className="px-4 py-2 bg-mainColor text-white rounded-md hover:bg-mainColor/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-mainColor/100"
+                    >
+                      Sudah diantar
+                    </button>
+                  </div>
+                )
+              }
             </div>
-            <div className="border-b border-gray-200 my-2"></div>
           </>
         )}
       </div>
@@ -422,16 +484,8 @@ const TaskTimeline = ({ tasks }: { tasks: Task[] }) => {
     }
   }, [tasks]);
 
-  const completeTask = () => {
-    // todo: update status to backend
-
-    // if (currentIndex < tasks.length - 1) {
-    //   setCurrentIndex(currentIndex + 1);
-    // }
-  };
-
   return (
-    <ol className="relative border-s border-gray-200 dark:border-gray-700">
+    <ol className="relative border-s border-black/40 dark:border-gray-700">
       <TimelineItemPending />
       <TimelineItemInProgress />
       <TimelineItemCompleted />
