@@ -370,7 +370,7 @@ export default function TransactionDetail() {
       { key: "jumlah", label: "Jumlah" },
       // { key: "satuan", label: "Satuan" },
       { key: "harga", label: "Harga Satuan" },
-      // { key: "totalHarga", label: "Total Harga" },
+      { key: "totalHarga", label: "Total" },
       // { key: "promo", label: "Promo Satuan" },
     ];
 
