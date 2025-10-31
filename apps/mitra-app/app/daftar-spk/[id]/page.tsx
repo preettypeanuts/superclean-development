@@ -640,7 +640,7 @@ const TimelineItemCompleted = ({
           <TimelineIcon taskIndex={TASK_INDEX} currentTaskIndex={transaction.transactionDetail?.stateProcess!} />
         </div>
         <div className="flex-1">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Selesai & Diterima Pelanggan</h3>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white" onClick={() => isOpenable && setIsOpen(!isOpen)}>Selesai & Diterima Pelanggan</h3>
           {
             isOpen && (
               <>
@@ -694,9 +694,6 @@ const TimelineItemCompleted = ({
                   {
                     isCurrent && (
                       <div className="flex">
-                        {/* <Button className="flex-1 mx-2" variant="outline2" onClick={() => {
-                          handleBackTask();
-                        }}>Kembali</Button> */}
                         <Button
                           disabled={
                             !isCurrent || loading || beforeImages.length === 0 || afterImages.length === 0
@@ -799,7 +796,7 @@ const TimelineItemInProgress = ({
       </div>
       <div className="flex-1">
         {/* <time className="mb-1 text-sm font-normal leading-none text-gray-400 dark:text-gray-500">({task.date} - {task.time})</time> */}
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Dalam Proses Pengerjaan</h3>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white" onClick={() => isOpenable && setIsOpen(!isOpen)}>Dalam Proses Pengerjaan</h3>
         {
           isOpen && (
             <>
