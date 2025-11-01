@@ -3,13 +3,14 @@
 import { Header } from "@shared/components/Header";
 import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
 import { Wrapper } from "@shared/components/Wrapper";
+import { formatDateInput } from "@shared/utils/formatDate";
 import { useTransactionHistory } from "@shared/utils/useTransactionHistory";
 import { DatePicker } from "@ui-components/components/date-picker";
 import MultiSelect from "@ui-components/components/multi-select";
 import { SPKTableDetail } from "@ui-components/components/spk-table-detail";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@ui-components/components/ui/tabs";
 import { useToast } from "@ui-components/hooks/use-toast";
-import { LocationData, Transaction, TransactionItem } from "apps/admin-app/app/transaksi/spk/edit/[...id]/page";
+import { LocationData, LookupUser, Transaction, TransactionItem } from "apps/admin-app/app/transaksi/spk/edit/[...id]/page";
 import PhotoSection from "apps/admin-app/app/transaksi/spk/photoSection";
 import { Button } from "libs/ui-components/src/components/ui/button";
 import { Input } from "libs/ui-components/src/components/ui/input";
@@ -87,6 +88,7 @@ export default function PembayaranDetail() {
   const [transaction, setTransaction] = useState<Transaction | null>(null);
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [loading, setLoading] = useState(true);
+  const [updating, setUpdating] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const id = useMemo(() => {
@@ -114,6 +116,9 @@ export default function PembayaranDetail() {
   const [selectedLockedCleaningStaffList, setSelectedLockedCleaningStaffList] = useState<any[]>([]);
   const [selectedLockedBlowerStaffList, setSelectedLockedBlowerStaffList] = useState<any[]>([]);
   const [selectedLockedReworkStaffList, setSelectedLockedReworkStaffList] = useState<any[]>([]);
+
+  const [blowerStaffList, setBlowerStaffList] = useState<LookupUser[]>([]);
+  const [loadingBlowerStaff, setLoadingBlowerStaff] = useState(false);
 
   // State untuk rework staff
   const [reworkStaffList, setReworkStaffList] = useState<any[]>([]);
@@ -152,6 +157,104 @@ export default function PembayaranDetail() {
       });
     }
   }
+
+  const handleBlowerStaffChange = (selectedStaffIds: string[]) => {
+    if (selectedStaffIds.length === 0) {
+      setTransaction(prev => {
+        if (!prev) return null;
+        return {
+          ...prev,
+          blowers: [],
+          deliveryDate: undefined,
+          pickupDate: undefined,
+        };
+      });
+    } else {
+      const defaultDate = transaction?.trxDate || new Date().toISOString();
+      setTransaction(prev => {
+        if (!prev) return null;
+        return {
+          ...prev,
+          blowers: selectedStaffIds,
+          deliveryDate: prev.deliveryDate || defaultDate,
+          pickupDate: prev.pickupDate || defaultDate,
+        };
+      });
+    }
+  };
+
+  // Function untuk update detail SPK
+  const handleUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (transaction?.assigns.length === 0 && transaction?.blowers.length === 0) {
+      toast({
+        title: "Peringatan",
+        description: "Harap pilih minimal satu petugas",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (totals.isInvalidTotal) {
+      toast({
+        title: "Peringatan",
+        description: "Total pengurangan (promo + diskon) tidak boleh lebih besar dari total harga",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Prepare data sesuai expected request body
+    const updateData = {
+      discountPrice: transaction?.discountPrice || 0,
+      additionalFee: transaction?.additionalFee || 0,
+
+      trxDate: transaction?.trxDate,
+      deliveryDate: transaction?.deliveryDate && transaction.blowers.length > 0
+        ? new Date(transaction.deliveryDate).toISOString()
+        : null,
+      pickupDate: transaction?.pickupDate && transaction.blowers.length > 0
+        ? new Date(transaction.pickupDate).toISOString()
+        : null,
+      assigns: transaction?.assigns || [],
+      blowers: transaction?.blowers || [],
+      notes: transaction?.notes || "",
+    };
+
+    try {
+      setUpdating(true);
+
+      await api.put(`/transaction/${transaction?.id}/update`, updateData);
+      if (IS_WAITING_PAYMENT && selectedReworkStaff.length > 0) {
+        await api.put(`/transaction/${transaction?.id}/reassigned`, {
+          reassigns: selectedReworkStaff,
+        });
+      }
+
+      toast({
+        title: "Berhasil",
+        description: "SPK berhasil diupdate!",
+        variant: "default",
+      });
+
+      // reload
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+
+    } catch (error: any) {
+      console.error("Error response:", error.response?.data || error.message);
+      toast({
+        title: "Gagal",
+        description: "Terjadi kesalahan saat menambahkan SPK.",
+        variant: "destructive",
+      });
+    }
+    finally {
+      setUpdating(false);
+    }
+  };
 
   // Effect untuk mengambil label lokasi berdasarkan customer yang dipilih
   useEffect(() => {
@@ -258,6 +361,7 @@ export default function PembayaranDetail() {
   useEffect(() => {
     if (customer?.city) {
       fetchStaffListData("CLEANER", customer.city, setReworkStaffList);
+      fetchStaffListData("BLOWER", customer.city, setBlowerStaffList);
     }
   }, [customer?.city])
 
@@ -339,28 +443,6 @@ export default function PembayaranDetail() {
       toast({
         title: "Error",
         description: "Gagal menyelesaikan transaksi.",
-        variant: "destructive"
-      });
-    }
-  }
-
-  const handleRework = async () => {
-    try {
-      await api.put(`/transaction/${transaction?.id}/reassigned`, {
-        reassigns: selectedReworkStaff,
-      }); // Assign ulang rework staff
-
-      router.back();
-
-      toast({
-        title: "Sukses",
-        description: "Transaksi berhasil dikerjakan ulang.",
-        variant: "success"
-      });
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: "Gagal mengerjakan ulang transaksi.",
         variant: "destructive"
       });
     }
@@ -559,13 +641,23 @@ export default function PembayaranDetail() {
                 <div className="col-span-1 space-y-4">
                   <div className="flex items-center space-x-4">
                     <Label className="w-[40%] font-semibold">Petugas Blower</Label>
-                    <Textarea
-                      disabled
-                      className="resize-none"
-                      placeholder="Tidak ada petugas blower"
-                      value={selectedLockedBlowerStaffList.map(staff => staff?.fullname).join(", ") || "-"}
-                      rows={2}
-                    />
+                    {transaction.blowers.length > 0 ? (
+                      <MultiSelect
+                        staffList={blowerStaffList.sort((a, b) => a.lookupValue.localeCompare(b.lookupValue))}
+                        selected={transaction?.blowers || []}
+                        onSelectionChange={handleBlowerStaffChange}
+                        placeholder="Pilih petugas blower"
+                        loading={loadingBlowerStaff}
+                      />
+                    ) : (
+                        <Textarea
+                          disabled
+                          className="resize-none"
+                          placeholder="Tidak ada petugas blower"
+                          value={selectedLockedBlowerStaffList.map(staff => staff?.fullname).join(", ") || "-"}
+                          rows={2}
+                        />
+                    )}
                   </div>
 
                   {
@@ -574,33 +666,62 @@ export default function PembayaranDetail() {
                         <div className="flex items-center space-x-4">
                           <Label className="w-[40%] font-semibold">Tanggal Pengantaran</Label>
                           <DatePicker
-                            defaultTime={transaction?.deliveryDate ? `${formatTime(transaction.deliveryDate)}` : "08:00"}
-                            value={transaction.deliveryDate ? new Date(transaction.deliveryDate) : undefined}
-                            disabled
+                            startFrom={new Date(transaction?.trxDate)}
                             withTime
+                            defaultTime={new Date(transaction?.deliveryDate ? transaction.deliveryDate : transaction?.trxDate).toTimeString().slice(0, 5)}
+                            onChangeTime={(time) => {
+                              if (time && transaction?.deliveryDate) {
+                                const date = new Date(transaction.deliveryDate);
+                                const [hours, minutes] = time.split(':').map(Number);
+                                date.setHours(hours, minutes);
+
+                                setTransaction(prev => ({
+                                  ...prev,
+                                  deliveryDate: date.toISOString()
+                                } as Transaction));
+                              }
+                            }}
+                            value={transaction.deliveryDate ? new Date(transaction.deliveryDate) : new Date(transaction.trxDate)}
+                            onChange={(date) => {
+                              if (date) {
+                                setTransaction(prev => ({
+                                  ...prev,
+                                  deliveryDate: formatDateInput(date.toISOString())
+                                } as Transaction));
+                              }
+                            }}
                           />
-                          {/* <Textarea
-                            disabled
-                            className="resize-none"
-                            value={transaction.deliveryDate ? formatDate(transaction.deliveryDate) : "-"}
-                            rows={1}
-                          /> */}
                         </div>
 
                         <div className="flex items-center space-x-4">
                           <Label className="w-[40%] font-semibold">Tanggal Pengambilan</Label>
                           <DatePicker
-                            defaultTime={transaction?.pickupDate ? `${formatTime(transaction.pickupDate)}` : "08:00"}
-                            value={transaction.pickupDate ? new Date(transaction.pickupDate) : undefined}
-                            disabled
                             withTime
+                            defaultTime={new Date(transaction?.pickupDate ? transaction.pickupDate : transaction?.trxDate).toTimeString().slice(0, 5)}
+                            startFrom={new Date(transaction?.trxDate)}
+                            value={transaction.pickupDate ? new Date(transaction.pickupDate) : new Date(transaction.trxDate)}
+                            onChange={(date) => {
+                              if (date) {
+                                setTransaction(prev => ({
+                                  ...prev,
+                                  pickupDate: formatDateInput(date.toISOString())
+                                } as Transaction));
+                              }
+                            }}
+                            onChangeTime={(time) => {
+                              if (time) {
+                                const date = new Date(transaction.pickupDate || transaction.trxDate);
+                                const [hours, minutes] = time.split(':').map(Number);
+                                date.setHours(hours, minutes);
+
+                                setTransaction(prev => ({
+                                  ...prev,
+                                  pickupDate: date.toISOString()
+                                } as Transaction));
+                              }
+                            }}
                           />
-                          {/* <Textarea
-                            disabled
-                            className="resize-none"
-                            value={transaction.pickupDate ? formatDate(transaction.pickupDate) : "-"}
-                            rows={1}
-                          /> */}
+
                         </div>
                       </>
                     )
@@ -714,26 +835,45 @@ export default function PembayaranDetail() {
                 </div>
               </div>
 
+
               {/* Action Buttons */}
-              <div className="flex justify-end mt-6 gap-2">
-                <Button onClick={() => router.back()} variant="outline2">
-                  <TbArrowBack />
-                  Kembali
-                </Button>
-
-                {IS_PAID && (
-                  <Button onClick={handleComplete} variant="main">
-                    Konfirmasi
+              <div className="flex justify-between">
+                <div className="flex justify-start mt-6 gap-2">
+                  <Button onClick={() => router.back()} variant="outline2">
+                    <TbArrowBack />
+                    Kembali
                   </Button>
-                )}
+                </div>
 
-                {IS_WAITING_PAYMENT && (
-                  <Button
-                    disabled={selectedReworkStaff.length === 0}
-                    onClick={handleRework} variant="main">
-                    Simpan
-                  </Button>
-                )}
+                <div className="flex justify-end mt-6 gap-2">
+                  {
+                    !IS_REWORKED && (
+                      <Button
+                        type="submit"
+                        variant="main"
+                        onClick={handleUpdate}
+                        disabled={totals.isInvalidTotal || updating}
+                        loading={updating}
+                      >
+                        Simpan
+                      </Button>
+                    )
+                  }
+
+                  {IS_PAID && (
+                    <Button onClick={handleComplete} variant="main">
+                      Konfirmasi
+                    </Button>
+                  )}
+
+                  {/* {IS_WAITING_PAYMENT && (
+                    <Button
+                      disabled={selectedReworkStaff.length === 0}
+                      onClick={handleRework} variant="main">
+                      Simpan
+                    </Button>
+                  )} */}
+                </div>
               </div>
             </div>
           </TabsContent>
