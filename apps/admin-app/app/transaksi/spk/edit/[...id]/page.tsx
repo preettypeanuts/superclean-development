@@ -598,8 +598,6 @@ export default function TransactionDetail() {
 
         // Mode edit - update existing item
         const payload = {
-          serviceCategory: catLayananMapping[formDataTable.category] || formDataTable.category,
-          serviceCode: formDataTable.serviceCode,
           serviceType: formDataTable.tipe === "vakum" ? 0 : 1,
           servicePrice: formDataTable.harga,
           promoCode: formDataTable.promoCode,
@@ -608,8 +606,6 @@ export default function TransactionDetail() {
           quantity: Number(formDataTable.jumlah),
         }
 
-        // delete first and then create new
-        // await api.delete(`/transaction-detail/${transaction?.id}/${editMode}`);
         await api.put(`/transaction-detail/${transaction?.id}/${formDataTable.id}`, payload);
 
         toast({
