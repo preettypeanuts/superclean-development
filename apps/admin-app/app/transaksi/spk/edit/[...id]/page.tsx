@@ -178,6 +178,7 @@ export default function TransactionDetail() {
   const [editMode, setEditMode] = useState<string | null>(null);
 
   const [formDataTable, setFormDataTable] = useState({
+    id: "",
     category: "",
     serviceCode: "",
     jumlah: "",
@@ -398,6 +399,7 @@ export default function TransactionDetail() {
     const selectedCategory = Object.entries(catLayananMapping).find(([key, value]) => value === item.kategoriCode);
 
     setFormDataTable({
+      id: item.id,
       category: selectedCategory ? selectedCategory[0] : item.kategoriCode,
       serviceCode: item.kode,
       jumlah: item.jumlah.toString(),
@@ -415,6 +417,7 @@ export default function TransactionDetail() {
   // resetFormDialog function
   const resetFormDialog = () => {
     setFormDataTable({
+      id: "",
       category: "",
       serviceCode: "",
       jumlah: "",
@@ -606,8 +609,8 @@ export default function TransactionDetail() {
         }
 
         // delete first and then create new
-        await api.delete(`/transaction-detail/${transaction?.id}/${editMode}`);
-        await api.post(`/transaction-detail/${transaction?.id}/`, payload);
+        // await api.delete(`/transaction-detail/${transaction?.id}/${editMode}`);
+        await api.put(`/transaction-detail/${transaction?.id}/${formDataTable.id}`, payload);
 
         toast({
           title: "Berhasil",
