@@ -509,11 +509,41 @@ export default function PembayaranDetail() {
                 <div className="col-span-1 space-y-4">
                   <div className="flex items-center space-x-4">
                     <Label className="w-[40%] font-semibold">No Transaksi</Label>
-                    <Input
-                      disabled
-                      value={transaction.trxNumber}
-                      className="bg-muted/50 cursor-not-allowed"
-                    />
+                    {transaction.status === 3 ? (
+                      <div className="flex items-center space-x-2 w-full">
+                        <Input
+                          disabled
+                          value={transaction.trxNumber}
+                          className="bg-muted/50 cursor-not-allowed"
+                        />
+                        <Button
+                          type="submit"
+                          onClick={() => {
+                            const currentOrigin = globalThis.location.origin;
+                            const url = `${currentOrigin}/invoice/${transaction.trxNumber}`;
+
+                            const width = 393;
+                            const height = 852;
+                            const left = (window.screen.width - width) / 2;
+                            const top = (window.screen.height - height) / 2;
+
+                            window.open(
+                              url,
+                              '_blank',
+                              `width=${width},height=${height},left=${left},top=${top},noopener,noreferrer`
+                            );
+                          }}
+                        >
+                          Link Invoice
+                        </Button>
+                      </div>
+                    ) : (
+                      <Input
+                        disabled
+                        value={transaction.trxNumber}
+                        className="bg-muted/50 cursor-not-allowed"
+                      />
+                    )}
                   </div>
 
                   <div className="flex items-center space-x-4">

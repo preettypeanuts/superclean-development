@@ -307,7 +307,6 @@ export default function InquiryTransaksiDetail() {
     <>
       <Breadcrumbs label={`Detail Pembayaran - ${transaction.trxNumber}`} />
       <Wrapper className="relative">
-
         <Tabs defaultValue="detail" className="-mt-2">
           <TabsList>
             <TabsTrigger value="detail">Detail</TabsTrigger>
@@ -321,18 +320,50 @@ export default function InquiryTransaksiDetail() {
                 {/* Kolom Kiri */}
                 <div className="col-span-1 space-y-4">
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold">No Transaksi</Label>
-                    <Input
-                      disabled
-                      value={transaction.trxNumber}
-                      className="bg-muted/50 cursor-not-allowed"
-                    />
+                    <Label className="w-[40%] font-semibold">
+                      No Transaksi
+                    </Label>
+                    {transaction.status === 3 ? (
+                      <div className="flex items-center space-x-2 w-full">
+                        <Input
+                          disabled
+                          value={transaction.trxNumber}
+                          className="bg-muted/50 cursor-not-allowed"
+                        />
+                        <Button
+                          type="submit"
+                          onClick={() => {
+                            const currentOrigin = globalThis.location.origin;
+                            const url = `${currentOrigin}/invoice/${transaction.trxNumber}`;
+
+                            const width = 393;
+                            const height = 852;
+                            const left = (window.screen.width - width) / 2;
+                            const top = (window.screen.height - height) / 2;
+
+                            window.open(
+                              url,
+                              '_blank',
+                              `width=${width},height=${height},left=${left},top=${top},noopener,noreferrer`
+                            );
+                          }}
+                        >
+                          Link Invoice
+                        </Button>
+                      </div>
+                    ) : (
+                      <Input
+                        disabled
+                        value={transaction.trxNumber}
+                        className="bg-muted/50 cursor-not-allowed"
+                      />
+                    )}
                   </div>
 
                   <div className="flex items-center space-x-4">
                     <Label className="w-[40%] font-semibold">No WhatsApp</Label>
                     <Input
-                      value={customer?.noWhatsapp || ""}
+                      value={customer?.noWhatsapp || ''}
                       readOnly
                       className="bg-muted/50 cursor-not-allowed"
                       placeholder="No WhatsApp tidak tersedia"
@@ -340,9 +371,11 @@ export default function InquiryTransaksiDetail() {
                   </div>
 
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold">Nama Customer</Label>
+                    <Label className="w-[40%] font-semibold">
+                      Nama Customer
+                    </Label>
                     <Input
-                      value={customer?.fullname || ""}
+                      value={customer?.fullname || ''}
                       readOnly
                       className="bg-muted/50 cursor-not-allowed"
                       placeholder="Nama customer tidak tersedia"
@@ -353,7 +386,7 @@ export default function InquiryTransaksiDetail() {
                     <Label className="w-[40%] font-semibold">Alamat</Label>
                     <Textarea
                       className="resize-none bg-muted/50 cursor-not-allowed"
-                      value={customer?.address || ""}
+                      value={customer?.address || ''}
                       readOnly
                       rows={4}
                       placeholder="Alamat tidak tersedia"
@@ -366,7 +399,11 @@ export default function InquiryTransaksiDetail() {
                   <div className="flex items-center space-x-4">
                     <Label className="w-[40%] font-semibold">Status</Label>
                     <Input
-                      value={statusMapping[transaction.status as keyof typeof statusMapping] || "Unknown"}
+                      value={
+                        statusMapping[
+                          transaction.status as keyof typeof statusMapping
+                        ] || 'Unknown'
+                      }
                       readOnly
                       className="bg-muted/50 cursor-not-allowed"
                     />
@@ -425,22 +462,38 @@ export default function InquiryTransaksiDetail() {
                 {/* Kolom Kiri */}
                 <div className="col-span-1 space-y-4">
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold">Petugas Cleaning</Label>
+                    <Label className="w-[40%] font-semibold">
+                      Petugas Cleaning
+                    </Label>
                     <Textarea
                       disabled
                       className="resize-none"
-                      value={selectedCleaningStaffList.map(staff => staff.fullname).join(", ") || "-"}
+                      value={
+                        selectedCleaningStaffList
+                          .map((staff) => staff.fullname)
+                          .join(', ') || '-'
+                      }
                       rows={2}
                     />
                   </div>
 
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold">Tanggal Pengerjaan</Label>
+                    <Label className="w-[40%] font-semibold">
+                      Tanggal Pengerjaan
+                    </Label>
                     <DatePicker
                       withTime
                       disabled
-                      value={transaction.trxDate ? new Date(transaction.trxDate) : undefined}
-                      defaultTime={transaction?.trxDate ? `${formatTime(transaction.trxDate)}` : "08:00"}
+                      value={
+                        transaction.trxDate
+                          ? new Date(transaction.trxDate)
+                          : undefined
+                      }
+                      defaultTime={
+                        transaction?.trxDate
+                          ? `${formatTime(transaction.trxDate)}`
+                          : '08:00'
+                      }
                     />
                     {/* <Input
                       disabled
@@ -453,59 +506,89 @@ export default function InquiryTransaksiDetail() {
                 {/* Kolom Kanan */}
                 <div className="col-span-1 space-y-4">
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold">Petugas Blower</Label>
+                    <Label className="w-[40%] font-semibold">
+                      Petugas Blower
+                    </Label>
                     <Textarea
                       disabled
                       className="resize-none"
-                      value={selectedBlowerStaffList.map(staff => staff.fullname).join(", ") || "-"}
+                      value={
+                        selectedBlowerStaffList
+                          .map((staff) => staff.fullname)
+                          .join(', ') || '-'
+                      }
                       rows={2}
                     />
                   </div>
 
-                  {
-                    transaction.blowers.length > 0 && (
-                      <>
-                        <div className="flex items-center space-x-4">
-                          <Label className="w-[40%] font-semibold">Tanggal Pengantaran</Label>
-                          <DatePicker
-                            withTime
-                            disabled
-                            value={transaction.deliveryDate ? new Date(transaction.deliveryDate) : undefined}
-                            defaultTime={transaction?.deliveryDate ? `${formatTime(transaction.deliveryDate)}` : "08:00"}
-                          />
-                          {/* <Textarea
+                  {transaction.blowers.length > 0 && (
+                    <>
+                      <div className="flex items-center space-x-4">
+                        <Label className="w-[40%] font-semibold">
+                          Tanggal Pengantaran
+                        </Label>
+                        <DatePicker
+                          withTime
+                          disabled
+                          value={
+                            transaction.deliveryDate
+                              ? new Date(transaction.deliveryDate)
+                              : undefined
+                          }
+                          defaultTime={
+                            transaction?.deliveryDate
+                              ? `${formatTime(transaction.deliveryDate)}`
+                              : '08:00'
+                          }
+                        />
+                        {/* <Textarea
                             disabled
                             className="resize-none"
                             value={transaction.deliveryDate ? formatDate(transaction.deliveryDate) : "-"}
                             rows={1}
                           /> */}
-                        </div>
+                      </div>
 
-                        <div className="flex items-center space-x-4">
-                          <Label className="w-[40%] font-semibold">Tanggal Pengambilan</Label>
-                          <DatePicker
-                            withTime
-                            disabled
-                            value={transaction.pickupDate ? new Date(transaction.pickupDate) : undefined}
-                            defaultTime={transaction?.pickupDate ? `${formatTime(transaction.pickupDate)}` : "08:00"}
-                          />
-                          {/* <Textarea
+                      <div className="flex items-center space-x-4">
+                        <Label className="w-[40%] font-semibold">
+                          Tanggal Pengambilan
+                        </Label>
+                        <DatePicker
+                          withTime
+                          disabled
+                          value={
+                            transaction.pickupDate
+                              ? new Date(transaction.pickupDate)
+                              : undefined
+                          }
+                          defaultTime={
+                            transaction?.pickupDate
+                              ? `${formatTime(transaction.pickupDate)}`
+                              : '08:00'
+                          }
+                        />
+                        {/* <Textarea
                             disabled
                             className="resize-none"
                             value={transaction.pickupDate ? formatDate(transaction.pickupDate) : "-"}
                             rows={1}
                           /> */}
-                        </div>
-                      </>
-                    )
-                  }
+                      </div>
+                    </>
+                  )}
 
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold">Dikerjakan Ulang</Label>
+                    <Label className="w-[40%] font-semibold">
+                      Dikerjakan Ulang
+                    </Label>
                     <Textarea
                       disabled
                       className="resize-none"
-                      value={reworkStaffList.map(staff => staff.fullname).join(", ") || "-"}
+                      value={
+                        reworkStaffList
+                          .map((staff) => staff.fullname)
+                          .join(', ') || '-'
+                      }
                       rows={2}
                     />
                   </div>
@@ -530,7 +613,7 @@ export default function InquiryTransaksiDetail() {
                   currentPage={1}
                   limit={10}
                   fetchData={() => {
-                    console.log("Fetching data...");
+                    console.log('Fetching data...');
                   }}
                 />
               </div>
@@ -547,7 +630,7 @@ export default function InquiryTransaksiDetail() {
                       disabled
                       id="notes"
                       placeholder="Tidak ada catatan"
-                      value={transaction.notes || ""}
+                      value={transaction.notes || ''}
                       rows={5}
                       className="resize-none"
                     />
@@ -575,7 +658,9 @@ export default function InquiryTransaksiDetail() {
                   </div>
 
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold">Diskon Manual</Label>
+                    <Label className="w-[40%] font-semibold">
+                      Diskon Manual
+                    </Label>
                     <Input
                       disabled
                       value={formatRupiah(transaction.discountPrice)}
@@ -584,7 +669,9 @@ export default function InquiryTransaksiDetail() {
                   </div>
 
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold">Biaya Tambahan</Label>
+                    <Label className="w-[40%] font-semibold">
+                      Biaya Tambahan
+                    </Label>
                     <Input
                       disabled
                       value={formatRupiah(transaction.additionalFee || 0)}
@@ -593,7 +680,9 @@ export default function InquiryTransaksiDetail() {
                   </div>
 
                   <div className="flex items-center justify-between mt-5 px-3 py-2 bg-neutral-200 rounded-lg dark:bg-neutral-800">
-                    <Label className="w-[50%] font-bold text-2xl">Total Akhir</Label>
+                    <Label className="w-[50%] font-bold text-2xl">
+                      Total Akhir
+                    </Label>
                     <Label className="text-right font-bold text-2xl">
                       {formatRupiah(totals.finalPrice)}
                     </Label>
@@ -621,7 +710,7 @@ export default function InquiryTransaksiDetail() {
                   size="sm"
                   disabled={historyLoading}
                 >
-                  {historyLoading ? "Loading..." : "Refresh"}
+                  {historyLoading ? 'Loading...' : 'Refresh'}
                 </Button>
               </div>
 
@@ -640,7 +729,9 @@ export default function InquiryTransaksiDetail() {
                     <PiWarningCircleFill className="mr-2" />
                     Error memuat riwayat
                   </div>
-                  <p className="text-sm text-muted-foreground">{historyError}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {historyError}
+                  </p>
                   <Button
                     onClick={() => refetchHistory()}
                     variant="outline"
@@ -705,12 +796,11 @@ export default function InquiryTransaksiDetail() {
                 totalPromo: totals.totalPromo,
                 finalPrice: totals.finalPrice,
                 isInvalidTotal: totals.isInvalidTotal,
-                manualDiscount: transaction.discountPrice
+                manualDiscount: transaction.discountPrice,
               }}
             />
           </TabsContent>
         </Tabs>
-
       </Wrapper>
     </>
   );
