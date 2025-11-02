@@ -35,6 +35,9 @@ interface Customer {
 
 // Mapping untuk status
 const statusMapping = {
+  0: "Baru",
+  1: "Proses",
+  2: "Batal",
   3: "Menunggu Pembayaran",
   4: "Sudah DiBayar",
   5: "Selesai",
