@@ -534,7 +534,7 @@ export default function PembayaranDetail() {
                             );
                           }}
                         >
-                          Link Invoice
+                          Link Pembayaran
                         </Button>
                       </div>
                     ) : (

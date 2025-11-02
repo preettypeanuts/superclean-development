@@ -348,7 +348,7 @@ export default function InquiryTransaksiDetail() {
                             );
                           }}
                         >
-                          Link Invoice
+                          Link Pembayaran
                         </Button>
                       </div>
                     ) : (
