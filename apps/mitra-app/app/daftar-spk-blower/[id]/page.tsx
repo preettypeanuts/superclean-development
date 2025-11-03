@@ -162,8 +162,8 @@ const TimelineItemCompleted = () => {
                   <div className="grid grid-cols-5 mb-2 pb-3 border-b border-bottom-dash border-gray-500"></div>
 
                   <div className="flex my-0.5">
-                    <p className="flex flex-1 font-medium">Total</p>
-                    <p className="flex-1 text-right font-medium text-gray-800 text-lg">
+                    <p className="flex flex-1 font-bold">Total</p>
+                    <p className="flex-1 text-right font-bold text-gray-800 text-lg">
                       Rp {transaction.transactionDetail?.finalPrice?.toLocaleString('id-ID') || '0'}
                     </p>
                   </div>
