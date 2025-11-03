@@ -46,9 +46,9 @@ interface Karyawan {
 }
 
 const options = [
-  { label: "Semua", value: 0 },
-  { label: "Aktif", value: 1 },
-  { label: "Tidak-Aktif", value: 2 },
+  { label: "Semua", value: "" },
+  { label: "Aktif", value: "1" },
+  { label: "Tidak-Aktif", value: "0" },
 ]
 
 export default function KaryawanPage() {
@@ -57,16 +57,12 @@ export default function KaryawanPage() {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalData, setTotalData] = useState<number>(0);
   const [limit, setLimit] = useState<number>(10);
-  const [searchQuery, setSearchQuery] = useState("");
   const [branchFilter, setBranchFilter] = useState<string>("");
   const [roleFilter, setRoleFilter] = useState<string>("");
-  const [statusFilter, setStatusFilter] = useState<number>(0);
+  const [statusFilter, setStatusFilter] = useState<string>("");
 
   // Filter sementara
   const [searchInput, setSearchInput] = useState("");
-  // const [tempBranchFilter, setTempBranchFilter] = useState<string>("");
-  // const [tempRoleFilter, setTempRoleFilter] = useState<string>("");
-  // const [tempStatusFilter, setTempStatusFilter] = useState<number>(0);
 
 
   const totalPages = Math.max(1, Math.ceil(totalData / limit));
@@ -92,11 +88,7 @@ export default function KaryawanPage() {
   const handleResetFilter = () => {
     setBranchFilter("");
     setRoleFilter("");
-    setStatusFilter(0);
-
-    // setTempBranchFilter("");
-    // setTempRoleFilter("");
-    // setTempStatusFilter(0);
+    setStatusFilter(null);
   };
 
   const handleCancelFilter = () => {
@@ -117,9 +109,10 @@ export default function KaryawanPage() {
     try {
       let url = `/user/page?search=${searchInput}&page=${page}&limit=${limit}`;
 
-      if (statusFilter !== 0) {
+      if (statusFilter !== "") {
         url += `&status=${statusFilter}`;
       }
+
       if (branchFilter) {
         url += `&branchId=${branchFilter}`;
       }
@@ -221,7 +214,7 @@ export default function KaryawanPage() {
                   id="status"
                   placeholder="Pilih Status"
                   value={statusFilter}
-                  optionsNumber={options}
+                  optionsString={options}
                   onChange={setStatusFilter}
                 />
               </GroupFilter>
