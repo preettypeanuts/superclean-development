@@ -88,7 +88,7 @@ export default function KaryawanPage() {
   const handleResetFilter = () => {
     setBranchFilter("");
     setRoleFilter("");
-    setStatusFilter(null);
+    setStatusFilter("");
   };
 
   const handleCancelFilter = () => {
