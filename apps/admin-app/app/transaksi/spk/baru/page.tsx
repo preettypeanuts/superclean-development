@@ -399,6 +399,11 @@ export default function NewSPK() {
   };
 
   const handleBlowerStaffChange = (selectedStaffIds: string[]) => {
+    if (selectedStaffIds.length > 0) {
+      // only one blower staff can be selected
+      selectedStaffIds = [selectedStaffIds[0]];
+    }
+
     if (selectedStaffIds.length == 0) {
       // remove delivery date and accept date
       setFormData(prev => ({
