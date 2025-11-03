@@ -1766,8 +1766,8 @@ export default function PekerjaanBerlangsung() {
     // api put to edit item from transaction
     try {
       const payload = {
-        serviceCategory: item.category,
-        serviceCode: item.service,
+        // serviceCategory: item.category,
+        // serviceCode: item.service,
         serviceType: item.type === "vakum" ? 1 : 2,
         servicePrice: item.price,
         promoCode: item.promoCode || "",
@@ -1777,8 +1777,8 @@ export default function PekerjaanBerlangsung() {
       }
 
       // delete and add new item
-      await api.delete(`/transaction-detail/${transactionDetail.id}/${id}`);
-      await api.post(`/transaction-detail/${transactionDetail.id}`, payload);
+      // await api.delete(`/transaction-detail/${transactionDetail.id}/${id}`);
+      await api.put(`/transaction-detail/${transactionDetail.id}/${item.id}`, payload);
       // refresh transaction detail
 
       const updatedTransaction = await api.get(`/transaction/detail?trxNumber=${trxNumber}`);
