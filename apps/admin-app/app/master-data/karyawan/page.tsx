@@ -46,7 +46,7 @@ interface Karyawan {
 }
 
 const options = [
-  { label: "Semua", value: "" },
+  { label: "Semua", value: "-" },
   { label: "Aktif", value: "1" },
   { label: "Tidak-Aktif", value: "0" },
 ]
@@ -88,7 +88,7 @@ export default function KaryawanPage() {
   const handleResetFilter = () => {
     setBranchFilter("");
     setRoleFilter("");
-    setStatusFilter("");
+    setStatusFilter("-");
   };
 
   const handleCancelFilter = () => {
@@ -109,7 +109,7 @@ export default function KaryawanPage() {
     try {
       let url = `/user/page?search=${searchInput}&page=${page}&limit=${limit}`;
 
-      if (statusFilter !== "") {
+      if (statusFilter !== "-") {
         url += `&status=${statusFilter}`;
       }
 
