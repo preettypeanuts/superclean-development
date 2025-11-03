@@ -371,9 +371,9 @@ export default function BenefitKaryawanPage() {
                     onChange={setTempSelectedKaryawan}
                     statusFilter={tempStatus || 1}
                     branchFilter={tempBranch === 'all' ? '' : tempBranch}
-                    roleFilter={tempRole === 'all' ? '' : tempRole}
+                    roleFilter='CLEANER'
                     className="mb-4"
-                    placeholder="Pilih karyawan untuk laporan detail"
+                    placeholder="Pilih Karyawan"
                   />
                 ) : (
                   <>
