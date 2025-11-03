@@ -437,7 +437,7 @@ export default function BenefitKaryawanPage() {
               </GroupFilter>
 
               <Button variant="main" onClick={handleApplyFilters}>
-                Cari
+                Tampilkan
               </Button>
             </div>
 

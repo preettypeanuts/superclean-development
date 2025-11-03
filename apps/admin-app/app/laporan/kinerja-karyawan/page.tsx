@@ -472,7 +472,7 @@ export default function KinerjaKaryawanPage() {
               </GroupFilter>
 
               <Button variant="main" onClick={handleApplyFilters}>
-                Cari
+                Tampilkan
               </Button>
             </div>
 
