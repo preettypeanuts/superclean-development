@@ -59,7 +59,7 @@ export default function KaryawanPage() {
   const [limit, setLimit] = useState<number>(10);
   const [branchFilter, setBranchFilter] = useState<string>("");
   const [roleFilter, setRoleFilter] = useState<string>("");
-  const [statusFilter, setStatusFilter] = useState<string>("");
+  const [statusFilter, setStatusFilter] = useState<string>("-");
 
   // Filter sementara
   const [searchInput, setSearchInput] = useState("");
@@ -109,7 +109,7 @@ export default function KaryawanPage() {
     try {
       let url = `/user/page?search=${searchInput}&page=${page}&limit=${limit}`;
 
-      if (statusFilter !== "-") {
+      if (statusFilter !== "-" && statusFilter !== "") {
         url += `&status=${statusFilter}`;
       }
 
