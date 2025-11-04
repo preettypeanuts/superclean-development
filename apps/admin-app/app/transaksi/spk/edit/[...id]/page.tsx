@@ -709,10 +709,10 @@ export default function TransactionDetail() {
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (transaction?.assigns.length === 0 && transaction?.blowers.length === 0) {
+    if (transaction?.assigns.length === 0) {
       toast({
         title: "Peringatan",
-        description: "Harap pilih minimal satu petugas",
+        description: "Harap pilih minimal satu petugas cleaner",
         variant: "destructive",
       });
       return;
