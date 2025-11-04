@@ -513,7 +513,7 @@ export default function NewSPK() {
       return;
     }
 
-    if (formData.cleaningStaff.length === 0 && formData.blowerStaff.length === 0) {
+    if (formData.cleaningStaff.length === 0) {
       toast({
         title: "Peringatan",
         description: "Harap pilih minimal satu petugas",
