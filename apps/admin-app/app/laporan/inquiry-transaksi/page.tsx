@@ -492,7 +492,7 @@ export default function InquiryTransaksiPage() {
               </GroupFilter>
 
               <Button variant="main" onClick={handleSearch}>
-                Tampilkan
+                Cari
               </Button>
             </div>
 
@@ -505,72 +505,6 @@ export default function InquiryTransaksiPage() {
               {isExporting ? "Mengekspor..." : "Ekspor Data"}
             </Button>
           </div>
-
-          {/* Employee Detail Section */}
-          {/* {selectedEmployee && (
-            <div className="border rounded-lg p-4 bg-gray-50">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold">
-                  Detail Kinerja: {EmployeeOptions.find(emp => emp.value === selectedEmployee)?.label}
-                  {startDate && endDate && (
-                    <span className="text-sm font-normal text-gray-600 ml-2">
-                      ({formatDateAPI(startDate)} - {formatDateAPI(endDate)})
-                    </span>
-                  )}
-                </h3>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    // setSelectedEmployee("");
-                    setTempSelectedEmployee("");
-                    setShowDetail(false);
-                    setPdfData("");
-                  }}
-                >
-                  <IoClose size={16} />
-                  Tutup
-                </Button>
-              </div>
-
-              {isLoadingDetail ? (
-                <div className="flex items-center justify-center h-40">
-                  <div className="text-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
-                    <p className="text-gray-600">Memuat detail kinerja...</p>
-                  </div>
-                </div>
-              ) : showDetail && pdfData ? (
-                <div className="w-full h-[600px] border rounded bg-white">
-                  <iframe
-                    src={`data:application/pdf;base64,${pdfData}`}
-                    width="100%"
-                    height="100%"
-                    style={{ border: 'none' }}
-                    title={`Detail Kinerja ${EmployeeOptions.find(emp => emp.value === selectedEmployee)?.label}`}
-                  />
-                </div>
-              ) : selectedEmployee && !startDate ? (
-                <div className="flex items-center justify-center h-40">
-                  <p className="text-amber-600 bg-amber-50 px-4 py-2 rounded">
-                    ⚠️ Silakan pilih tanggal awal untuk melihat detail kinerja
-                  </p>
-                </div>
-              ) : selectedEmployee && !endDate ? (
-                <div className="flex items-center justify-center h-40">
-                  <p className="text-amber-600 bg-amber-50 px-4 py-2 rounded">
-                    ⚠️ Silakan pilih tanggal akhir untuk melihat detail kinerja
-                  </p>
-                </div>
-              ) : (
-                <div className="flex items-center justify-center h-40">
-                  <p className="text-red-600 bg-red-50 px-4 py-2 rounded">
-                    ❌ Gagal memuat detail kinerja. Silakan coba lagi.
-                  </p>
-                </div>
-              )}
-            </div>
-          )} */}
 
           {loading || loadingParams ? (
             <p className="text-center py-4">Memuat data...</p>

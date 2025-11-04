@@ -234,7 +234,7 @@ export default function NewKaryawan(): JSX.Element {
   };
 
   const handleCheckboxChange = (checked: boolean | 'indeterminate'): void => {
-    const status: 1 | 2 = checked === true ? 1 : 2;
+    const status: 1 | 0 = checked === true ? 1 : 0;
     handleSelectChange('status', status);
   };
 

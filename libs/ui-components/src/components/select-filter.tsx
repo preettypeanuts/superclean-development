@@ -45,9 +45,12 @@ export const SelectFilter = ({
   className = "",
   labelClassName = "",
 }: SelectFilterProps) => {
-  const options = optionsNumber
-    ? optionsNumber.map((opt) => ({ label: opt.label, value: opt.value.toString() }))
-    : (optionsString ? optionsString.map((opt) => ({ label: opt.label, value: opt.value })) : []);
+  let options: { label: string; value: string }[] = [];
+  if (optionsNumber) {
+    options = optionsNumber.map((opt) => ({ label: opt.label, value: opt.value.toString() }));
+  } else if (optionsString) {
+    options = optionsString.map((opt) => ({ label: opt.label, value: opt.value }));
+  }
 
   return (
     <div className={`flex items-center space-x-4 ${className}`}>

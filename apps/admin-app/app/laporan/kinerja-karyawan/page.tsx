@@ -36,7 +36,7 @@ export default function KinerjaKaryawanPage() {
   // filter sementara
   const [tempStatus, setTempStatus] = useState<number>(0);
   const [tempBranch, setTempBranch] = useState<string>('all');
-  const [tempRole, setTempRole] = useState<string>('all');
+  const [tempRole, setTempRole] = useState<string>('');
   const [tempSelectedKaryawan, setTempSelectedKaryawan] = useState<string>('');
   const [tempStartDate, setTempStartDate] = useState<Date>();
   const [tempEndDate, setTempEndDate] = useState<Date>();
@@ -215,7 +215,7 @@ export default function KinerjaKaryawanPage() {
   const handleResetFilters = () => {
     setTempStatus(0);
     setTempBranch('all');
-    setTempRole('all');
+    setTempRole('');
     setTempSelectedKaryawan('');
     setTempStartDate(undefined);
     setTempEndDate(undefined);
@@ -231,7 +231,7 @@ export default function KinerjaKaryawanPage() {
   const handleCancelFilters = () => {
     setTempStatus(statusFilter);
     setTempBranch(branchFilter || 'all');
-    setTempRole(roleFilter || 'all');
+    setTempRole(roleFilter || '');
     setTempSelectedKaryawan(selectedKaryawan);
     setTempStartDate(startDate);
     setTempEndDate(endDate);
@@ -405,9 +405,9 @@ export default function KinerjaKaryawanPage() {
                     onChange={setTempSelectedKaryawan}
                     statusFilter={tempStatus || 1}
                     branchFilter={tempBranch === 'all' ? '' : tempBranch}
-                    roleFilter={tempRole === 'all' ? '' : tempRole}
+                    roleFilter='CLEANER'
                     className="mb-4"
-                    placeholder="Pilih karyawan untuk laporan detail"
+                    placeholder="Pilih Karyawan"
                   />
                 ) : (
                   <>
@@ -415,8 +415,8 @@ export default function KinerjaKaryawanPage() {
                       <SelectFilter
                         label="Akses Pengguna"
                         id="role"
-                        placeholder="Pilih Role"
-                        value={tempRole || 'all'}
+                        placeholder="Pilih Akses Pengguna"
+                        value={tempRole || ''}
                         optionsString={[
                           { label: 'Staff Cleaning', value: 'CLEANER' },
                           { label: 'Staff Blower', value: 'BLOWER' },
@@ -472,7 +472,7 @@ export default function KinerjaKaryawanPage() {
               </GroupFilter>
 
               <Button variant="main" onClick={handleApplyFilters}>
-                Cari
+                Tampilkan
               </Button>
             </div>
 
