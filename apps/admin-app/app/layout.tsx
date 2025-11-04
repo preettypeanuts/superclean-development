@@ -1,14 +1,8 @@
 import ProtectedLayout from "@shared/components/ProtectedLayout";
-import { Sidebar } from "@shared/components/ui/Sidebar";
 import '@superclean-workspace/shared/styles';
-import { Toaster } from "libs/ui-components/src/components/ui/toaster";
 import { ThemeProvider } from 'next-themes';
-import { Figtree, Plus_Jakarta_Sans } from "next/font/google";
-
-const fightree = Figtree({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700", "800", "900"]
-});
+import { Plus_Jakarta_Sans } from "next/font/google";
+import Content from "./content";
 
 const jakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -19,8 +13,6 @@ export const metadata = {
   title: 'Superclean',
   description: 'Superclean Backoffice',
 };
-
-const noNavigation = ["/login", "/forgot-password", "/reset-password", "/invoice/[id]", "/rating", "payment/[id]"];
 
 
 export default function RootLayout({
@@ -41,13 +33,9 @@ export default function RootLayout({
       >
         <ThemeProvider enableSystem={false} defaultTheme='light' attribute="class">
           <ProtectedLayout>
-            <Sidebar />
-            <section className='flex flex-col max-h-[98lvh] h-[98lvh] w-full min-h-0'>
-              <Toaster />
-              <main className='flex-grow min-h-0'>
-                {children}
-              </main>
-            </section>
+            <Content>
+              {children}
+            </Content>
           </ProtectedLayout>
         </ThemeProvider>
       </body>

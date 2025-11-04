@@ -108,76 +108,39 @@ export const SPKTable: React.FC<DataTableProps> = ({ data, columns, currentPage,
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.map((spk, rowIndex) => (
-            <TableRow
-              key={spk.id}
-              className={rowIndex % 2 === 0 ? "" : "bg-neutral-300/20 dark:bg-neutral-500/20"}
-            >
-              {columns.map((header) => (
-                <TableCell key={header.key} className={header.key === "menu" ? "!w-fit" : ""}>
-                  {header.key === "menu" ? (
-                    <div className="w-fit flex gap-2 items-center">
-                      <Link href={`/transaksi/spk/edit/${spk.trxNumber}`}>
-                        <Button size="icon" variant="main">
-                          <HiMiniPencilSquare />
-                        </Button>
-                      </Link>
-                      {
-                        spk.status !== TrxStatus.CANCEL && (
-                          <Button
-                            size="icon"
-                            variant="destructive"
-                            onClick={() => {
-                              setSelectedSPK(spk);
-                              setIsDialogOpen(true);
-                            }}
-                          >
-                            <HiOutlineX className="h-6 w-6 text-white" />
-                          </Button>
-                        )
-                      }
-                    </div>
-                  ) : header.key === "status" ? (
-                      <p className={`badge rounded-md !font-medium border-0 ${statusColors[
-                        (() => {
-                          switch (spk.status) {
-                            case TrxStatus.TODO: return "Baru";
-                            case TrxStatus.ACCEPT: return "Proses";
-                            case TrxStatus.CANCEL: return "Batal";
-                            default: return spk.status;
+          {data.map((spk, rowIndex) => {
+            return (
+              <TableRow
+                key={spk.id}
+                className={rowIndex % 2 === 0 ? "" : "bg-neutral-300/20 dark:bg-neutral-500/20"}
+              >
+                {columns.map((header) => {
+                  return (
+                    <TableCell key={header.key} className={header.key === "menu" ? "!w-fit" : ""}>
+                      {header.key === "menu" ? (
+                        <div className="w-fit flex gap-2 items-center">
+                          <Link href={`/transaksi/spk/edit/${spk.trxNumber}`}>
+                            <Button size="icon" variant="main">
+                              <HiMiniPencilSquare />
+                            </Button>
+                          </Link>
+                          {
+                            spk.status !== TrxStatus.CANCEL && (
+                              <Button
+                                size="icon"
+                                variant="destructive"
+                                onClick={() => {
+                                  setSelectedSPK(spk);
+                                  setIsDialogOpen(true);
+                                }}
+                              >
+                                <HiOutlineX className="h-6 w-6 text-white" />
+                              </Button>
+                            )
                           }
-                        })()
-                      ]
-                        }`}>
-                      {(() => {
-                        switch (spk.status) {
-                          case TrxStatus.TODO: return "Baru";
-                          case TrxStatus.ACCEPT: return "Proses";
-                          case TrxStatus.CANCEL: return "Batal";
-                          default: return spk.status;
-                        }
-                      })()}
-                    </p>
-                  ) : header.key === "id" ? (
-                    <p>{(currentPage - 1) * limit + rowIndex + 1}</p>
-                  ) : header.key === "cleaner" ? (
-                    <p className="cursor-default" title={spk.cleaner}>
-                      {spk.cleaner.length > 30
-                        ? spk.cleaner.slice(0, 30) + "..."
-                        : spk.cleaner}
-                    </p>
-                  ) : header.key === "includeBlower" ? (
-                    <p>{spk.includeBlower === 1 ? "Ya" : "Tidak"}</p>
-                  ) :
-                    header.key === "noWhatsapp" ? (
-                      <p>{spk.noWhatsapp}</p>
-                    ) : header.key === "finalPrice" ? (
-                      <p>{formatRupiah(Number(spk.finalPrice))}</p>
-                    ) : header.key === "trxDate" ? (
-                                  <p>{new Date(spk.trxDate).toLocaleDateString('en-GB')}</p>
-                    ) : header.key === "trxNumber" ? (
-                      <div className="flex items-center">
-                        <div className={`mr-2 rounded-full w-[6px] h-[6px] ${pingColor[
+                        </div>
+                      ) : header.key === "status" ? (
+                        <p className={`badge rounded-md !font-medium border-0 ${statusColors[
                           (() => {
                             switch (spk.status) {
                               case TrxStatus.TODO: return "Baru";
@@ -187,17 +150,58 @@ export const SPKTable: React.FC<DataTableProps> = ({ data, columns, currentPage,
                             }
                           })()
                         ]
-                          }`}
-                        ></div>
-                        <p>{spk.trxNumber}</p>
-                      </div>
-                    ) : (
-                      spk[header.key as keyof SPK]
-                    )}
-                </TableCell>
-              ))}
-            </TableRow>
-          ))}
+                          }`}>
+                          {(() => {
+                            switch (spk.status) {
+                              case TrxStatus.TODO: return "Baru";
+                              case TrxStatus.ACCEPT: return "Proses";
+                              case TrxStatus.CANCEL: return "Batal";
+                              default: return spk.status;
+                            }
+                          })()}
+                        </p>
+                      ) : header.key === "id" ? (
+                        <p>{(currentPage - 1) * limit + rowIndex + 1}</p>
+                      ) : header.key === "cleaner" ? (
+                        <p className="cursor-default" title={spk.cleaner}>
+                          {spk.cleaner?.length > 30
+                            ? spk.cleaner.slice(0, 30) + "..."
+                            : spk.cleaner}
+                        </p>
+                      ) : header.key === "includeBlower" ? (
+                        <p>{spk.includeBlower === 1 ? "Ya" : "Tidak"}</p>
+                      ) :
+                        header.key === "noWhatsapp" ? (
+                          <p>{spk.noWhatsapp}</p>
+                        ) : header.key === "finalPrice" ? (
+                          <p>{formatRupiah(Number(spk.finalPrice))}</p>
+                        ) : header.key === "trxDate" ? (
+                          <p>{new Date(spk.trxDate).toLocaleDateString('en-GB')}</p>
+                        ) : header.key === "trxNumber" ? (
+                          <div className="flex items-center">
+                            <div className={`mr-2 rounded-full w-[6px] h-[6px] ${pingColor[
+                              (() => {
+                                switch (spk.status) {
+                                  case TrxStatus.TODO: return "Baru";
+                                  case TrxStatus.ACCEPT: return "Proses";
+                                  case TrxStatus.CANCEL: return "Batal";
+                                  default: return spk.status;
+                                }
+                              })()
+                            ]
+                              }`}
+                            ></div>
+                            <p>{spk.trxNumber}</p>
+                          </div>
+                        ) : (
+                          spk[header.key as keyof SPK]
+                        )}
+                    </TableCell>
+                  )
+                })}
+              </TableRow>
+            )
+          })}
         </TableBody>
       </Table>
 
