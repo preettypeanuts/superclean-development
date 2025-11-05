@@ -45,8 +45,6 @@ export const SPKTable: React.FC<DataTableProps> = ({ data, columns, currentPage,
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const handleDelete = async () => {
-    console.log(selectedSPK);
-
     try {
       const response = await api.put(`/transaction/${selectedSPK?.id}/status`, {
         status: TrxStatus.CANCEL
