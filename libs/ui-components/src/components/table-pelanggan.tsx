@@ -1,21 +1,13 @@
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
-import { Button } from "./ui/button";
+import { DeleteDialog } from "libs/ui-components/src/components/delete-dialog";
+import { useToast } from "libs/ui-components/src/hooks/use-toast";
+import { api } from "libs/utils/apiClient";
+import Link from "next/link";
+import { useState } from "react";
 import { HiMiniPencilSquare } from "react-icons/hi2";
 import { IoMdTrash } from "react-icons/io";
-import { formatDate } from "../../../utils/formatDate"
-import Link from "next/link";
-import { api } from "libs/utils/apiClient";
-import { useToast } from "libs/ui-components/src/hooks/use-toast"
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "./ui/dialog";
-import { useState } from "react";
-import { DeleteDialog } from "libs/ui-components/src/components/delete-dialog";
+import { formatDate } from "../../../utils/formatDate";
+import { Button } from "./ui/button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
 
 interface TableHeader {
     key: string;
@@ -116,7 +108,7 @@ export const TablePelanggan: React.FC<DataTableProps> = ({ data, columns, curren
                                         </Button>
                                     </div>
                                 ) : header.
-                                key === "createdAt" ? (
+                                        key === "createdAt" ? (
                                     <p>{formatDate(String(customer[header.key as keyof Pelanggan]))}</p>
                                 ) : header.key === "address" ? (
                                     <p className="truncate-2 untruncate">
@@ -130,8 +122,7 @@ export const TablePelanggan: React.FC<DataTableProps> = ({ data, columns, curren
                                     //         {customer[header.key as keyof Pelanggan] === 1 ? "Aktif" : "Tidak Aktif"}
                                     //     </p>
                                 ) : header.key === "fullname" ? (
-                                    <div className="flex items-center">
-                                        <span className={`mr-2 ${customer["status"] === 1 ? "bg-green-500" : "bg-red-500"} rounded-full w-[6px] h-[6px]`}></span>
+                                                    <div className="flex items-center">
                                         <p>{customer[header.key as keyof Pelanggan]}</p>
                                     </div>
                                 ) : (
