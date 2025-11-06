@@ -1,21 +1,21 @@
 "use client";
-import Link from "next/link";
-import { useEffect, useState, useMemo, useCallback } from "react";
-import { Wrapper } from "@shared/components/Wrapper";
-import { Input } from "libs/ui-components/src/components/ui/input";
-import { Button } from "libs/ui-components/src/components/ui/button";
-import { LuPlus } from "react-icons/lu";
-import { Search } from "lucide-react";
-import { SelectData } from "libs/ui-components/src/components/select-data";
-import { PaginationNumber } from "libs/ui-components/src/components/pagination-number";
-import { TablePelanggan } from "libs/ui-components/src/components/table-pelanggan";
-import { apiClient } from "libs/utils/apiClient";
-import { IoClose } from "react-icons/io5";
-import { Label } from "@ui-components/components/ui/label";
 import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
-import { useLocationData, getCitiesLabel, LocationData } from "libs/utils/useLocationData";
+import { Wrapper } from "@shared/components/Wrapper";
 import { GroupFilter } from "@ui-components/components/group-filter";
 import { SelectFilter } from "@ui-components/components/select-filter";
+import { Label } from "@ui-components/components/ui/label";
+import { PaginationNumber } from "libs/ui-components/src/components/pagination-number";
+import { SelectData } from "libs/ui-components/src/components/select-data";
+import { TablePelanggan } from "libs/ui-components/src/components/table-pelanggan";
+import { Button } from "libs/ui-components/src/components/ui/button";
+import { Input } from "libs/ui-components/src/components/ui/input";
+import { apiClient } from "libs/utils/apiClient";
+import { getCitiesLabel, LocationData, useLocationData } from "libs/utils/useLocationData";
+import { Search } from "lucide-react";
+import Link from "next/link";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { IoClose } from "react-icons/io5";
+import { LuPlus } from "react-icons/lu";
 
 const DataHeaderPelanggan = [
   { key: "id", label: "#" },
@@ -240,14 +240,16 @@ export default function PelangganPage() {
           ) : dataPelanggan.length === 0 ? (
               <p className="text-center py-4"> Data pelanggan tidak ditemukan.</p>
           ) : (
-            <TablePelanggan
-              key={`${currentPage}-${limit}`}
-              data={processedPelanggan}
-              columns={DataHeaderPelanggan}
-              currentPage={currentPage}
-              limit={limit}
-              fetchData={fetchPelanggan}
-            />
+                <div className="overflow-x-auto">
+                  <TablePelanggan
+                    key={`${currentPage}-${limit}`}
+                    data={processedPelanggan}
+                    columns={DataHeaderPelanggan}
+                    currentPage={currentPage}
+                    limit={limit}
+                    fetchData={fetchPelanggan}
+                  />
+                </div>
           )}
         </div>
 

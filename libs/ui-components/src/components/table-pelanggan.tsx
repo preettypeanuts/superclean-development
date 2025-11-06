@@ -1,21 +1,13 @@
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
-import { Button } from "./ui/button";
+import { DeleteDialog } from "libs/ui-components/src/components/delete-dialog";
+import { useToast } from "libs/ui-components/src/hooks/use-toast";
+import { api } from "libs/utils/apiClient";
+import Link from "next/link";
+import { useState } from "react";
 import { HiMiniPencilSquare } from "react-icons/hi2";
 import { IoMdTrash } from "react-icons/io";
-import { formatDate } from "../../../utils/formatDate"
-import Link from "next/link";
-import { api } from "libs/utils/apiClient";
-import { useToast } from "libs/ui-components/src/hooks/use-toast"
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "./ui/dialog";
-import { useState } from "react";
-import { DeleteDialog } from "libs/ui-components/src/components/delete-dialog";
+import { formatDate } from "../../../utils/formatDate";
+import { Button } from "./ui/button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
 
 interface TableHeader {
     key: string;
@@ -79,69 +71,82 @@ export const TablePelanggan: React.FC<DataTableProps> = ({ data, columns, curren
         }
     };
     return (
-        <Table>
-            <TableHeader>
-                <TableRow>
-                    {columns.map((header) => (
-                        <TableHead key={header.key} className={`${header.key === "menu" && "w-[100px]"}`}>
-                            {header.label}
-                        </TableHead>
-                    ))}
-                </TableRow>
-            </TableHeader>
-            <TableBody>
-                {data.map((customer, rowIndex) => (
-                    <TableRow key={customer.id} className={rowIndex % 2 === 0 ? "" : "bg-neutral-300/20 dark:bg-neutral-500/20"}>
+        <>
+            <Table className="w-full min-w-max">
+                <TableHeader>
+                    <TableRow className="flex-row">
                         {columns.map((header) => (
-                            <TableCell key={header.key} className={`${header.key === "menu" && "!w-fit"} truncate-paren`}>
-                                {header.key === "menu" ? (
-                                    <div className="w-fit flex gap-2">
-                                        <Link href={`/master-data/pelanggan/edit/${customer.id}`}>
-                                            <Button
-                                                size={"icon"}
-                                                variant={"main"}
-                                            >
-                                                <HiMiniPencilSquare />
-                                            </Button>
-                                        </Link>
-                                        <Button
-                                            size="icon"
-                                            variant="destructive"
-                                            onClick={() => {
-                                                setSelectedCustomer(customer);
-                                                setIsDialogOpen(true);
-                                            }}
-                                        >
-                                            <IoMdTrash />
-                                        </Button>
-                                    </div>
-                                ) : header.
-                                key === "createdAt" ? (
-                                    <p>{formatDate(String(customer[header.key as keyof Pelanggan]))}</p>
-                                ) : header.key === "address" ? (
-                                    <p className="truncate-2 untruncate">
-                                        {customer[header.key as keyof Pelanggan]}
-                                    </p>
-                                ) : header.key === "id" ? (
-                                    <p>{(currentPage - 1) * limit + rowIndex + 1}</p>
-                                    // ) : header.key === "status" ? (
-                                    //     <p className={`badge truncate dark:bg-opacity-70 rounded-md !font-medium border-0 ${customer[header.key as keyof Pelanggan] === 1 ? "bg-green-200 text-green-900 dark:bg-green-500 dark:text-green-100" : "bg-red-200 text-red-900 dark:bg-red-500 dark:text-red-100"}`}>
-                                    //         <span className={`mr-2 ${customer["status"] === 1 ?  "bg-green-500 dark:bg-green-200" : "bg-red-500 dark:bg-red-200"} rounded-full w-[6px] h-[6px]`}></span>
-                                    //         {customer[header.key as keyof Pelanggan] === 1 ? "Aktif" : "Tidak Aktif"}
-                                    //     </p>
-                                ) : header.key === "fullname" ? (
-                                    <div className="flex items-center">
-                                        <span className={`mr-2 ${customer["status"] === 1 ? "bg-green-500" : "bg-red-500"} rounded-full w-[6px] h-[6px]`}></span>
-                                        <p>{customer[header.key as keyof Pelanggan]}</p>
-                                    </div>
-                                ) : (
-                                    customer[header.key as keyof Pelanggan]
-                                )}
-                            </TableCell>
+                            <TableHead
+                                key={header.key}
+                                className={
+                                    header.key === "menu" ? "w-[100px]" :
+                                        header.key === "address" ? "min-w-[250px] max-w-[400px]" :
+                                            header.key === "city" ? "min-w-[150px]" :
+                                                "min-w-[120px] max-w-[200px] "
+                                }
+                            >
+                                {header.label}
+                            </TableHead>
                         ))}
                     </TableRow>
-                ))}
-            </TableBody>
+                </TableHeader>
+                <TableBody>
+                    {data.map((customer, rowIndex) => (
+                        <TableRow key={customer.id} className={rowIndex % 2 === 0 ? "" : "bg-neutral-300/20 dark:bg-neutral-500/20"}>
+                            {columns.map((header) => (
+                                <TableCell
+                                    key={header.key}
+                                    title={String(customer[header.key as keyof Pelanggan])}
+                                    className={
+                                        header.key === "menu" ? "w-fit" :
+                                            header.key === "address" ? "min-w-[250px] max-w-[400px]" :
+                                                header.key === "city" ? "min-w-[150px]" :
+                                                    "min-w-[120px] max-w-[200px]"
+                                    }
+                                >
+                                    {header.key === "menu" ? (
+                                        <div className="w-fit flex gap-2">
+                                            <Link href={`/master-data/pelanggan/edit/${customer.id}`}>
+                                                <Button
+                                                    size={"icon"}
+                                                    variant={"main"}
+                                                >
+                                                    <HiMiniPencilSquare />
+                                                </Button>
+                                            </Link>
+                                            <Button
+                                                size="icon"
+                                                variant="destructive"
+                                                onClick={() => {
+                                                    setSelectedCustomer(customer);
+                                                    setIsDialogOpen(true);
+                                                }}
+                                            >
+                                                <IoMdTrash />
+                                            </Button>
+                                        </div>
+                                    ) : header.key === "createdAt" ? (
+                                        <p>{formatDate(String(customer[header.key as keyof Pelanggan]))}</p>
+                                    ) : header.key === "address" ? (
+                                                <p className="line-clamp-2" title={String(customer[header.key as keyof Pelanggan])}>
+                                            {customer[header.key as keyof Pelanggan]}
+                                        </p>
+                                    ) : header.key === "id" ? (
+                                                    <p>{(currentPage - 1) * limit + rowIndex + 1}</p>
+                                    ) : header.key === "fullname" ? (
+                                        <div className="flex items-center">
+                                            <p>{customer[header.key as keyof Pelanggan]}</p>
+                                        </div>
+                                    ) : (
+                                        customer[header.key as keyof Pelanggan]
+                                    )}
+                                </TableCell>
+                            ))}
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
+
             {/* Delete Confirmation Dialog */}
             {selectedCustomer && (
                 <DeleteDialog
@@ -155,6 +160,6 @@ export const TablePelanggan: React.FC<DataTableProps> = ({ data, columns, curren
                     confirmLabel="Hapus"
                 />
             )}
-        </Table>
+        </>
     );
 };
