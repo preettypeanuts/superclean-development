@@ -590,6 +590,8 @@ const TimelineItemCompleted = ({
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(isCurrent);
 
+  const completeDisabled = !isCurrent || loading || beforeImages.length === 0 || afterImages.length === 0;
+
   useEffect(() => {
     setIsOpen(isCurrent);
   }, [isCurrent]);
@@ -692,13 +694,11 @@ const TimelineItemCompleted = ({
                   </div>
 
                   {
-                    isCurrent && (
+                    true && (
                       <div className="flex">
                         <Button
-                          disabled={
-                            !isCurrent || loading || beforeImages.length === 0 || afterImages.length === 0
-                          }
-                          className="flex-1 mx-2" variant="main" onClick={() => {
+                          disabled={completeDisabled}
+                          className={`flex-1 mx-2 ${completeDisabled ? "opacity-50 cursor-not-allowed" : ""}`} variant={completeDisabled ? "disabled" : "main"} onClick={() => {
                             handleCompleteTask();
                           }}>Selesai</Button>
                       </div>
