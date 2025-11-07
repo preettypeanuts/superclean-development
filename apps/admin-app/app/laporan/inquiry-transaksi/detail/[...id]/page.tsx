@@ -355,7 +355,7 @@ export default function InquiryTransaksiDetail() {
                 {/* Kolom Kiri */}
                 <div className="col-span-1 space-y-4">
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold">
+                    <Label className="w-[40%] font-semibold shrink-0">
                       No Transaksi
                     </Label>
                     {transaction.status === 3 ? (
@@ -396,7 +396,7 @@ export default function InquiryTransaksiDetail() {
                   </div>
 
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold">No WhatsApp</Label>
+                    <Label className="w-[40%] font-semibold shrink-0">No WhatsApp</Label>
                     <Input
                       value={customer?.noWhatsapp || ''}
                       readOnly
@@ -406,7 +406,7 @@ export default function InquiryTransaksiDetail() {
                   </div>
 
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold">
+                    <Label className="w-[40%] font-semibold shrink-0">
                       Nama Customer
                     </Label>
                     <Input
@@ -418,7 +418,7 @@ export default function InquiryTransaksiDetail() {
                   </div>
 
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold">Alamat</Label>
+                    <Label className="w-[40%] font-semibold shrink-0">Alamat</Label>
                     <Textarea
                       className="resize-none bg-muted/50 cursor-not-allowed"
                       value={customer?.address || ''}
@@ -432,7 +432,7 @@ export default function InquiryTransaksiDetail() {
                 {/* Kolom Kanan */}
                 <div className="col-span-1 space-y-4">
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold">Status</Label>
+                    <Label className="w-[40%] font-semibold shrink-0">Status</Label>
                     <Input
                       value={
                         statusMapping[
@@ -446,7 +446,7 @@ export default function InquiryTransaksiDetail() {
 
                   {/* Provinsi - View Only */}
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold">Provinsi</Label>
+                    <Label className="w-[40%] font-semibold shrink-0">Provinsi</Label>
                     <Input
                       value={locationLabels.provinceName}
                       placeholder="Provinsi tidak tersedia"
@@ -457,7 +457,7 @@ export default function InquiryTransaksiDetail() {
 
                   {/* Kab/Kota - View Only */}
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold">Kab/Kota</Label>
+                    <Label className="w-[40%] font-semibold shrink-0">Kab/Kota</Label>
                     <Input
                       value={locationLabels.cityName}
                       placeholder="Kota/Kabupaten tidak tersedia"
@@ -468,7 +468,7 @@ export default function InquiryTransaksiDetail() {
 
                   {/* Kecamatan - View Only */}
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold">Kecamatan</Label>
+                    <Label className="w-[40%] font-semibold shrink-0">Kecamatan</Label>
                     <Input
                       value={locationLabels.districtName}
                       placeholder="Kecamatan tidak tersedia"
@@ -479,7 +479,7 @@ export default function InquiryTransaksiDetail() {
 
                   {/* Kelurahan - View Only */}
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold">Kelurahan</Label>
+                    <Label className="w-[40%] font-semibold shrink-0">Kelurahan</Label>
                     <Input
                       value={locationLabels.subDistrictName}
                       placeholder="Kelurahan tidak tersedia"
@@ -497,10 +497,22 @@ export default function InquiryTransaksiDetail() {
                 {/* Kolom Kiri */}
                 <div className="col-span-1 space-y-4">
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold">
+                    <Label className="w-[40%] font-semibold shrink-0">
                       Petugas Cleaning
                     </Label>
-                    <Textarea
+                    <div className="flex-1">
+                      {/* cleaning list */}
+                      {cleanerStaffList.filter(staff => transaction.assigns.includes(staff.lookupKey)).length > 0 ? (
+                        cleanerStaffList.filter(staff => transaction.assigns.includes(staff.lookupKey)).map((staff) => (
+                          <div key={staff.lookupKey} className="inline-block m-1 bg-baseLight/50 dark:bg-baseDark/50 text-teal-800 dark:text-teal-400 border-mainColor dark:border-teal-400 mx-1 rounded-full px-2 py-0.5 flex-shrink-0">
+                            {staff.lookupValue}
+                          </div>
+                        ))
+                      ) : (
+                        <p className="text-gray-500">Tidak ada petugas cleaning</p>
+                      )}
+                    </div>
+                    {/* <Textarea
                       disabled
                       className="resize-none"
                       value={
@@ -509,11 +521,11 @@ export default function InquiryTransaksiDetail() {
                           .join(', ') || '-'
                       }
                       rows={2}
-                    />
+                    /> */}
                   </div>
 
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold">
+                    <Label className="w-[40%] font-semibold shrink-0">
                       Tanggal Pengerjaan
                     </Label>
                     <DatePicker
@@ -541,10 +553,20 @@ export default function InquiryTransaksiDetail() {
                 {/* Kolom Kanan */}
                 <div className="col-span-1 space-y-4">
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold">
+                    <Label className="w-[40%] font-semibold shrink-0">
                       Petugas Blower
                     </Label>
-                    <Textarea
+                    {/* blower list */}
+                    {blowerStaffList.filter(staff => transaction.assigns.includes(staff.lookupKey)).length > 0 ? (
+                      blowerStaffList.filter(staff => transaction.assigns.includes(staff.lookupKey)).map((staff) => (
+                        <div key={staff.lookupKey} className="inline-block m-1 bg-baseLight/50 dark:bg-baseDark/50 text-teal-800 dark:text-teal-400 border-mainColor dark:border-teal-400 mx-1 rounded-full px-2 py-0.5 flex-shrink-0">
+                          {staff.lookupValue}
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-gray-500 text-center">Tidak ada petugas blower</p>
+                    )}
+                    {/* <Textarea
                       disabled
                       className="resize-none"
                       value={
@@ -553,13 +575,13 @@ export default function InquiryTransaksiDetail() {
                           .join(', ') || '-'
                       }
                       rows={2}
-                    />
+                    /> */}
                   </div>
 
-                  {transaction.blowers.length > 0 && (
+                  {transaction.blowers.length > 0 && transaction.deliveryDate && (
                     <>
                       <div className="flex items-center space-x-4">
-                        <Label className="w-[40%] font-semibold">
+                        <Label className="w-[40%] font-semibold shrink-0">
                           Tanggal Pengantaran
                         </Label>
                         <DatePicker
@@ -585,7 +607,7 @@ export default function InquiryTransaksiDetail() {
                       </div>
 
                       <div className="flex items-center space-x-4">
-                        <Label className="w-[40%] font-semibold">
+                        <Label className="w-[40%] font-semibold shrink-0">
                           Tanggal Pengambilan
                         </Label>
                         <DatePicker
@@ -594,12 +616,12 @@ export default function InquiryTransaksiDetail() {
                           value={
                             transaction.pickupDate
                               ? new Date(transaction.pickupDate)
-                              : undefined
+                              : new Date(transaction.deliveryDate)
                           }
                           defaultTime={
                             transaction?.pickupDate
                               ? `${formatTime(transaction.pickupDate)}`
-                              : '08:00'
+                              : `${formatTime(transaction.deliveryDate)}`
                           }
                         />
                         {/* <Textarea
@@ -613,10 +635,20 @@ export default function InquiryTransaksiDetail() {
                   )}
 
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold">
+                    <Label className="w-[40%] font-semibold shrink-0">
                       Dikerjakan Ulang
                     </Label>
-                    <Textarea
+                    {/* blower list */}
+                    {cleanerStaffList.filter(staff => transaction.reassigns.includes(staff.lookupKey)).length > 0 ? (
+                      cleanerStaffList.filter(staff => transaction.reassigns.includes(staff.lookupKey)).map((staff) => (
+                        <div key={staff.lookupKey} className="inline-block m-1 bg-baseLight/50 dark:bg-baseDark/50 text-teal-800 dark:text-teal-400 border-mainColor dark:border-teal-400 mx-1 rounded-full px-2 py-0.5 flex-shrink-0">
+                          {staff.lookupValue}
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-gray-500 text-center">Tidak ada petugas pekerja ulang</p>
+                    )}
+                    {/* <Textarea
                       disabled
                       className="resize-none"
                       value={
@@ -625,7 +657,7 @@ export default function InquiryTransaksiDetail() {
                           .join(', ') || '-'
                       }
                       rows={2}
-                    />
+                    /> */}
                   </div>
                 </div>
               </div>
@@ -658,7 +690,7 @@ export default function InquiryTransaksiDetail() {
                 {/* Kolom Kiri - Kosong */}
                 <div className="col-span-1">
                   <div className="flex items-start space-x-4">
-                    <Label className="w-[40%] font-semibold flex items-center mt-2">
+                    <Label className="w-[40%] font-semibold shrink-0 flex items-center mt-2">
                       Catatan
                     </Label>
                     <Textarea
@@ -675,7 +707,7 @@ export default function InquiryTransaksiDetail() {
                 {/* Kolom Kanan - Summary */}
                 <div className="col-span-1 space-y-4">
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold">Total Harga</Label>
+                    <Label className="w-[40%] font-semibold shrink-0">Total Harga</Label>
                     <Input
                       disabled
                       value={formatRupiah(totals.totalPrice)}
@@ -684,7 +716,7 @@ export default function InquiryTransaksiDetail() {
                   </div>
 
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold">Total Promo</Label>
+                    <Label className="w-[40%] font-semibold shrink-0">Total Promo</Label>
                     <Input
                       disabled
                       value={formatRupiah(totals.totalPromo)}
@@ -693,7 +725,7 @@ export default function InquiryTransaksiDetail() {
                   </div>
 
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold">
+                    <Label className="w-[40%] font-semibold shrink-0">
                       Diskon Manual
                     </Label>
                     <Input
@@ -704,7 +736,7 @@ export default function InquiryTransaksiDetail() {
                   </div>
 
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold">
+                    <Label className="w-[40%] font-semibold shrink-0">
                       Biaya Tambahan
                     </Label>
                     <Input
