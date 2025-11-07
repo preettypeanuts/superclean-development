@@ -1098,6 +1098,7 @@ export default function TransactionDetail() {
                   }}
                   onEdit={handleOpenEditSPKItem}
                   onDelete={handleDeleteSPKItem}
+                  ableDelete={!IS_CANCELLED && spkItems.length > 1}
                 />
               </div>
 

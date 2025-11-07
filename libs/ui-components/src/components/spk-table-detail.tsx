@@ -42,6 +42,7 @@ interface DataTableProps {
   fetchData: () => void;
   onDelete?: (id: string) => void;
   onEdit?: (item: SPKItem) => void;
+  ableDelete?: boolean;
 }
 
 export const SPKTableDetail: React.FC<DataTableProps> = ({
@@ -49,7 +50,8 @@ export const SPKTableDetail: React.FC<DataTableProps> = ({
   columns,
   fetchData,
   onDelete,
-  onEdit
+  onEdit,
+  ableDelete = true
 }) => {
   const { toast } = useToast();
 
@@ -187,7 +189,7 @@ export const SPKTableDetail: React.FC<DataTableProps> = ({
                     key={header.key}
                     className={`${header.key === "menu" ? "!w-fit" : ""}`}
                   >
-                    {renderCellValue(item, header.key, rowIndex, data.length <= 1)}
+                    {renderCellValue(item, header.key, rowIndex, !ableDelete)}
                   </TableCell>
                 )
               })}
