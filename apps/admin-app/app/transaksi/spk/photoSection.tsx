@@ -964,7 +964,7 @@ export default function PhotoSection({
                     {/* footer */}
                     <div className="flex items-center p-4">
                       {/* left content - logo and payment */}
-                      <div className="flex-1 flex items-center space-x-4">
+                      <div className="flex-1 flex items-center space-x-4 mr-6">
                         <img src="/assets/image.png" alt="Logo" width={200} height={100} />
                         <div className="">
                           <p className="font-semibold">Nama Rekening & No Rekening</p>

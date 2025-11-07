@@ -124,6 +124,7 @@ export default function PembayaranDetail() {
   const [reworkStaffList, setReworkStaffList] = useState<any[]>([]);
   const [selectedReworkStaff, setSelectedReworkStaff] = useState<string[]>([]);
 
+
   const handleReworkStaffChange = (selected: string[]) => {
     setSelectedReworkStaff(selected);
   }
@@ -994,8 +995,8 @@ export default function PembayaranDetail() {
               transaction={transaction}
               customer={customer}
               locationLabels={locationLabels}
-              cleaningStaffList={selectedLockedCleaningStaffList}
-              blowerStaffList={selectedLockedBlowerStaffList}
+              cleaningStaffList={reworkStaffList.filter(staff => transaction.assigns.includes(staff.lookupKey))}
+              blowerStaffList={blowerStaffList.filter(staff => transaction.blowers.includes(staff.lookupKey))}
               spkItems={spkItems}
               totals={{
                 totalPrice: totals.totalPrice,

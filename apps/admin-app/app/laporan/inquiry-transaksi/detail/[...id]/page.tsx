@@ -7,6 +7,7 @@ import { useTransactionHistory } from "@shared/utils/useTransactionHistory";
 import { DatePicker } from "@ui-components/components/date-picker";
 import { SPKTableDetail } from "@ui-components/components/spk-table-detail";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@ui-components/components/ui/tabs";
+import { useToast } from "@ui-components/hooks/use-toast";
 import { LocationData, Transaction, TransactionItem } from "apps/admin-app/app/transaksi/spk/edit/[...id]/page";
 import PhotoSection from "apps/admin-app/app/transaksi/spk/photoSection";
 import { Button } from "libs/ui-components/src/components/ui/button";
@@ -72,6 +73,7 @@ export default function InquiryTransaksiDetail() {
   const pathname = usePathname();
   const router = useRouter();
   const trxNumber = pathname.split("/laporan/inquiry-transaksi/detail/").pop();
+  const { toast } = useToast();
 
   const [transaction, setTransaction] = useState<Transaction | null>(null);
   const [customer, setCustomer] = useState<Customer | null>(null);
@@ -114,7 +116,10 @@ export default function InquiryTransaksiDetail() {
 
   const [selectedCleaningStaffList, setSelectedCleaningStaffList] = useState<any[]>([]);
   const [selectedBlowerStaffList, setSelectedBlowerStaffList] = useState<any[]>([]);
-  const [reworkStaffList, setReworkStaffList] = useState<any[]>([]);
+  const [selectedreworkStaffList, setSelectedReworkStaffList] = useState<any[]>([]);
+
+  const [cleanerStaffList, setCleanerStaffList] = useState<any[]>([]);
+  const [blowerStaffList, setBlowerStaffList] = useState<any[]>([]);
 
 
   const fetchLocationLabels = async () => {
@@ -148,10 +153,40 @@ export default function InquiryTransaksiDetail() {
     }
   }
 
+  const fetchStaffListData = async (roleId: string, city: string, setStaffList: Function) => {
+    if (!roleId || !city) {
+      setStaffList([]);
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await api.get(`/user/lookup?roleId=${roleId}&city=${city}`);
+      setStaffList(response?.data || []);
+    } catch (error) {
+      console.error(`Error fetching ${roleId} staff:`, error);
+      setStaffList([]);
+      toast({
+        title: "Error",
+        description: `Gagal mengambil data petugas ${roleId.toLowerCase()}`,
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  }
+
   // Effect untuk mengambil label lokasi berdasarkan customer yang dipilih
   useEffect(() => {
     fetchLocationLabels();
   }, [customer, provinces, cities, districts, subDistricts]);
+
+  useEffect(() => {
+    if (customer?.city) {
+      fetchStaffListData("CLEANER", customer.city, setCleanerStaffList);
+      fetchStaffListData("BLOWER", customer.city, setBlowerStaffList);
+    }
+  }, [customer?.city])
 
   const fetchCustomerData = async (customerId: string) => {
     try {
@@ -206,7 +241,7 @@ export default function InquiryTransaksiDetail() {
           }
 
           if (transactionData.reassigns && transactionData.reassigns.length > 0) {
-            await fetchStaffData(transactionData.reassigns, setReworkStaffList);
+            await fetchStaffData(transactionData.reassigns, setSelectedReworkStaffList);
           }
         } else {
           setError("Data transaksi tidak ditemukan");
@@ -585,7 +620,7 @@ export default function InquiryTransaksiDetail() {
                       disabled
                       className="resize-none"
                       value={
-                        reworkStaffList
+                        selectedreworkStaffList
                           .map((staff) => staff.fullname)
                           .join(', ') || '-'
                       }
@@ -788,8 +823,8 @@ export default function InquiryTransaksiDetail() {
               transaction={transaction}
               customer={customer}
               locationLabels={locationLabels}
-              cleaningStaffList={selectedCleaningStaffList}
-              blowerStaffList={selectedBlowerStaffList}
+              cleaningStaffList={cleanerStaffList.filter(staff => transaction.assigns.includes(staff.lookupKey))}
+              blowerStaffList={blowerStaffList.filter(staff => transaction.blowers.includes(staff.lookupKey))}
               spkItems={spkItems}
               totals={{
                 totalPrice: totals.totalPrice,
