@@ -426,7 +426,7 @@ function PaymentPreview({
         </div>
 
         <div className="flex flex-col justify-center gap-3 w-full">
-          <div className="p-2 w-full md:max-w-md">
+          <div className="p-2 w-full md:max-w-md m-auto">
             <Image
               width={500}
               height={500}
@@ -598,10 +598,10 @@ export default function InvoicePage() {
     const newUrl = `${pathname}?step=complete`;
     window.history.replaceState(null, '', newUrl);
   }
-  else if (step !== '' && reviewData.rating === 0 && transaction?.status !== 4) {
+  else if (step !== '' && reviewData.rating === 0 && reviewData.review === '' && transaction?.status !== 4) {
     // reset query param
     const newUrl = pathname;
-    // window.history.replaceState(null, '', newUrl);
+    window.history.replaceState(null, '', newUrl);
   }
 
   // Fetch transaction data
