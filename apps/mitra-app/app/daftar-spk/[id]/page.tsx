@@ -832,6 +832,11 @@ const TimelineItemInProgress = ({
                               <span className="mr-2"> - </span>
                               <span className="block overflow-hidden whitespace-nowrap text-ellipsis"> {item.service.name}</span>
                             </div>
+                            {item.serviceCategory === "BLOWER" ? null : (
+                                <div className="flex">
+                                   <span className="mr-2"><b>Tipe : </b>{item.serviceType === 1 ? 'Cuci' : 'Vakum'} </span>
+                              </div>
+                              )} 
 
                             <span className="font-bold text-[#72757C]"> Rp. {(item.totalPrice - item.promoPrice).toLocaleString('id-ID')} </span>
                           </p>
@@ -995,6 +1000,11 @@ const TimelineItemPending = ({
                                 <span className="mr-2"> - </span>
                                 <span className="block overflow-hidden whitespace-nowrap text-ellipsis"> {item.service.name}</span>
                               </div>
+                              {item.serviceCategory === "BLOWER" ?  null : (
+                                <div className="flex">
+                                   <span className="mr-2"><b>Tipe : </b>{item.serviceType === 1 ? 'Cuci' : 'Vakum'} </span>
+                              </div>
+                              )}                              
 
                               <span className="font-bold text-[#72757C]"> Rp. {(item.totalPrice - item.promoPrice).toLocaleString('id-ID')} </span>
                             </p>
