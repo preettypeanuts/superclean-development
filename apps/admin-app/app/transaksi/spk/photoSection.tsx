@@ -10,7 +10,7 @@ import { useToast } from "@ui-components/hooks/use-toast";
 import { Parameter } from "apps/admin-app/app/pengaturan/page";
 import { SPKItem } from "apps/admin-app/app/transaksi/spk/baru/page";
 import { Customer, Transaction } from "apps/admin-app/app/transaksi/spk/edit/[...id]/page";
-import html2canvas from "html2canvas";
+import domtoimage from "dom-to-image";
 import { Button } from "libs/ui-components/src/components/ui/button";
 import { Label } from "libs/ui-components/src/components/ui/label";
 import { Textarea } from "libs/ui-components/src/components/ui/textarea";
@@ -102,19 +102,43 @@ const downloadImage = (blob: string, fileName: string) => {
 
 const exportAsImage = async (element: HTMLElement, filename: string) => {
   try {
-    const elementHeight = element.scrollHeight;
-    const offset = window.outerHeight - window.innerHeight;
+    // Get the actual rendered dimensions
+    const rect = element.getBoundingClientRect();
+    const actualWidth = Math.max(element.scrollWidth, element.offsetWidth, rect.width);
+    const actualHeight = Math.max(element.scrollHeight, element.offsetHeight, rect.height);
 
-    const canvas = await html2canvas(element, {
-      allowTaint: true,
-      useCORS: true,
-      height: elementHeight + offset,
-      windowHeight: elementHeight + offset,
+    console.log('Capturing dimensions:', {
+      scrollWidth: element.scrollWidth,
+      scrollHeight: element.scrollHeight,
+      offsetWidth: element.offsetWidth,
+      offsetHeight: element.offsetHeight,
+      clientWidth: element.clientWidth,
+      clientHeight: element.clientHeight,
+      rectWidth: rect.width,
+      rectHeight: rect.height,
+      actualWidth,
+      actualHeight
     });
-    const image = canvas.toDataURL("image/png", 1.0);
-    downloadImage(image, filename);
+
+    // Use dom-to-image with higher pixel ratio for better quality
+    const scale = 2;
+    const dataUrl = await domtoimage.toPng(element, {
+      quality: 1.0,
+      bgcolor: '#ffffff',
+      width: actualWidth * scale,
+      height: actualHeight * scale,
+      style: {
+        transform: `scale(${scale})`,
+        transformOrigin: 'top left',
+        width: actualWidth + 'px',
+        height: actualHeight + 'px'
+      }
+    });
+
+    downloadImage(dataUrl, filename);
   }
   catch (error) {
+    console.error('Error in exportAsImage:', error);
     throw error;
   }
 }
@@ -130,6 +154,9 @@ export default function PhotoSection({
   totals,
   readonly = false
 }: PhotoSectionProps) {
+  console.log(cleaningStaffList, blowerStaffList);
+
+
   const { toast } = useToast();
 
   const [showInvoice, setShowInvoice] = useState(false);
@@ -152,6 +179,20 @@ export default function PhotoSection({
   // reload indicator
   const [reload, setReload] = useState(false)
 
+  // Prevent body scroll when modal is open
+  useEffect(() => {
+    if (showInvoice) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    // Cleanup on unmount
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [showInvoice]);
+
   // Format date with time
   const formatDateTime = (dateString: string) => {
     const date = new Date(dateString);
@@ -165,25 +206,90 @@ export default function PhotoSection({
     });
   };
 
-  const handleDownloadInvoice = () => {
+  const handleDownloadInvoice = async () => {
     try {
       const invoiceElement = document.getElementById("invoice");
-      if (invoiceElement) {
+      const containerElement = invoiceElement?.parentElement;
+
+      if (invoiceElement && containerElement) {
         setIsDownloadInvoice(true);
-        exportAsImage(invoiceElement, `Invoice-${transaction?.trxNumber}.png`)
-          .then(() => {
-            setIsDownloadInvoice(false);
-          })
-          .catch((error) => {
-            console.error("Error exporting invoice:", error);
-            setIsDownloadInvoice(false);
+
+        // Store original parent and styles
+        const originalParent = invoiceElement.parentElement;
+        const originalNextSibling = invoiceElement.nextSibling;
+
+        // Store original styles
+        const originalContainerOverflow = containerElement.style.overflow;
+        const originalContainerMaxHeight = containerElement.style.maxHeight;
+        const originalScrollTop = containerElement.scrollTop;
+
+        // Create a temporary container to render the invoice without constraints
+        const tempContainer = document.createElement('div');
+        tempContainer.style.position = 'fixed';
+        tempContainer.style.top = '-10000px';
+        tempContainer.style.left = '-10000px';
+        tempContainer.style.width = 'auto';
+        tempContainer.style.height = 'auto';
+        tempContainer.style.overflow = 'visible';
+        document.body.appendChild(tempContainer);
+
+        // Move invoice to temp container
+        tempContainer.appendChild(invoiceElement);
+
+        // Wait for layout to settle
+        await new Promise(resolve => setTimeout(resolve, 300));
+
+        // Log dimensions for debugging
+        console.log('Invoice element dimensions before capture:', {
+          scrollWidth: invoiceElement.scrollWidth,
+          scrollHeight: invoiceElement.scrollHeight,
+          offsetWidth: invoiceElement.offsetWidth,
+          offsetHeight: invoiceElement.offsetHeight,
+          clientWidth: invoiceElement.clientWidth,
+          clientHeight: invoiceElement.clientHeight
+        });
+
+        try {
+          await exportAsImage(invoiceElement, `Invoice-${transaction?.trxNumber}.png`);
+
+          toast({
+            title: "Success",
+            description: "Invoice berhasil diunduh.",
+            variant: "default",
           });
+        } catch (exportError) {
+          console.error("Error exporting invoice:", exportError);
+          toast({
+            title: "Error",
+            description: "Terjadi kesalahan saat mengekspor invoice.",
+            variant: "destructive",
+          });
+        } finally {
+          // Move invoice back to original container
+          if (originalParent) {
+            if (originalNextSibling) {
+              originalParent.insertBefore(invoiceElement, originalNextSibling);
+            } else {
+              originalParent.appendChild(invoiceElement);
+            }
+          }
+
+          // Remove temp container
+          document.body.removeChild(tempContainer);
+
+          // Restore original styles and scroll position
+          containerElement.style.overflow = originalContainerOverflow;
+          containerElement.style.maxHeight = originalContainerMaxHeight;
+          containerElement.scrollTop = originalScrollTop;
+          setIsDownloadInvoice(false);
+        }
       } else {
         toast({
           title: "Error",
           description: "Element invoice tidak ditemukan.",
           variant: "destructive",
         });
+        setIsDownloadInvoice(false);
       }
     } catch (error) {
       console.error("Error downloading invoice:", error);
@@ -192,10 +298,9 @@ export default function PhotoSection({
         description: "Terjadi kesalahan saat mengunduh invoice.",
         variant: "destructive",
       });
-    } finally {
       setIsDownloadInvoice(false);
     }
-  }
+  };;
 
   useEffect(() => {
     const fetchTransactionReview = async () => {
@@ -674,215 +779,233 @@ export default function PhotoSection({
     {
       showInvoice && (
         <>
-          <div className="absolute top-0 left-0 w-full h-full z-[200] overflow-hidden" >
-            <div className="invoice-container flex items-center justify-center min-h-screen py-6 bg-gray-200/60 dark:bg-gray-800/60 " onClick={(e) => {
-              if (e.target === e.currentTarget) {
-                setShowInvoice(false);
-              }
-            }}>
-              <div id="invoice" className="invoice w-5/6 min-w-xl max-h-screen overflow-auto">
-                {/* header */}
-                <div className="bg-mainColor p-4 flex items-center justify-between rounded-t-lg">
-                  <h2 className="font-semibold text-mainDark">Invoice</h2>
+          {/* Overlay with backdrop */}
+          <div
+            className="fixed inset-0 z-[200] flex items-center justify-center bg-gray-900/50 dark:bg-gray-950/70 overflow-hidden"
+          >
+            {/* Modal Container - prevents background scroll */}
+            <div className="relative w-full h-full flex flex-col items-center justify-center p-4 overflow-hidden"
+              onClick={(e) => {
+                // Close when clicking on the overlay background
+                if (e.target === e.currentTarget) {
+                  setShowInvoice(false);
+                }
+              }}
+            >
+              {/* Scrollable Invoice Container */}
+              <div
+                className="relative w-full max-w-[1200px] max-h-[calc(100vh-120px)] bg-gray-200 dark:bg-gray-800 rounded-lg overflow-y-auto overflow-x-hidden shadow-2xl"
+              >
+                <div id="invoice" className="invoice bg-white dark:bg-gray-900">
+                  {/* header */}
+                  <div className="bg-mainColor p-4 flex items-center justify-between sticky top-0 z-10">
+                    <h2 className="font-semibold text-mainDark">Invoice</h2>
+                    <button
+                      onClick={() => setShowInvoice(false)}
+                      className="text-mainDark hover:text-mainDark/70 font-bold text-xl px-2"
+                    >
+                      ✕
+                    </button>
+                  </div>
+
+                  <div className="bg-white dark:bg-gray-900 text-black dark:text-white px-4">
+                    {/* transaction summary */}
+                    <div className="flex space-x-8">
+                      {/* left content */}
+                      <div className="flex-1 p-4">
+                        <div className="flex mb-5 items-center space-x-4">
+                          <p className="flex-1 font-semibold">No Transaksi</p>
+                          <p className="font-semibold">:</p>
+                          <p className="flex-1 font-light">{transaction?.trxNumber}</p>
+                        </div>
+
+                        <div className="flex mb-5 items-center space-x-4">
+                          <p className="flex-1 font-semibold">No Whatsapp</p>
+                          <p className="font-semibold">:</p>
+                          <p className="flex-1 font-light">{customer?.noWhatsapp}</p>
+                        </div>
+
+                        <div className="flex mb-5 items-center space-x-4">
+                          <p className="flex-1 font-semibold">Nama Pelanggan</p>
+                          <p className="font-semibold">:</p>
+                          <p className="flex-1 font-light">{customer?.fullname}</p>
+                        </div>
+
+                        <div className="flex mb-5 justify-start space-x-4">
+                          <p className="flex-1 font-semibold">Alamat</p>
+                          <p className="font-semibold">:</p>
+                          <p className="flex-1 font-light">{customer?.address}</p>
+                        </div>
+                      </div>
+
+                      {/* right content */}
+                      <div className="flex-1 p-4">
+                        <div className="flex mb-5 items-center space-x-4">
+                          <p className="flex-1 font-semibold">Provinsi</p>
+                          <p className="font-semibold">:</p>
+                          <p className="flex-1 font-light">{locationLabels.provinceName}</p>
+                        </div>
+
+                        <div className="flex mb-5 items-center space-x-4">
+                          <p className="flex-1 font-semibold">Kab/Kota</p>
+                          <p className="font-semibold">:</p>
+                          <p className="flex-1 font-light">{locationLabels.cityName}</p>
+                        </div>
+
+                        <div className="flex mb-5 items-center space-x-4">
+                          <p className="flex-1 font-semibold">Kecamatan</p>
+                          <p className="font-semibold">:</p>
+                          <p className="flex-1 font-light">{locationLabels.districtName}</p>
+                        </div>
+
+                        <div className="flex mb-5 justify-start space-x-4">
+                          <p className="flex-1 font-semibold">Kelurahan</p>
+                          <p className="font-semibold">:</p>
+                          <p className="flex-1 font-light">{locationLabels.subDistrictName}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* divider */}
+                    <div className="w-full border-t my-4"></div>
+
+                    {/* cleaning / blower */}
+
+                    <div className="flex space-x-8">
+                      {/* left content */}
+                      <div className="flex-1 p-4">
+                        <div className="flex mb-5 items-center space-x-4 justify-start">
+                          <p className="flex-1 font-semibold ">Petugas Cleaning</p>
+                          <p className="font-semibold">:</p>
+                          <div className="flex-1">
+                            {/* cleaning list */}
+                            {cleaningStaffList.length > 0 ? (
+                              cleaningStaffList.map((staff) => (
+                                <div key={staff.lookupKey} className="inline-block m-1 bg-baseLight/50  text-teal-800 border-mainColor border mx-1 rounded-full px-2 py-0.5 flex-shrink-0">
+                                  {staff.lookupValue}
+                                </div>
+                              ))
+                            ) : (
+                              <p className="text-gray-500">Tidak ada petugas cleaning</p>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="flex mb-5 items-center space-x-4">
+                          <p className="flex-1 font-semibold">Tanggal Pengerjaan</p>
+                          <p className="font-semibold">:</p>
+                          <p className="flex-1 font-light">{transaction?.trxDate ? <>{formatDate(transaction.trxDate)}</> : <span className="text-gray-500">Tidak ada tanggal</span>}</p>
+                        </div>
+                      </div>
+
+                      {/* right content */}
+                      <div className="flex-1 p-4">
+                        <div className="flex mb-5 items-center space-x-4 justify-start">
+                          <p className="flex-1 font-semibold">Petugas Blower</p>
+                          <p className="font-semibold">:</p>
+                          <div className="flex-1">
+                            {/* cleaning list */}
+                            {blowerStaffList.length > 0 ? (
+                              blowerStaffList.map((staff) => (
+                                <div key={staff.lookupKey} className="inline-block m-1 bg-baseLight/50  text-teal-800 border-mainColor border mx-1 rounded-full px-2 py-0.5 flex-shrink-0">
+                                  {staff.lookupValue}
+                                </div>
+                              ))
+                            ) : (
+                              <p className="text-gray-500">Tidak ada petugas blower</p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* divider */}
+                    <div className="w-full border-t my-4"></div>
+
+                    {/* transaction items */}
+                    <div className="transaction-items-table w-full">
+                      {/* header */}
+                      <div className="flex w-full rounded-t-md px-2 bg-mainColor/40">
+                        <div className="flex w-6 p-2 mx-1 py-4 text-baseDark/70 font-semibold">#</div>
+                        <div className="flex-[3] p-2 mx-1 py-4 text-baseDark/70 font-semibold">Kode</div>
+                        <div className="flex-1 p-2 mx-1 py-4 text-baseDark/70 font-semibold">Layanan</div>
+                        <div className="flex-1 p-2 mx-1 py-4 text-baseDark/70 font-semibold">kategori</div>
+                        <div className="flex-1 p-2 mx-1 py-4 text-baseDark/70 font-semibold">Jumlah</div>
+                        <div className="flex-1 p-2 mx-1 py-4 text-baseDark/70 font-semibold">Satuan</div>
+                        <div className="flex-1 p-2 mx-1 py-4 text-baseDark/70 font-semibold">Harga</div>
+                        <div className="flex-1 p-2 mx-1 py-4 text-baseDark/70 font-semibold">Promo</div>
+                      </div>
+
+                      {spkItems.map((item, index) => {
+                        const {
+                          kode, layanan, kategori, jumlah, satuan, harga, promo
+                        } = item;
+
+                        const totalPrice = harga * jumlah;
+
+                        return (
+                          <div key={item.id} className="flex w-full px-2 items-center">
+                            <div className="flex w-6 p-2 mx-1 py-4 text-gray-500">{index + 1}</div>
+                            <div className="flex-[3] p-2 mx-1 py-4 text-gray-500">{item.kode}</div>
+                            <div className="flex-1 p-2 mx-1 py-4 text-gray-500">{item.layanan}</div>
+                            <div className="flex-1 p-2 mx-1 py-4 text-gray-500">{item.kategori}</div>
+                            <div className="flex-1 p-2 mx-1 py-4 text-gray-500">{item.jumlah}</div>
+                            <div className="flex-1 p-2 mx-1 py-4 text-gray-500">{item.satuan}</div>
+                            <div className="flex-1 p-2 mx-1 py-4 text-gray-500">Rp. {totalPrice.toLocaleString()}</div>
+                            <div className="flex-1 p-2 mx-1 py-4 text-gray-500">Rp. {item.promo.toLocaleString()}</div>
+                          </div>
+                        )
+                      })}
+                    </div>
+
+                    {/* divider */}
+                    <div className="w-full border-t my-4"></div>
+
+                    {/* footer */}
+                    <div className="flex items-center p-4">
+                      {/* left content - logo and payment */}
+                      <div className="flex-1 flex items-center space-x-4">
+                        <img src="/assets/image.png" alt="Logo" width={200} height={100} />
+                        <div className="">
+                          <p className="font-semibold">Nama Rekening & No Rekening</p>
+                          <p className=" text-gray-600 mb-4">a/n ({bankName}) {bankAccountName} - {bankAccount}</p>
+                        </div>
+
+                      </div>
+
+                      {/* right content - total price and promos */}
+                      <div className="flex-1 flex flex-col">
+                        <div className="flex my-3 px-1 items-center justify-between">
+                          <p className="flex-1 font-semibold">Total Harga</p>
+                          <p className="font-normal">{formatRupiah(totals.totalPrice)}</p>
+                        </div>
+
+                        <div className="flex my-3 px-1 items-center justify-between">
+                          <p className="flex-1 font-semibold">Promo</p>
+                          <p className="font-normal">{formatRupiah(totals.totalPromo)}</p>
+                        </div>
+
+                        <div className="flex my-3 px-1 items-center justify-between">
+                          <p className="flex-1 font-semibold">Diskon</p>
+                          <p className="font-normal">{formatRupiah(totals.manualDiscount)}</p>
+                        </div>
+
+                        <div className="flex my-4 items-center justify-between p-2 bg-gray-100 rounded-lg">
+                          <p className="flex-1 text-lg font-bold">Total Akhir</p>
+                          <p className="font-bold text-lg">{formatRupiah(totals.finalPrice)}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
-                <div className="bg-white text-black px-4">
-                  {/* transaction summary */}
-                  <div className="flex space-x-8">
-                    {/* left content */}
-                    <div className="flex-1 p-4">
-                      <div className="flex mb-5 items-center space-x-4">
-                        <p className="flex-1 font-semibold">No Transaksi</p>
-                        <p className="font-semibold">:</p>
-                        <p className="flex-1 font-light">{transaction?.trxNumber}</p>
-                      </div>
 
-                      <div className="flex mb-5 items-center space-x-4">
-                        <p className="flex-1 font-semibold">No Whatsapp</p>
-                        <p className="font-semibold">:</p>
-                        <p className="flex-1 font-light">{customer?.noWhatsapp}</p>
-                      </div>
-
-                      <div className="flex mb-5 items-center space-x-4">
-                        <p className="flex-1 font-semibold">Nama Pelanggan</p>
-                        <p className="font-semibold">:</p>
-                        <p className="flex-1 font-light">{customer?.fullname}</p>
-                      </div>
-
-                      <div className="flex mb-5 justify-start space-x-4">
-                        <p className="flex-1 font-semibold">Alamat</p>
-                        <p className="font-semibold">:</p>
-                        <p className="flex-1 font-light">{customer?.address}</p>
-                      </div>
-                    </div>
-
-                    {/* right content */}
-                    <div className="flex-1 p-4">
-                      <div className="flex mb-5 items-center space-x-4">
-                        <p className="flex-1 font-semibold">Provinsi</p>
-                        <p className="font-semibold">:</p>
-                        <p className="flex-1 font-light">{locationLabels.provinceName}</p>
-                      </div>
-
-                      <div className="flex mb-5 items-center space-x-4">
-                        <p className="flex-1 font-semibold">Kab/Kota</p>
-                        <p className="font-semibold">:</p>
-                        <p className="flex-1 font-light">{locationLabels.cityName}</p>
-                      </div>
-
-                      <div className="flex mb-5 items-center space-x-4">
-                        <p className="flex-1 font-semibold">Kecamatan</p>
-                        <p className="font-semibold">:</p>
-                        <p className="flex-1 font-light">{locationLabels.districtName}</p>
-                      </div>
-
-                      <div className="flex mb-5 justify-start space-x-4">
-                        <p className="flex-1 font-semibold">Kelurahan</p>
-                        <p className="font-semibold">:</p>
-                        <p className="flex-1 font-light">{locationLabels.subDistrictName}</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* divider */}
-                  <div className="w-full border-t my-4"></div>
-
-                  {/* cleaning / blower */}
-
-                  <div className="flex space-x-8">
-                    {/* left content */}
-                    <div className="flex-1 p-4">
-                      <div className="flex mb-5 items-center space-x-4 justify-start">
-                        <p className="flex-1 font-semibold ">Petugas Cleaning</p>
-                        <p className="font-semibold">:</p>
-                        <div className="flex-1">
-                          {/* cleaning list */}
-                          {cleaningStaffList.length > 0 ? (
-                            cleaningStaffList.map((staff) => (
-                              <div key={staff.lookupKey} className="inline-block m-1 bg-baseLight/50  text-teal-800 border-mainColor border mx-1 rounded-full px-2 py-0.5 flex-shrink-0">
-                                {staff.lookupValue}
-                              </div>
-                            ))
-                          ) : (
-                            <p className="text-gray-500">Tidak ada petugas cleaning</p>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="flex mb-5 items-center space-x-4">
-                        <p className="flex-1 font-semibold">Tanggal Pengerjaan</p>
-                        <p className="font-semibold">:</p>
-                        <p className="flex-1 font-light">{transaction?.trxDate ? <>{formatDate(transaction.trxDate)}</> : <span className="text-gray-500">Tidak ada tanggal</span>}</p>
-                      </div>
-                    </div>
-
-                    {/* right content */}
-                    <div className="flex-1 p-4">
-                      <div className="flex mb-5 items-center space-x-4 justify-start">
-                        <p className="flex-1 font-semibold">Petugas Blower</p>
-                        <p className="font-semibold">:</p>
-                        <div className="flex-1">
-                          {/* cleaning list */}
-                          {blowerStaffList.length > 0 ? (
-                            blowerStaffList.map((staff) => (
-                              <div key={staff.lookupKey} className="inline-block m-1 bg-baseLight/50  text-teal-800 border-mainColor border mx-1 rounded-full px-2 py-0.5 flex-shrink-0">
-                                {staff.lookupValue}
-                              </div>
-                            ))
-                          ) : (
-                            <p className="text-gray-500">Tidak ada petugas blower</p>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* divider */}
-                  <div className="w-full border-t my-4"></div>
-
-                  {/* transaction items */}
-                  <div className="transaction-items-table w-full">
-                    {/* header */}
-                    <div className="flex w-full rounded-t-md px-2 bg-mainColor/40">
-                      <div className="flex w-6 p-2 mx-1 py-4 text-baseDark/70 font-semibold">#</div>
-                      <div className="flex-[3] p-2 mx-1 py-4 text-baseDark/70 font-semibold">Kode</div>
-                      <div className="flex-1 p-2 mx-1 py-4 text-baseDark/70 font-semibold">Layanan</div>
-                      <div className="flex-1 p-2 mx-1 py-4 text-baseDark/70 font-semibold">kategori</div>
-                      <div className="flex-1 p-2 mx-1 py-4 text-baseDark/70 font-semibold">Jumlah</div>
-                      <div className="flex-1 p-2 mx-1 py-4 text-baseDark/70 font-semibold">Satuan</div>
-                      <div className="flex-1 p-2 mx-1 py-4 text-baseDark/70 font-semibold">Harga</div>
-                      <div className="flex-1 p-2 mx-1 py-4 text-baseDark/70 font-semibold">Promo</div>
-                    </div>
-
-                    {spkItems.map((item, index) => {
-                      const {
-                        kode, layanan, kategori, jumlah, satuan, harga, promo
-                      } = item;
-
-                      const totalPrice = harga * jumlah;
-
-                      return (
-                        <div key={item.id} className="flex w-full px-2 items-center">
-                          <div className="flex w-6 p-2 mx-1 py-4 text-gray-500">{index + 1}</div>
-                          <div className="flex-[3] p-2 mx-1 py-4 text-gray-500">{item.kode}</div>
-                          <div className="flex-1 p-2 mx-1 py-4 text-gray-500">{item.layanan}</div>
-                          <div className="flex-1 p-2 mx-1 py-4 text-gray-500">{item.kategori}</div>
-                          <div className="flex-1 p-2 mx-1 py-4 text-gray-500">{item.jumlah}</div>
-                          <div className="flex-1 p-2 mx-1 py-4 text-gray-500">{item.satuan}</div>
-                          <div className="flex-1 p-2 mx-1 py-4 text-gray-500">Rp. {totalPrice.toLocaleString()}</div>
-                          <div className="flex-1 p-2 mx-1 py-4 text-gray-500">Rp. {item.promo.toLocaleString()}</div>
-                        </div>
-                      )
-                    })}
-                  </div>
-
-                  {/* divider */}
-                  <div className="w-full border-t my-4"></div>
-
-                  {/* footer */}
-                  <div className="flex items-center p-4">
-                    {/* left content - logo and payment */}
-                    <div className="flex-1 flex items-center space-x-4">
-                      <img src="/assets/image.png" alt="Logo" width={200} height={100} />
-                      <div className="">
-                        <p className="font-semibold">Nama Rekening & No Rekening</p>
-                        <p className=" text-gray-600 mb-4">a/n ({bankName}) {bankAccountName} - {bankAccount}</p>
-                      </div>
-
-                    </div>
-
-                    {/* right content - total price and promos */}
-                    <div className="flex-1 flex flex-col">
-                      <div className="flex my-3 px-1 items-center justify-between">
-                        <p className="flex-1 font-semibold">Total Harga</p>
-                        <p className="font-normal">{formatRupiah(totals.totalPrice)}</p>
-                      </div>
-
-                      <div className="flex my-3 px-1 items-center justify-between">
-                        <p className="flex-1 font-semibold">Promo</p>
-                        <p className="font-normal">{formatRupiah(totals.totalPromo)}</p>
-                      </div>
-
-                      <div className="flex my-3 px-1 items-center justify-between">
-                        <p className="flex-1 font-semibold">Diskon</p>
-                        <p className="font-normal">{formatRupiah(totals.manualDiscount)}</p>
-                      </div>
-
-                      <div className="flex my-4 items-center justify-between p-2 bg-gray-100 rounded-lg">
-                        <p className="flex-1 text-lg font-bold">Total Akhir</p>
-                        <p className="font-bold text-lg">{formatRupiah(totals.finalPrice)}</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
               </div>
-            </div>
 
-            {/* download button */}
-            <div className="relative">
-              <div className="fixed bottom-0 right-0">
+              {/* Download button - positioned outside invoice but inside modal */}
+              <div className="absolute bottom-4 right-4">
                 <Button
-                  className="m-4"
+                  className="shadow-lg"
                   loading={isDownloadInvoice}
                   onClick={() => {
                     handleDownloadInvoice()
@@ -898,3 +1021,4 @@ export default function PhotoSection({
     }
   </>
 }
+
