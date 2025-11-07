@@ -107,10 +107,20 @@ const ProtectedRoutes = ({ children }: { children: React.ReactNode }) => {
       }
     };
 
+    // Custom event handler for same-tab logout
+    const handleLogout = () => {
+      setIsAuthenticated(false);
+      if (!isPublicRoute(pathname)) {
+        router.push("/login");
+      }
+    };
+
     window.addEventListener("storage", handleStorageChange);
+    window.addEventListener("logout", handleLogout);
 
     return () => {
       window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("logout", handleLogout);
     };
   }, [pathname, router]);
 

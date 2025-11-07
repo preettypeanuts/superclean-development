@@ -263,7 +263,8 @@ export const Sidebar = ({
                                 className="text-red-700 dark:text-red-400"
                                 onClick={() => {
                                     localStorage.clear();
-                                    router.push("/login");
+                                    // Dispatch custom event to trigger logout in ProtectedLayout
+                                    window.dispatchEvent(new Event('logout'));
                                 }}
                             >
                                 <RiLogoutCircleFill />
