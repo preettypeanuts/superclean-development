@@ -878,22 +878,22 @@ export default function TransactionDetail() {
                   {/* Kolom Kiri */}
                   <div className="col-span-1 space-y-4">
                     <div className="flex items-center space-x-4">
-                      <Label className="w-[40%] font-semibold">No Transaksi</Label>
+                      <Label className="w-[40%] font-semibold shrink-0">No Transaksi</Label>
                       <Input disabled value={transaction?.trxNumber} />
                     </div>
 
                     <div className="flex items-center space-x-4">
-                      <Label className="w-[40%] font-semibold">No Whatsapp</Label>
+                      <Label className="w-[40%] font-semibold shrink-0">No Whatsapp</Label>
                       <Input disabled value={customer?.noWhatsapp || "-"} />
                     </div>
 
                     <div className="flex items-center space-x-4">
-                      <Label className="w-[40%] font-semibold">Nama Pelanggan</Label>
+                      <Label className="w-[40%] font-semibold shrink-0">Nama Pelanggan</Label>
                       <Input disabled value={customer?.fullname || "-"} />
                     </div>
 
                     <div className="flex items-center space-x-4">
-                      <Label className="w-[40%] font-semibold">Alamat</Label>
+                      <Label className="w-[40%] font-semibold shrink-0">Alamat</Label>
                       <Textarea
                         disabled
                         className="resize-none"
@@ -906,27 +906,27 @@ export default function TransactionDetail() {
                   {/* Kolom Kanan */}
                   <div className="col-span-1 space-y-4">
                     <div className="flex items-center space-x-4">
-                      <Label className="w-[40%] font-semibold">Status</Label>
+                      <Label className="w-[40%] font-semibold shrink-0">Status</Label>
                       <Input disabled value={getStatusLabel(transaction?.status as number)} />
                     </div>
 
                     <div className="flex items-center space-x-4">
-                      <Label className="w-[40%] font-semibold">Provinsi</Label>
+                      <Label className="w-[40%] font-semibold shrink-0">Provinsi</Label>
                       <Input disabled value={locationLabels.provinceName || "-"} />
                     </div>
 
                     <div className="flex items-center space-x-4">
-                      <Label className="w-[40%] font-semibold">Kab/Kota</Label>
+                      <Label className="w-[40%] font-semibold shrink-0">Kab/Kota</Label>
                       <Input disabled value={locationLabels.cityName || "-"} />
                     </div>
 
                     <div className="flex items-center space-x-4">
-                      <Label className="w-[40%] font-semibold">Kecamatan</Label>
+                      <Label className="w-[40%] font-semibold shrink-0">Kecamatan</Label>
                       <Input disabled value={locationLabels.districtName || "-"} />
                     </div>
 
                     <div className="flex items-center space-x-4">
-                      <Label className="w-[40%] font-semibold">Kelurahan</Label>
+                      <Label className="w-[40%] font-semibold shrink-0">Kelurahan</Label>
                       <Input disabled value={locationLabels.subDistrictName || "-"} />
                     </div>
                   </div>
@@ -940,7 +940,7 @@ export default function TransactionDetail() {
                   {/* Kolom Kiri */}
                   <div className="col-span-1 space-y-4">
                     <div className="flex items-center space-x-4">
-                      <Label className="w-[40%] font-semibold">Petugas Cleaning</Label>
+                      <Label className="w-[40%] font-semibold shrink-0">Petugas Cleaning</Label>
                       <MultiSelect
                         staffList={cleaningStaffList.sort((a, b) => a.lookupValue.localeCompare(b.lookupValue))}
                         selected={transaction?.assigns || []}
@@ -951,7 +951,7 @@ export default function TransactionDetail() {
                     </div>
 
                     <div className="flex items-center space-x-4">
-                      <Label className="w-[40%] font-semibold">Tanggal Pengerjaan</Label>
+                      <Label className="w-[40%] font-semibold shrink-0">Tanggal Pengerjaan</Label>
                       <DatePicker
                         withTime
                         defaultTime={new Date(transaction?.trxDate || new Date()).toTimeString().slice(0, 5)}
@@ -984,7 +984,7 @@ export default function TransactionDetail() {
                   {/* Kolom Kanan */}
                   <div className="col-span-1 space-y-4">
                     <div className="flex items-center space-x-4">
-                      <Label className="w-[40%] font-semibold">Petugas Blower</Label>
+                      <Label className="w-[40%] font-semibold shrink-0">Petugas Blower</Label>
                       <MultiSelect
                         staffList={blowerStaffList.sort((a, b) => a.lookupValue.localeCompare(b.lookupValue))}
                         selected={transaction?.blowers || []}
@@ -998,7 +998,7 @@ export default function TransactionDetail() {
                       transaction.blowers.length > 0 && (
                         <>
                           <div className="flex items-center space-x-4">
-                            <Label className="w-[40%] font-semibold">Tanggal Pengantaran</Label>
+                            <Label className="w-[40%] font-semibold shrink-0">Tanggal Pengantaran</Label>
                             <DatePicker
                               startFrom={new Date(transaction?.trxDate)}
                               withTime
@@ -1028,7 +1028,7 @@ export default function TransactionDetail() {
                           </div>
 
                           <div className="flex items-center space-x-4">
-                            <Label className="w-[40%] font-semibold">Tanggal Pengambilan</Label>
+                            <Label className="w-[40%] font-semibold shrink-0">Tanggal Pengambilan</Label>
                             <DatePicker
                               withTime
                               defaultTime={new Date(transaction?.pickupDate ? transaction.pickupDate : transaction?.trxDate).toTimeString().slice(0, 5)}
@@ -1098,6 +1098,7 @@ export default function TransactionDetail() {
                   }}
                   onEdit={handleOpenEditSPKItem}
                   onDelete={handleDeleteSPKItem}
+                  ableDelete={!IS_CANCELLED && spkItems.length > 1}
                 />
               </div>
 
@@ -1106,7 +1107,7 @@ export default function TransactionDetail() {
                 {/* Kolom Kiri */}
                 <div className="col-span-1">
                   <div className="flex items-start space-x-4">
-                    <Label className="w-[40%] font-semibold flex items-center mt-2">
+                    <Label className="w-[40%] font-semibold shrink-0 flex items-center mt-2">
                       Catatan
                     </Label>
                     <div className="w-full">
@@ -1133,7 +1134,7 @@ export default function TransactionDetail() {
                 {/* Kolom Kanan */}
                 <div className="col-span-1 space-y-4">
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold flex items-center gap-1">
+                    <Label className="w-[40%] font-semibold shrink-0 flex items-center gap-1">
                       <span>Total Harga</span>
                       {!totals.isTotalPriceValid && (
                         <div className="relative group mx-1">
@@ -1152,14 +1153,14 @@ export default function TransactionDetail() {
                   </div>
 
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold">Total Promo</Label>
+                    <Label className="w-[40%] font-semibold shrink-0">Total Promo</Label>
                     <Input className="text-right" disabled value={formatRupiah(totals.totalPromo)} />
                   </div>
 
                   {!IS_CANCELLED && (
                     <>
                       <div className="flex items-center space-x-4">
-                        <Label className="w-[40%] font-semibold flex items-center gap-1">
+                        <Label className="w-[40%] font-semibold shrink-0 flex items-center gap-1">
                           <span>Diskon Manual</span>
                           {totals.isInvalidTotal && (
                             <div className="relative group mx-1">
@@ -1179,7 +1180,7 @@ export default function TransactionDetail() {
                         />
                       </div>
                       <div className="flex items-center space-x-4">
-                        <Label className="w-[40%] font-semibold">Biaya Tambahan</Label>
+                        <Label className="w-[40%] font-semibold shrink-0">Biaya Tambahan</Label>
                         <RupiahInput
                           placeholder="Rp. 0"
                           value={formatRupiah(additionalFee)}

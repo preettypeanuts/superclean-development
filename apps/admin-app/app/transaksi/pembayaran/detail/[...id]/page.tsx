@@ -509,7 +509,7 @@ export default function PembayaranDetail() {
                 {/* Kolom Kiri */}
                 <div className="col-span-1 space-y-4">
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold">No Transaksi</Label>
+                    <Label className="w-[40%] shrink-0 font-semibold">No Transaksi</Label>
                     {transaction.status === 3 ? (
                       <div className="flex items-center space-x-2 w-full">
                         <Input
@@ -548,7 +548,7 @@ export default function PembayaranDetail() {
                   </div>
 
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold">No WhatsApp</Label>
+                    <Label className="w-[40%] shrink-0 font-semibold">No WhatsApp</Label>
                     <Input
                       value={customer?.noWhatsapp || ""}
                       readOnly
@@ -558,7 +558,7 @@ export default function PembayaranDetail() {
                   </div>
 
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold">Nama Customer</Label>
+                    <Label className="w-[40%] shrink-0 font-semibold">Nama Customer</Label>
                     <Input
                       value={customer?.fullname || ""}
                       readOnly
@@ -568,7 +568,7 @@ export default function PembayaranDetail() {
                   </div>
 
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold">Alamat</Label>
+                    <Label className="w-[40%] shrink-0 font-semibold">Alamat</Label>
                     <Textarea
                       className="resize-none bg-muted/50 cursor-not-allowed"
                       value={customer?.address || ""}
@@ -582,7 +582,7 @@ export default function PembayaranDetail() {
                 {/* Kolom Kanan */}
                 <div className="col-span-1 space-y-4">
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold">Status</Label>
+                    <Label className="w-[40%] shrink-0 font-semibold">Status</Label>
                     <Input
                       value={statusMapping[transaction.status as keyof typeof statusMapping] || "Unknown"}
                       readOnly
@@ -592,7 +592,7 @@ export default function PembayaranDetail() {
 
                   {/* Provinsi - View Only */}
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold">Provinsi</Label>
+                    <Label className="w-[40%] shrink-0 font-semibold">Provinsi</Label>
                     <Input
                       value={locationLabels.provinceName}
                       placeholder="Provinsi tidak tersedia"
@@ -603,7 +603,7 @@ export default function PembayaranDetail() {
 
                   {/* Kab/Kota - View Only */}
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold">Kab/Kota</Label>
+                    <Label className="w-[40%] shrink-0 font-semibold">Kab/Kota</Label>
                     <Input
                       value={locationLabels.cityName}
                       placeholder="Kota/Kabupaten tidak tersedia"
@@ -614,7 +614,7 @@ export default function PembayaranDetail() {
 
                   {/* Kecamatan - View Only */}
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold">Kecamatan</Label>
+                    <Label className="w-[40%] shrink-0 font-semibold">Kecamatan</Label>
                     <Input
                       value={locationLabels.districtName}
                       placeholder="Kecamatan tidak tersedia"
@@ -625,7 +625,7 @@ export default function PembayaranDetail() {
 
                   {/* Kelurahan - View Only */}
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold">Kelurahan</Label>
+                    <Label className="w-[40%] shrink-0 font-semibold">Kelurahan</Label>
                     <Input
                       value={locationLabels.subDistrictName}
                       placeholder="Kelurahan tidak tersedia"
@@ -642,18 +642,24 @@ export default function PembayaranDetail() {
               <div className="grid grid-cols-2 gap-20">
                 {/* Kolom Kiri */}
                 <div className="col-span-1 space-y-4">
-                  <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold">Petugas Cleaning</Label>
-                    <Textarea
-                      disabled
-                      className="resize-none"
-                      value={selectedLockedCleaningStaffList.map(staff => staff?.fullname).join(", ") || "-"}
-                      rows={2}
-                    />
+                  <div className="flex items-start space-x-4">
+                    <Label className="w-[40%] shrink-0 font-semibold mt-2">Petugas Cleaning</Label>
+                    {/* cleaning list */}
+                    <div className="flex-1 flex flex-wrap gap-2 min-h-[40px] items-center">
+                      {reworkStaffList.filter(staff => transaction.assigns.includes(staff.lookupKey)).length > 0 ? (
+                        reworkStaffList.filter(staff => transaction.assigns.includes(staff.lookupKey)).map((staff) => (
+                          <div key={staff.lookupKey} className="inline-block bg-baseLight/50 dark:bg-baseDark/50 text-teal-800 dark:text-teal-400 border border-mainColor dark:border-teal-400 rounded-full px-3 py-1 flex-shrink-0">
+                            {staff.lookupValue}
+                          </div>
+                        ))
+                      ) : (
+                        <p className="text-gray-500">Tidak ada petugas cleaning</p>
+                      )}
+                    </div>
                   </div>
 
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold">Tanggal Pengerjaan</Label>
+                    <Label className="w-[40%] shrink-0 font-semibold">Tanggal Pengerjaan</Label>
                     {/* <Input
                       disabled
                       value={formatDate(transaction.trxDate)}
@@ -671,7 +677,7 @@ export default function PembayaranDetail() {
                 {/* Kolom Kanan */}
                 <div className="col-span-1 space-y-4">
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold">Petugas Blower</Label>
+                    <Label className="w-[40%] shrink-0 font-semibold">Petugas Blower</Label>
                     {transaction.blowers.length > 0 ? (
                       <MultiSelect
                         staffList={blowerStaffList.sort((a, b) => a.lookupValue.localeCompare(b.lookupValue))}
@@ -695,7 +701,7 @@ export default function PembayaranDetail() {
                     transaction.blowers.length > 0 && (
                       <>
                         <div className="flex items-center space-x-4">
-                          <Label className="w-[40%] font-semibold">Tanggal Pengantaran</Label>
+                          <Label className="w-[40%] shrink-0 font-semibold">Tanggal Pengantaran</Label>
                           <DatePicker
                             startFrom={new Date(transaction?.trxDate)}
                             withTime
@@ -725,7 +731,7 @@ export default function PembayaranDetail() {
                         </div>
 
                         <div className="flex items-center space-x-4">
-                          <Label className="w-[40%] font-semibold">Tanggal Pengambilan</Label>
+                          <Label className="w-[40%] shrink-0 font-semibold">Tanggal Pengambilan</Label>
                           <DatePicker
                             withTime
                             defaultTime={new Date(transaction?.pickupDate ? transaction.pickupDate : transaction?.trxDate).toTimeString().slice(0, 5)}
@@ -758,26 +764,28 @@ export default function PembayaranDetail() {
                     )
                   }
 
-                  <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold">Dikerjakan Ulang</Label>
-                    {IS_WAITING_PAYMENT && (
-                      <MultiSelect
-                        staffList={reworkStaffList}
-                        selected={selectedReworkStaff}
-                        onSelectionChange={handleReworkStaffChange}
-                        placeholder="Pilih pekerja ulang"
-                        loading={false}
-                      />
-                    )}
+                  <div className="flex items-start space-x-4">
+                    <Label className="w-[40%] shrink-0 font-semibold mt-2">Dikerjakan Ulang</Label>
+                    <div className="flex-1">
+                      {IS_WAITING_PAYMENT && (
+                        <MultiSelect
+                          staffList={reworkStaffList}
+                          selected={selectedReworkStaff}
+                          onSelectionChange={handleReworkStaffChange}
+                          placeholder="Pilih pekerja ulang"
+                          loading={false}
+                        />
+                      )}
 
-                    {!IS_WAITING_PAYMENT && (
-                      <Textarea
-                        disabled
-                        className="resize-none"
-                        value={selectedLockedReworkStaffList.map(staff => staff?.fullname).join(", ") || "-"}
-                        rows={2}
-                      />
-                    )}
+                      {!IS_WAITING_PAYMENT && (
+                        <Textarea
+                          disabled
+                          className="resize-none"
+                          value={selectedLockedReworkStaffList.map(staff => staff?.fullname).join(", ") || "-"}
+                          rows={2}
+                        />
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -803,7 +811,7 @@ export default function PembayaranDetail() {
                 {/* Kolom Kiri - Kosong */}
                 <div className="col-span-1">
                   <div className="flex items-start space-x-4">
-                    <Label className="w-[40%] font-semibold flex items-center mt-2">
+                    <Label className="w-[40%] shrink-0 font-semibold flex items-center mt-2">
                       Catatan
                     </Label>
                     <Textarea
@@ -820,7 +828,7 @@ export default function PembayaranDetail() {
                 {/* Kolom Kanan - Summary */}
                 <div className="col-span-1 space-y-4">
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold">
+                    <Label className="w-[40%] shrink-0 font-semibold">
                       <span>Total Harga</span>
                     </Label>
                     <Input
@@ -831,7 +839,7 @@ export default function PembayaranDetail() {
                   </div>
 
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold">Total Promo</Label>
+                    <Label className="w-[40%] shrink-0 font-semibold">Total Promo</Label>
                     <Input
                       disabled
                       value={formatRupiah(totals.totalPromo)}
@@ -840,7 +848,7 @@ export default function PembayaranDetail() {
                   </div>
 
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold">Diskon Manual</Label>
+                    <Label className="w-[40%] shrink-0 font-semibold">Diskon Manual</Label>
                     <Input
                       disabled
                       value={formatRupiah(transaction.discountPrice)}
@@ -849,7 +857,7 @@ export default function PembayaranDetail() {
                   </div>
 
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold">Biaya Tambahan</Label>
+                    <Label className="w-[40%] shrink-0 font-semibold">Biaya Tambahan</Label>
                     <Input
                       disabled
                       value={formatRupiah(transaction.additionalFee || 0)}

@@ -817,7 +817,7 @@ export default function NewSPK() {
                   <div className="col-span-1 space-y-4">
                     {/* WhatsApp Combobox */}
                     <div className="flex items-center space-x-4">
-                      <Label className="w-[40%] font-semibold">No Whatsapp</Label>
+                      <Label className="w-[40%] font-semibold shrink-0">No Whatsapp</Label>
                       <WhatsAppCombobox
                         value={formData.noWhatsapp}
                         onValueChange={handleWhatsAppChange}
@@ -830,7 +830,7 @@ export default function NewSPK() {
 
                     {/* Nama Pelanggan - View Only */}
                     <div className="flex items-center space-x-4">
-                      <Label className="w-[40%] font-semibold">Nama Pelanggan</Label>
+                      <Label className="w-[40%] font-semibold shrink-0">Nama Pelanggan</Label>
                       <Input
                         id="customerName"
                         value={formData.customerName}
@@ -842,7 +842,7 @@ export default function NewSPK() {
 
                     {/* Alamat - View Only */}
                     <div className="flex items-center space-x-4">
-                      <Label className="w-[40%] font-semibold">Alamat</Label>
+                      <Label className="w-[40%] font-semibold shrink-0">Alamat</Label>
                       <Textarea
                         id="address"
                         value={formData.address}
@@ -857,7 +857,7 @@ export default function NewSPK() {
                   <div className="col-span-1 space-y-4">
                     {/* Provinsi - View Only */}
                     <div className="flex items-center space-x-4">
-                      <Label className="w-[40%] font-semibold">Provinsi</Label>
+                      <Label className="w-[40%] font-semibold shrink-0">Provinsi</Label>
                       <Input
                         value={locationLabels.provinceName}
                         placeholder="Provinsi akan terisi otomatis"
@@ -868,7 +868,7 @@ export default function NewSPK() {
 
                     {/* Kab/Kota - View Only */}
                     <div className="flex items-center space-x-4">
-                      <Label className="w-[40%] font-semibold">Kab/Kota</Label>
+                      <Label className="w-[40%] font-semibold shrink-0">Kab/Kota</Label>
                       <Input
                         value={locationLabels.cityName}
                         placeholder="Kota/Kabupaten akan terisi otomatis"
@@ -879,7 +879,7 @@ export default function NewSPK() {
 
                     {/* Kecamatan - View Only */}
                     <div className="flex items-center space-x-4">
-                      <Label className="w-[40%] font-semibold">Kecamatan</Label>
+                      <Label className="w-[40%] font-semibold shrink-0">Kecamatan</Label>
                       <Input
                         value={locationLabels.districtName}
                         placeholder="Kecamatan akan terisi otomatis"
@@ -890,7 +890,7 @@ export default function NewSPK() {
 
                     {/* Kelurahan - View Only */}
                     <div className="flex items-center space-x-4">
-                      <Label className="w-[40%] font-semibold">Kelurahan</Label>
+                      <Label className="w-[40%] font-semibold shrink-0">Kelurahan</Label>
                       <Input
                         value={locationLabels.subDistrictName}
                         placeholder="Kelurahan akan terisi otomatis"
@@ -906,7 +906,7 @@ export default function NewSPK() {
                 <div className="grid grid-cols-2 gap-20">
                   <div className="col-span-1 space-y-4">
                     <div className="flex items-center space-x-4">
-                      <Label className="w-[40%] font-semibold">Petugas Cleaning</Label>
+                      <Label className="w-[40%] font-semibold shrink-0">Petugas Cleaning</Label>
                       <MultiSelect
                         staffList={cleaningStaffList.sort((a, b) => a.lookupValue.localeCompare(b.lookupValue))}
                         selected={formData.cleaningStaff}
@@ -917,7 +917,7 @@ export default function NewSPK() {
                     </div>
 
                     <div className="flex items-center space-x-4">
-                      <Label className="w-[40%] font-semibold">Tanggal Pengerjaan</Label>
+                      <Label className="w-[40%] font-semibold shrink-0">Tanggal Pengerjaan</Label>
                       <DatePicker
                         startFrom={new Date()}
                         withTime
@@ -948,7 +948,7 @@ export default function NewSPK() {
 
                   <div className="col-span-1 space-y-4">
                     <div className="flex items-center space-x-4">
-                      <Label className="w-[40%] font-semibold">Petugas Blower</Label>
+                      <Label className="w-[40%] font-semibold shrink-0">Petugas Blower</Label>
                       <MultiSelect
                         staffList={blowerStaffList.sort((a, b) => a.lookupValue.localeCompare(b.lookupValue))}
                         selected={formData.blowerStaff}
@@ -962,7 +962,7 @@ export default function NewSPK() {
                       formData.blowerStaff.length > 0 && (
                         <>
                           <div className="flex items-center space-x-4">
-                            <Label className="w-[40%] font-semibold">Tanggal Pengantaran</Label>
+                            <Label className="w-[40%] font-semibold shrink-0">Tanggal Pengantaran</Label>
                             <DatePicker
                               startFrom={new Date()}
                               withTime
@@ -991,7 +991,7 @@ export default function NewSPK() {
                           </div>
 
                           {/* <div className="flex items-center space-x-4">
-                            <Label className="w-[40%] font-semibold">Tanggal Pengambilan</Label>
+                            <Label className="w-[40%] font-semibold shrink-0">Tanggal Pengambilan</Label>
                             <DatePicker
                               startFrom={new Date()}
                               withTime
@@ -1056,7 +1056,7 @@ export default function NewSPK() {
               <div className="grid grid-cols-2 gap-20 mt-8 border-t pt-6">
                 <div className="col-span-1">
                   <div className="flex items-start space-x-4">
-                    <Label className="w-[40%] font-semibold flex items-center mt-2">
+                    <Label className="w-[40%] font-semibold shrink-0 flex items-center mt-2">
                       Catatan
                     </Label>
                     <div className="w-full">
@@ -1077,7 +1077,7 @@ export default function NewSPK() {
                 </div>
                 <div className="col-span-1 space-y-4">
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold flex items-center gap-1">
+                    <Label className="w-[40%] font-semibold shrink-0 flex items-center gap-1">
                       <span>Total Harga</span>
                       {!totals.isTotalPriceValid && (
                         <div className="relative group mx-1">
@@ -1096,12 +1096,12 @@ export default function NewSPK() {
                   </div>
 
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold">Total Promo</Label>
+                    <Label className="w-[40%] font-semibold shrink-0">Total Promo</Label>
                     <Input className="text-right" disabled value={formatRupiah(totals.totalPromo)} />
                   </div>
 
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold flex items-center gap-1">
+                    <Label className="w-[40%] font-semibold shrink-0 flex items-center gap-1">
                       <span>Diskon Manual</span>
                       {totals.isInvalidTotal && (
                         <div className="relative group mx-1">
@@ -1122,7 +1122,7 @@ export default function NewSPK() {
                   </div>
 
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold">Biaya Tambahan</Label>
+                    <Label className="w-[40%] font-semibold shrink-0">Biaya Tambahan</Label>
                     <RupiahInput
                       placeholder="Rp. 0"
                       value={formatRupiah(additionalFee)}
