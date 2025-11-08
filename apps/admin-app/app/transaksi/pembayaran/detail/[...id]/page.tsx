@@ -91,6 +91,8 @@ export default function PembayaranDetail() {
   const [updating, setUpdating] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+
+
   const id = useMemo(() => {
     return pathname.split("/transaksi/pembayaran/detail/").pop();
   }, [])
@@ -116,6 +118,8 @@ export default function PembayaranDetail() {
   const [selectedLockedCleaningStaffList, setSelectedLockedCleaningStaffList] = useState<any[]>([]);
   const [selectedLockedBlowerStaffList, setSelectedLockedBlowerStaffList] = useState<any[]>([]);
   const [selectedLockedReworkStaffList, setSelectedLockedReworkStaffList] = useState<any[]>([]);
+
+  const [isUsingBlower, setIsUsingBlower] = useState(false);
 
   const [blowerStaffList, setBlowerStaffList] = useState<LookupUser[]>([]);
   const [loadingBlowerStaff, setLoadingBlowerStaff] = useState(false);
@@ -160,6 +164,10 @@ export default function PembayaranDetail() {
   }
 
   const handleBlowerStaffChange = (selectedStaffIds: string[]) => {
+    if (selectedStaffIds.length > 1) {
+      selectedStaffIds = selectedStaffIds.slice(0, 1);
+    }
+
     if (selectedStaffIds.length === 0) {
       setTransaction(prev => {
         if (!prev) return null;
@@ -324,6 +332,9 @@ export default function PembayaranDetail() {
           setTransaction({
             ...transactionData,
           });
+
+          // Set blower usage state
+          setIsUsingBlower(transactionData.blowers && transactionData.blowers.length > 0);
 
           // Fetch customer data using customerId
           if (transactionData.customerId) {
@@ -648,7 +659,7 @@ export default function PembayaranDetail() {
                     <div className="flex-1 flex flex-wrap gap-2 min-h-[40px] items-center">
                       {reworkStaffList.filter(staff => transaction.assigns.includes(staff.lookupKey)).length > 0 ? (
                         reworkStaffList.filter(staff => transaction.assigns.includes(staff.lookupKey)).map((staff) => (
-                          <div key={staff.lookupKey} className="inline-block bg-baseLight/50 dark:bg-baseDark/50 text-teal-800 dark:text-teal-400 border border-mainColor dark:border-teal-400 rounded-full px-3 py-1 flex-shrink-0">
+                          <div key={staff.lookupKey} className="inline-block bg-baseLight/50 text-sm dark:bg-baseDark/50 text-teal-800 dark:text-teal-400 border border-mainColor dark:border-teal-400 rounded-full px-3 py-1 flex-shrink-0">
                             {staff.lookupValue}
                           </div>
                         ))
@@ -678,23 +689,63 @@ export default function PembayaranDetail() {
                 <div className="col-span-1 space-y-4">
                   <div className="flex items-center space-x-4">
                     <Label className="w-[40%] shrink-0 font-semibold">Petugas Blower</Label>
-                    {transaction.blowers.length > 0 ? (
-                      <MultiSelect
-                        staffList={blowerStaffList.sort((a, b) => a.lookupValue.localeCompare(b.lookupValue))}
-                        selected={transaction?.blowers || []}
-                        onSelectionChange={handleBlowerStaffChange}
-                        placeholder="Pilih petugas blower"
-                        loading={loadingBlowerStaff}
-                      />
+                    {isUsingBlower ? (
+                      <>
+                        {!IS_COMPLETED ? (
+                          <MultiSelect
+                            staffList={blowerStaffList.sort((a, b) => a.lookupValue.localeCompare(b.lookupValue))}
+                            selected={transaction?.blowers || []}
+                            onSelectionChange={handleBlowerStaffChange}
+                            placeholder="Pilih petugas blower"
+                            loading={loadingBlowerStaff}
+                          />
+                        ) : (
+                          <>
+                              {transaction.blowers.length > 0 ? (
+                              transaction.blowers.map((blowerId) => {
+                                const blower = blowerStaffList.find(staff => staff.lookupKey === blowerId);
+                                return (
+                                  <div key={blowerId} className="inline-block bg-baseLight/50 text-sm dark:bg-baseDark/50 text-teal-800 dark:text-teal-400 border border-mainColor dark:border-teal-400 rounded-full px-3 py-1 flex-shrink-0">
+                                    {blower ? blower.lookupValue : blowerId}
+                                  </div>
+                                );
+                              })
+                            ) : (
+                              <p className="text-gray-500">Tidak ada petugas blower</p>
+                            )}
+                          </>
+                        )}
+                      </>
                     ) : (
-                        <Textarea
-                          disabled
-                          className="resize-none"
-                          placeholder="Tidak ada petugas blower"
-                          value={selectedLockedBlowerStaffList.map(staff => staff?.fullname).join(", ") || "-"}
-                          rows={2}
-                        />
+                      <>
+                        <p className="text-gray-500">Tidak ada petugas blower</p>
+                      </>
                     )}
+
+                    {/* {!IS_COMPLETED ? (
+                      <>
+                        {isUsingBlower ? (
+                          <MultiSelect
+                            staffList={blowerStaffList.sort((a, b) => a.lookupValue.localeCompare(b.lookupValue))}
+                            selected={transaction?.blowers || []}
+                            onSelectionChange={handleBlowerStaffChange}
+                            placeholder="Pilih petugas blower"
+                            loading={loadingBlowerStaff}
+                          />
+                        ) : (
+                          <Textarea
+                            disabled
+                            className="resize-none"
+                            placeholder="Tidak ada petugas blower"
+                            value={selectedLockedBlowerStaffList.map(staff => staff?.fullname).join(", ") || "-"}
+                            rows={2}
+                          />
+                        )}
+                      </>
+                    ) : (
+                      <>
+                      </>
+                    )} */}
                   </div>
 
                   {
@@ -778,12 +829,17 @@ export default function PembayaranDetail() {
                       )}
 
                       {!IS_WAITING_PAYMENT && (
-                        <Textarea
-                          disabled
-                          className="resize-none"
-                          value={selectedLockedReworkStaffList.map(staff => staff?.fullname).join(", ") || "-"}
-                          rows={2}
-                        />
+                        <>
+                          {reworkStaffList.filter(staff => transaction.reassigns.includes(staff.lookupKey)).length > 0 ? (
+                            reworkStaffList.filter(staff => transaction.reassigns.includes(staff.lookupKey)).map((staff) => (
+                              <div key={staff.lookupKey} className="inline-block bg-baseLight/50 text-sm dark:bg-baseDark/50 text-teal-800 dark:text-teal-400 border border-mainColor dark:border-teal-400 rounded-full px-3 py-1 flex-shrink-0">
+                                {staff.lookupValue}
+                              </div>
+                            ))
+                          ) : (
+                            <p className="text-gray-500">Tidak ada petugas pekerja ulang</p>
+                          )}
+                        </>
                       )}
                     </div>
                   </div>
@@ -886,7 +942,7 @@ export default function PembayaranDetail() {
 
                 <div className="flex justify-end mt-6 gap-2">
                   {
-                    !IS_REWORKED && (
+                    !IS_COMPLETED && (
                       <Button
                         type="submit"
                         variant="main"

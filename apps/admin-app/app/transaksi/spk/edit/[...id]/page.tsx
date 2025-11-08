@@ -403,7 +403,7 @@ export default function TransactionDetail() {
       category: selectedCategory ? selectedCategory[0] : item.kategoriCode,
       serviceCode: item.kode,
       jumlah: item.jumlah.toString(),
-      tipe: item.tipe || "vakum", 
+      tipe: item.tipe || "vakum",
       harga: item.harga,
       promo: item.promo,
       promoCode: item.promoCode || "",
@@ -941,13 +941,27 @@ export default function TransactionDetail() {
                   <div className="col-span-1 space-y-4">
                     <div className="flex items-center space-x-4">
                       <Label className="w-[40%] font-semibold shrink-0">Petugas Cleaning</Label>
-                      <MultiSelect
-                        staffList={cleaningStaffList.sort((a, b) => a.lookupValue.localeCompare(b.lookupValue))}
-                        selected={transaction?.assigns || []}
-                        onSelectionChange={handleCleaningStaffChange}
-                        placeholder="Pilih petugas cleaning"
-                        loading={loadingCleaningStaff}
-                      />
+                      {!IS_CANCELLED ? (
+                        <MultiSelect
+                          staffList={cleaningStaffList.sort((a, b) => a.lookupValue.localeCompare(b.lookupValue))}
+                          selected={transaction?.assigns || []}
+                          onSelectionChange={handleCleaningStaffChange}
+                          placeholder="Pilih petugas cleaning"
+                          loading={loadingCleaningStaff}
+                        />
+                      ) :
+                        (
+                          <>
+                            {cleaningStaffList.filter(staff => transaction.assigns.includes(staff.lookupKey)).length > 0 ? (
+                              cleaningStaffList.filter(staff => transaction.assigns.includes(staff.lookupKey)).map((staff) => (
+                                <div key={staff.lookupKey} className="inline-block m-1 bg-baseLight/50 text-sm dark:bg-baseDark/50 text-teal-800 dark:text-teal-400 border-mainColor dark:border-teal-400 mx-1 rounded-full px-2 py-0.5 flex-shrink-0">
+                                  {staff.lookupValue}
+                                </div>
+                              ))
+                            ) : (
+                              <p className="text-gray-500">Tidak ada petugas cleaning</p>
+                            )}                        </>
+                        )}
                     </div>
 
                     <div className="flex items-center space-x-4">
@@ -985,13 +999,29 @@ export default function TransactionDetail() {
                   <div className="col-span-1 space-y-4">
                     <div className="flex items-center space-x-4">
                       <Label className="w-[40%] font-semibold shrink-0">Petugas Blower</Label>
-                      <MultiSelect
+                      {
+                        !IS_CANCELLED ? (
+                          <MultiSelect
                         staffList={blowerStaffList.sort((a, b) => a.lookupValue.localeCompare(b.lookupValue))}
                         selected={transaction?.blowers || []}
                         onSelectionChange={handleBlowerStaffChange}
                         placeholder="Pilih petugas blower"
                         loading={loadingBlowerStaff}
                       />
+                        ) : (
+                          <>
+                            {blowerStaffList.filter(staff => transaction.blowers.includes(staff.lookupKey)).length > 0 ? (
+                              blowerStaffList.filter(staff => transaction.blowers.includes(staff.lookupKey)).map((staff) => (
+                                <div key={staff.lookupKey} className="inline-block m-1 bg-baseLight/50 text-sm dark:bg-baseDark/50 text-teal-800 dark:text-teal-400 border-mainColor dark:border-teal-400 mx-1 rounded-full px-2 py-0.5 flex-shrink-0">
+                                  {staff.lookupValue}
+                                </div>
+                              ))
+                            ) : (
+                              <p className="text-gray-500">Tidak ada petugas blower</p>
+                            )}
+                          </>
+                        )
+                      }
                     </div>
 
                     {
