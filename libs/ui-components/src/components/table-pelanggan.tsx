@@ -75,19 +75,29 @@ export const TablePelanggan: React.FC<DataTableProps> = ({ data, columns, curren
             <Table className="w-full min-w-max">
                 <TableHeader>
                     <TableRow className="flex-row">
-                        {columns.map((header) => (
-                            <TableHead
+                        {columns.map((header) => {
+                            console.log(header.key, header.key === "menu" ? "w-[100px]" :
+                                header.key === "id" ? "w-[20px]" :
+                                    header.key === "address" ? "min-w-[250px] max-w-[400px]" :
+                                        header.key === "city" ? "min-w-[150px]" :
+                                            "min-w-[10px] max-w-[200px] ");
+
+
+                            return (
+                                <TableHead
                                 key={header.key}
                                 className={
                                     header.key === "menu" ? "w-[100px]" :
+                                        header.key === "id" ? "w-[20px]" :
                                         header.key === "address" ? "min-w-[250px] max-w-[400px]" :
                                             header.key === "city" ? "min-w-[150px]" :
-                                                "min-w-[120px] max-w-[200px] "
+                                                    "min-w-[10px] max-w-[200px] "
                                 }
                             >
                                 {header.label}
                             </TableHead>
-                        ))}
+                            )
+                        })}
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -99,6 +109,7 @@ export const TablePelanggan: React.FC<DataTableProps> = ({ data, columns, curren
                                     title={String(customer[header.key as keyof Pelanggan])}
                                     className={
                                         header.key === "menu" ? "w-fit" :
+                                            header.key === "id" ? "w-[20px]" :
                                             header.key === "address" ? "min-w-[250px] max-w-[400px]" :
                                                 header.key === "city" ? "min-w-[150px]" :
                                                     "min-w-[120px] max-w-[200px]"

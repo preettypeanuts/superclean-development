@@ -209,21 +209,51 @@ export default function PhotoSection({
   const handleDownloadInvoice = async () => {
     try {
       const invoiceElement = document.getElementById("invoice");
-      const containerElement = invoiceElement?.parentElement;
 
-      if (invoiceElement && containerElement) {
+      if (invoiceElement) {
         setIsDownloadInvoice(true);
 
-        // Store original parent and styles
-        const originalParent = invoiceElement.parentElement;
-        const originalNextSibling = invoiceElement.nextSibling;
+        // Clone the invoice element to render without constraints
+        const clonedInvoice = invoiceElement.cloneNode(true) as HTMLElement;
 
-        // Store original styles
-        const originalContainerOverflow = containerElement.style.overflow;
-        const originalContainerMaxHeight = containerElement.style.maxHeight;
-        const originalScrollTop = containerElement.scrollTop;
+        // Force light theme styles on cloned element
+        clonedInvoice.style.backgroundColor = '#ffffff';
+        clonedInvoice.style.color = '#000000';
 
-        // Create a temporary container to render the invoice without constraints
+        // Remove dark mode classes and force light theme
+        clonedInvoice.classList.remove('dark:bg-gray-900', 'dark:text-white');
+
+        // Apply light theme styles to all child elements
+        const allElements = clonedInvoice.querySelectorAll('*');
+        allElements.forEach((el: Element) => {
+          const htmlEl = el as HTMLElement;
+          // Remove all dark: prefixed classes
+          const classes = Array.from(htmlEl.classList);
+          classes.forEach(className => {
+            if (className.startsWith('dark:')) {
+              htmlEl.classList.remove(className);
+            }
+          });
+
+          // Force specific light theme colors for common elements
+          if (htmlEl.classList.contains('bg-white') || htmlEl.classList.contains('bg-gray-900')) {
+            htmlEl.style.backgroundColor = '#ffffff';
+          }
+          if (htmlEl.classList.contains('text-black') || htmlEl.classList.contains('text-white')) {
+            htmlEl.style.color = '#000000';
+          }
+          if (htmlEl.classList.contains('text-gray-500')) {
+            htmlEl.style.color = '#6b7280';
+          }
+          if (htmlEl.classList.contains('text-gray-600')) {
+            htmlEl.style.color = '#4b5563';
+          }
+          if (htmlEl.classList.contains('bg-gray-100')) {
+            htmlEl.style.backgroundColor = '#f3f4f6';
+          }
+        });
+
+        // Create a temporary container to render the clone without constraints
         const tempContainer = document.createElement('div');
         tempContainer.style.position = 'fixed';
         tempContainer.style.top = '-10000px';
@@ -231,26 +261,25 @@ export default function PhotoSection({
         tempContainer.style.width = 'auto';
         tempContainer.style.height = 'auto';
         tempContainer.style.overflow = 'visible';
+        tempContainer.style.backgroundColor = '#ffffff';
         document.body.appendChild(tempContainer);
 
-        // Move invoice to temp container
-        tempContainer.appendChild(invoiceElement);
+        // Add cloned invoice to temp container
+        tempContainer.appendChild(clonedInvoice);
 
-        // Wait for layout to settle
+        // Wait for layout to settle and images to load
         await new Promise(resolve => setTimeout(resolve, 300));
 
         // Log dimensions for debugging
-        console.log('Invoice element dimensions before capture:', {
-          scrollWidth: invoiceElement.scrollWidth,
-          scrollHeight: invoiceElement.scrollHeight,
-          offsetWidth: invoiceElement.offsetWidth,
-          offsetHeight: invoiceElement.offsetHeight,
-          clientWidth: invoiceElement.clientWidth,
-          clientHeight: invoiceElement.clientHeight
+        console.log('Cloned invoice dimensions:', {
+          scrollWidth: clonedInvoice.scrollWidth,
+          scrollHeight: clonedInvoice.scrollHeight,
+          offsetWidth: clonedInvoice.offsetWidth,
+          offsetHeight: clonedInvoice.offsetHeight,
         });
 
         try {
-          await exportAsImage(invoiceElement, `Invoice-${transaction?.trxNumber}.png`);
+          await exportAsImage(clonedInvoice, `Invoice-${transaction?.trxNumber}.png`);
 
           toast({
             title: "Success",
@@ -265,22 +294,8 @@ export default function PhotoSection({
             variant: "destructive",
           });
         } finally {
-          // Move invoice back to original container
-          if (originalParent) {
-            if (originalNextSibling) {
-              originalParent.insertBefore(invoiceElement, originalNextSibling);
-            } else {
-              originalParent.appendChild(invoiceElement);
-            }
-          }
-
           // Remove temp container
           document.body.removeChild(tempContainer);
-
-          // Restore original styles and scroll position
-          containerElement.style.overflow = originalContainerOverflow;
-          containerElement.style.maxHeight = originalContainerMaxHeight;
-          containerElement.scrollTop = originalScrollTop;
           setIsDownloadInvoice(false);
         }
       } else {
@@ -300,7 +315,7 @@ export default function PhotoSection({
       });
       setIsDownloadInvoice(false);
     }
-  };;
+  };;;
 
   useEffect(() => {
     const fetchTransactionReview = async () => {
@@ -783,6 +798,17 @@ export default function PhotoSection({
           <div
             className="fixed inset-0 z-[200] flex items-center justify-center bg-gray-900/50 dark:bg-gray-950/70 overflow-hidden"
           >
+            {/* Loading Overlay - Fixed position above everything */}
+            {isDownloadInvoice && (
+              <div className="fixed inset-0 z-[250] bg-black/50 backdrop-blur-sm flex items-center justify-center">
+                <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-xl flex flex-col items-center gap-3">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-mainColor"></div>
+                  <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">Mengunduh Invoice...</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Mohon tunggu sebentar</p>
+                </div>
+              </div>
+            )}
+
             {/* Modal Container - prevents background scroll */}
             <div className="relative w-full h-full flex flex-col items-center justify-center p-4 overflow-hidden"
               onClick={(e) => {
@@ -796,224 +822,227 @@ export default function PhotoSection({
               <div
                 className="relative w-full max-w-[1200px] max-h-[calc(100vh-120px)] bg-gray-200 dark:bg-gray-800 rounded-lg overflow-y-auto overflow-x-hidden shadow-2xl"
               >
-                <div id="invoice" className="invoice bg-white dark:bg-gray-900">
-                  {/* header */}
-                  <div className="bg-mainColor p-4 flex items-center justify-between sticky top-0 z-10">
-                    <h2 className="font-semibold text-mainDark">Invoice</h2>
-                    <button
-                      onClick={() => setShowInvoice(false)}
-                      className="text-mainDark hover:text-mainDark/70 font-bold text-xl px-2"
-                    >
-                      ✕
-                    </button>
+                <div id="invoice-container" className="invoice-container bg-white dark:bg-gray-900">
+                  <div id="invoice" className="invoice bg-white dark:bg-gray-900">
+                    {/* header */}
+                    <div className="bg-mainColor p-4 flex items-center justify-between sticky top-0 z-10">
+                      <h2 className="font-semibold text-mainDark">Invoice</h2>
+                      <button
+                        onClick={() => setShowInvoice(false)}
+                        className="text-mainDark hover:text-mainDark/70 font-bold text-xl px-2"
+                      >
+                        ✕
+                      </button>
+                    </div>
+
+                    <div className="bg-white dark:bg-gray-900 text-black dark:text-white px-4">
+                      {/* transaction summary */}
+                      <div className="flex space-x-8">
+                        {/* left content */}
+                        <div className="flex-1 p-4">
+                          <div className="flex mb-5 items-center space-x-4">
+                            <p className="flex-1 font-semibold">No Transaksi</p>
+                            <p className="font-semibold">:</p>
+                            <p className="flex-1 font-light">{transaction?.trxNumber}</p>
+                          </div>
+
+                          <div className="flex mb-5 items-center space-x-4">
+                            <p className="flex-1 font-semibold">No Whatsapp</p>
+                            <p className="font-semibold">:</p>
+                            <p className="flex-1 font-light">{customer?.noWhatsapp}</p>
+                          </div>
+
+                          <div className="flex mb-5 items-center space-x-4">
+                            <p className="flex-1 font-semibold">Nama Pelanggan</p>
+                            <p className="font-semibold">:</p>
+                            <p className="flex-1 font-light">{customer?.fullname}</p>
+                          </div>
+
+                          <div className="flex mb-5 justify-start space-x-4">
+                            <p className="flex-1 font-semibold">Alamat</p>
+                            <p className="font-semibold">:</p>
+                            <p className="flex-1 font-light">{customer?.address}</p>
+                          </div>
+                        </div>
+
+                        {/* right content */}
+                        <div className="flex-1 p-4">
+                          <div className="flex mb-5 items-center space-x-4">
+                            <p className="flex-1 font-semibold">Provinsi</p>
+                            <p className="font-semibold">:</p>
+                            <p className="flex-1 font-light">{locationLabels.provinceName}</p>
+                          </div>
+
+                          <div className="flex mb-5 items-center space-x-4">
+                            <p className="flex-1 font-semibold">Kab/Kota</p>
+                            <p className="font-semibold">:</p>
+                            <p className="flex-1 font-light">{locationLabels.cityName}</p>
+                          </div>
+
+                          <div className="flex mb-5 items-center space-x-4">
+                            <p className="flex-1 font-semibold">Kecamatan</p>
+                            <p className="font-semibold">:</p>
+                            <p className="flex-1 font-light">{locationLabels.districtName}</p>
+                          </div>
+
+                          <div className="flex mb-5 justify-start space-x-4">
+                            <p className="flex-1 font-semibold">Kelurahan</p>
+                            <p className="font-semibold">:</p>
+                            <p className="flex-1 font-light">{locationLabels.subDistrictName}</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* divider */}
+                      <div className="w-full border-t my-4"></div>
+
+                      {/* cleaning / blower */}
+
+                      <div className="flex space-x-8">
+                        {/* left content */}
+                        <div className="flex-1 p-4">
+                          <div className="flex mb-5 items-center space-x-4 justify-start">
+                            <p className="flex-1 font-semibold ">Petugas Cleaning</p>
+                            <p className="font-semibold">:</p>
+                            <div className="flex-1">
+                              {/* cleaning list */}
+                              {cleaningStaffList.length > 0 ? (
+                                cleaningStaffList.map((staff) => (
+                                  <div key={staff.lookupKey} className="inline-block bg-baseLight/50 text-sm dark:bg-baseDark/50 text-teal-800 dark:text-teal-400 border border-mainColor dark:border-teal-400 rounded-full px-3 py-1 flex-shrink-0">
+                                    {staff.lookupValue}
+                                  </div>
+                                ))
+                              ) : (
+                                <p className="text-gray-500">Tidak ada petugas cleaning</p>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="flex mb-5 items-center space-x-4">
+                            <p className="flex-1 font-semibold">Tanggal Pengerjaan</p>
+                            <p className="font-semibold">:</p>
+                            <p className="flex-1 font-light">{transaction?.trxDate ? <>{formatDate(transaction.trxDate)}</> : <span className="text-gray-500">Tidak ada tanggal</span>}</p>
+                          </div>
+                        </div>
+
+                        {/* right content */}
+                        <div className="flex-1 p-4">
+                          <div className="flex mb-5 items-center space-x-4 justify-start">
+                            <p className="flex-1 font-semibold">Petugas Blower</p>
+                            <p className="font-semibold">:</p>
+                            <div className="flex-1">
+                              {/* cleaning list */}
+                              {blowerStaffList.length > 0 ? (
+                                blowerStaffList.map((staff) => (
+                                  <div key={staff.lookupKey} className="inline-block bg-baseLight/50 text-sm dark:bg-baseDark/50 text-teal-800 dark:text-teal-400 border border-mainColor dark:border-teal-400 rounded-full px-3 py-1 flex-shrink-0">
+                                    {staff.lookupValue}
+                                  </div>
+                                ))
+                              ) : (
+                                <p className="text-gray-500">Tidak ada petugas blower</p>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* divider */}
+                      <div className="w-full border-t my-4"></div>
+
+                      {/* transaction items */}
+                      <div className="transaction-items-table w-full">
+                        {/* header */}
+                        <div className="flex w-full rounded-t-md px-2 bg-mainColor/40">
+                          <div className="flex w-6 p-2 mx-1 py-4 text-baseDark/70 dark:text-baseLight font-semibold">#</div>
+                          <div className="flex-[3] p-2 mx-1 py-4 text-baseDark/70 dark:text-baseLight font-semibold">Kode</div>
+                          <div className="flex-1 p-2 mx-1 py-4 text-baseDark/70 dark:text-baseLight font-semibold">Layanan</div>
+                          <div className="flex-1 p-2 mx-1 py-4 text-baseDark/70 dark:text-baseLight font-semibold">kategori</div>
+                          <div className="flex-1 p-2 mx-1 py-4 text-baseDark/70 dark:text-baseLight font-semibold">Jumlah</div>
+                          <div className="flex-1 p-2 mx-1 py-4 text-baseDark/70 dark:text-baseLight font-semibold">Satuan</div>
+                          <div className="flex-1 p-2 mx-1 py-4 text-baseDark/70 dark:text-baseLight font-semibold">Harga</div>
+                          <div className="flex-1 p-2 mx-1 py-4 text-baseDark/70 dark:text-baseLight font-semibold">Promo</div>
+                        </div>
+
+                        {spkItems.map((item, index) => {
+                          const {
+                            kode, layanan, kategori, jumlah, satuan, harga, promo
+                          } = item;
+
+                          const totalPrice = harga * jumlah;
+
+                          return (
+                            <div key={item.id} className="flex w-full px-2 items-center">
+                              <div className="flex w-6 p-2 mx-1 py-4 dark:text-baseLight text-gray-500">{index + 1}</div>
+                              <div className="flex-[3] p-2 mx-1 py-4 dark:text-baseLight text-gray-500">{item.kode}</div>
+                              <div className="flex-1 p-2 mx-1 py-4 dark:text-baseLight text-gray-500">{item.layanan}</div>
+                              <div className="flex-1 p-2 mx-1 py-4 dark:text-baseLight text-gray-500">{item.kategori}</div>
+                              <div className="flex-1 p-2 mx-1 py-4 dark:text-baseLight text-gray-500">{item.jumlah}</div>
+                              <div className="flex-1 p-2 mx-1 py-4 dark:text-baseLight text-gray-500">{item.satuan}</div>
+                              <div className="flex-1 p-2 mx-1 py-4 dark:text-baseLight text-gray-500">Rp. {totalPrice.toLocaleString()}</div>
+                              <div className="flex-1 p-2 mx-1 py-4 dark:text-baseLight text-gray-500">Rp. {item.promo.toLocaleString()}</div>
+                            </div>
+                          )
+                        })}
+                      </div>
+
+                      {/* divider */}
+                      <div className="w-full border-t my-4"></div>
+
+                      {/* footer */}
+                      <div className="flex items-center p-4">
+                        {/* left content - logo and payment */}
+                        <div className="flex-1 flex items-center space-x-4 mr-6">
+                          <img src="/assets/image.png" alt="Logo" width={200} height={100} />
+                          <div className="">
+                            <p className="font-semibold">Nama Rekening & No Rekening</p>
+                            <p className=" text-gray-600 dark:text-baseLight mb-4">a/n ({bankName}) {bankAccountName} - {bankAccount}</p>
+                          </div>
+
+                        </div>
+
+                        {/* right content - total price and promos */}
+                        <div className="flex-1 flex flex-col">
+                          <div className="flex my-3 px-1 items-center justify-between">
+                            <p className="flex-1 font-semibold">Total Harga</p>
+                            <p className="font-normal">{formatRupiah(totals.totalPrice)}</p>
+                          </div>
+
+                          <div className="flex my-3 px-1 items-center justify-between">
+                            <p className="flex-1 font-semibold">Promo</p>
+                            <p className="font-normal">{formatRupiah(totals.totalPromo)}</p>
+                          </div>
+
+                          <div className="flex my-3 px-1 items-center justify-between">
+                            <p className="flex-1 font-semibold">Diskon</p>
+                            <p className="font-normal">{formatRupiah(totals.manualDiscount)}</p>
+                          </div>
+
+                          <div className="flex my-4 items-center justify-between p-2 bg-gray-100 dark:bg-gray-800 rounded-lg">
+                            <p className="flex-1 text-lg font-bold">Total Akhir</p>
+                            <p className="font-bold text-lg">{formatRupiah(totals.finalPrice)}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-
-                  <div className="bg-white dark:bg-gray-900 text-black dark:text-white px-4">
-                    {/* transaction summary */}
-                    <div className="flex space-x-8">
-                      {/* left content */}
-                      <div className="flex-1 p-4">
-                        <div className="flex mb-5 items-center space-x-4">
-                          <p className="flex-1 font-semibold">No Transaksi</p>
-                          <p className="font-semibold">:</p>
-                          <p className="flex-1 font-light">{transaction?.trxNumber}</p>
-                        </div>
-
-                        <div className="flex mb-5 items-center space-x-4">
-                          <p className="flex-1 font-semibold">No Whatsapp</p>
-                          <p className="font-semibold">:</p>
-                          <p className="flex-1 font-light">{customer?.noWhatsapp}</p>
-                        </div>
-
-                        <div className="flex mb-5 items-center space-x-4">
-                          <p className="flex-1 font-semibold">Nama Pelanggan</p>
-                          <p className="font-semibold">:</p>
-                          <p className="flex-1 font-light">{customer?.fullname}</p>
-                        </div>
-
-                        <div className="flex mb-5 justify-start space-x-4">
-                          <p className="flex-1 font-semibold">Alamat</p>
-                          <p className="font-semibold">:</p>
-                          <p className="flex-1 font-light">{customer?.address}</p>
-                        </div>
-                      </div>
-
-                      {/* right content */}
-                      <div className="flex-1 p-4">
-                        <div className="flex mb-5 items-center space-x-4">
-                          <p className="flex-1 font-semibold">Provinsi</p>
-                          <p className="font-semibold">:</p>
-                          <p className="flex-1 font-light">{locationLabels.provinceName}</p>
-                        </div>
-
-                        <div className="flex mb-5 items-center space-x-4">
-                          <p className="flex-1 font-semibold">Kab/Kota</p>
-                          <p className="font-semibold">:</p>
-                          <p className="flex-1 font-light">{locationLabels.cityName}</p>
-                        </div>
-
-                        <div className="flex mb-5 items-center space-x-4">
-                          <p className="flex-1 font-semibold">Kecamatan</p>
-                          <p className="font-semibold">:</p>
-                          <p className="flex-1 font-light">{locationLabels.districtName}</p>
-                        </div>
-
-                        <div className="flex mb-5 justify-start space-x-4">
-                          <p className="flex-1 font-semibold">Kelurahan</p>
-                          <p className="font-semibold">:</p>
-                          <p className="flex-1 font-light">{locationLabels.subDistrictName}</p>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* divider */}
-                    <div className="w-full border-t my-4"></div>
-
-                    {/* cleaning / blower */}
-
-                    <div className="flex space-x-8">
-                      {/* left content */}
-                      <div className="flex-1 p-4">
-                        <div className="flex mb-5 items-center space-x-4 justify-start">
-                          <p className="flex-1 font-semibold ">Petugas Cleaning</p>
-                          <p className="font-semibold">:</p>
-                          <div className="flex-1">
-                            {/* cleaning list */}
-                            {cleaningStaffList.length > 0 ? (
-                              cleaningStaffList.map((staff) => (
-                                <div key={staff.lookupKey} className="inline-block m-1 bg-baseLight/50  text-teal-800 border-mainColor border mx-1 rounded-full px-2 py-0.5 flex-shrink-0">
-                                  {staff.lookupValue}
-                                </div>
-                              ))
-                            ) : (
-                              <p className="text-gray-500">Tidak ada petugas cleaning</p>
-                            )}
-                          </div>
-                        </div>
-
-                        <div className="flex mb-5 items-center space-x-4">
-                          <p className="flex-1 font-semibold">Tanggal Pengerjaan</p>
-                          <p className="font-semibold">:</p>
-                          <p className="flex-1 font-light">{transaction?.trxDate ? <>{formatDate(transaction.trxDate)}</> : <span className="text-gray-500">Tidak ada tanggal</span>}</p>
-                        </div>
-                      </div>
-
-                      {/* right content */}
-                      <div className="flex-1 p-4">
-                        <div className="flex mb-5 items-center space-x-4 justify-start">
-                          <p className="flex-1 font-semibold">Petugas Blower</p>
-                          <p className="font-semibold">:</p>
-                          <div className="flex-1">
-                            {/* cleaning list */}
-                            {blowerStaffList.length > 0 ? (
-                              blowerStaffList.map((staff) => (
-                                <div key={staff.lookupKey} className="inline-block m-1 bg-baseLight/50  text-teal-800 border-mainColor border mx-1 rounded-full px-2 py-0.5 flex-shrink-0">
-                                  {staff.lookupValue}
-                                </div>
-                              ))
-                            ) : (
-                              <p className="text-gray-500">Tidak ada petugas blower</p>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* divider */}
-                    <div className="w-full border-t my-4"></div>
-
-                    {/* transaction items */}
-                    <div className="transaction-items-table w-full">
-                      {/* header */}
-                      <div className="flex w-full rounded-t-md px-2 bg-mainColor/40">
-                        <div className="flex w-6 p-2 mx-1 py-4 text-baseDark/70 font-semibold">#</div>
-                        <div className="flex-[3] p-2 mx-1 py-4 text-baseDark/70 font-semibold">Kode</div>
-                        <div className="flex-1 p-2 mx-1 py-4 text-baseDark/70 font-semibold">Layanan</div>
-                        <div className="flex-1 p-2 mx-1 py-4 text-baseDark/70 font-semibold">kategori</div>
-                        <div className="flex-1 p-2 mx-1 py-4 text-baseDark/70 font-semibold">Jumlah</div>
-                        <div className="flex-1 p-2 mx-1 py-4 text-baseDark/70 font-semibold">Satuan</div>
-                        <div className="flex-1 p-2 mx-1 py-4 text-baseDark/70 font-semibold">Harga</div>
-                        <div className="flex-1 p-2 mx-1 py-4 text-baseDark/70 font-semibold">Promo</div>
-                      </div>
-
-                      {spkItems.map((item, index) => {
-                        const {
-                          kode, layanan, kategori, jumlah, satuan, harga, promo
-                        } = item;
-
-                        const totalPrice = harga * jumlah;
-
-                        return (
-                          <div key={item.id} className="flex w-full px-2 items-center">
-                            <div className="flex w-6 p-2 mx-1 py-4 text-gray-500">{index + 1}</div>
-                            <div className="flex-[3] p-2 mx-1 py-4 text-gray-500">{item.kode}</div>
-                            <div className="flex-1 p-2 mx-1 py-4 text-gray-500">{item.layanan}</div>
-                            <div className="flex-1 p-2 mx-1 py-4 text-gray-500">{item.kategori}</div>
-                            <div className="flex-1 p-2 mx-1 py-4 text-gray-500">{item.jumlah}</div>
-                            <div className="flex-1 p-2 mx-1 py-4 text-gray-500">{item.satuan}</div>
-                            <div className="flex-1 p-2 mx-1 py-4 text-gray-500">Rp. {totalPrice.toLocaleString()}</div>
-                            <div className="flex-1 p-2 mx-1 py-4 text-gray-500">Rp. {item.promo.toLocaleString()}</div>
-                          </div>
-                        )
-                      })}
-                    </div>
-
-                    {/* divider */}
-                    <div className="w-full border-t my-4"></div>
-
-                    {/* footer */}
-                    <div className="flex items-center p-4">
-                      {/* left content - logo and payment */}
-                      <div className="flex-1 flex items-center space-x-4 mr-6">
-                        <img src="/assets/image.png" alt="Logo" width={200} height={100} />
-                        <div className="">
-                          <p className="font-semibold">Nama Rekening & No Rekening</p>
-                          <p className=" text-gray-600 mb-4">a/n ({bankName}) {bankAccountName} - {bankAccount}</p>
-                        </div>
-
-                      </div>
-
-                      {/* right content - total price and promos */}
-                      <div className="flex-1 flex flex-col">
-                        <div className="flex my-3 px-1 items-center justify-between">
-                          <p className="flex-1 font-semibold">Total Harga</p>
-                          <p className="font-normal">{formatRupiah(totals.totalPrice)}</p>
-                        </div>
-
-                        <div className="flex my-3 px-1 items-center justify-between">
-                          <p className="flex-1 font-semibold">Promo</p>
-                          <p className="font-normal">{formatRupiah(totals.totalPromo)}</p>
-                        </div>
-
-                        <div className="flex my-3 px-1 items-center justify-between">
-                          <p className="flex-1 font-semibold">Diskon</p>
-                          <p className="font-normal">{formatRupiah(totals.manualDiscount)}</p>
-                        </div>
-
-                        <div className="flex my-4 items-center justify-between p-2 bg-gray-100 rounded-lg">
-                          <p className="flex-1 text-lg font-bold">Total Akhir</p>
-                          <p className="font-bold text-lg">{formatRupiah(totals.finalPrice)}</p>
-                        </div>
-                      </div>
-                    </div>
+                  {/* Download button - positioned outside invoice but inside modal */}
+                  <div className="text-right px-6 pb-4">
+                    <Button
+                      className="shadow-lg"
+                      loading={isDownloadInvoice}
+                      onClick={() => {
+                        handleDownloadInvoice()
+                      }}
+                    >
+                      Download Invoice
+                    </Button>
                   </div>
                 </div>
 
 
               </div>
 
-              {/* Download button - positioned outside invoice but inside modal */}
-              <div className="absolute bottom-4 right-4">
-                <Button
-                  className="shadow-lg"
-                  loading={isDownloadInvoice}
-                  onClick={() => {
-                    handleDownloadInvoice()
-                  }}
-                >
-                  Download Invoice
-                </Button>
-              </div>
+
             </div>
           </div>
         </>

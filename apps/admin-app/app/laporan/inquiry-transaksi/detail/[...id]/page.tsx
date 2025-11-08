@@ -504,7 +504,7 @@ export default function InquiryTransaksiDetail() {
                       {/* cleaning list */}
                       {cleanerStaffList.filter(staff => transaction.assigns.includes(staff.lookupKey)).length > 0 ? (
                         cleanerStaffList.filter(staff => transaction.assigns.includes(staff.lookupKey)).map((staff) => (
-                          <div key={staff.lookupKey} className="inline-block m-1 bg-baseLight/50 dark:bg-baseDark/50 text-teal-800 dark:text-teal-400 border-mainColor dark:border-teal-400 mx-1 rounded-full px-2 py-0.5 flex-shrink-0">
+                          <div key={staff.lookupKey} className="inline-block m-1 bg-baseLight/50 text-sm dark:bg-baseDark/50 text-teal-800 dark:text-teal-400 border-mainColor dark:border-teal-400 mx-1 rounded-full px-2 py-0.5 flex-shrink-0">
                             {staff.lookupValue}
                           </div>
                         ))
@@ -559,7 +559,7 @@ export default function InquiryTransaksiDetail() {
                     {/* blower list */}
                     {blowerStaffList.filter(staff => transaction.assigns.includes(staff.lookupKey)).length > 0 ? (
                       blowerStaffList.filter(staff => transaction.assigns.includes(staff.lookupKey)).map((staff) => (
-                        <div key={staff.lookupKey} className="inline-block m-1 bg-baseLight/50 dark:bg-baseDark/50 text-teal-800 dark:text-teal-400 border-mainColor dark:border-teal-400 mx-1 rounded-full px-2 py-0.5 flex-shrink-0">
+                        <div key={staff.lookupKey} className="inline-block m-1 bg-baseLight/50 text-sm dark:bg-baseDark/50 text-teal-800 dark:text-teal-400 border-mainColor dark:border-teal-400 mx-1 rounded-full px-2 py-0.5 flex-shrink-0">
                           {staff.lookupValue}
                         </div>
                       ))
@@ -641,7 +641,7 @@ export default function InquiryTransaksiDetail() {
                     {/* blower list */}
                     {cleanerStaffList.filter(staff => transaction.reassigns.includes(staff.lookupKey)).length > 0 ? (
                       cleanerStaffList.filter(staff => transaction.reassigns.includes(staff.lookupKey)).map((staff) => (
-                        <div key={staff.lookupKey} className="inline-block m-1 bg-baseLight/50 dark:bg-baseDark/50 text-teal-800 dark:text-teal-400 border-mainColor dark:border-teal-400 mx-1 rounded-full px-2 py-0.5 flex-shrink-0">
+                        <div key={staff.lookupKey} className="inline-block m-1 bg-baseLight/50 text-sm dark:bg-baseDark/50 text-teal-800 dark:text-teal-400 border-mainColor dark:border-teal-400 mx-1 rounded-full px-2 py-0.5 flex-shrink-0">
                           {staff.lookupValue}
                         </div>
                       ))
