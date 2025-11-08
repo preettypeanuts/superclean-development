@@ -1,22 +1,22 @@
 'use client';
-import KaryawanSelect from '@ui-components/components/karyawan-select';
-import { useState } from 'react';
-import { DatePicker } from '@ui-components/components/date-picker';
-import { Wrapper } from '@shared/components/Wrapper';
-import { Button } from '@ui-components/components/ui/button';
 import { Breadcrumbs } from '@shared/components/ui/Breadcrumbs';
-import { Label } from '@ui-components/components/ui/label';
-import { IoClose } from 'react-icons/io5';
+import { Wrapper } from '@shared/components/Wrapper';
+import { apiClient } from '@shared/utils/apiClient';
+import { formatDateAPI } from '@shared/utils/formatDate';
+import { useParameterStore } from '@shared/utils/useParameterStore';
+import { DatePicker } from '@ui-components/components/date-picker';
 import { GroupFilter } from '@ui-components/components/group-filter';
+import KaryawanSelect from '@ui-components/components/karyawan-select';
 import { SelectFilter } from '@ui-components/components/select-filter';
-import { FaFileExcel, FaFilePdf } from 'react-icons/fa6';
+import { Button } from '@ui-components/components/ui/button';
+import { Label } from '@ui-components/components/ui/label';
 import {
   RadioGroup,
   RadioGroupItem,
 } from '@ui-components/components/ui/radio-group';
-import { useParameterStore } from '@shared/utils/useParameterStore';
-import { apiClient } from '@shared/utils/apiClient';
-import { formatDateAPI } from '@shared/utils/formatDate';
+import { useState } from 'react';
+import { FaFileExcel, FaFilePdf } from 'react-icons/fa6';
+import { IoClose } from 'react-icons/io5';
 
 export default function BenefitKaryawanPage() {
   const [reportType, setReportType] = useState<'absensi' | 'tip'>('absensi');
@@ -524,7 +524,7 @@ export default function BenefitKaryawanPage() {
           {/* Default Content */}
           {!showDetail && (
             <div className="text-center text-muted-foreground text-sm py-7 my-3 border-y">
-              Silakan lengkapi kriteria pencarian lalu klik tombol <b>Cari</b>{' '}
+              Silakan lengkapi kriteria pencarian lalu klik tombol <b>Tampilkan</b>{' '}
               untuk melihat laporan
             </div>
           )}
