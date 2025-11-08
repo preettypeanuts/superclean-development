@@ -399,12 +399,22 @@ export default function NewSPK() {
   };
 
   const handleBlowerStaffChange = (selectedStaffIds: string[]) => {
-    if (selectedStaffIds.length > 0) {
-      // only one blower staff can be selected
-      selectedStaffIds = [selectedStaffIds[0]];
-    }
+    // if (selectedStaffIds.length > 0) {
+    //   // only one blower staff can be selected
+    //   selectedStaffIds = [selectedStaffIds[0]];
+    // }
+    const newDeliveryDate = formData.deliveryDate;
+    const newPickupDate = formData.pickupDate;
 
-    if (selectedStaffIds.length == 0) {
+    if (selectedStaffIds.length > 0) {
+      // if previously blowerStaff was empty and now has value, set delivery date and accept date to trxDate
+      setFormData(prev => ({
+        ...prev,
+        blowerStaff: selectedStaffIds,
+        deliveryDate: newDeliveryDate || formData.trxDate,
+        pickupDate: newPickupDate || formData.trxDate,
+      }));
+    } else if (selectedStaffIds.length == 0) {
       // remove delivery date and accept date
       setFormData(prev => ({
         ...prev,
@@ -412,16 +422,9 @@ export default function NewSPK() {
         pickupDate: undefined,
         blowerStaff: []
       }));
-    } else if (selectedStaffIds.length > 0 && !(formData.deliveryDate && formData.pickupDate)) {
-      // if previously blowerStaff was empty and now has value, set delivery date and accept date to trxDate
-      setFormData(prev => ({
-        ...prev,
-        deliveryDate: formData.trxDate,
-        pickupDate: formData.trxDate,
-        blowerStaff: selectedStaffIds
-      }));
-    }
+    } 
   };
+
 
   const handleClearCustomer = () => {
     setSelectedCustomer(null);

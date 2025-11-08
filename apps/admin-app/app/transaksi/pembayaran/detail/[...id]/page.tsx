@@ -164,9 +164,9 @@ export default function PembayaranDetail() {
   }
 
   const handleBlowerStaffChange = (selectedStaffIds: string[]) => {
-    if (selectedStaffIds.length > 1) {
-      selectedStaffIds = selectedStaffIds.slice(0, 1);
-    }
+    // if (selectedStaffIds.length > 1) {
+    //   selectedStaffIds = selectedStaffIds.slice(0, 1);
+    // }
 
     if (selectedStaffIds.length === 0) {
       setTransaction(prev => {

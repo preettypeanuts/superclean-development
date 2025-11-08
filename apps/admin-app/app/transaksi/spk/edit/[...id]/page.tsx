@@ -465,10 +465,10 @@ export default function TransactionDetail() {
   };
 
   const handleBlowerStaffChange = (selectedStaffIds: string[]) => {
-    if (selectedStaffIds.length > 1) {
-      // only one blower staff can be selected
-      selectedStaffIds = [selectedStaffIds[0]];
-    }
+    // if (selectedStaffIds.length > 1) {
+    //   // only one blower staff can be selected
+    //   selectedStaffIds = [selectedStaffIds[0]];
+    // }
 
     if (selectedStaffIds.length === 0) {
       setTransaction(prev => {
