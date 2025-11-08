@@ -216,6 +216,43 @@ export default function PhotoSection({
         // Clone the invoice element to render without constraints
         const clonedInvoice = invoiceElement.cloneNode(true) as HTMLElement;
 
+        // Force light theme styles on cloned element
+        clonedInvoice.style.backgroundColor = '#ffffff';
+        clonedInvoice.style.color = '#000000';
+
+        // Remove dark mode classes and force light theme
+        clonedInvoice.classList.remove('dark:bg-gray-900', 'dark:text-white');
+
+        // Apply light theme styles to all child elements
+        const allElements = clonedInvoice.querySelectorAll('*');
+        allElements.forEach((el: Element) => {
+          const htmlEl = el as HTMLElement;
+          // Remove all dark: prefixed classes
+          const classes = Array.from(htmlEl.classList);
+          classes.forEach(className => {
+            if (className.startsWith('dark:')) {
+              htmlEl.classList.remove(className);
+            }
+          });
+
+          // Force specific light theme colors for common elements
+          if (htmlEl.classList.contains('bg-white') || htmlEl.classList.contains('bg-gray-900')) {
+            htmlEl.style.backgroundColor = '#ffffff';
+          }
+          if (htmlEl.classList.contains('text-black') || htmlEl.classList.contains('text-white')) {
+            htmlEl.style.color = '#000000';
+          }
+          if (htmlEl.classList.contains('text-gray-500')) {
+            htmlEl.style.color = '#6b7280';
+          }
+          if (htmlEl.classList.contains('text-gray-600')) {
+            htmlEl.style.color = '#4b5563';
+          }
+          if (htmlEl.classList.contains('bg-gray-100')) {
+            htmlEl.style.backgroundColor = '#f3f4f6';
+          }
+        });
+
         // Create a temporary container to render the clone without constraints
         const tempContainer = document.createElement('div');
         tempContainer.style.position = 'fixed';
@@ -224,6 +261,7 @@ export default function PhotoSection({
         tempContainer.style.width = 'auto';
         tempContainer.style.height = 'auto';
         tempContainer.style.overflow = 'visible';
+        tempContainer.style.backgroundColor = '#ffffff';
         document.body.appendChild(tempContainer);
 
         // Add cloned invoice to temp container
@@ -870,7 +908,7 @@ export default function PhotoSection({
                               {/* cleaning list */}
                               {cleaningStaffList.length > 0 ? (
                                 cleaningStaffList.map((staff) => (
-                                  <div key={staff.lookupKey} className="inline-block m-1 text-sm bg-baseLight/50  text-teal-800 border-mainColor border mx-1 rounded-full px-2 py-0.5 flex-shrink-0">
+                                  <div key={staff.lookupKey} className="inline-block bg-baseLight/50 text-sm dark:bg-baseDark/50 text-teal-800 dark:text-teal-400 border border-mainColor dark:border-teal-400 rounded-full px-3 py-1 flex-shrink-0">
                                     {staff.lookupValue}
                                   </div>
                                 ))
@@ -896,7 +934,7 @@ export default function PhotoSection({
                               {/* cleaning list */}
                               {blowerStaffList.length > 0 ? (
                                 blowerStaffList.map((staff) => (
-                                  <div key={staff.lookupKey} className="inline-block m-1 text-sm bg-baseLight/50  text-teal-800 border-mainColor border mx-1 rounded-full px-2 py-0.5 flex-shrink-0">
+                                  <div key={staff.lookupKey} className="inline-block bg-baseLight/50 text-sm dark:bg-baseDark/50 text-teal-800 dark:text-teal-400 border border-mainColor dark:border-teal-400 rounded-full px-3 py-1 flex-shrink-0">
                                     {staff.lookupValue}
                                   </div>
                                 ))
@@ -915,14 +953,14 @@ export default function PhotoSection({
                       <div className="transaction-items-table w-full">
                         {/* header */}
                         <div className="flex w-full rounded-t-md px-2 bg-mainColor/40">
-                          <div className="flex w-6 p-2 mx-1 py-4 text-baseDark/70 font-semibold">#</div>
-                          <div className="flex-[3] p-2 mx-1 py-4 text-baseDark/70 font-semibold">Kode</div>
-                          <div className="flex-1 p-2 mx-1 py-4 text-baseDark/70 font-semibold">Layanan</div>
-                          <div className="flex-1 p-2 mx-1 py-4 text-baseDark/70 font-semibold">kategori</div>
-                          <div className="flex-1 p-2 mx-1 py-4 text-baseDark/70 font-semibold">Jumlah</div>
-                          <div className="flex-1 p-2 mx-1 py-4 text-baseDark/70 font-semibold">Satuan</div>
-                          <div className="flex-1 p-2 mx-1 py-4 text-baseDark/70 font-semibold">Harga</div>
-                          <div className="flex-1 p-2 mx-1 py-4 text-baseDark/70 font-semibold">Promo</div>
+                          <div className="flex w-6 p-2 mx-1 py-4 text-baseDark/70 dark:text-baseLight font-semibold">#</div>
+                          <div className="flex-[3] p-2 mx-1 py-4 text-baseDark/70 dark:text-baseLight font-semibold">Kode</div>
+                          <div className="flex-1 p-2 mx-1 py-4 text-baseDark/70 dark:text-baseLight font-semibold">Layanan</div>
+                          <div className="flex-1 p-2 mx-1 py-4 text-baseDark/70 dark:text-baseLight font-semibold">kategori</div>
+                          <div className="flex-1 p-2 mx-1 py-4 text-baseDark/70 dark:text-baseLight font-semibold">Jumlah</div>
+                          <div className="flex-1 p-2 mx-1 py-4 text-baseDark/70 dark:text-baseLight font-semibold">Satuan</div>
+                          <div className="flex-1 p-2 mx-1 py-4 text-baseDark/70 dark:text-baseLight font-semibold">Harga</div>
+                          <div className="flex-1 p-2 mx-1 py-4 text-baseDark/70 dark:text-baseLight font-semibold">Promo</div>
                         </div>
 
                         {spkItems.map((item, index) => {
@@ -934,14 +972,14 @@ export default function PhotoSection({
 
                           return (
                             <div key={item.id} className="flex w-full px-2 items-center">
-                              <div className="flex w-6 p-2 mx-1 py-4 text-gray-500">{index + 1}</div>
-                              <div className="flex-[3] p-2 mx-1 py-4 text-gray-500">{item.kode}</div>
-                              <div className="flex-1 p-2 mx-1 py-4 text-gray-500">{item.layanan}</div>
-                              <div className="flex-1 p-2 mx-1 py-4 text-gray-500">{item.kategori}</div>
-                              <div className="flex-1 p-2 mx-1 py-4 text-gray-500">{item.jumlah}</div>
-                              <div className="flex-1 p-2 mx-1 py-4 text-gray-500">{item.satuan}</div>
-                              <div className="flex-1 p-2 mx-1 py-4 text-gray-500">Rp. {totalPrice.toLocaleString()}</div>
-                              <div className="flex-1 p-2 mx-1 py-4 text-gray-500">Rp. {item.promo.toLocaleString()}</div>
+                              <div className="flex w-6 p-2 mx-1 py-4 dark:text-baseLight text-gray-500">{index + 1}</div>
+                              <div className="flex-[3] p-2 mx-1 py-4 dark:text-baseLight text-gray-500">{item.kode}</div>
+                              <div className="flex-1 p-2 mx-1 py-4 dark:text-baseLight text-gray-500">{item.layanan}</div>
+                              <div className="flex-1 p-2 mx-1 py-4 dark:text-baseLight text-gray-500">{item.kategori}</div>
+                              <div className="flex-1 p-2 mx-1 py-4 dark:text-baseLight text-gray-500">{item.jumlah}</div>
+                              <div className="flex-1 p-2 mx-1 py-4 dark:text-baseLight text-gray-500">{item.satuan}</div>
+                              <div className="flex-1 p-2 mx-1 py-4 dark:text-baseLight text-gray-500">Rp. {totalPrice.toLocaleString()}</div>
+                              <div className="flex-1 p-2 mx-1 py-4 dark:text-baseLight text-gray-500">Rp. {item.promo.toLocaleString()}</div>
                             </div>
                           )
                         })}
@@ -957,7 +995,7 @@ export default function PhotoSection({
                           <img src="/assets/image.png" alt="Logo" width={200} height={100} />
                           <div className="">
                             <p className="font-semibold">Nama Rekening & No Rekening</p>
-                            <p className=" text-gray-600 mb-4">a/n ({bankName}) {bankAccountName} - {bankAccount}</p>
+                            <p className=" text-gray-600 dark:text-baseLight mb-4">a/n ({bankName}) {bankAccountName} - {bankAccount}</p>
                           </div>
 
                         </div>
@@ -979,7 +1017,7 @@ export default function PhotoSection({
                             <p className="font-normal">{formatRupiah(totals.manualDiscount)}</p>
                           </div>
 
-                          <div className="flex my-4 items-center justify-between p-2 bg-gray-100 rounded-lg">
+                          <div className="flex my-4 items-center justify-between p-2 bg-gray-100 dark:bg-gray-800 rounded-lg">
                             <p className="flex-1 text-lg font-bold">Total Akhir</p>
                             <p className="font-bold text-lg">{formatRupiah(totals.finalPrice)}</p>
                           </div>
