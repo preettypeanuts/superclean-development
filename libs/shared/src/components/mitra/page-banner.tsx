@@ -12,6 +12,7 @@ interface PageBannerProps {
   titleClassName?: string;
   backButtonClassName?: string;
   scrollThreshold?: number; // Threshold untuk memulai transisi sticky
+  hide?: boolean; // Control visibility of banner
 }
 
 export const PageBanner: React.FC<PageBannerProps> = ({
@@ -22,7 +23,8 @@ export const PageBanner: React.FC<PageBannerProps> = ({
   className = "",
   titleClassName = "",
   backButtonClassName = "",
-  scrollThreshold = 0
+  scrollThreshold = 0,
+  hide = false
 }) => {
 
   const [scrollY, setScrollY] = useState(0);
@@ -78,6 +80,11 @@ export const PageBanner: React.FC<PageBannerProps> = ({
 
   // Calculate opacity untuk smooth fade effect
   const backgroundOpacity = Math.min(1, Math.max(0.8, (scrollThreshold - scrollY) / scrollThreshold));
+
+  // Hide banner if hide prop is true
+  if (hide) {
+    return null;
+  }
 
   return (
     <main

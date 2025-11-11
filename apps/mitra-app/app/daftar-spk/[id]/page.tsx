@@ -1225,16 +1225,6 @@ const ImagePreviewModal = ({ isOpen, imageSrc, onClose, onDelete, isReadOnly }: 
 
   return (
     <div className="fixed inset-0 z-[1999] bg-black/90 flex items-center justify-center" onClick={onClose}>
-      {/* Close button */}
-      <button
-        onClick={onClose}
-        className="absolute top-4 right-4 z-[1000] p-2 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </button>
-
       {/* Delete button */}
       {!isReadOnly && (
         <button
@@ -1287,6 +1277,8 @@ const UploadPhoto = ({
   isReadOnly = false
 }: AttachmentImageProps) => {
   const ALLOWED_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+  const context = React.useContext(TransactionContext);
+  const setIsImagePreviewOpen = context.setIsImagePreviewOpen;
 
   const [imageSrc, setImageSrc] = useState<string>(src);
   const [currentLoading, setCurrentLoading] = useState<boolean>(loading);
@@ -1299,6 +1291,13 @@ const UploadPhoto = ({
   useEffect(() => {
     setCurrentLoading(loading);
   }, [loading]);
+
+  // Sync preview state with context
+  useEffect(() => {
+    if (setIsImagePreviewOpen) {
+      setIsImagePreviewOpen(showPreview);
+    }
+  }, [showPreview, setIsImagePreviewOpen]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -1659,6 +1658,8 @@ const TransactionContext = React.createContext<{
   afterImages?: Array<TransactionDocument>;
   setBeforeImages?: React.Dispatch<React.SetStateAction<Array<TransactionDocument>>>;
   setAfterImages?: React.Dispatch<React.SetStateAction<Array<TransactionDocument>>>;
+  isImagePreviewOpen?: boolean;
+  setIsImagePreviewOpen?: React.Dispatch<React.SetStateAction<boolean>>;
 }>({
   transactionDetail: null,
   customerDetail: null,
@@ -1672,6 +1673,8 @@ const TransactionContext = React.createContext<{
   afterImages: [],
   setBeforeImages: () => { },
   setAfterImages: () => { },
+  isImagePreviewOpen: false,
+  setIsImagePreviewOpen: () => { },
 });
 
 export default function PekerjaanBerlangsung() {
@@ -1693,6 +1696,7 @@ export default function PekerjaanBerlangsung() {
 
   const [showUploadBefore, setShowUploadBefore] = useState<boolean>(false);
   const [showUploadAfter, setShowUploadAfter] = useState<boolean>(false);
+  const [isImagePreviewOpen, setIsImagePreviewOpen] = useState<boolean>(false);
 
   const [beforeImages, setBeforeImages] = useState<Array<TransactionDocument>>([]); // Replace with actual before images array
   const [afterImages, setAfterImages] = useState<Array<TransactionDocument>>([]); // Replace with actual after images array
@@ -1896,12 +1900,15 @@ export default function PekerjaanBerlangsung() {
       beforeImages,
       afterImages,
       setBeforeImages,
-      setAfterImages
+      setAfterImages,
+      isImagePreviewOpen,
+      setIsImagePreviewOpen
 
     }}>
       <main className="pb-[20vh] relative">
         <PageBanner
           title={getBannerTitle}
+          hide={isImagePreviewOpen}
         />
         <div className="bg-white dark:bg-slate-800 mx-4 rounded-md -m-8 z-30 relative">
           {/* preview */}
