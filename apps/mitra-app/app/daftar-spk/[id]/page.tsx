@@ -1188,6 +1188,79 @@ const RiwayatTab = () => {
 }
 
 
+interface ImagePreviewModalProps {
+  isOpen: boolean;
+  imageSrc: string;
+  onClose: () => void;
+  onDelete: () => void;
+  isReadOnly: boolean;
+}
+
+const ImagePreviewModal = ({ isOpen, imageSrc, onClose, onDelete, isReadOnly }: ImagePreviewModalProps) => {
+  useEffect(() => {
+    if (isOpen) {
+      // Prevent body scroll
+      document.body.style.overflow = 'hidden';
+
+      // Hide header and footer navigation
+      const header = document.querySelector('header');
+      const footer = document.querySelector('footer');
+      const nav = document.querySelector('nav');
+
+      if (header) header.style.display = 'none';
+      if (footer) footer.style.display = 'none';
+      if (nav) nav.style.display = 'none';
+
+      return () => {
+        // Restore on unmount
+        document.body.style.overflow = 'unset';
+        if (header) header.style.display = '';
+        if (footer) footer.style.display = '';
+        if (nav) nav.style.display = '';
+      };
+    }
+  }, [isOpen]);
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-[1999] bg-black/90 flex items-center justify-center" onClick={onClose}>
+      {/* Close button */}
+      <button
+        onClick={onClose}
+        className="absolute top-4 right-4 z-[1000] p-2 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+
+      {/* Delete button */}
+      {!isReadOnly && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete();
+            onClose();
+          }}
+          className="absolute bottom-8 right-1/2 translate-x-1/2 z-[1000] px-6 py-3 bg-red-500 hover:bg-red-600 rounded-lg text-white font-semibold transition-colors flex items-center gap-2"
+        >
+          <FaX size={14} />
+          Hapus Foto
+        </button>
+      )}
+
+      {/* Image */}
+      <img
+        src={imageSrc}
+        alt="Preview"
+        className="max-w-[90vw] max-h-[90vh] object-contain"
+        onClick={(e) => e.stopPropagation()}
+      />
+    </div>
+  );
+};
+
 interface AttachmentImageProps {
   onUpload?: (file: File) => void;
   onDelete?: () => void;
@@ -1217,6 +1290,7 @@ const UploadPhoto = ({
 
   const [imageSrc, setImageSrc] = useState<string>(src);
   const [currentLoading, setCurrentLoading] = useState<boolean>(loading);
+  const [showPreview, setShowPreview] = useState<boolean>(false);
 
   useEffect(() => {
     setImageSrc(src);
@@ -1252,16 +1326,30 @@ const UploadPhoto = ({
 
 
   return <>
+    <ImagePreviewModal
+      isOpen={showPreview}
+      imageSrc={imageSrc}
+      onClose={() => setShowPreview(false)}
+      onDelete={() => {
+        setImageSrc("");
+        onDelete();
+      }}
+      isReadOnly={isReadOnly}
+    />
+
     <div className={cn(className, "flex items-center justify-center relative w-full h-full aspect-square rounded-md overflow-hidden")}>
       {
         imageSrc ? (
-          <div className="flex flex-1 items-center justify-center h-full relative">
+          <div
+            className="flex flex-1 items-center justify-center h-full relative cursor-pointer"
+            onClick={() => setShowPreview(true)}
+          >
             <img
               src={imageSrc}
               alt={label}
               width={width}
               height={height}
-            // className=" w-full h-full cursor-pointer aspect-square object-cover"
+              className="w-full h-full object-cover"
             />
           </div>)
           : (
@@ -1271,21 +1359,6 @@ const UploadPhoto = ({
             </div>
           )
       }
-
-      {imageSrc && !isReadOnly && (
-        <Button
-          variant="destructive"
-          size="icon"
-          className="absolute !p-1 top-2 right-3 rounded-lg bg-mainColor/80 border border-gray-300 hover:bg-gray-100/10 text-white hover:text-red-500"
-          onClick={() => {
-            setImageSrc("");
-            onDelete();
-          }}
-        >
-          {/* cross icon */}
-          <FaX size={10} />
-        </Button>
-      )}
     </div>
   </>
 
