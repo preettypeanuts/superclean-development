@@ -284,7 +284,7 @@ export default function PemberitahuanPage() {
 
             <div ref={lastPostElementRef} className="h-10 mt-4">
               {isLoading && <p className="text-center text-sm text-muted-foreground">Loading...</p>}
-              {all.length > 0 && noMoreData && <p className="text-center text-sm text-muted-foreground">Tidak ada lagi pemberitahuan.</p>}
+              {all.length === 0 && <p className="text-center text-sm text-muted-foreground">Tidak ada lagi pemberitahuan.</p>}
             </div>
           </TabsContent>
           <TabsContent value="unread">
@@ -296,7 +296,7 @@ export default function PemberitahuanPage() {
 
             <div ref={lastPostElementRef} className="h-10 mt-4">
               {isLoading && <p className="text-center text-sm text-muted-foreground">Loading...</p>}
-              {unread.length > 0 && noMoreData && <p className="text-center text-sm text-muted-foreground">Tidak ada lagi pemberitahuan.</p>}
+              {unread.length === 0 && <p className="text-center text-sm text-muted-foreground">Tidak ada lagi pemberitahuan.</p>}
             </div>
           </TabsContent>
           <TabsContent value="read">
@@ -308,7 +308,7 @@ export default function PemberitahuanPage() {
 
             <div ref={lastPostElementRef} className="h-10 mt-4">
               {isLoading && <p className="text-center text-sm text-muted-foreground">Loading...</p>}
-              {read.length > 0 && noMoreData && <p className="text-center text-sm text-muted-foreground">Tidak ada lagi pemberitahuan.</p>}
+              {read.length === 0 && <p className="text-center text-sm text-muted-foreground">Tidak ada lagi pemberitahuan.</p>}
             </div>
           </TabsContent>
         </Tabs>
