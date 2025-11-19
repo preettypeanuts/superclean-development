@@ -52,7 +52,7 @@ function NotificationList({
   }, [selectedIds]);
 
   if (items.length === 0) {
-    return <p className="text-muted-foreground text-center border-b pb-5">Tidak ada pemberitahuan.</p>;
+    return <p className="text-muted-foreground text-center pb-5">Tidak ada pemberitahuan.</p>;
   }
 
   return (
@@ -282,10 +282,15 @@ export default function PemberitahuanPage() {
               toggleCheckbox={toggleCheckbox}
             />
 
-            <div ref={lastPostElementRef} className="h-10 mt-4">
-              {isLoading && <p className="text-center text-sm text-muted-foreground">Loading...</p>}
-              {all.length > 0 && noMoreData && <p className="text-center text-sm text-muted-foreground">Tidak ada lagi pemberitahuan.</p>}
-            </div>
+            {isLoading &&
+              <>
+              <div ref={lastPostElementRef} className="h-10 mt-4">
+                <p className="text-center text-sm text-muted-foreground">Loading...</p>
+              </div>
+              </>
+            }
+
+
           </TabsContent>
           <TabsContent value="unread">
             <NotificationList
@@ -294,10 +299,11 @@ export default function PemberitahuanPage() {
               toggleCheckbox={toggleCheckbox}
             />
 
-            <div ref={lastPostElementRef} className="h-10 mt-4">
-              {isLoading && <p className="text-center text-sm text-muted-foreground">Loading...</p>}
-              {unread.length > 0 && noMoreData && <p className="text-center text-sm text-muted-foreground">Tidak ada lagi pemberitahuan.</p>}
-            </div>
+            {isLoading && (
+              <div ref={lastPostElementRef} className="h-10 mt-4">
+                <p className="text-center text-sm text-muted-foreground">Loading...</p>
+              </div>
+            )}
           </TabsContent>
           <TabsContent value="read">
             <NotificationList
@@ -306,10 +312,15 @@ export default function PemberitahuanPage() {
               toggleCheckbox={toggleCheckbox}
             />
 
-            <div ref={lastPostElementRef} className="h-10 mt-4">
-              {isLoading && <p className="text-center text-sm text-muted-foreground">Loading...</p>}
-              {read.length > 0 && noMoreData && <p className="text-center text-sm text-muted-foreground">Tidak ada lagi pemberitahuan.</p>}
-            </div>
+            {
+              isLoading && (
+                <div ref={lastPostElementRef} className="h-10 mt-4">
+                  <p className="text-center text-sm text-muted-foreground">Loading...</p>
+                </div>
+              )
+            }
+
+
           </TabsContent>
         </Tabs>
       </Wrapper>
