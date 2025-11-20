@@ -119,7 +119,7 @@ const EditItemModal = ({ isOpen = false, item, onClose = () => { } }: EditItemMo
         service: item?.serviceCode || "",
         quantity: item?.quantity || 1,
         price: item.servicePrice,
-        type: item?.serviceType == 1 ? "vakum" : "cuci",
+        type: item?.serviceType === 1 ? "cuci" : "vakum",
         totalPrice: item?.totalPrice || 0,
       } as Item);
     } else {
@@ -192,7 +192,7 @@ const EditItemModal = ({ isOpen = false, item, onClose = () => { } }: EditItemMo
     if (item && services.length > 0) {
       setFormData((prev) => {
         const service = services.find((s) => s.serviceCode === item.serviceCode);
-        const price = item.serviceType == 1 ? service?.vacuumPrice : service?.cleanPrice;
+        const price = item.serviceType === 1 ? service?.cleanPrice : service?.vacuumPrice;
 
         if (service) {
           return {
