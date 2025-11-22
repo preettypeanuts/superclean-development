@@ -1,15 +1,15 @@
+import { useToast } from "libs/ui-components/src/hooks/use-toast";
+import { api } from "libs/utils/apiClient";
+import { formatRupiah } from "libs/utils/formatRupiah";
 import Link from "next/link";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
-import { Button } from "./ui/button";
+import { useState } from "react";
 import { HiMiniPencilSquare } from "react-icons/hi2";
 import { IoMdTrash } from "react-icons/io";
-import { api } from "libs/utils/apiClient";
-import { useToast } from "libs/ui-components/src/hooks/use-toast";
-import { formatRupiah } from "libs/utils/formatRupiah";
-import { formatDate, daysRemaining } from "../../../utils/formatDate"
-import { useState } from "react";
-import { DeleteDialog } from "./delete-dialog";
 import { PiWarningCircleLight } from "react-icons/pi";
+import { daysRemaining, formatDate } from "../../../utils/formatDate";
+import { DeleteDialog } from "./delete-dialog";
+import { Button } from "./ui/button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
 
 interface TableHeader {
     key: string;
@@ -89,7 +89,7 @@ export const DiscountTable: React.FC<DataTableProps> = ({ data, columns, current
                             <TableCell key={header.key} className={`${header.key === "menu" && "!w-fit"}`}>
                                 {header.key === "menu" ? (
                                     <div className="w-fit flex gap-2">
-                                        <Link href={`/master-data/diskon/edit/${discount.id}`} >
+                                        <Link href={`/master-data/promo/edit/${discount.id}`} >
                                             <Button
                                                 size={"icon"}
                                                 variant={"main"}
