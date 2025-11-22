@@ -1,10 +1,10 @@
 "use client";
-import { useRouter } from "next/navigation";
-import DiscountForm, { Diskon } from "apps/admin-app/app/master-data/diskon/form";
-import { useToast } from "@ui-components/hooks/use-toast";
-import { useState } from "react";
 import { api } from "@shared/utils/apiClient";
 import { ConfirmSaveDialog } from "@ui-components/components/save-dialog";
+import { useToast } from "@ui-components/hooks/use-toast";
+import DiscountForm, { Diskon } from "apps/admin-app/app/master-data/promo/form";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function NewDiscount() {
   const router = useRouter();
@@ -67,7 +67,7 @@ export default function NewDiscount() {
         description: "Promo berhasil ditambahkan!",
         variant: "default",
       });
-      router.push("/master-data/diskon");
+      router.push("/master-data/promo");
     } catch (error: any) {
       console.error("Error creating promo:", error);
 

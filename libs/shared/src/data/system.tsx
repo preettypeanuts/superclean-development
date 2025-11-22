@@ -22,7 +22,7 @@ export const navigationItems = {
           { name: "karyawan", path: "/master-data/karyawan" },
           { name: "pelanggan", path: "/master-data/pelanggan" },
           { name: "layanan", path: "/master-data/layanan" },
-          { name: "Promo", path: "/master-data/diskon" },
+          { name: "Promo", path: "/master-data/promo" },
         ]
       },
       {

@@ -1,12 +1,12 @@
 "use client";
-import { usePathname, useRouter } from "next/navigation";
 import { Wrapper } from "@shared/components/Wrapper";
+import { usePathname, useRouter } from "next/navigation";
 
-import { Dispatch, useEffect, useState } from "react";
-import { api } from "libs/utils/apiClient";
-import { useToast } from "libs/ui-components/src/hooks/use-toast";
 import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
-import DiscountForm, { Diskon, DiskonErrors } from "apps/admin-app/app/master-data/diskon/form";
+import DiscountForm, { Diskon, DiskonErrors } from "apps/admin-app/app/master-data/promo/form";
+import { useToast } from "libs/ui-components/src/hooks/use-toast";
+import { api } from "libs/utils/apiClient";
+import { Dispatch, useEffect, useState } from "react";
 
 
 export default function EditDiskon() {
@@ -151,7 +151,7 @@ export default function EditDiskon() {
         description: "Diskon berhasil diperbarui!",
         variant: "success",
       });
-      router.push("/master-data/diskon");
+      router.push("/master-data/promo");
     } catch (error) {
       console.error("Gagal memperbarui diskon:", error);
       toast({

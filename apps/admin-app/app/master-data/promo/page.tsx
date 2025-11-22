@@ -128,7 +128,7 @@ export default function PromoPage() {
 
               <Button variant="main" onClick={handleSearch}>Cari</Button>
             </div>
-            <Link href="diskon/baru">
+            <Link href="promo/baru">
               <Button icon={<LuPlus size={14} />} iconPosition="left" variant="default">
                 Tambah
               </Button>
@@ -144,7 +144,7 @@ export default function PromoPage() {
               data={dataPromo}
               columns={DataHeaderPromo}
               key={`${currentPage}-${limit}`}
-                  currentPage={currentPage.page}
+              currentPage={currentPage.page}
               limit={limit}
               fetchData={fetchPromo} // Pass the fetchPromo function to the table
             />
