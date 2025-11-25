@@ -43,7 +43,7 @@ export const TipWidget = ({ blower = false }: TipWidgetProps) => {
                 
                 // Calculate total tip amount (only for non-blower mode)
                 if (!blower) {
-                    const totalTipAmount = reviews.reduce((sum, item) => sum + item.amount, 0);
+                    const totalTipAmount = reviews.reduce((sum, item) => sum + Number(item.amount), 0);
                     setTotalTip(totalTipAmount);
                 }
                 

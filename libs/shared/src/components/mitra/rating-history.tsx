@@ -41,7 +41,7 @@ export const RatingHistory: React.FC<RatingHistoryProps> = ({ blower = false }) 
             setLoading(true);
             setError(null);
             
-            const response: ApiResponse = await api.get('/transaction/review-mitra?page=1&limit=10');
+            const response: ApiResponse = await api.get('/transaction/review-mitra?page=1&limit=100');
             
             if (response && response.status === "success") {
                 setReviews(response.data[0]);

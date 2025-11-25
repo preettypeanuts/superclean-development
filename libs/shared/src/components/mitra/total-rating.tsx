@@ -56,7 +56,7 @@ export const TotalRating = () => {
             setLoading(true);
             setError(null);
 
-            const response: ApiResponse = await api.get('/transaction/review-mitra?page=1&limit=100');
+            const response: ApiResponse = await api.get('/transaction/review-mitra?page=1&limit=100');                    
 
             if (response && response.status === "success") {
                 const reviews = response.data[0];
