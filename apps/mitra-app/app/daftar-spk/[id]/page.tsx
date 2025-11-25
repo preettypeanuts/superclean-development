@@ -1306,7 +1306,7 @@ const UploadPhoto = ({
 
       // check if filesize is allowed
       if (file.size > ALLOWED_FILE_SIZE) {
-        alert("Ukuran file terlalu besar. Maksimal ukuran file adalah 5MB.");
+        alert("Ukuran file terlalu besar. Maksimal ukuran file adalah 10MB.");
         return;
       }
 
