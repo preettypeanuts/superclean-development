@@ -431,7 +431,7 @@ function PaymentPreview({
               width={500}
               height={500}
               className="w-full h-full  aspect-square"
-              src="/assets/qris.png"
+              src="/assets/qris_updated.jpeg"
               alt="Qris barcode"
             />
           </div>
