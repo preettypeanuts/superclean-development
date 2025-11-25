@@ -6,18 +6,13 @@ import { api } from "../../../../utils/apiClient";
 
 // Interface sesuai dengan API response
 interface ReviewData {
-    username: string;
-    transaction: {
-        id: string;
-        trxNumber: string;
-        trxDate: string;
-        rating: number;
-        review: string | null;
-    };
-    insentive: {
-        amount: number;
-        attendanceDate: string | null;
-    };
+    fullname: string;    
+    id: string;
+    trxNumber: string;
+    trxDate: string;
+    rating: number;
+    review: string | null;
+    amount: number;
 }
 
 // Interface untuk response API
@@ -48,14 +43,14 @@ export const TipWidget = ({ blower = false }: TipWidgetProps) => {
                 
                 // Calculate total tip amount (only for non-blower mode)
                 if (!blower) {
-                    const totalTipAmount = reviews.reduce((sum, item) => sum + item.insentive.amount, 0);
+                    const totalTipAmount = reviews.reduce((sum, item) => sum + item.amount, 0);
                     setTotalTip(totalTipAmount);
                 }
                 
                 // Calculate average rating (only for reviews with rating > 0)
-                const validRatings = reviews.filter(item => item.transaction.rating > 0);
+                const validRatings = reviews.filter(item => item.rating > 0);
                 if (validRatings.length > 0) {
-                    const avgRating = validRatings.reduce((sum, item) => sum + item.transaction.rating, 0) / validRatings.length;
+                    const avgRating = validRatings.reduce((sum, item) => sum + item.rating, 0) / validRatings.length;
                     setAverageRating(Math.round(avgRating * 10) / 10); // Round to 1 decimal place
                 } else {
                     setAverageRating(0);

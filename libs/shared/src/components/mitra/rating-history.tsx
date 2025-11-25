@@ -7,21 +7,13 @@ import { api } from "../../../../utils/apiClient";
 
 // Interface sesuai dengan API response yang baru
 interface ReviewData {
-    username: string;
-    customer: {
-        fullname: string;
-    };
-    transaction: {
-        id: string;
-        trxNumber: string;
-        trxDate: string;
-        rating: number;
-        review: string | null;
-    };
-    insentive: {
-        amount: number;
-        attendanceDate: string | null;
-    };
+    fullname: string;    
+    id: string;
+    trxNumber: string;
+    trxDate: string;
+    rating: number;
+    review: string | null;
+    amount: number;
 }
 
 // Interface untuk response API
@@ -163,32 +155,32 @@ export const RatingHistory: React.FC<RatingHistoryProps> = ({ blower = false }) 
             <div className="space-y-[14px]">
                 {reviews.map((item, index) => (
                     <div
-                        key={item.transaction.id}
+                        key={item.id}
                         className={`p-3${index !== reviews.length - 1 ? ' border-b' : ''}`}
                     >
                         <div className="flex items-start justify-between">
                             <div className={`flex items-start space-x-3 ${blower ? 'w-full' : ''}`}>
                                 <div className={`mt-2 w-[28px] h-[28px] aspect-square rounded-full flex items-center justify-center flex-shrink-0 ${
-                                    item.transaction.rating > 0 ? 'bg-yellow-400' : 'bg-gray-300'
+                                    item.rating > 0 ? 'bg-yellow-400' : 'bg-gray-300'
                                 }`}>
                                     <Star className={`w-[16px] h-[16px] ${
-                                        item.transaction.rating > 0 ? 'text-white fill-white' : 'text-gray-500 fill-gray-500'
+                                        item.rating > 0 ? 'text-white fill-white' : 'text-gray-500 fill-gray-500'
                                     }`} />
                                 </div>
 
                                 <div className="flex-1 min-w-0 space-y-1">
                                     <h3 className="text-lg font-semibold text-gray-900">
-                                        {item.customer.fullname}
+                                        {item.fullname}
                                     </h3>
 
                                     <p className="text-xs text-orange-500">
-                                        Nomor Transaksi: {item.transaction.trxNumber}
+                                        Nomor Transaksi: {item.trxNumber}
                                     </p>
 
-                                    {item.transaction.rating > 0 ? (
+                                    {item.rating > 0 ? (
                                         <div className="flex items-center space-x-1">
                                             <span className="text-xs text-neutral-800 mr-2">Poins:</span>
-                                            {renderStars(item.transaction.rating)}
+                                            {renderStars(item.rating)}
                                         </div>
                                     ) : (
                                         <div className="flex items-center space-x-1">
@@ -196,11 +188,11 @@ export const RatingHistory: React.FC<RatingHistoryProps> = ({ blower = false }) 
                                         </div>
                                     )}
 
-                                    {item.transaction.review ? (
+                                    {item.review ? (
                                         <p className="text-xs text-muted-foreground">
-                                            Notes: {item.transaction.review}
+                                            Notes: {item.review}
                                         </p>
-                                    ) : item.transaction.rating === 0 && (
+                                    ) : item.rating === 0 && (
                                         <p className="text-xs text-gray-400 italic">
                                             Menunggu review dari pelanggan
                                         </p>
@@ -212,7 +204,7 @@ export const RatingHistory: React.FC<RatingHistoryProps> = ({ blower = false }) 
                                 <div className="text-right flex-shrink-0">
                                     <p className="text-sm text-gray-500 mb-1 text-left">Uang Tip</p>
                                     <p className="text-xs font-bold text-green-600">
-                                        + {formatCurrency(item.insentive.amount)}
+                                        + {formatCurrency(item.amount)}
                                     </p>
                                 </div>
                             )}

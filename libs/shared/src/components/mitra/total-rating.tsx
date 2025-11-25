@@ -9,21 +9,13 @@ import { useUserProfile } from "../../../../utils/useUserProfile";
 
 // Interface untuk data rating dari API
 interface ReviewData {
-    username: string;
-    customer: {
-        fullname: string;
-    };
-    transaction: {
-        id: string;
-        trxNumber: string;
-        trxDate: string;
-        rating: number;
-        review: string | null;
-    };
-    insentive: {
-        amount: number;
-        attendanceDate: string | null;
-    };
+    fullname: string;    
+    id: string;
+    trxNumber: string;
+    trxDate: string;
+    rating: number;
+    review: string | null;
+    amount: number;
 }
 
 interface ApiResponse {
@@ -80,7 +72,7 @@ export const TotalRating = () => {
 
     const calculateRatingStats = (reviews: ReviewData[]) => {
         // Filter hanya review yang sudah ada rating (> 0)
-        const reviewsWithRating = reviews.filter(review => review.transaction.rating > 0);
+        const reviewsWithRating = reviews.filter(review => review.rating > 0);
 
         if (reviewsWithRating.length === 0) {
             setRatingStats({
@@ -92,13 +84,13 @@ export const TotalRating = () => {
         }
 
         // Hitung total rating
-        const totalRating = reviewsWithRating.reduce((sum, review) => sum + review.transaction.rating, 0);
+        const totalRating = reviewsWithRating.reduce((sum, review) => sum + review.rating, 0);
         const averageRating = totalRating / reviewsWithRating.length;
 
         // Hitung distribusi rating
         const ratingCounts: { [key: number]: number } = {};
         reviewsWithRating.forEach(review => {
-            const rating = review.transaction.rating;
+            const rating = review.rating;
             ratingCounts[rating] = (ratingCounts[rating] || 0) + 1;
         });
 
