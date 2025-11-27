@@ -409,9 +409,15 @@ export default function PembayaranDetail() {
   }, [transaction]);
 
   const calculateTotals = () => {
-    const totalPrice = transaction?.details.reduce((sum, item) => sum + item.servicePrice * item.quantity, 0) || 0;
+    let totalPrice = transaction?.details.reduce((sum, item) => sum + item.servicePrice * item.quantity, 0) || 0;
     const totalPromo = transaction?.details.reduce((sum, item) => sum + item.promoPrice, 0) || 0;
 
+    const isTotalPriceValid = totalPrice >= 250_000;
+
+    if (!isTotalPriceValid) {
+      totalPrice = 250_000;
+    }
+    
     const manualDiscount = transaction?.discountPrice || 0;
     const additionalFee = transaction?.additionalFee || 0;
 
