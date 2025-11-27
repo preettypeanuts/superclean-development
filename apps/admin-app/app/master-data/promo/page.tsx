@@ -22,7 +22,7 @@ const DataHeaderPromo = [
   { key: "amount", label: "Potongan (Rp / %)" },
   { key: "serviceCode", label: "Layanan" },
   { key: "minItem", label: "Minimal Item" },
-  { key: "endDate", label: "Masa Berlaku" },
+  { key: "endDate", label: "Berlaku Sampai" },
   { key: "menu", label: "Aksi" },
 ];
 

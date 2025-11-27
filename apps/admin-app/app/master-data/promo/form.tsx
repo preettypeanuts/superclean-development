@@ -338,7 +338,7 @@ export default function DiscountForm({
             </div>
           </div>
           <div className="flex items-center space-x-4">
-            <Label htmlFor="endDate" className="w-1/4 font-semibold">Masa Berlaku</Label>
+            <Label htmlFor="endDate" className="w-1/4 font-semibold">Berlaku Sampai</Label>
             <div className="w-full">
               <Input
                 type="date"

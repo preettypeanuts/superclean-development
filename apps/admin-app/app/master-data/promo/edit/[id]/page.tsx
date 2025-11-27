@@ -105,7 +105,7 @@ export default function EditDiskon() {
     }
 
     if (!formData.endDate) {
-      newErrors.endDate = "Masa berlaku wajib diisi";
+      newErrors.endDate = "Berlaku Sampai wajib diisi";
       isValid = false;
     } else {
       const selectedDate = new Date(formData.endDate);
@@ -113,7 +113,7 @@ export default function EditDiskon() {
       today.setHours(0, 0, 0, 0);
 
       if (selectedDate < today) {
-        newErrors.endDate = "Masa berlaku tidak boleh kurang dari hari ini";
+        newErrors.endDate = "Berlaku Sampai tidak boleh kurang dari hari ini";
         isValid = false;
       }
     }
