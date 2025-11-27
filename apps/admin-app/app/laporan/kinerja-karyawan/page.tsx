@@ -419,7 +419,7 @@ export default function KinerjaKaryawanPage() {
                         value={tempRole || ''}
                         optionsString={[
                           { label: 'Staff Cleaning', value: 'CLEANER' },
-                          { label: 'Staff Blower', value: 'BLOWER' },
+                          // { label: 'Staff Blower', value: 'BLOWER' },
                         ]}
                         onChange={(value) =>
                           setTempRole(value === 'all' ? '' : value)
