@@ -1819,7 +1819,7 @@ export default function PekerjaanBerlangsung() {
       const payload = {
         serviceCategory: item.category,
         serviceCode: item.service,
-        serviceType: item.type === "vakum" ? 1 : 2,
+        serviceType: item.type === "vakum" ? 0 : 1,
         servicePrice: item.price,
         promoCode: item.promoCode || "",
         promoType: item.promoType || "",
