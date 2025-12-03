@@ -25,13 +25,25 @@ export default function EditDiskon() {
     serviceCode: "",
     minItem: "",
     endDate: "",
+    startDate: "",
   });
 
   useEffect(() => {
     const fetchDiskon = async () => {
       try {
         const result = await api.get(`/promo/id/${id}`);
-        const { code, name, category, promoType, serviceCode, amount, minItem, endDate } = result.data;
+        const {
+          code,
+          name,
+          category,
+          promoType,
+          serviceCode,
+          amount,
+          minItem,
+          endDate,
+          startDate,
+        } = result.data;
+
         setFormData({
           code,
           name,
@@ -41,6 +53,7 @@ export default function EditDiskon() {
           amount: Number(amount),
           minItem: Number(minItem),
           endDate: endDate ? new Date(endDate).toISOString().split("T")[0] : "",
+          startDate: startDate ? new Date(startDate).toISOString().split("T")[0] : "",
         });
       } catch (error) {
         console.error("Gagal mengambil data diskon:", error);
@@ -105,7 +118,7 @@ export default function EditDiskon() {
     }
 
     if (!formData.endDate) {
-      newErrors.endDate = "Berlaku Sampai wajib diisi";
+      newErrors.endDate = "Tanggal Akhir wajib diisi";
       isValid = false;
     } else {
       const selectedDate = new Date(formData.endDate);
@@ -113,7 +126,20 @@ export default function EditDiskon() {
       today.setHours(0, 0, 0, 0);
 
       if (selectedDate < today) {
-        newErrors.endDate = "Berlaku Sampai tidak boleh kurang dari hari ini";
+        newErrors.endDate = "Tanggal Akhir tidak boleh kurang dari hari ini";
+        isValid = false;
+      }
+    }
+
+    if (!formData.startDate) {
+      newErrors.startDate = "Tanggal Mulai wajib diisi";
+      isValid = false;
+    } else {
+      const selectedStartDate = new Date(formData.startDate);
+      const selectedEndDate = new Date(formData.endDate); 
+
+      if (selectedStartDate > selectedEndDate) {
+        newErrors.startDate = "Tanggal Mulai tidak boleh lebih dari Tanggal Akhir";
         isValid = false;
       }
     }
@@ -142,10 +168,12 @@ export default function EditDiskon() {
       amount: formData.amount,
       minItem: formData.minItem,
       endDate: formData.endDate,
+      startDate: formData.startDate,
     };
 
     try {
-      const response = await api.put(`/promo/${id}`, updatedData);
+      await api.put(`/promo/${id}`, updatedData);
+      
       toast({
         title: "Berhasil",
         description: "Diskon berhasil diperbarui!",

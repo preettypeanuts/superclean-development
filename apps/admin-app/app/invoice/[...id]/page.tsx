@@ -27,7 +27,6 @@ interface Review {
   rating: number;
   tip: number;
   review: string;
-  manualTip?: number;
   paymentProof?: File | null;
 }
 
@@ -67,7 +66,7 @@ function InvoicePreview({
     const numericValue = parseInt(value, 10) || 0;
     setReviewData(prev => ({
       ...prev,
-      manualTip: numericValue,
+      tip: numericValue,
     }))
   }
 
@@ -109,16 +108,6 @@ function InvoicePreview({
               })}
             </Label>
           </div>
-          {/* <div className="flex items-center justify-between">
-            <Label>
-              Tip
-            </Label>
-            <Label className="font-semibold">
-              {reviewData.tip?.toLocaleString('id-ID', {
-                style: 'currency', currency: 'IDR', minimumFractionDigits: 0, maximumFractionDigits: 0
-              })}
-            </Label>
-          </div> */}
           <div className="flex items-center justify-between">
             <Label>
               Tanggal transaksi
@@ -170,14 +159,6 @@ function InvoicePreview({
           )}
         </div>
 
-        {/* petugas */}
-        {/* <div className="flex items-center gap-3">
-          <p className="text-sm font-semibold text-secondaryColorDark">
-            Petugas Cleaning
-          </p>
-        </div> */}
-
-
         <div className="space-y-3 bg-baseLight/50 p-4 rounded-md">
           <p className="text-sm font-semibold">
             Bagaimana pengalaman anda menggunakan layanan kami?
@@ -199,11 +180,11 @@ function InvoicePreview({
             Anda dapat memberi apresiasi kepada pekerja pembersih kami dengan memberikan tip.
           </p>
           <div className="grid grid-cols-2 gap-4">
-            <button onClick={(e) => handleTipChange(e, 10000)} className={reviewData.tip === 10000 ? "bg-mainColor text-white rounded-md py-2" : "border border-neutral-300 rounded-md py-2"}>
-              Rp 10.000
-            </button>
             <button onClick={(e) => handleTipChange(e, 20000)} className={reviewData.tip === 20000 ? "bg-mainColor text-white rounded-md py-2" : "border border-neutral-300 rounded-md py-2"}>
               Rp 20.000
+            </button>
+            <button onClick={(e) => handleTipChange(e, 30000)} className={reviewData.tip === 30000 ? "bg-mainColor text-white rounded-md py-2" : "border border-neutral-300 rounded-md py-2"}>
+              Rp 30.000
             </button>
             <button onClick={(e) => handleTipChange(e, 50000)} className={reviewData.tip === 50000 ? "bg-mainColor text-white rounded-md py-2" : "border border-neutral-300 rounded-md py-2"}>
               Rp 50.000
@@ -214,20 +195,16 @@ function InvoicePreview({
           </div>
         </div>
 
-        {
-          reviewData.tip === 0 && (
-            <div className="space-y-1">
-              <p className="text-sm font-semibold">
-                Masukkan Nominal Lain
-              </p>
-              <Input
-                placeholder="Rp. Masukkan Jumlah"
-                value={formatRupiah(reviewData.manualTip || 0)}
-                onChange={handleManualTipChange}
-              />
-            </div>
-          )
-        }
+        <div className="space-y-1">
+          <p className="text-sm font-semibold">
+            Tip Nominal Lain
+          </p>
+          <Input
+            placeholder="Rp. Nominal Lain"
+            value={formatRupiah(reviewData.tip || 0)}
+            onChange={handleManualTipChange}
+          />
+        </div>
 
         <div className="space-y-1">
           <p className="text-sm font-semibold">
@@ -552,18 +529,17 @@ export default function InvoicePage() {
   const [reviewData, setReviewData] = useState<Review>({
     rating: 0,
     tip: 0,
-    manualTip: 0,
     paymentProof: null,
     review: ""
   });
 
 
   const handleComplete = async () => {
-    const tip = reviewData.tip ? reviewData.tip : reviewData.manualTip
+    const tipAmount = reviewData.tip || 0;
 
     const reviewPayload = {
       rating: reviewData.rating,
-      tipAmount: tip || 0,
+      tipAmount,
       notes: reviewData.review || "",
     }
 

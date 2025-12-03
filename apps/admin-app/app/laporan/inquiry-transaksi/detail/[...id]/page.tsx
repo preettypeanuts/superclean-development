@@ -713,6 +713,10 @@ export default function InquiryTransaksiDetail() {
                 {/* Kolom Kanan - Summary */}
                 <div className="col-span-1 space-y-4">
                   <div className="flex items-center space-x-4">
+                    <Label className="w-[40%] font-semibold shrink-0">Total Harga SPK</Label>
+                    <Input className="text-right" disabled value={formatRupiah(transaction.originPrice)} />
+                  </div>
+                  <div className="flex items-center space-x-4">
                     <Label className="w-[40%] font-semibold shrink-0">Total Harga</Label>
                     <Input
                       disabled

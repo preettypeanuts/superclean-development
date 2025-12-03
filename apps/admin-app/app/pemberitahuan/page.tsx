@@ -98,8 +98,6 @@ export default function PemberitahuanPage() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-
-  const [reload, setReload] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
 
   const toggleCheckbox = (id: string) => {
@@ -129,6 +127,12 @@ export default function PemberitahuanPage() {
         description: `${selectedIds.length} pemberitahuan telah ditandai sudah dibaca.`,
         variant: "success",
       });
+
+      setNotifications([]);
+      setAll([]);
+      setUnread([]);
+      setRead([]);
+      fetchMoreData(1);
     } catch (error) {
       console.error("Error marking notifications as read:", error);
     } finally {
@@ -152,6 +156,12 @@ export default function PemberitahuanPage() {
         description: `${selectedIds.length} pemberitahuan telah dihapus.`,
         variant: "success",
       });
+
+      setNotifications([]);
+      setAll([]);
+      setUnread([]);
+      setRead([]);
+      fetchMoreData(1);
     }
     catch (error) {
       console.error("Error deleting notifications:", error);
@@ -161,21 +171,18 @@ export default function PemberitahuanPage() {
     }
   };
 
-  const all = notifications;
-  const unread = useMemo(() => notifications.filter((n) => !n.isRead), [notifications]);
-  const read = useMemo(() => notifications.filter((n) => n.isRead), [notifications]);
-
+  const [all, setAll] = useState<Notification[]>([]);
+  const [unread, setUnread] = useState<Notification[]>([]);
+  const [read, setRead] = useState<Notification[]>([]);
   const [page, setPage] = useState(1);
   const [noMoreData, setNoMoreData] = useState(false);
   const itemsPerPage = 10;
 
   const [isLoading, setIsLoading] = useState(false);
   const [currentTab, setCurrentTab] = useState("all");
+  
 
   const resetStates = () => {
-    setNotifications([]);
-    setPage(1);
-    setNoMoreData(false);
     setSelectedIds([]);
     setSubmitLoading(false);
     setIsDialogOpen(false);
@@ -205,16 +212,22 @@ export default function PemberitahuanPage() {
       setIsLoading(false);
     }
     finally {
+      resetStates();
     }
   };
 
   useEffect(() => {
     // Initial fetch
     fetchMoreData(page);
-  }, [reload]);
+  }, []);
 
   useEffect(() => {
     setIsLoading(false);
+
+    setAll(notifications);
+    setUnread(notifications.filter((n) => !n.isRead));
+    setRead(notifications.filter((n) => n.isRead));
+
   }, [notifications]);
 
 

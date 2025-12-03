@@ -41,6 +41,7 @@ export interface Transaction {
   trxNumber: string;
   customerId: string;
   branchId: string;
+  originPrice: number;
   totalPrice: number;
   discountPrice: number;
   promoPrice: number;
@@ -1163,6 +1164,10 @@ export default function TransactionDetail() {
 
                 {/* Kolom Kanan */}
                 <div className="col-span-1 space-y-4">
+                   <div className="flex items-center space-x-4">
+                    <Label className="w-[40%] font-semibold shrink-0">Total Harga SPK</Label>
+                    <Input className="text-right" disabled value={formatRupiah(transaction.originPrice)} />
+                  </div>
                   <div className="flex items-center space-x-4">
                     <Label className="w-[40%] font-semibold shrink-0 flex items-center gap-1">
                       <span>Total Harga</span>

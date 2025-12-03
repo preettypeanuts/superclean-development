@@ -19,23 +19,11 @@ export default function NewDiscount() {
     amount: 0,
     minItem: 1,
     endDate: "",
+    startDate: "",
   });
 
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
-  const handleCheckSubmit = () => {
-    // Validate form before submission
-    if (!validateForm()) {
-      toast({
-        title: "Validasi Gagal",
-        description: "Mohon lengkapi semua field yang wajib diisi dengan benar",
-        variant: "destructive",
-      });
-      return;
-    }
-    setShowConfirmDialog(true);
-  }
 
   const handleSubmit = async () => {
     // Validate form before submission
@@ -57,6 +45,7 @@ export default function NewDiscount() {
       amount: Number(formData.amount) || 0, // Pastikan amount berupa number
       minItem: minItemValue, // Pastikan minItem minimal 1
       endDate: formData.endDate ? `${formData.endDate}T12:00:00.000Z` : null, // Format tanggal ke ISO 8601
+      startDate: formData.startDate ? `${formData.startDate}T12:00:00.000Z` : null, // Format tanggal ke ISO 8601
     };
 
     try {
@@ -123,6 +112,7 @@ export default function NewDiscount() {
     serviceCode: "",
     minItem: "",
     endDate: "",
+    startDate: "",
   });
 
   const validateForm = () => {
@@ -179,7 +169,7 @@ export default function NewDiscount() {
     }
 
     if (!formData.endDate) {
-      newErrors.endDate = "Berlaku Sampai wajib diisi";
+      newErrors.endDate = "Tanggal Akhir wajib diisi";
       isValid = false;
     } else {
       const selectedDate = new Date(formData.endDate);
@@ -187,7 +177,21 @@ export default function NewDiscount() {
       today.setHours(0, 0, 0, 0);
 
       if (selectedDate < today) {
-        newErrors.endDate = "Berlaku Sampai tidak boleh kurang dari hari ini";
+        newErrors.endDate = "Tanggal Akhir tidak boleh kurang dari hari ini";
+        isValid = false;
+      }
+    }
+
+    if (!formData.startDate) {
+      newErrors.startDate = "Tanggal Mulai wajib diisi";
+      isValid = false;
+    } else {
+      const selectedStartDate = new Date(formData.startDate);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      if (selectedStartDate < today) {
+        newErrors.startDate = "Tanggal Mulai tidak boleh kurang dari hari ini";
         isValid = false;
       }
     }

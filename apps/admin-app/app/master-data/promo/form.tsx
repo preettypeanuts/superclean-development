@@ -25,6 +25,7 @@ export interface Diskon {
   amount: number;
   minItem: number;
   endDate: string;
+  startDate: string;
 }
 
 export type DiskonErrors = {
@@ -36,6 +37,7 @@ export type DiskonErrors = {
   serviceCode: string;
   minItem: string;
   endDate: string;
+  startDate: string;
 };
 
 type DiscountFormProps = {
@@ -338,7 +340,22 @@ export default function DiscountForm({
             </div>
           </div>
           <div className="flex items-center space-x-4">
-            <Label htmlFor="endDate" className="w-1/4 font-semibold">Berlaku Sampai</Label>
+            <Label htmlFor="endDate" className="w-1/4 font-semibold">Tanggal Awal</Label>
+            <div className="w-full">
+              <Input
+                type="date"
+                className={`flex w-full ${errors.startDate ? 'border-red-500' : ''}`}
+                id="startDate"
+                value={formData.startDate}
+                onChange={(e) => {
+                  handleChange(e);
+                }}
+              />
+              {errors.startDate && <p className="text-red-500 text-sm mt-1">{errors.startDate}</p>}
+            </div>
+          </div>
+          <div className="flex items-center space-x-4">
+            <Label htmlFor="endDate" className="w-1/4 font-semibold">Tanggal Akhir</Label>
             <div className="w-full">
               <Input
                 type="date"
@@ -346,7 +363,7 @@ export default function DiscountForm({
                 id="endDate"
                 value={formData.endDate}
                 onChange={(e) => {
-                  handleChange(e); console.log(formData.endDate, e.target.value);
+                  handleChange(e);
                 }}
               />
               {errors.endDate && <p className="text-red-500 text-sm mt-1">{errors.endDate}</p>}

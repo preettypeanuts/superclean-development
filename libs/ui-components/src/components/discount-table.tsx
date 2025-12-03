@@ -108,7 +108,18 @@ export const DiscountTable: React.FC<DataTableProps> = ({ data, columns, current
                                             <IoMdTrash />
                                         </Button>
                                     </div>
-                                ) : header.key === "endDate" ? (
+                                ) : header.key === "startDate" ? (
+                                    <div className="relative group cursor-pointer flex items-center gap-1">                                        
+                                        <p
+                                            className={`badge dark:bg-opacity-70 rounded-md !font-medium border-0 ${new Date(String(discount["endDate"])) < new Date()
+                                                ? "bg-red-100 text-red-500 dark:bg-red-500 dark:text-red-100"
+                                                : "bg-green-100 text-green-500 dark:bg-green-500 dark:text-green-100"
+                                                }`}
+                                        >
+                                            {formatDate(String(discount[header.key as keyof Column]))}
+                                        </p>
+                                    </div>
+                                ) :  header.key === "endDate" ? (
                                     <div className="relative group cursor-pointer flex items-center gap-1">
                                         <p className={`${new Date(String(discount[header.key as keyof Column])) < new Date()
                                             ? " text-red-500  dark:text-red-100"
