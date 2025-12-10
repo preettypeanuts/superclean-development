@@ -212,6 +212,7 @@ function InvoicePreview({
           </p>
           <Textarea
             rows={4}
+            value={reviewData.review}
             placeholder="Tulis sesuatu..."
             onChange={handleReviewChange}
           />
@@ -251,6 +252,7 @@ function PaymentPreview({
   handleComplete: () => Promise<any>,
   parameters: Parameter[]
 }) {
+  const pathname = usePathname();
   const [loading, setLoading] = useState<boolean>(false);
   const [paymentProof, setPaymentProof] = useState<File | null>(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -296,7 +298,10 @@ function PaymentPreview({
 
   return (
     <>
-      <HeaderMobile label="Pembayaran" />
+      <HeaderMobile label="Pembayaran" onBackClick={() => {
+         const newUrl = pathname;
+         window.history.replaceState(null, '', newUrl);
+      }}/>
       <WrapperMobile className="space-y-5 pb-24">
         <div className="flex items-center gap-2 text-mainColor">
           <BsClockHistory />
@@ -569,17 +574,6 @@ export default function InvoicePage() {
   const searchParams = useSearchParams();
   const step: "" | "payment" | "complete" = searchParams.get('step') as any || '';
 
-  if (step !== 'complete' && transaction?.status === 4) {
-    // redirect to complete if transaction already paid
-    const newUrl = `${pathname}?step=complete`;
-    window.history.replaceState(null, '', newUrl);
-  }
-  else if (step !== '' && reviewData.rating === 0 && reviewData.review === '' && transaction?.status !== 4) {
-    // reset query param
-    const newUrl = pathname;
-    window.history.replaceState(null, '', newUrl);
-  }
-
   // Fetch transaction data
   useEffect(() => {
     const fetchTransaction = async () => {
@@ -587,7 +581,11 @@ export default function InvoicePage() {
         const result = await api.get(`/transaction/detail?trxNumber=${id}`);
         const transactionData = result.data as Transaction
         setTransaction(transactionData);
-
+        setReviewData({
+          rating: transactionData.rating ?? 0,
+          review: transactionData.review ?? '',
+          tip: 0
+        })
       } catch (error) {
         console.error("Gagal mengambil data transaksi:", error);
       } finally {

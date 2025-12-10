@@ -56,6 +56,8 @@ export interface Transaction {
   blowers: string[]; // Array of user IDs for blower staff
   details: TransactionItem[];
   reassigns: string[];
+  rating: number;
+  review: string;
 }
 
 // Customer interface

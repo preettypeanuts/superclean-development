@@ -538,7 +538,8 @@ export default function PembayaranDetail() {
                           type="submit"
                           onClick={() => {
                             const currentOrigin = globalThis.location.origin;
-                            const url = `${currentOrigin}/invoice/${transaction.trxNumber}`;
+                            const step = transaction.rating !== 0 ? '?step=payment' : '';
+                            const url = `${currentOrigin}/invoice/${transaction.trxNumber}${step}`;
 
                             const width = 393;
                             const height = 852;
