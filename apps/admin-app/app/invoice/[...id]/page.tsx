@@ -540,6 +540,7 @@ export default function InvoicePage() {
 
 
   const handleComplete = async () => {
+    const accessToken = localStorage.getItem("access_token");
     const tipAmount = reviewData.tip || 0;
 
     const reviewPayload = {
@@ -566,6 +567,7 @@ export default function InvoicePage() {
     }, {
       headers: {
         "X-Auth-Request-Id": AUTH_REQUEST_ID || "",
+        ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
       }
     });
 
