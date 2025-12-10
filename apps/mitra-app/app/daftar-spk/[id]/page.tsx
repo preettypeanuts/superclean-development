@@ -611,12 +611,18 @@ const TimelineItemCompleted = ({
     try {
       setLoading(true);
 
+      const userStorage = localStorage.getItem('user') ?? '';
+
       await api.put(`/transaction/${trxId}/state-process`, {
         stateProcess: SPK_STATUS_PROSES.SELESAI,
       });
 
+      const user = JSON.parse(userStorage);
+
       await api.put(`/transaction/${trxId}/status`, {
         status: SPK_STATUS.MENUNGGU_BAYAR,
+        username: user ? user?.username : 'Mitra',
+        fullname: user ? user?.fullname : 'Mitra'
       });
 
       setTransaction((prev) => ({

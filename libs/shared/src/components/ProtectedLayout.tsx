@@ -29,6 +29,7 @@ const ProtectedRoutes = ({ children }: { children: React.ReactNode }) => {
 
             if (response.ok) {
                 const userData = await response.json();
+                localStorage.setItem("user", JSON.stringify(userData?.data));
                 return !!userData; // Return true jika ada user data
             } else {
                 // Token tidak valid atau expired
@@ -96,28 +97,6 @@ const ProtectedRoutes = ({ children }: { children: React.ReactNode }) => {
             window.removeEventListener("storage", handleStorageChange);
         };
     }, [pathname, router]);
-
-    // Listen untuk perubahan token di tab yang sama
-    // useEffect(() => {
-    //     const handleLocalStorageChange = () => {
-    //         const token = localStorage.getItem("access_token");
-    //         if (!token && !PUBLIC_ROUTES.includes(pathname)) {
-    //             setIsAuthenticated(false);
-    //             router.push("/login");
-    //         }
-    //     };
-
-    // Polling sederhana untuk detect perubahan localStorage di tab yang sama
-    //     const interval = setInterval(() => {
-    //         const currentToken = localStorage.getItem("access_token");
-    //         if (!currentToken && isAuthenticated && !PUBLIC_ROUTES.includes(pathname)) {
-    //             setIsAuthenticated(false);
-    //             router.push("/login");
-    //         }
-    //     }, 1000);
-
-    //     return () => clearInterval(interval);
-    // }, [isAuthenticated, pathname, router]);
 
     // Tampilkan loading atau konten
     if (!isLoaded) {
