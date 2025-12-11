@@ -417,7 +417,7 @@ export default function PembayaranDetail() {
     if (!isTotalPriceValid) {
       totalPrice = 250_000;
     }
-    
+
     const manualDiscount = transaction?.discountPrice || 0;
     const additionalFee = transaction?.additionalFee || 0;
 
@@ -708,7 +708,7 @@ export default function PembayaranDetail() {
                           />
                         ) : (
                           <>
-                              {transaction.blowers.length > 0 ? (
+                            {transaction.blowers.length > 0 ? (
                               transaction.blowers.map((blowerId) => {
                                 const blower = blowerStaffList.find(staff => staff.lookupKey === blowerId);
                                 return (
