@@ -224,7 +224,24 @@ function InvoicePreview({
               variant={"main"}
               className="w-full"
               disabled={reviewData.rating === 0}
-              onClick={() => {
+              onClick={async() => {
+                const accessToken = localStorage.getItem("access_token");
+                const tipAmount = reviewData.tip || 0;
+
+                const reviewPayload = {
+                  rating: reviewData.rating,
+                  tipAmount,
+                  notes: reviewData.review || "",
+                }
+
+                // todo: send review
+                await api.put(`/transaction/${transaction.id}/review`, reviewPayload, {
+                  headers: {
+                    'X-Auth-Request-Id': AUTH_REQUEST_ID || '',
+                    ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
+                  },
+                });
+
                 const pathname = window.location.pathname;
                 const newUrl = `${pathname}?step=payment`;
                 window.history.pushState(null, '', newUrl);
@@ -541,16 +558,6 @@ export default function InvoicePage() {
 
   const handleComplete = async () => {
     const accessToken = localStorage.getItem("access_token");
-    const tipAmount = reviewData.tip || 0;
-
-    const reviewPayload = {
-      rating: reviewData.rating,
-      tipAmount,
-      notes: reviewData.review || "",
-    }
-
-    // todo: send review
-    await api.put(`/transaction/${transaction.id}/review`, reviewPayload);
 
     // todo: send payment proof
     if (reviewData.paymentProof) {
