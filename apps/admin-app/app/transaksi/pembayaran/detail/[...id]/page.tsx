@@ -4,14 +4,20 @@ import { Header } from "@shared/components/Header";
 import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
 import { Wrapper } from "@shared/components/Wrapper";
 import { formatDateInput } from "@shared/utils/formatDate";
+import { useCategoryStore, useServiceLookup } from "@shared/utils/useCategoryStore";
 import { useTransactionHistory } from "@shared/utils/useTransactionHistory";
 import { DatePicker } from "@ui-components/components/date-picker";
 import MultiSelect from "@ui-components/components/multi-select";
+import { RupiahInput } from "@ui-components/components/rupiah-input";
 import { SPKTableDetail } from "@ui-components/components/spk-table-detail";
+import { RadioGroup, RadioGroupItem } from "@ui-components/components/ui/radio-group";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@ui-components/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@ui-components/components/ui/tabs";
 import { useToast } from "@ui-components/hooks/use-toast";
+import { PromoResponse, SPKItem } from "apps/admin-app/app/transaksi/spk/baru/page";
 import { LocationData, LookupUser, Transaction, TransactionItem } from "apps/admin-app/app/transaksi/spk/edit/[...id]/page";
 import PhotoSection from "apps/admin-app/app/transaksi/spk/photoSection";
+import { DialogWrapper } from "libs/ui-components/src/components/dialog-wrapper";
 import { Button } from "libs/ui-components/src/components/ui/button";
 import { Input } from "libs/ui-components/src/components/ui/input";
 import { Label } from "libs/ui-components/src/components/ui/label";
@@ -19,8 +25,12 @@ import { Textarea } from "libs/ui-components/src/components/ui/textarea";
 import { api } from "libs/utils/apiClient";
 import { formatRupiah } from "libs/utils/formatRupiah";
 import { useLocationData } from "libs/utils/useLocationData";
+import { useUserProfile } from "libs/utils/useUserProfile";
+import { AlertTriangle } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
+import { BsInfoCircleFill } from "react-icons/bs";
+import { LuPlus } from "react-icons/lu";
 import { PiWarningCircleFill } from "react-icons/pi";
 import { TbArrowBack } from "react-icons/tb";
 
@@ -89,7 +99,35 @@ export default function PembayaranDetail() {
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Get user profile for role checking
+  const { user } = useUserProfile();
+  const isSuperAdmin = user?.roleId === "Super Admin";
+
+  // States for editing items
+  const [spkItems, setSPKItems] = useState<SPKItem[]>([]);
+  const [originalSPKItems, setOriginalSPKItems] = useState<SPKItem[]>([]);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [editMode, setEditMode] = useState<string | null>(null);
+  const [loadingPromo, setLoadingPromo] = useState(false);
+
+  // States for manual discount and additional fee
+  const [manualDiscount, setManualDiscount] = useState<number>(0);
+  const [additionalFee, setAdditionalFee] = useState<number>(0);
+
+  const [formDataTable, setFormDataTable] = useState({
+    id: "",
+    category: "",
+    serviceCode: "",
+    jumlah: "",
+    tipe: "vakum",
+    harga: 0,
+    promo: 0,
+    promoCode: "",
+    promoType: "",
+  });
 
 
 
@@ -99,6 +137,12 @@ export default function PembayaranDetail() {
   const { history, loading: historyLoading, error: historyError, refetch: refetchHistory } = useTransactionHistory(id);
   const reverseHistory = history ? [...history].reverse() : [];
 
+  // Hooks for editing
+  const { services, loading: loadingServices } = useServiceLookup(formDataTable.category);
+  const { catLayananMapping, loading: loadingParams } = useCategoryStore();
+
+  // Check if editing an original item (from API)
+  const isEditingOriginal = (editMode && originalSPKItems.some(item => item.id === editMode)) as boolean;
 
   // State untuk menyimpan display names dari location codes
   const [locationLabels, setLocationLabels] = useState({
@@ -128,6 +172,10 @@ export default function PembayaranDetail() {
   const [reworkStaffList, setReworkStaffList] = useState<any[]>([]);
   const [selectedReworkStaff, setSelectedReworkStaff] = useState<string[]>([]);
 
+  const IS_WAITING_PAYMENT = transaction?.status === 3;
+  const IS_PAID = transaction?.status === 4;
+  const IS_COMPLETED = transaction?.status === 5;
+  const IS_REWORKED = transaction?.status === 6;
 
   const handleReworkStaffChange = (selected: string[]) => {
     setSelectedReworkStaff(selected);
@@ -192,6 +240,256 @@ export default function PembayaranDetail() {
     }
   };
 
+  // Fetch promo function
+  const fetchPromo = async (serviceCode: string, quantity: string): Promise<PromoResponse> => {
+    if (!serviceCode || !quantity || parseInt(quantity) <= 0) {
+      return { amount: 0, code: "", type: "" };
+    }
+
+    setLoadingPromo(true);
+    try {
+      const response = await api.get(`/promo/current?serviceCode=${serviceCode}&quantity=${quantity}`);
+
+      return {
+        amount: response.data?.amount || 0,
+        code: response.data?.code || "",
+        type: response.data?.promoType || ""
+      };
+    } catch (error) {
+      console.error("Error fetching promo:", error);
+      return { amount: 0, code: "", type: "" };
+    } finally {
+      setLoadingPromo(false);
+    }
+  };
+
+  // Handle table form change
+  const handleChangeTable = async (field: string, value: any) => {
+    setFormDataTable(prev => {
+      const newData = { ...prev, [field]: value };
+
+      if (field === "category") {
+        newData.serviceCode = "";
+        newData.harga = 0;
+        newData.promo = 0;
+        newData.jumlah = "";
+        newData.promoCode = "";
+        newData.promoType = "";
+
+        if (value === "GENERAL" || value === "BLOWER") {
+          newData.tipe = "cuci";
+        }
+      }
+
+      if (field === "serviceCode" && value) {
+        const selectedService = services.find(service => service.serviceCode === value);
+        if (selectedService) {
+          const price = newData.tipe === "vakum"
+            ? selectedService.vacuumPrice
+            : selectedService.cleanPrice;
+          newData.harga = price;
+        }
+
+        newData.promo = 0;
+        newData.promoCode = "";
+        newData.promoType = "";
+      }
+
+      if (field === "tipe" && newData.serviceCode) {
+        const selectedService = services.find(service => service.serviceCode === newData.serviceCode);
+        if (selectedService) {
+          const price = value === "vakum"
+            ? selectedService.vacuumPrice
+            : selectedService.cleanPrice;
+          newData.harga = price;
+        }
+
+        newData.promo = 0;
+        newData.promoCode = "";
+        newData.promoType = "";
+      }
+
+      return newData;
+    });
+
+    setTimeout(async () => {
+      const currentData = { ...formDataTable, [field]: value };
+
+      if ((field === "serviceCode" || field === "jumlah" || field === "tipe") &&
+        currentData.serviceCode &&
+        currentData.jumlah &&
+        parseInt(currentData.jumlah) > 0) {
+
+        const promoData = await fetchPromo(currentData.serviceCode, currentData.jumlah);
+
+        setFormDataTable(prev => ({
+          ...prev,
+          promo: promoData.amount,
+          promoCode: promoData.code,
+          promoType: promoData.type
+        }));
+      }
+    }, 100);
+  };
+
+  // Handle open edit item
+  const handleOpenEditSPKItem = (item: SPKItem) => {
+    const selectedCategory = Object.entries(catLayananMapping).find(([key, value]) => value === item.kategoriCode);
+
+    setFormDataTable({
+      id: item.id,
+      category: selectedCategory ? selectedCategory[0] : item.kategoriCode,
+      serviceCode: item.kode,
+      jumlah: item.jumlah.toString(),
+      tipe: item.tipe || "vakum",
+      harga: item.harga,
+      promo: item.promo,
+      promoCode: item.promoCode || "",
+      promoType: item.promoType || "",
+    });
+
+    setEditMode(item.id);
+    setOpenDialog(true);
+  };
+
+  // Reset form dialog
+  const resetFormDialog = () => {
+    setFormDataTable({
+      id: "",
+      category: "",
+      serviceCode: "",
+      jumlah: "",
+      tipe: "vakum",
+      harga: 0,
+      promo: 0,
+      promoCode: "",
+      promoType: "",
+    });
+    setEditMode(null);
+  };
+
+  // Handle submit SPK item (add/edit)
+  const handleSubmitSPKItem = async () => {
+    if (!formDataTable.category || !formDataTable.serviceCode || !formDataTable.jumlah) {
+      toast({
+        title: "Peringatan",
+        description: "Harap lengkapi semua field yang wajib diisi",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const quantity = parseInt(formDataTable.jumlah);
+    const totalHargaSebelumPromo = formDataTable.harga * quantity;
+
+    if (formDataTable.promo > totalHargaSebelumPromo) {
+      toast({
+        title: "Peringatan",
+        description: "Promo tidak boleh lebih besar dari total harga item",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (editMode) {
+      try {
+        setSubmitting(true);
+
+        const payload = {
+          serviceType: formDataTable.tipe === "vakum" ? 0 : 1,
+          servicePrice: formDataTable.harga,
+          promoCode: formDataTable.promoCode,
+          promoType: formDataTable.promoType,
+          promoAmount: formDataTable.promo,
+          quantity: Number(formDataTable.jumlah),
+        }
+
+        await api.put(`/transaction-detail/${transaction?.id}/${formDataTable.id}`, payload);
+
+        toast({
+          title: "Berhasil",
+          description: "Item berhasil diperbarui",
+          variant: "default",
+        });
+
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      }
+      catch (error) {
+        toast({
+          title: "Gagal",
+          description: "Terjadi kesalahan saat memperbarui item.",
+          variant: "destructive",
+        })
+      }
+      finally {
+        // setSubmitting(false);
+      }
+    } else {
+      try {
+        setSubmitting(true);
+
+        const payload = {
+          serviceCategory: catLayananMapping[formDataTable.category] || formDataTable.category,
+          serviceCode: formDataTable.serviceCode,
+          serviceType: formDataTable.tipe === "vakum" ? 0 : 1,
+          servicePrice: formDataTable.harga,
+          promoCode: formDataTable.promoCode,
+          promoType: formDataTable.promoType || "Nominal",
+          promoAmount: formDataTable.promo,
+          quantity: Number(formDataTable.jumlah),
+        }
+
+        await api.post(`/transaction-detail/${transaction?.id}/`, payload);
+
+        toast({
+          title: "Berhasil",
+          description: "Item berhasil ditambahkan",
+          variant: "default",
+        });
+
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      }
+      catch (error) {
+        toast({
+          title: "Gagal",
+          description: "Terjadi kesalahan saat menambahkan item.",
+          variant: "destructive",
+        })
+      }
+      finally {
+        // setSubmitting(false);
+      }
+    }
+  };
+
+  // Handle delete SPK item
+  const handleDeleteSPKItem = async (itemId: string) => {
+    try {
+      await api.delete(`/transaction-detail/${transaction?.id}/${itemId}`);
+      setSPKItems(prev => prev.filter(item => item.id !== itemId));
+      toast({
+        title: "Berhasil",
+        description: "Item berhasil dihapus",
+        variant: "default",
+      });
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    }
+    catch (error) {
+      toast({
+        title: "Gagal",
+        description: "Terjadi kesalahan saat menghapus item.",
+        variant: "destructive",
+      });
+    }
+  };
+
   // Function untuk update detail SPK
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -216,8 +514,8 @@ export default function PembayaranDetail() {
 
     // Prepare data sesuai expected request body
     const updateData = {
-      discountPrice: transaction?.discountPrice || 0,
-      additionalFee: transaction?.additionalFee || 0,
+      discountPrice: manualDiscount,
+      additionalFee: additionalFee,
 
       trxDate: transaction?.trxDate,
       deliveryDate: transaction?.deliveryDate && transaction.blowers.length > 0
@@ -336,6 +634,18 @@ export default function PembayaranDetail() {
           // Set blower usage state
           setIsUsingBlower(transactionData.blowers && transactionData.blowers.length > 0);
 
+          // Initialize SPK items for editing
+          if (transactionData?.details.length) {
+            setSPKItems(formatDetailsForTable(transactionData.details));
+            setOriginalSPKItems(formatDetailsForTable(transactionData.details));
+          }
+
+          // Initialize pricing states
+          const totalDiscount = transactionData.discountPrice || 0;
+          const totalPromo = transactionData.promoPrice || 0;
+          setManualDiscount(totalDiscount - totalPromo);
+          setAdditionalFee(transactionData.additionalFee || 0);
+
           // Fetch customer data using customerId
           if (transactionData.customerId) {
             await fetchCustomerData(transactionData.customerId);
@@ -389,8 +699,7 @@ export default function PembayaranDetail() {
   //   promoAmount: detail.promoAmount ? formatRupiah(detail.promoAmount) : "-",
   // })) || [];
 
-  const spkItems = formatDetailsForTable(transaction?.details || []);
-
+  // Remove this line - spkItems is now managed in state
 
   const DataHeaderSPKDetail = useMemo(() => {
     const columns = [
@@ -405,37 +714,45 @@ export default function PembayaranDetail() {
       // { key: "promo", label: "Promo Satuan" },
     ];
 
+    // Add actions column for superadmin and when not completed
+    if (isSuperAdmin && !IS_COMPLETED) {
+      columns.push({ key: "menu", label: "Actions" });
+    }
+
     return columns;
-  }, [transaction]);
+  }, [transaction, isSuperAdmin]);
 
   const calculateTotals = () => {
-    const totalPrice = transaction?.details.reduce((sum, item) => sum + item.servicePrice * item.quantity, 0) || 0;
-    const totalPromo = transaction?.details.reduce((sum, item) => sum + item.promoPrice, 0) || 0;
+    let totalPrice = spkItems.reduce((sum, item) => sum + item.harga * item.jumlah, 0);
+    const isTotalPriceValid = totalPrice >= 250_000;
 
-    const manualDiscount = transaction?.discountPrice || 0;
-    const additionalFee = transaction?.additionalFee || 0;
+    if (!isTotalPriceValid) {
+      totalPrice = 250_000;
+    }
+
+    const totalPromo = spkItems.reduce((sum, item) => {
+      const promoAmount = item.promoType === "Persentase" ? (item.promo * item.harga * item.jumlah) / 100 : item.promo * item.jumlah;
+      return sum + promoAmount;
+    }, 0);
 
     const finalPrice = totalPrice - totalPromo - manualDiscount + additionalFee;
 
     // Validasi: total pengurangan tidak boleh lebih besar dari total harga
-    const totalReductions = totalPromo;
-    const isInvalidTotal = totalReductions > totalPrice;
+    const totalReductions = totalPromo + manualDiscount;
+    const isInvalidTotal = finalPrice < 0;
 
     return {
       totalPrice,
       totalPromo,
+      manualDiscount,
       totalReductions,
       finalPrice,
       isInvalidTotal,
+      isTotalPriceValid
     };
   };
 
   const totals = calculateTotals();
-
-  const IS_WAITING_PAYMENT = transaction?.status === 3;
-  const IS_PAID = transaction?.status === 4;
-  const IS_COMPLETED = transaction?.status === 5;
-  const IS_REWORKED = transaction?.status === 6;
 
   // action handlers
   const handleComplete = async () => {
@@ -851,6 +1168,23 @@ export default function PembayaranDetail() {
                 <div className="flex justify-between items-center">
                   <h3 className="text-lg font-semibold">Detail Layanan</h3>
                 </div>
+
+                {isSuperAdmin && !IS_COMPLETED && (
+                  <div className="flex justify-end">
+                    <Button
+                      icon={<LuPlus size={16} />}
+                      className="pl-2 pr-4"
+                      iconPosition="left"
+                      variant="default"
+                      onClick={() => {
+                        resetFormDialog();
+                        setOpenDialog(true);
+                      }}
+                    >
+                      Tambah
+                    </Button>
+                  </div>
+                )}
                 <SPKTableDetail
                   data={spkItems}
                   columns={DataHeaderSPKDetail}
@@ -859,6 +1193,9 @@ export default function PembayaranDetail() {
                   fetchData={() => {
                     console.log("Fetching data...");
                   }}
+                  onEdit={isSuperAdmin ? handleOpenEditSPKItem : undefined}
+                  onDelete={isSuperAdmin ? handleDeleteSPKItem : undefined}
+                  ableDelete={isSuperAdmin && !IS_COMPLETED && spkItems.length > 1}
                 />
               </div>
 
@@ -884,8 +1221,16 @@ export default function PembayaranDetail() {
                 {/* Kolom Kanan - Summary */}
                 <div className="col-span-1 space-y-4">
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] shrink-0 font-semibold">
+                    <Label className="w-[40%] shrink-0 font-semibold flex items-center gap-1">
                       <span>Total Harga</span>
+                      {!totals.isTotalPriceValid && (
+                        <div className="relative group mx-1">
+                          <BsInfoCircleFill className="h-4 w-4" />
+                          <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
+                            Transaksi dibawah minimum Rp 250.000 akan dikenakan sebesar pembayaran minimum yaitu Rp 250.000
+                          </div>
+                        </div>
+                      )}
                     </Label>
                     <Input
                       disabled
@@ -903,23 +1248,59 @@ export default function PembayaranDetail() {
                     />
                   </div>
 
-                  <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] shrink-0 font-semibold">Diskon Manual</Label>
-                    <Input
-                      disabled
-                      value={formatRupiah(transaction.discountPrice)}
-                      className="text-right bg-muted/50 cursor-not-allowed"
-                    />
-                  </div>
+                  {isSuperAdmin && !IS_COMPLETED ? (
+                    <>
+                      <div className="flex items-center space-x-4">
+                        <Label className="w-[40%] shrink-0 font-semibold flex items-center gap-1">
+                          <span>Diskon Manual</span>
+                          {totals.isInvalidTotal && (
+                            <div className="relative group mx-1">
+                              <AlertTriangle className="h-4 w-4 text-red-500" />
+                              <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
+                                Total pengurangan tidak boleh lebih besar dari total harga
+                              </div>
+                            </div>
+                          )}
+                        </Label>
+                        <RupiahInput
+                          placeholder="Rp. 0"
+                          value={formatRupiah(manualDiscount)}
+                          onValueChange={setManualDiscount}
+                          className={`text-right ${totals.isInvalidTotal ? 'border-red-500 bg-red-50 dark:bg-red-500/40' : ''}`}
+                        />
+                      </div>
 
-                  <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] shrink-0 font-semibold">Biaya Tambahan</Label>
-                    <Input
-                      disabled
-                      value={formatRupiah(transaction.additionalFee || 0)}
-                      className="text-right bg-muted/50 cursor-not-allowed"
-                    />
-                  </div>
+                      <div className="flex items-center space-x-4">
+                        <Label className="w-[40%] shrink-0 font-semibold">Biaya Tambahan</Label>
+                        <RupiahInput
+                          placeholder="Rp. 0"
+                          value={formatRupiah(additionalFee)}
+                          onValueChange={setAdditionalFee}
+                          className="text-right"
+                        />
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                        <div className="flex items-center space-x-4">
+                          <Label className="w-[40%] shrink-0 font-semibold">Diskon Manual</Label>
+                          <Input
+                            disabled
+                            value={formatRupiah(manualDiscount)}
+                            className="text-right bg-muted/50 cursor-not-allowed"
+                          />
+                        </div>
+
+                        <div className="flex items-center space-x-4">
+                          <Label className="w-[40%] shrink-0 font-semibold">Biaya Tambahan</Label>
+                          <Input
+                            disabled
+                            value={formatRupiah(additionalFee)}
+                            className="text-right bg-muted/50 cursor-not-allowed"
+                          />
+                        </div>
+                    </>
+                  )}
 
                   <div className="flex items-center justify-between mt-5 px-3 py-2 bg-neutral-200 rounded-lg dark:bg-neutral-800">
                     <Label className="w-[50%] font-bold text-2xl">Total Akhir</Label>
@@ -1065,14 +1446,206 @@ export default function PembayaranDetail() {
               totals={{
                 totalPrice: totals.totalPrice,
                 totalPromo: totals.totalPromo,
+                manualDiscount: manualDiscount,
                 finalPrice: totals.finalPrice,
-                isInvalidTotal: totals.isInvalidTotal,
-                manualDiscount: transaction.discountPrice
+                isInvalidTotal: totals.isInvalidTotal
               }}
             />
           </TabsContent>
         </Tabs>
       </Wrapper>
+
+      {/* Input Table Dialog */}
+      <DialogWrapper
+        open={openDialog}
+        onOpenChange={(open) => {
+          setOpenDialog(open);
+          if (!open) {
+            resetFormDialog();
+          }
+        }}
+        headItem={
+          <>
+            <Header label={editMode ? "Edit Item Pembayaran" : "Tambah Item Baru"} />
+          </>
+        }
+      >
+        <form onSubmit={(e) => {
+          e.preventDefault();
+          if (submitting) return;
+          if (formDataTable.category && formDataTable.serviceCode) {
+            handleSubmitSPKItem();
+          }
+        }}>
+          <div className="mx-2">
+            <div className="space-y-4">
+              <div className="flex items-center space-x-4">
+                <Label htmlFor="category" className="w-1/4">
+                  Kategori
+                </Label>
+                <Select
+                  onValueChange={(value) => handleChangeTable("category", value)}
+                  value={formDataTable.category}
+                  disabled={loadingParams || isEditingOriginal}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Pilih Kategori" />
+                  </SelectTrigger>
+                  <SelectContent className="z-[999]">
+                    <SelectGroup>
+                      <SelectLabel>Kategori</SelectLabel>
+                      {loadingParams ? (
+                        <SelectItem value="loading" disabled>
+                          Loading...
+                        </SelectItem>
+                      ) : (
+                        Object.keys(catLayananMapping).map((key) => (
+                          <SelectItem key={key} value={key}>
+                            {catLayananMapping[key]}
+                          </SelectItem>
+                        ))
+                      )}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="flex items-center space-x-4">
+                <Label htmlFor="unit" className="w-1/4">
+                  Layanan
+                </Label>
+                <Select
+                  onValueChange={(value) => handleChangeTable("serviceCode", value)}
+                  value={formDataTable.serviceCode}
+                  disabled={loadingServices || !formDataTable.category || formDataTable.category === "" || isEditingOriginal}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue
+                      placeholder={
+                        !formDataTable.category
+                          ? "Pilih kategori terlebih dahulu"
+                          : loadingServices
+                            ? "Loading..."
+                            : "Pilih Layanan"
+                      }
+                    />
+                  </SelectTrigger>
+                  <SelectContent className="z-[999]">
+                    <SelectGroup>
+                      <SelectLabel>Layanan</SelectLabel>
+                      {loadingServices ? (
+                        <SelectItem value="loading" disabled>
+                          Loading...
+                        </SelectItem>
+                      ) : services.length === 0 ? (
+                        <SelectItem value="no-data" disabled>
+                          Tidak ada layanan untuk kategori ini
+                        </SelectItem>
+                      ) : (
+                        services.map((service) => (
+                          <SelectItem key={service.serviceCode} value={service.serviceCode}>
+                            {service.serviceName}
+                          </SelectItem>
+                        ))
+                      )}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="flex items-center space-x-4">
+                <Label htmlFor="jumlah" className="w-1/4 font-semibold">Jumlah</Label>
+                <Input
+                  placeholder="Masukkan Jumlah"
+                  type="number"
+                  min={1}
+                  value={formDataTable.jumlah}
+                  onChange={(e) => handleChangeTable("jumlah", e.target.value)}
+                />
+              </div>
+
+              <div className="flex items-center space-x-4">
+                <Label htmlFor="tipe" className="w-[20%] font-semibold">Tipe</Label>
+                <RadioGroup
+                  value={formDataTable.tipe}
+                  onValueChange={(value) => handleChangeTable("tipe", value)}
+                  className="flex items-center gap-5"
+                  disabled={!(formDataTable.category !== "GENERAL" && formDataTable.category !== "BLOWER")}
+                >
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="vakum" id="vakum" />
+                    <Label htmlFor="vakum">Vakum</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="cuci" id="cuci" />
+                    <Label htmlFor="cuci">Cuci</Label>
+                  </div>
+                </RadioGroup>
+              </div>
+
+              <div className="flex items-center space-x-4">
+                <Label htmlFor="harga" className="w-1/4 font-semibold">Harga</Label>
+                <RupiahInput
+                  disabled
+                  placeholder="Rp. 0"
+                  value={formatRupiah(formDataTable.harga * Number(formDataTable.jumlah || 1))}
+                  onValueChange={(value) => handleChangeTable("harga", value)}
+                />
+              </div>
+
+              <div className="flex items-center space-x-4">
+                <Label htmlFor="promo" className="w-1/4 font-semibold">Promo</Label>
+                <div className="flex items-center space-x-2 w-full">
+                  <div className="relative flex-1">
+                    <Input
+                      value={formatRupiah(formDataTable.promoType === 'Persentase' ? formDataTable.promo * formDataTable.harga * Number(formDataTable.jumlah) / 100 : formDataTable.promo * Number(formDataTable.jumlah))}
+                      className="bg-muted/50 cursor-not-allowed text-right"
+                      readOnly
+                      placeholder="Rp. 0"
+                    />
+                    {loadingPromo && (
+                      <div className="absolute inset-0 bg-background/50 flex items-center justify-center rounded-md">
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center space-x-4">
+                <Label htmlFor="subtotal" className="w-1/4 font-bold text-lg">Subtotal</Label>
+                <RupiahInput
+                  placeholder="Rp. 0"
+                  value={formatRupiah(
+                    (Number(formDataTable.harga) || 0) * (Number(formDataTable.jumlah) || 1) - (Number(formDataTable.promoType === "Persentase" ? Number(formDataTable.jumlah) * formDataTable.promo * formDataTable.harga / 100 : formDataTable.promo * Number(formDataTable.jumlah)) || 0)
+                  )}
+                  className="!border-0 !text-lg font-bold text-right"
+                  readOnly
+                />
+              </div>
+            </div>
+          </div>
+          <div className="flex justify-end gap-2 mt-4">
+            <Button
+              variant="outline2"
+              onClick={() => {
+                setOpenDialog(false);
+                resetFormDialog();
+              }}
+            >
+              Kembali
+            </Button>
+            <Button
+              disabled={!formDataTable.category || !formDataTable.serviceCode || !formDataTable.jumlah || !formDataTable.harga || submitting}
+              variant="main"
+              onClick={handleSubmitSPKItem}
+              loading={submitting}
+            >
+              {editMode ? "Perbarui" : "Tambah"}
+            </Button>
+          </div>
+        </form>
+      </DialogWrapper>
     </>
   );
 }
