@@ -59,7 +59,7 @@ const HeaderPembayaran = [
 // Mapping untuk status
 const statusMapping = {
   3: "Menunggu Pembayaran",
-  4: "Sudah DiBayar",
+  4: "Sudah Dibayar",
   5: "Selesai",
   6: "Dikerjakan Kembali"
 };

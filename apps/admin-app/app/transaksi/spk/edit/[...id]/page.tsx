@@ -58,6 +58,7 @@ export interface Transaction {
   reassigns: string[];
   rating: number;
   review: string;
+  tip: number;
 }
 
 // Customer interface

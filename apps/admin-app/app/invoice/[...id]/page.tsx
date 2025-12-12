@@ -295,11 +295,7 @@ function PaymentPreview({
       const pathname = window.location.pathname;
       const newUrl = `${pathname}?step=complete`;
       window.history.pushState(null, '', newUrl);
-    }
-    catch (error) {
-
-    }
-    finally {
+    } finally {
       setLoading(false)
     }
   }
@@ -593,7 +589,7 @@ export default function InvoicePage() {
         setReviewData({
           rating: transactionData.rating ?? 0,
           review: transactionData.review ?? '',
-          tip: 0
+          tip: transactionData.tip ?? 0
         })
       } catch (error) {
         console.error("Gagal mengambil data transaksi:", error);
