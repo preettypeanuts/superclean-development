@@ -34,10 +34,12 @@ function InvoicePreview({
   transaction,
   reviewData,
   setReviewData,
+  isBackoffice
 }: {
   transaction: Transaction,
   reviewData: Review,
   setReviewData: Dispatch<SetStateAction<Review>>,
+  isBackoffice: boolean
 }) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -84,34 +86,27 @@ function InvoicePreview({
       <WrapperMobile className="space-y-5 pb-24">
         <div className="flex items-center gap-2 text-mainColor">
           <BsClockHistory />
-          <Label className="font-bold">
-            Menunggu Pembayaran
-          </Label>
+          <Label className="font-bold">Menunggu Pembayaran</Label>
         </div>
 
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <Label>
-              Nomor transaksi
-            </Label>
-            <Label className="font-semibold">
-              {transaction?.trxNumber}
-            </Label>
+            <Label>Nomor transaksi</Label>
+            <Label className="font-semibold">{transaction?.trxNumber}</Label>
           </div>
           <div className="flex items-center justify-between">
-            <Label>
-              Nominal
-            </Label>
+            <Label>Nominal</Label>
             <Label className="font-semibold">
               {transaction.finalPrice?.toLocaleString('id-ID', {
-                style: 'currency', currency: 'IDR', minimumFractionDigits: 0, maximumFractionDigits: 0
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0,
               })}
             </Label>
           </div>
           <div className="flex items-center justify-between">
-            <Label>
-              Tanggal transaksi
-            </Label>
+            <Label>Tanggal transaksi</Label>
             <Label className="font-semibold">
               {new Date(transaction?.trxDate).toLocaleDateString('en-GB')}
             </Label>
@@ -126,13 +121,17 @@ function InvoicePreview({
             </p>
 
             <div>
-              {
-                isOpen ? (
-                  <ChevronUp className="w-4 h-4 text-secondaryColorDark" onClick={() => setIsOpen(!isOpen)} />
-                ) : (
-                  <ChevronUp className="w-4 h-4 text-secondaryColorDark rotate-180" onClick={() => setIsOpen(!isOpen)} />
-                )
-              }
+              {isOpen ? (
+                <ChevronUp
+                  className="w-4 h-4 text-secondaryColorDark"
+                  onClick={() => setIsOpen(!isOpen)}
+                />
+              ) : (
+                <ChevronUp
+                  className="w-4 h-4 text-secondaryColorDark rotate-180"
+                  onClick={() => setIsOpen(!isOpen)}
+                />
+              )}
             </div>
           </div>
 
@@ -150,7 +149,10 @@ function InvoicePreview({
                   </div>
                   <p className="text-sm font-semibold">
                     {detail.totalPrice.toLocaleString('id-ID', {
-                      style: 'currency', currency: 'IDR', minimumFractionDigits: 0, maximumFractionDigits: 0
+                      style: 'currency',
+                      currency: 'IDR',
+                      minimumFractionDigits: 0,
+                      maximumFractionDigits: 0,
                     })}
                   </p>
                 </div>
@@ -169,7 +171,12 @@ function InvoicePreview({
                 key={star}
                 size={35}
                 onClick={() => handleStarChange(star)}
-                className={reviewData.rating >= star ? "text-yellow-500 cursor-pointer" : "text-neutral-300 cursor-pointer"}
+                className={
+                  reviewData.rating >= star
+                    ? 'text-yellow-500 cursor-pointer'
+                    : 'text-neutral-300 cursor-pointer'
+                }
+                style={isBackoffice ? { pointerEvents: 'none' } : {}}
               />
             ))}
           </div>
@@ -177,73 +184,116 @@ function InvoicePreview({
 
         <div className="space-y-3">
           <p className="text-sm font-semibold">
-            Anda dapat memberi apresiasi kepada pekerja pembersih kami dengan memberikan tip.
+            Anda dapat memberi apresiasi kepada pekerja pembersih kami dengan
+            memberikan tip.
           </p>
           <div className="grid grid-cols-2 gap-4">
-            <button onClick={(e) => handleTipChange(e, 20000)} className={reviewData.tip === 20000 ? "bg-mainColor text-white rounded-md py-2" : "border border-neutral-300 rounded-md py-2"}>
+            <button
+              onClick={(e) => handleTipChange(e, 20000)}
+              disabled={isBackoffice}
+              className={
+                reviewData.tip === 20000
+                  ? 'bg-mainColor text-white rounded-md py-2'
+                  : 'border border-neutral-300 rounded-md py-2'
+              }
+              style={isBackoffice ? { backgroundColor: 'rgb(244, 244, 244)' } : {}}
+            >
               Rp 20.000
             </button>
-            <button onClick={(e) => handleTipChange(e, 30000)} className={reviewData.tip === 30000 ? "bg-mainColor text-white rounded-md py-2" : "border border-neutral-300 rounded-md py-2"}>
+            <button
+              onClick={(e) => handleTipChange(e, 30000)}
+              disabled={isBackoffice}
+              className={
+                reviewData.tip === 30000
+                  ? 'bg-mainColor text-white rounded-md py-2'
+                  : 'border border-neutral-300 rounded-md py-2'
+              }
+              style={isBackoffice ? { backgroundColor: 'rgb(244, 244, 244)' } : {}}
+            >
               Rp 30.000
             </button>
-            <button onClick={(e) => handleTipChange(e, 50000)} className={reviewData.tip === 50000 ? "bg-mainColor text-white rounded-md py-2" : "border border-neutral-300 rounded-md py-2"}>
+            <button
+              onClick={(e) => handleTipChange(e, 50000)}
+              disabled={isBackoffice}
+              className={
+                reviewData.tip === 50000
+                  ? 'bg-mainColor text-white rounded-md py-2'
+                  : 'border border-neutral-300 rounded-md py-2'
+              }
+              style={isBackoffice ? { backgroundColor: 'rgb(244, 244, 244)' } : {}}
+            >
               Rp 50.000
             </button>
-            <button onClick={(e) => handleTipChange(e, 100000)} className={reviewData.tip === 100000 ? "bg-mainColor text-white rounded-md py-2" : "border border-neutral-300 rounded-md py-2"}>
+            <button
+              onClick={(e) => handleTipChange(e, 100000)}
+              disabled={isBackoffice}
+              className={
+                reviewData.tip === 100000
+                  ? 'bg-mainColor text-white rounded-md py-2'
+                  : 'border border-neutral-300 rounded-md py-2'
+              }
+              style={isBackoffice ? { backgroundColor: 'rgb(244, 244, 244)' } : {}}
+            >
               Rp 100.000
             </button>
           </div>
         </div>
 
         <div className="space-y-1">
-          <p className="text-sm font-semibold">
-            Tip Nominal Lain
-          </p>
+          <p className="text-sm font-semibold">Tip Nominal Lain</p>
           <Input
             placeholder="Rp. Nominal Lain"
             value={formatRupiah(reviewData.tip || 0)}
             onChange={handleManualTipChange}
+            disabled={isBackoffice}
           />
         </div>
 
         <div className="space-y-1">
-          <p className="text-sm font-semibold">
-            Masukkan Terkait Layanan
-          </p>
+          <p className="text-sm font-semibold">Ada saran untuk petugas?</p>
           <Textarea
             rows={4}
             value={reviewData.review}
             placeholder="Tulis sesuatu..."
             onChange={handleReviewChange}
+            disabled={isBackoffice}
           />
         </div>
 
         <div className="fixed bottom-0 right-0 left-0">
           <div className="p-4 bg-white/50 backdrop-blur-md">
             <Button
-              variant={"main"}
+              variant={'main'}
               className="w-full"
-              disabled={reviewData.rating === 0}
-              onClick={async() => {
-                const accessToken = localStorage.getItem("access_token");
-                const tipAmount = reviewData.tip || 0;
+              disabled={reviewData.rating === 0 && !isBackoffice}
+              onClick={async () => {
+                if (!isBackoffice) {
+                  const accessToken = localStorage.getItem('access_token');
+                  const tipAmount = reviewData.tip || 0;
 
-                const reviewPayload = {
-                  rating: reviewData.rating,
-                  tipAmount,
-                  notes: reviewData.review || "",
+                  const reviewPayload = {
+                    rating: reviewData.rating,
+                    tipAmount,
+                    notes: reviewData.review || '',
+                  };
+
+                  // todo: send review
+                  await api.put(
+                    `/transaction/${transaction.id}/review`,
+                    reviewPayload,
+                    {
+                      headers: {
+                        'X-Auth-Request-Id': AUTH_REQUEST_ID || '',
+                        ...(accessToken && {
+                          Authorization: `Bearer ${accessToken}`,
+                        }),
+                      },
+                    }
+                  );
                 }
 
-                // todo: send review
-                await api.put(`/transaction/${transaction.id}/review`, reviewPayload, {
-                  headers: {
-                    'X-Auth-Request-Id': AUTH_REQUEST_ID || '',
-                    ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
-                  },
-                });
-
                 const pathname = window.location.pathname;
-                const newUrl = `${pathname}?step=payment`;
+                const newUrl = `${pathname}?step=payment&backoffice=${isBackoffice}`;
                 window.history.pushState(null, '', newUrl);
               }}
             >
@@ -269,6 +319,7 @@ function PaymentPreview({
   handleComplete: () => Promise<any>,
   parameters: Parameter[]
 }) {
+  const searchParams = useSearchParams();
   const pathname = usePathname();
   const [loading, setLoading] = useState<boolean>(false);
   const [paymentProof, setPaymentProof] = useState<File | null>(null);
@@ -312,8 +363,13 @@ function PaymentPreview({
   return (
     <>
       <HeaderMobile label="Pembayaran" onBackClick={() => {
-         const newUrl = pathname;
-         window.history.replaceState(null, '', newUrl);
+         const params = new URLSearchParams(searchParams);
+  
+        // Hapus param 'step' tapi tetap simpan 'backoffice'
+        params.delete('step');
+        
+        const newUrl = `${pathname}?${params.toString()}`;
+        window.history.replaceState(null, '', newUrl);
       }}/>
       <WrapperMobile className="space-y-5 pb-24">
         <div className="flex items-center gap-2 text-mainColor">
@@ -578,6 +634,8 @@ export default function InvoicePage() {
 
   const searchParams = useSearchParams();
   const step: "" | "payment" | "complete" = searchParams.get('step') as any || '';
+  const backoffice = searchParams.get('backoffice');
+  const isBackoffice = backoffice === 'true';
 
   // Fetch transaction data
   useEffect(() => {
@@ -648,6 +706,7 @@ export default function InvoicePage() {
       transaction={{ ...transaction }}
       reviewData={reviewData}
       setReviewData={setReviewData}
+      isBackoffice={isBackoffice}
     />
   )
 }

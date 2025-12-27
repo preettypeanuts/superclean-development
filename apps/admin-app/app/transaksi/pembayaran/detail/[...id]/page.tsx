@@ -32,6 +32,7 @@ import { useEffect, useMemo, useState } from "react";
 import { BsInfoCircleFill } from "react-icons/bs";
 import { LuPlus } from "react-icons/lu";
 import { PiWarningCircleFill } from "react-icons/pi";
+import { RiCheckLine, RiFileCopyLine, RiPagesLine } from "react-icons/ri";
 import { TbArrowBack } from "react-icons/tb";
 
 interface Customer {
@@ -116,6 +117,7 @@ export default function PembayaranDetail() {
   // States for manual discount and additional fee
   const [manualDiscount, setManualDiscount] = useState<number>(0);
   const [additionalFee, setAdditionalFee] = useState<number>(0);
+  const [copied, setCopied] = useState(false);
 
   const [formDataTable, setFormDataTable] = useState({
     id: "",
@@ -845,26 +847,60 @@ export default function PembayaranDetail() {
                           value={transaction.trxNumber}
                           className="bg-muted/50 cursor-not-allowed"
                         />
-                        <Button
-                          type="submit"
-                          onClick={() => {
-                            const currentOrigin = globalThis.location.origin;
-                            const url = `${currentOrigin}/invoice/${transaction.trxNumber}`;
+                        <div className="relative group">
+                          <Button
+                            type="button"
+                            onClick={() => {
+                              const currentOrigin = globalThis.location.origin;
+                              const url = `${currentOrigin}/invoice/${transaction.trxNumber}?backoffice=true`;
 
-                            const width = 393;
-                            const height = 852;
-                            const left = (window.screen.width - width) / 2;
-                            const top = (window.screen.height - height) / 2;
+                              const width = 393;
+                              const height = 852;
+                              const left = (window.screen.width - width) / 2;
+                              const top = (window.screen.height - height) / 2;
 
-                            window.open(
-                              url,
-                              '_blank',
-                              `width=${width},height=${height},left=${left},top=${top},noopener,noreferrer`
-                            );
-                          }}
-                        >
-                          Link Pembayaran
-                        </Button>
+                              window.open(
+                                url,
+                                '_blank',
+                                `width=${width},height=${height},left=${left},top=${top},noopener,noreferrer`
+                              );
+                            }}
+                          >
+                            <RiPagesLine />
+                          </Button>
+                          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-gray-900 text-white text-sm rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
+                            Halaman Pembayaran
+                            <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-gray-900"></div>
+                          </div>
+                        </div>
+                        <div className="relative group">
+                          <Button
+                            type="button"
+                            style={{backgroundColor: '#2667e3'}}
+                            onClick={async () => {
+                              const currentOrigin = globalThis.location.origin;
+                              const url = `${currentOrigin}/invoice/${transaction.trxNumber}`;
+
+                              await navigator.clipboard.writeText(url);
+                              setCopied(true);
+                              setTimeout(() => setCopied(false), 2000);
+                            }}
+                          >
+                            {copied ? (
+                              <>
+                                <RiCheckLine className="w-5 h-5" />
+                              </>
+                            ) : (
+                              <>
+                                <RiFileCopyLine className="w-5 h-5" />
+                              </>
+                            )}
+                          </Button>
+                          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-gray-900 text-white text-sm rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
+                            Salin Link
+                            <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-gray-900"></div>
+                          </div>
+                        </div>
                       </div>
                     ) : (
                       <Input
