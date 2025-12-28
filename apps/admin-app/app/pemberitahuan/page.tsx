@@ -12,7 +12,7 @@ import {
   TabsTrigger,
 } from "@ui-components/components/ui/tabs";
 import { useToast } from "@ui-components/hooks/use-toast";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { IoMdTrash } from "react-icons/io";
 import { IoCheckmarkCircle } from "react-icons/io5";
 
@@ -27,9 +27,9 @@ type Notification = {
 };
 
 const TabItems = [
-  { value: "all", label: "Semuanya" },
-  { value: "unread", label: "Belum Dibaca" },
-  { value: "read", label: "Sudah Dibaca" },
+  { value: "all", label: "Semua" },
+  // { value: "unread", label: "Belum Dibaca" },
+  // { value: "read", label: "Sudah Dibaca" },
 ];
 
 function NotificationList({
@@ -59,33 +59,42 @@ function NotificationList({
     <>
       <ul className="space-y-2">
         {items.map((item, index) => {
-          return <>
-            <li
-              key={item.id}
-              className={`${item.isRead ? "bg-white dark:bg-black" : "bg-baseLight/70 dark:bg-baseDark"} cursor-pointer flex gap-2 pl-3 pr-4 py-2 border rounded-lg`}
-              onClick={() => {
-                toggleCheckbox(item.id);
-              }}
-            >
-              <div className="w-fit ml-[1px] mt-[1px]">
-                {selectionMode && (
-                  <Checkbox
-                    checked={selectedIds.includes(item.id)}
-                    className="bg-white dark:bg-black"
-                  />
-                )}
-              </div>
-              <div className="w-full">
-                <div className="flex justify-between items-center">
-                  <h4 className="text-base font-semibold">{item.title}</h4>
-                  <span className="text-xs text-muted-foreground">
-                    {new Date(item.createdAt).toLocaleString()}
-                  </span>
+          return (
+            <>
+              <li
+                key={item.id}
+                className={`${
+                  item.isRead
+                    ? 'bg-white dark:bg-black'
+                    : 'bg-baseLight/70 dark:bg-baseDark'
+                } cursor-pointer flex gap-2 pl-3 pr-4 py-2 border rounded-lg`}
+                onClick={() => {
+                  toggleCheckbox(item.id);
+                }}
+              >
+                <div className="w-fit ml-[1px] mt-[1px]">
+                  {selectionMode && (
+                    <Checkbox
+                      checked={selectedIds.includes(item.id)}
+                      className="bg-white dark:bg-black"
+                    />
+                  )}
                 </div>
-                <p className="text-sm text-muted-foreground mt-1">{item.detail}</p>
-              </div>
-            </li>
-          </>
+                <div className="w-full">
+                  <div className="flex justify-between items-center">
+                    <h4 className="text-base font-semibold">{item.title}</h4>
+                    <span className="text-xs text-muted-foreground">
+                      {new Date(item.createdAt).toLocaleString()}
+                    </span>
+                  </div>
+                  <p
+                    className="text-sm text-muted-foreground mt-1"
+                    dangerouslySetInnerHTML={{ __html: item.detail }}
+                  />
+                </div>
+              </li>
+            </>
+          );
         })}
       </ul>
     </>
@@ -128,11 +137,7 @@ export default function PemberitahuanPage() {
         variant: "success",
       });
 
-      setNotifications([]);
-      setAll([]);
-      setUnread([]);
-      setRead([]);
-      fetchMoreData(1);
+      window.location.reload();
     } catch (error) {
       console.error("Error marking notifications as read:", error);
     } finally {
@@ -157,11 +162,7 @@ export default function PemberitahuanPage() {
         variant: "success",
       });
 
-      setNotifications([]);
-      setAll([]);
-      setUnread([]);
-      setRead([]);
-      fetchMoreData(1);
+      window.location.reload();
     }
     catch (error) {
       console.error("Error deleting notifications:", error);
@@ -172,8 +173,8 @@ export default function PemberitahuanPage() {
   };
 
   const [all, setAll] = useState<Notification[]>([]);
-  const [unread, setUnread] = useState<Notification[]>([]);
-  const [read, setRead] = useState<Notification[]>([]);
+  // const [unread, setUnread] = useState<Notification[]>([]);
+  // const [read, setRead] = useState<Notification[]>([]);
   const [page, setPage] = useState(1);
   const [noMoreData, setNoMoreData] = useState(false);
   const itemsPerPage = 10;
@@ -225,8 +226,8 @@ export default function PemberitahuanPage() {
     setIsLoading(false);
 
     setAll(notifications);
-    setUnread(notifications.filter((n) => !n.isRead));
-    setRead(notifications.filter((n) => n.isRead));
+    // setUnread(notifications.filter((n) => !n.isRead));
+    // setRead(notifications.filter((n) => n.isRead));
 
   }, [notifications]);
 
@@ -305,7 +306,7 @@ export default function PemberitahuanPage() {
 
 
           </TabsContent>
-          <TabsContent value="unread">
+          {/* <TabsContent value="unread">
             <NotificationList
               items={unread}
               selectedIds={selectedIds}
@@ -334,7 +335,7 @@ export default function PemberitahuanPage() {
             }
 
 
-          </TabsContent>
+          </TabsContent> */}
         </Tabs>
       </Wrapper>
 

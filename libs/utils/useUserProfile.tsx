@@ -14,6 +14,7 @@ export interface RawUserData {
 export interface ProcessedUserData {
   username: string;
   fullname: string;
+  roleIdCode: string;
   roleId: string;   // mapped label
   branchId: string; // mapped label
 }
@@ -31,7 +32,6 @@ export const useUserProfile = () => {
   // JANGAN taruh pathname di useCallback
 const fetchUserProfile = useCallback(async () => {
     setLoading(true);
-    console.log("[useUserProfile] Fetch triggered due to pathname or mapping change");
 
     try {
       const response = await api.get("/profile");
@@ -41,6 +41,7 @@ const fetchUserProfile = useCallback(async () => {
   
         const processed: ProcessedUserData = {
           ...rawUser,
+          roleIdCode: rawUser.roleId,
           roleId: roleMapping[rawUser.roleId] || "Tidak Diketahui",
           branchId: branchMapping[rawUser.branchId] || "Tidak Diketahui",
         };

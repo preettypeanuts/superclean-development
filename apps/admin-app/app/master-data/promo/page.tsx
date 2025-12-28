@@ -1,6 +1,7 @@
 "use client"
 import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
 import { Wrapper } from "@shared/components/Wrapper";
+import { useUserProfile } from "@shared/utils/useUserProfile";
 import { Label } from "@ui-components/components/ui/label";
 import { DiscountTable } from "libs/ui-components/src/components/discount-table";
 import { PaginationNumber } from "libs/ui-components/src/components/pagination-number";
@@ -42,6 +43,9 @@ export default function PromoPage() {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [tempSearchQuery, setTempSearchQuery] = useState("");
+  const [disabledAction, setDisabledAction] = useState<boolean>(true);
+  const [actionMenu, setActionMenu] = useState<{key: string, label: string}[]>(DataHeaderPromo);
+  const { user } = useUserProfile();
 
   const totalPages = Math.max(1, Math.ceil(totalData / limit));
 
@@ -85,15 +89,23 @@ export default function PromoPage() {
 
   const handleSearch = () => {
     fetchPromo(true);
-    // setSearchQuery(tempSearchQuery);
-    // setCurrentPage(1);
   };
 
   const resetSearch = () => {
     setTempSearchQuery("");
     setSearchQuery("");
-    // setCurrentPage(1);
   };
+
+  useEffect(() => {
+      if (user?.roleIdCode === 'SA' || user?.roleIdCode === 'SPV') {
+        setDisabledAction(false);
+        setActionMenu(DataHeaderPromo);
+      } else {
+        setDisabledAction(true);
+        const filteredData = DataHeaderPromo.filter(item => item.key !== "menu");
+        setActionMenu(filteredData);
+      }
+  }, [user]);
 
   return (
     <>
@@ -129,7 +141,7 @@ export default function PromoPage() {
 
               <Button variant="main" onClick={handleSearch}>Cari</Button>
             </div>
-            <Link href="promo/baru">
+            <Link href="promo/baru" hidden={disabledAction}>
               <Button icon={<LuPlus size={14} />} iconPosition="left" variant="default">
                 Tambah
               </Button>
@@ -143,7 +155,7 @@ export default function PromoPage() {
           ) : (
             <DiscountTable
               data={dataPromo}
-              columns={DataHeaderPromo}
+              columns={actionMenu}
               key={`${currentPage}-${limit}`}
               currentPage={currentPage.page}
               limit={limit}

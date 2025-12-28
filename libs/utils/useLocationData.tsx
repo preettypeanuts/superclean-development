@@ -15,6 +15,7 @@ export function useLocationData(province?: string, city?: string, district?: str
   const [cities, setCities] = useState<LocationData[]>([]);
   const [districts, setDistricts] = useState<LocationData[]>([]);
   const [subDistricts, setSubDistricts] = useState<LocationData[]>([]);
+  const [allCities, setAllCities] = useState<LocationData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -31,7 +32,20 @@ export function useLocationData(province?: string, city?: string, district?: str
       }
     };
 
+    const fetchCities = async () => {
+      try {
+        const response = await apiClient("/parameter/category?category=KOTA");
+        setAllCities(response.data);
+      } catch (err) {
+        console.error("Error fetching provinces:", err);
+        setError("Gagal memuat data provinsi.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchProvinces();
+    fetchCities();
   }, []);
 
   useEffect(() => {
@@ -88,22 +102,18 @@ export function useLocationData(province?: string, city?: string, district?: str
     fetchSubDistricts();
   }, [province, city, district]);
 
-  return { provinces, cities, districts, subDistricts, loading, error };
+  return { provinces, cities, districts, subDistricts, loading, error, allCities };
 }
 
-export async function getCitiesLabel(cityCode: string[]): Promise<LocationData[]> {
+export async function getCitiesLabel(provincCode: string): Promise<LocationData[]> {
   const allCities: LocationData[] = [];
 
-  await Promise.all(
-    cityCode.map(async (code) => {
-      try {
-        const res = await apiClient(`/parameter/cities?province=${code}`);
-        allCities.push(...res.data);
-      } catch (error) {
-        console.error(`Gagal fetch kota dari provinsi ${code}:`, error);
-      }
-    })
-  );
+  try {
+    const res = await apiClient(`/parameter/cities?province=${provincCode}`);
+    allCities.push(...res.data);
+  } catch (error) {
+    console.error(`Gagal fetch kota dari provinsi ${provincCode}:`, error);
+  }
 
   return allCities;
 }

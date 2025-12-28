@@ -37,7 +37,6 @@ interface DataTableProps {
 }
 
 export const TableKaryawan: React.FC<DataTableProps> = ({ data, columns, currentPage, limit, fetchData }) => {
-    console.log(data);
     const { toast } = useToast(); // Initialize toast
     const roleColors: Record<string, string> = {
         "Super Admin": "bg-white border-blue-600 text-blue-600 dark:bg-black dark:border-blue-300 dark:text-blue-300",

@@ -23,7 +23,7 @@ const DataHeaderPelanggan = [
   { key: "noWhatsapp", label: "No. WhatsApp" },
   { key: "customerType", label: "Tipe Pelanggan" },
   { key: "address", label: "Alamat" },
-  { key: "city", label: "Kota" },
+  { key: "city", label: "Kota / Kabupaten" },
   { key: "createdBy", label: "Didaftarkan Oleh" },
   { key: "menu", label: "Aksi" },
 ];
@@ -50,18 +50,13 @@ export default function PelangganPage() {
   const [totalData, setTotalData] = useState<number>(0);
   const [limit, setLimit] = useState<number>(10);
   const [searchInput, setSearchInput] = useState("");
+  const [provinceFilter, setProvinceFilter] = useState<string>("all");
   const [cityFilter, setCityFilter] = useState<string>("all");
   const [customerTypeFilter, setCustomerTypeFilter] = useState<string>("all");
 
-  // const [statusFilter, setStatusFilter] = useState<string>("");
-
   const totalPages = Math.max(1, Math.ceil(totalData / limit));
 
-  const selectedProvince = useMemo(() => {
-    return [...new Set(dataPelanggan.map((item) => item.province).filter(Boolean))];
-  }, [dataPelanggan]);
-
-  const { provinces } = useLocationData();
+  const { provinces, allCities } = useLocationData();
   const [cities, setCities] = useState<LocationData[]>([]);
 
   const fetchPelanggan = useCallback(async (resetPagination: boolean = false) => {
@@ -80,9 +75,6 @@ export default function PelangganPage() {
       if (customerTypeFilter !== "" && customerTypeFilter !== "all") {
         url += `&customerType=${customerTypeFilter}`;
       }
-      // if (statusFilter !== "") {
-      //   url += `&status=${statusFilter}`;
-      // }
 
       const result = await apiClient(url);
       setDataPelanggan(result.data[0] || []);
@@ -105,11 +97,9 @@ export default function PelangganPage() {
 
   // useEffect untuk fetch cities dengan memoized selectedProvince
   useEffect(() => {
-    if (selectedProvince.length === 0) return;
-
     const fetchCities = async () => {
       try {
-        const result = await getCitiesLabel(selectedProvince);
+        const result = await getCitiesLabel(provinceFilter);
         setCities(result);
       } catch (error) {
         console.error("Error fetching cities:", error);
@@ -117,7 +107,7 @@ export default function PelangganPage() {
     };
 
     fetchCities();
-  }, [selectedProvince]); // Sekarang selectedProvince sudah di-memoize
+  }, [provinceFilter]); // Sekarang selectedProvince sudah di-memoize
 
   const handleSearch = useCallback(() => {
     fetchPelanggan(true);
@@ -131,15 +121,14 @@ export default function PelangganPage() {
   const processedPelanggan = useMemo(() => {
     return dataPelanggan.map((item) => ({
       ...item,
-      province:
-        provinces.find((prov: { paramKey: string; paramValue: string }) => prov.paramKey === item.province)?.paramValue || "Tidak Diketahui",
       city:
-        cities.find((cty) => cty.paramKey === item.city)?.paramValue || "Tidak Diketahui",
+        allCities.find((cty) => cty.paramKey === item.city)?.paramValue || "Tidak Diketahui",
     }));
-  }, [dataPelanggan, provinces, cities]);
+  }, [dataPelanggan, cities]);
 
   const handleResetFilter = () => {
     setCityFilter("all");
+    setProvinceFilter("all");
     setCustomerTypeFilter("all");
   };
 
@@ -157,7 +146,7 @@ export default function PelangganPage() {
                   value={searchInput}
                   onChange={(e) => setSearchInput(e.target.value)}
                   onKeyDown={(i) => {
-                    if (i.key === "Enter") {
+                    if (i.key === 'Enter') {
                       handleSearch();
                     }
                   }}
@@ -174,27 +163,40 @@ export default function PelangganPage() {
                   </button>
                 )}
               </div>
-              {/* <FilterStatus
-                placeholder="Status"
-                value={statusFilter}
-                onChange={setStatusFilter}
-              /> */}
 
               <GroupFilter
                 className="space-y-2"
-                // onApply={handleApplyFilter}
                 onReset={handleResetFilter}
-                // onCancel={handleCancelFilter}
                 hideButtons
               >
                 <SelectFilter
-                  label="Kota"
+                  label="Provinsi"
+                  id="province"
+                  placeholder="Pilih Provinsi"
+                  value={provinceFilter}
+                  optionsString={[
+                    { label: 'Semua Provinsi', value: 'all' },
+                    ...provinces.map((province) => ({
+                      label: province.paramValue,
+                      value: province.paramKey,
+                    })),
+                  ]}
+                  onChange={(value) => {
+                    setProvinceFilter(value);
+                    setCityFilter('all');
+                  }}
+                />
+                <SelectFilter
+                  label="Kota / Kabupaten"
                   id="kota"
                   placeholder="Pilih Kota"
                   value={cityFilter}
                   optionsString={[
-                    { label: "Semua Kota", value: "all" },
-                    ...cities.map((city) => ({ label: city.paramValue, value: city.paramKey })),
+                    { label: 'Semua Kota', value: 'all' },
+                    ...cities.map((city) => ({
+                      label: city.paramValue,
+                      value: city.paramKey,
+                    })),
                   ]}
                   onChange={setCityFilter}
                 />
@@ -205,17 +207,17 @@ export default function PelangganPage() {
                   value={customerTypeFilter}
                   optionsString={[
                     {
-                      label: "Semua Jenis Pelanggan",
-                      value: "all"
+                      label: 'Semua Jenis Pelanggan',
+                      value: 'all',
                     },
                     {
-                      label: "Perusahaan",
-                      value: "Perusahaan"
+                      label: 'Perusahaan',
+                      value: 'Perusahaan',
                     },
                     {
-                      label: "Pribadi",
-                      value: "Pribadi"
-                    }
+                      label: 'Pribadi',
+                      value: 'Pribadi',
+                    },
                   ]}
                   onChange={setCustomerTypeFilter}
                 />
@@ -238,18 +240,18 @@ export default function PelangganPage() {
           {loading ? (
             <p className="text-center py-4">Memuat data...</p>
           ) : dataPelanggan.length === 0 ? (
-              <p className="text-center py-4"> Data pelanggan tidak ditemukan.</p>
+            <p className="text-center py-4"> Data pelanggan tidak ditemukan.</p>
           ) : (
-                <div className="overflow-x-auto">
-                  <TablePelanggan
-                    key={`${currentPage}-${limit}`}
-                    data={processedPelanggan}
-                    columns={DataHeaderPelanggan}
-                    currentPage={currentPage}
-                    limit={limit}
-                    fetchData={fetchPelanggan}
-                  />
-                </div>
+            <div className="overflow-x-auto">
+              <TablePelanggan
+                key={`${currentPage}-${limit}`}
+                data={processedPelanggan}
+                columns={DataHeaderPelanggan}
+                currentPage={currentPage}
+                limit={limit}
+                fetchData={fetchPelanggan}
+              />
+            </div>
           )}
         </div>
 
@@ -262,7 +264,9 @@ export default function PelangganPage() {
               onLimitChange={(limit: string) => setLimit(Number(limit))}
             />
           ) : (
-            <Label className="text-xs">Semua data telah ditampilkan ({totalData})</Label>
+            <Label className="text-xs">
+              Semua data telah ditampilkan ({totalData})
+            </Label>
           )}
           <PaginationNumber
             totalPages={totalPages}

@@ -5,8 +5,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { HiMiniPencilSquare } from "react-icons/hi2";
 import { IoMdTrash } from "react-icons/io";
-import { PiWarningCircleLight } from "react-icons/pi";
-import { daysRemaining, formatDate } from "../../../utils/formatDate";
+import { formatDate } from "../../../utils/formatDate";
 import { DeleteDialog } from "./delete-dialog";
 import { Button } from "./ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
@@ -120,13 +119,7 @@ export const DiscountTable: React.FC<DataTableProps> = ({ data, columns, current
                                         </p>
                                     </div>
                                 ) :  header.key === "endDate" ? (
-                                    <div className="relative group cursor-pointer flex items-center gap-1">
-                                        <p className={`${new Date(String(discount[header.key as keyof Column])) < new Date()
-                                            ? " text-red-500  dark:text-red-100"
-                                            : " text-green-500 dark:text-green-100"
-                                            }`}>
-                                            <PiWarningCircleLight />
-                                        </p>
+                                    <div className="relative group cursor-pointer flex items-center gap-1">                                        
                                         <p
                                             className={`badge dark:bg-opacity-70 rounded-md !font-medium border-0 ${new Date(String(discount[header.key as keyof Column])) < new Date()
                                                 ? "bg-red-100 text-red-500 dark:bg-red-500 dark:text-red-100"
@@ -135,9 +128,6 @@ export const DiscountTable: React.FC<DataTableProps> = ({ data, columns, current
                                         >
                                             {formatDate(String(discount[header.key as keyof Column]))}
                                         </p>
-                                        <span className="absolute truncate left-[102px] top-1/2 transform -translate-y-1/2 hidden group-hover:inline-block bg-lightColor dark:bg-darkColor text-black shadow-custom dark:text-white text-xs rounded-lg px-2 py-1">
-                                            {daysRemaining(String(discount[header.key as keyof Column]))}
-                                        </span>
                                     </div>
                                 ) : header.key === "serviceCode" ? (
                                     <p className="uppercase">

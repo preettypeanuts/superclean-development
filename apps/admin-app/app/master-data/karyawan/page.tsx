@@ -1,5 +1,6 @@
 "use client"
 import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
+import { useUserProfile } from "@shared/utils/useUserProfile";
 import { Label } from "@ui-components/components/ui/label";
 import { Wrapper } from "libs/shared/src/components/Wrapper";
 import { GroupFilter } from "libs/ui-components/src/components/group-filter";
@@ -60,10 +61,12 @@ export default function KaryawanPage() {
   const [branchFilter, setBranchFilter] = useState<string>("");
   const [roleFilter, setRoleFilter] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<string>("-");
+  const [disabledAction, setDisabledAction] = useState<boolean>(true);
+  const [actionMenu, setActionMenu] = useState<{key: string, label: string}[]>(DataHeaderPelanggan);
+  const { user } = useUserProfile();
 
   // Filter sementara
   const [searchInput, setSearchInput] = useState("");
-
 
   const totalPages = Math.max(1, Math.ceil(totalData / limit));
   const { roleMapping, branchMapping, loading: loadingParams } = useParameterStore();
@@ -78,25 +81,11 @@ export default function KaryawanPage() {
     value: key,
   }));
 
-  const handleApplyFilter = () => {
-    // setBranchFilter(tempBranchFilter);
-    // setRoleFilter(tempRoleFilter);
-    // setStatusFilter(tempStatusFilter);
-    // setCurrentPage(1);
-  };
-
   const handleResetFilter = () => {
     setBranchFilter("");
     setRoleFilter("");
     setStatusFilter("-");
   };
-
-  const handleCancelFilter = () => {
-    // setTempBranchFilter(branchFilter);
-    // setTempRoleFilter(roleFilter);
-    // setTempStatusFilter(statusFilter);
-  };
-
 
   const fetchKaryawan = async (resetPagination: boolean = false) => {
     let page = currentPage
@@ -148,6 +137,17 @@ export default function KaryawanPage() {
     setSearchInput("");
   };
 
+  useEffect(() => {
+      if (user?.roleIdCode === 'SA' || user?.roleIdCode === 'SPV') {
+        setDisabledAction(false);
+        setActionMenu(DataHeaderPelanggan);
+      } else {
+        setDisabledAction(true);
+        const filteredData = DataHeaderPelanggan.filter(item => item.key !== "menu");
+        setActionMenu(filteredData);
+      }
+  }, [user]);
+
   // Proses Data Karyawan (Mapping roleId dan branchId)
   const processedKaryawan = dataKaryawan.map((item) => ({
     ...item,
@@ -188,9 +188,7 @@ export default function KaryawanPage() {
               </div>
               <GroupFilter
                 className="space-y-2"
-                onApply={handleApplyFilter}
                 onReset={handleResetFilter}
-                onCancel={handleCancelFilter}
                 hideButtons
               >
                 <SelectFilter
@@ -220,7 +218,7 @@ export default function KaryawanPage() {
               </GroupFilter>
               <Button variant="main" onClick={handleSearch}>Cari</Button>
             </div>
-            <Link href="karyawan/baru">
+            <Link href="karyawan/baru" hidden={disabledAction}>
               <Button icon={<LuPlus size={14} />} iconPosition="left" variant="default" type="submit">
                 Tambah
               </Button>
@@ -234,7 +232,7 @@ export default function KaryawanPage() {
           ) : (
             <TableKaryawan
               data={processedKaryawan}
-              columns={DataHeaderPelanggan}
+              columns={actionMenu}
               key={`${currentPage}-${limit}`}
               currentPage={currentPage}
               limit={limit}

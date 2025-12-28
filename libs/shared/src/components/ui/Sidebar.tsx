@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { IoIosArrowDown } from "react-icons/io";
 import { IoReloadOutline } from "react-icons/io5";
 import { RiLogoutCircleFill, RiUserFill } from "react-icons/ri";
@@ -15,10 +15,35 @@ import {
     DropdownMenuTrigger,
 } from "../../../../ui-components/src/components/ui/dropdown-menu";
 import { useUserProfile } from "../../../../utils/useUserProfile";
-import { navigationItems } from "../../data/system";
+import { navigationItems, navigationItemsAdmin, navigationItemsDefault, navigationItemsSpv } from "../../data/system";
 import { ThemeSwitch } from "./ThemeSwitch";
 
 import Image from "next/image";
+
+// Interface general yang bisa digunakan untuk berbagai menu
+interface SubMenuItem {
+    name: string;
+    path: string;
+    [key: string]: any; // Untuk properti tambahan
+}
+
+interface MenuItem {
+    label: string;
+    path: string;
+    icon?: ReactNode;
+    subs?: SubMenuItem[];
+    [key: string]: any; // Untuk properti tambahan
+}
+
+interface MenuSection {
+    label: string;
+    contents: MenuItem[];
+    [key: string]: any; // Untuk properti tambahan
+}
+
+interface NavigationMenus {
+    [key: string]: MenuSection; // Bisa menu, settings, atau section lainnya
+}
 
 export const Sidebar = ({
     isExpanded = true,
@@ -29,20 +54,29 @@ export const Sidebar = ({
 
     const [openSubmenus, setOpenSubmenus] = useState<{ [key: string]: boolean }>({});
     const { user, loading: loadingUser } = useUserProfile();
+    const [navigationMenus, setNavigationMenus] = useState<NavigationMenus>(navigationItemsDefault);
 
     useEffect(() => {
+        if (user?.roleIdCode === 'SA') {
+            setNavigationMenus(navigationItems);
+        } else if (user?.roleIdCode === 'ADMIN') {
+            setNavigationMenus(navigationItemsAdmin);
+        } else if (user?.roleIdCode === 'SPV') {
+            setNavigationMenus(navigationItemsSpv);
+        }
+        
     }, [user, path]);
 
     const getRoleAbbreviation = (roleValue: string) => {
         const roleMap: Record<string, string> = {
-            "Administrasi": "ADM",
+            "Staff Administrasi": "ADM",
             "Staff Blower": "SB",
             "Staff Cleaning": "SC",
             "Super Admin": "SA",
-            "Supervisor": "SPV",
+            "Supervisor Administrasi": "SPV",
         };
 
-        return roleMap[roleValue] || "0";
+        return roleMap[roleValue] || "UN";
     };
 
     const processedRole = user?.roleId ? getRoleAbbreviation(user.roleId) : "UN";
@@ -130,7 +164,7 @@ export const Sidebar = ({
                     )}
 
                     {/* Navigation Sections */}
-                    {Object.entries(navigationItems).map(([key, section]) => (
+                    {Object.entries(navigationMenus).map(([key, section]) => (
                         <div key={key}>
                             <p className={`${!isExpanded && "w-full h-[1px] bg-neutral-500/30 rounded-full mb-3"} text-neutral-400 text-[10px] uppercase tracking-wide font-semibold px-3 pb-1`}>
                                 <span className={`${!isExpanded && "hidden"}`}>
@@ -198,10 +232,10 @@ export const Sidebar = ({
                                                 </ul>
                                             )}
 
-                                            {item.subs.length > 0 && !isExpanded && (
+                                            {item?.subs && item?.subs.length > 0 && !isExpanded && (
                                                 <ul tabIndex={idx} className="ml-1 dropdown-content menu bg-baseLight dark:bg-baseDark rounded-lg !z-[999] w-56 p-2 shadow">
                                                     <p className="block px-3 py-2 -m-1 bg-mainColor/20 border border-white/50 dark:border-neutral-500/50 rounded-md capitalize mb-2 font-bold text-sm">{item.label}</p>
-                                                    {item.subs.map((sub, subIdx) => (
+                                                    {item?.subs?.map((sub, subIdx) => (
                                                         <li key={subIdx}>
                                                             <Link
                                                                 href={sub.path}

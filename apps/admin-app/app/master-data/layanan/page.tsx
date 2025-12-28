@@ -1,7 +1,9 @@
 "use client";
 import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
-import { FilterCategoryLayanan } from "@superclean-workspace/ui-components/components/filter-category-layanan";
-import { FilterStatus } from "@superclean-workspace/ui-components/components/filter-status";
+import { useCategoryStore2 } from "@shared/utils/useCategoryStore";
+import { useUserProfile } from "@shared/utils/useUserProfile";
+import { GroupFilter } from "@ui-components/components/group-filter";
+import { SelectFilter } from "@ui-components/components/select-filter";
 import { Label } from "@ui-components/components/ui/label";
 import { Wrapper } from "libs/shared/src/components/Wrapper";
 import { TableLayanan } from "libs/ui-components/src/components/layanan-table";
@@ -21,6 +23,7 @@ const DataHeaderLayanan = [
   { key: "code", label: "Kode Layanan" },
   { key: "name", label: "Nama Layanan" },
   { key: "category", label: "Kategori" },
+  { key: "unit", label: "Satuan" },
   { key: "vacuumPrice", label: "Harga Vakum" },
   { key: "cleanPrice", label: "Harga Cuci" },
   { key: "status", label: "Status" },
@@ -39,6 +42,12 @@ interface Service {
   status: number;
 }
 
+const options = [
+  { label: "Semua", value: "all" },
+  { label: "Aktif", value: "1" },
+  { label: "Tidak-Aktif", value: "0" },
+]
+
 export default function LayananPage() {
   const [dataLayanan, setDataLayanan] = useState<Service[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -52,14 +61,18 @@ export default function LayananPage() {
   const [totalData, setTotalData] = useState<number>(0);
   const [limit, setLimit] = useState<number>(10);
   const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string>("");
-  const [catFilter, setCatFilter] = useState<string>("");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [catFilter, setCatFilter] = useState<string>("all");
 
   const totalPages = Math.max(1, Math.ceil(totalData / limit));
 
   const [tempSearchQuery, setTempSearchQuery] = useState("");
-  const [tempStatusFilter, setTempStatusFilter] = useState<string>("");
-  const [tempCatFilter, setTempCatFilter] = useState<string>("");
+  const [tempStatusFilter, setTempStatusFilter] = useState<string>("all");
+  const [tempCatFilter, setTempCatFilter] = useState<string>("all");
+  const [disabledAction, setDisabledAction] = useState<boolean>(true);
+  const [actionMenu, setActionMenu] = useState<{key: string, label: string}[]>(DataHeaderLayanan);
+  const { user } = useUserProfile();
+  const { categories } = useCategoryStore2();
 
   const fetchLayanan = async (reset: boolean = false) => {
     let page = currentPage.page;
@@ -86,11 +99,11 @@ export default function LayananPage() {
     try {
       let url = `/service/page?search=${search}&page=${page}&limit=${limit}`;
 
-      if (status !== "") {
+      if (status !== "all") {
         url += `&status=${status}`;
       }
 
-      if (cat !== "") {
+      if (cat !== "all") {
         url += `&category=${cat}`;
       }
 
@@ -108,24 +121,32 @@ export default function LayananPage() {
   useEffect(() => {
     if (currentPage.reset) return;
     fetchLayanan();
-  }, [
-    // searchQuery,
-    // statusFilter,
-    // catFilter,
-    currentPage,
-    limit
-  ]);
+  }, [currentPage, limit]);
 
   const handleSearch = () => {
     fetchLayanan(true)
-    // setSearchQuery(searchInput);
-    // setCurrentPage(1);
   };
 
   const resetSearch = () => {
     setTempSearchQuery("");
     setSearchQuery("");
-    // setCurrentPage(1);
+  };
+
+  useEffect(() => {
+      if (user?.roleIdCode === 'SA' || user?.roleIdCode === 'SPV') {
+        setDisabledAction(false);
+        setActionMenu(DataHeaderLayanan);
+      } else {
+        setDisabledAction(true);
+        const filteredData = DataHeaderLayanan.filter(item => item.key !== "menu");
+        setActionMenu(filteredData);
+      }
+  }, [user]);
+
+  const handleResetFilter = () => {
+    setTempSearchQuery("");
+    setStatusFilter("all");
+    setTempCatFilter("all");
   };
 
   return (
@@ -142,7 +163,7 @@ export default function LayananPage() {
                   value={tempSearchQuery}
                   onChange={(e) => setTempSearchQuery(e.target.value)}
                   onKeyDown={(e) => {
-                    if (e.key === "Enter") {
+                    if (e.key === 'Enter') {
                       handleSearch();
                     }
                   }}
@@ -159,24 +180,39 @@ export default function LayananPage() {
                   </button>
                 )}
               </div>
-
-              <FilterCategoryLayanan
-                catFilter={tempCatFilter}
-                setcatFilter={setTempCatFilter}
-              />
-              <FilterStatus
-                placeholder="Status"
-                value={tempStatusFilter}
-                onChange={setTempStatusFilter}
-              />
-              <Button
-                variant="main"
-                onClick={handleSearch}
+              <GroupFilter
+                className="space-y-2"
+                onReset={handleResetFilter}
+                hideButtons
               >
+                <SelectFilter
+                  label="Kategori Layanan"
+                  id="category"
+                  placeholder="Pilih Kategori Layanan"
+                  value={tempCatFilter}
+                  optionsString={[
+                    { label: 'Semua Kategori', value: 'all' },
+                    ...categories.map((item) => ({
+                      label: item.paramValue,
+                      value: item.paramKey,
+                    })),
+                  ]}
+                  onChange={setTempCatFilter}
+                />
+                <SelectFilter
+                  label="Status"
+                  id="status"
+                  placeholder="Pilih Status"
+                  value={tempStatusFilter}
+                  optionsString={options}
+                  onChange={setTempStatusFilter}
+                />
+              </GroupFilter>
+              <Button variant="main" onClick={handleSearch}>
                 Cari
               </Button>
             </div>
-            <Link href="layanan/baru">
+            <Link href="layanan/baru" hidden={disabledAction}>
               <Button
                 icon={<LuPlus size={16} />}
                 iconPosition="left"
@@ -189,18 +225,20 @@ export default function LayananPage() {
 
           {loading ? (
             <p className="text-center py-4">Memuat data...</p>
-          ) : dataLayanan.length === 0 ?
-            (<p className="text-center py-4">Tidak ada data layanan yang tersedia.</p>
-              ) : (
-                <TableLayanan
-                  data={dataLayanan}
-                  columns={DataHeaderLayanan}
-                  key={`${currentPage}-${limit}`}
-                currentPage={currentPage.page}
-                limit={limit}
-                fetchData={fetchLayanan}
-              />
-            )}
+          ) : dataLayanan.length === 0 ? (
+            <p className="text-center py-4">
+              Tidak ada data layanan yang tersedia.
+            </p>
+          ) : (
+            <TableLayanan
+              data={dataLayanan}
+              columns={actionMenu}
+              key={`${currentPage}-${limit}`}
+              currentPage={currentPage.page}
+              limit={limit}
+              fetchData={fetchLayanan}
+            />
+          )}
         </div>
 
         <div className="flex items-center justify-between mt-4">
@@ -212,7 +250,9 @@ export default function LayananPage() {
               onLimitChange={(limit: string) => setLimit(Number(limit))}
             />
           ) : (
-            <Label className="text-xs">Semua data telah ditampilkan ({totalData})</Label>
+            <Label className="text-xs">
+              Semua data telah ditampilkan ({totalData})
+            </Label>
           )}
 
           <PaginationNumber

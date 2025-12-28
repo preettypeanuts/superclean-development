@@ -141,3 +141,133 @@ export const TrxStatusLabel: Record<number, string> = {
   4: "Sudah Bayar",
   5: "Selesai"
 };
+
+export const navigationItemsAdmin = {
+  menu: {
+    label: "Main Menu",
+    contents: [
+      {
+        label: "Dashboard",
+        path: "/",
+        icon: <TbLayoutDashboardFilled />,
+        subs: []
+      },
+      {
+        label: "master data",
+        path: "/master-data",
+        icon: <FaChartSimple />,
+        subs: [
+          { name: "karyawan", path: "/master-data/karyawan" },
+          { name: "pelanggan", path: "/master-data/pelanggan" },
+          { name: "layanan", path: "/master-data/layanan" },
+          { name: "Promo", path: "/master-data/promo" },
+        ]
+      },
+      {
+        label: "transaksi",
+        path: "/transaksi",
+        icon: <FaHandsHelping />,
+        subs: [
+          { name: "SPK", path: "/transaksi/spk" },
+        ]
+      },
+      {
+        label: "laporan",
+        path: "/laporan",
+        icon: <HiDocumentReport />,
+        subs: [
+          { name: "inquiry transaksi", path: "/laporan/inquiry-transaksi" },
+        ]
+      }
+    ]
+  },
+  settings: {
+    label: "Umum",
+    contents: [
+      {
+        label: "pemberitahuan",
+        path: "/pemberitahuan",
+        icon: <RiNotification4Fill />,
+        subs: []
+      }
+    ]
+  }
+};
+
+export const navigationItemsSpv = {
+  menu: {
+    label: "Main Menu",
+    contents: [
+      {
+        label: "Dashboard",
+        path: "/",
+        icon: <TbLayoutDashboardFilled />,
+        subs: []
+      },
+      {
+        label: "master data",
+        path: "/master-data",
+        icon: <FaChartSimple />,
+        subs: [
+          { name: "karyawan", path: "/master-data/karyawan" },
+          { name: "pelanggan", path: "/master-data/pelanggan" },
+          { name: "layanan", path: "/master-data/layanan" },
+          { name: "Promo", path: "/master-data/promo" },
+        ]
+      },
+      {
+        label: "transaksi",
+        path: "/transaksi",
+        icon: <FaHandsHelping />,
+        subs: [
+          { name: "SPK", path: "/transaksi/spk" },
+          { name: "pembayaran", path: "/transaksi/pembayaran" },
+        ]
+      },
+      {
+        label: "laporan",
+        path: "/laporan",
+        icon: <HiDocumentReport />,
+        subs: [
+          { name: "inquiry transaksi", path: "/laporan/inquiry-transaksi" },
+        ]
+      }
+    ]
+  },
+  settings: {
+    label: "Umum",
+    contents: [
+      {
+        label: "pemberitahuan",
+        path: "/pemberitahuan",
+        icon: <RiNotification4Fill />,
+        subs: []
+      }
+    ]
+  }
+};
+
+export const navigationItemsDefault = {
+  menu: {
+    label: "Main Menu",
+    contents: [
+      {
+        label: "Dashboard",
+        path: "/",
+        icon: <TbLayoutDashboardFilled />,
+        subs: []
+      },
+    ]
+  },
+  settings: {
+    label: "Umum",
+    contents: [
+      {
+        label: "pemberitahuan",
+        path: "/pemberitahuan",
+        icon: <RiNotification4Fill />,
+        subs: []
+      }
+    ]
+  }
+};
