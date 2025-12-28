@@ -20,6 +20,7 @@ import { useLocationData } from "libs/utils/useLocationData";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { PiWarningCircleFill } from "react-icons/pi";
+import { RiCheckLine, RiFileCopyLine, RiPagesLine } from "react-icons/ri";
 import { TbArrowBack } from "react-icons/tb";
 
 interface Customer {
@@ -79,6 +80,7 @@ export default function InquiryTransaksiDetail() {
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
 
   const id = useMemo(() => {
     return pathname.split("/laporan/inquiry-transaksi/detail/").pop();
@@ -259,18 +261,6 @@ export default function InquiryTransaksiDetail() {
     }
   }, [trxNumber]);
 
-  // Transform transaction details for table
-  // const transformedDetails = transaction?.details?.map((detail, index) => ({
-  //   id: (index + 1).toString(),
-  //   serviceCode: detail.serviceCode,
-  //   serviceCategory: detail.serviceCategory,
-  //   serviceType: serviceTypeMapping[detail.serviceType as keyof typeof serviceTypeMapping] || "Unknown",
-  //   quantity: detail.quantity,
-  //   servicePrice: formatRupiah(detail.servicePrice),
-  //   promoCode: detail.promoCode || "-",
-  //   promoAmount: detail.promoPrice ? formatRupiah(detail.promoPrice) : "-",
-  // })) || [];
-
   const DataHeaderSPKDetail = useMemo(() => {
     const columns = [
       { key: "no", label: "#" },
@@ -371,26 +361,60 @@ export default function InquiryTransaksiDetail() {
                           value={transaction.trxNumber}
                           className="bg-muted/50 cursor-not-allowed"
                         />
-                        <Button
-                          type="submit"
-                          onClick={() => {
-                            const currentOrigin = globalThis.location.origin;
-                            const url = `${currentOrigin}/invoice/${transaction.trxNumber}`;
+                        <div className="relative group">
+                          <Button
+                            type="button"
+                            onClick={() => {
+                              const currentOrigin = globalThis.location.origin;
+                              const url = `${currentOrigin}/invoice/${transaction.trxNumber}?backoffice=true`;
 
-                            const width = 393;
-                            const height = 852;
-                            const left = (window.screen.width - width) / 2;
-                            const top = (window.screen.height - height) / 2;
+                              const width = 393;
+                              const height = 852;
+                              const left = (window.screen.width - width) / 2;
+                              const top = (window.screen.height - height) / 2;
 
-                            window.open(
-                              url,
-                              '_blank',
-                              `width=${width},height=${height},left=${left},top=${top},noopener,noreferrer`
-                            );
-                          }}
-                        >
-                          Link Pembayaran
-                        </Button>
+                              window.open(
+                                url,
+                                '_blank',
+                                `width=${width},height=${height},left=${left},top=${top},noopener,noreferrer`
+                              );
+                            }}
+                          >
+                            <RiPagesLine />
+                          </Button>
+                          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-gray-900 text-white text-sm rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
+                            Halaman Pembayaran
+                            <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-gray-900"></div>
+                          </div>
+                        </div>
+                        <div className="relative group">
+                          <Button
+                            type="button"
+                            style={{ backgroundColor: '#2667e3' }}
+                            onClick={async () => {
+                              const currentOrigin = globalThis.location.origin;
+                              const url = `${currentOrigin}/invoice/${transaction.trxNumber}`;
+
+                              await navigator.clipboard.writeText(url);
+                              setCopied(true);
+                              setTimeout(() => setCopied(false), 2000);
+                            }}
+                          >
+                            {copied ? (
+                              <>
+                                <RiCheckLine className="w-5 h-5" />
+                              </>
+                            ) : (
+                              <>
+                                <RiFileCopyLine className="w-5 h-5" />
+                              </>
+                            )}
+                          </Button>
+                          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-gray-900 text-white text-sm rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
+                            Salin Link
+                            <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-gray-900"></div>
+                          </div>
+                        </div>
                       </div>
                     ) : (
                       <Input
@@ -402,7 +426,9 @@ export default function InquiryTransaksiDetail() {
                   </div>
 
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold shrink-0">No WhatsApp</Label>
+                    <Label className="w-[40%] font-semibold shrink-0">
+                      No WhatsApp
+                    </Label>
                     <Input
                       value={customer?.noWhatsapp || ''}
                       readOnly
@@ -424,7 +450,9 @@ export default function InquiryTransaksiDetail() {
                   </div>
 
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold shrink-0">Alamat</Label>
+                    <Label className="w-[40%] font-semibold shrink-0">
+                      Alamat
+                    </Label>
                     <Textarea
                       className="resize-none bg-muted/50 cursor-not-allowed"
                       value={customer?.address || ''}
@@ -438,7 +466,9 @@ export default function InquiryTransaksiDetail() {
                 {/* Kolom Kanan */}
                 <div className="col-span-1 space-y-4">
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold shrink-0">Status</Label>
+                    <Label className="w-[40%] font-semibold shrink-0">
+                      Status
+                    </Label>
                     <Input
                       value={
                         statusMapping[
@@ -452,7 +482,9 @@ export default function InquiryTransaksiDetail() {
 
                   {/* Provinsi - View Only */}
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold shrink-0">Provinsi</Label>
+                    <Label className="w-[40%] font-semibold shrink-0">
+                      Provinsi
+                    </Label>
                     <Input
                       value={locationLabels.provinceName}
                       placeholder="Provinsi tidak tersedia"
@@ -463,7 +495,9 @@ export default function InquiryTransaksiDetail() {
 
                   {/* Kab/Kota - View Only */}
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold shrink-0">Kab/Kota</Label>
+                    <Label className="w-[40%] font-semibold shrink-0">
+                      Kab/Kota
+                    </Label>
                     <Input
                       value={locationLabels.cityName}
                       placeholder="Kota/Kabupaten tidak tersedia"
@@ -474,7 +508,9 @@ export default function InquiryTransaksiDetail() {
 
                   {/* Kecamatan - View Only */}
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold shrink-0">Kecamatan</Label>
+                    <Label className="w-[40%] font-semibold shrink-0">
+                      Kecamatan
+                    </Label>
                     <Input
                       value={locationLabels.districtName}
                       placeholder="Kecamatan tidak tersedia"
@@ -485,7 +521,9 @@ export default function InquiryTransaksiDetail() {
 
                   {/* Kelurahan - View Only */}
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold shrink-0">Kelurahan</Label>
+                    <Label className="w-[40%] font-semibold shrink-0">
+                      Kelurahan
+                    </Label>
                     <Input
                       value={locationLabels.subDistrictName}
                       placeholder="Kelurahan tidak tersedia"
@@ -508,14 +546,25 @@ export default function InquiryTransaksiDetail() {
                     </Label>
                     <div className="flex-1">
                       {/* cleaning list */}
-                      {cleanerStaffList.filter(staff => transaction.assigns.includes(staff.lookupKey)).length > 0 ? (
-                        cleanerStaffList.filter(staff => transaction.assigns.includes(staff.lookupKey)).map((staff) => (
-                          <div key={staff.lookupKey} className="inline-block m-1 bg-baseLight/50 text-sm dark:bg-baseDark/50 text-teal-800 dark:text-teal-400 border-mainColor dark:border-teal-400 mx-1 rounded-full px-2 py-0.5 flex-shrink-0">
-                            {staff.lookupValue}
-                          </div>
-                        ))
+                      {cleanerStaffList.filter((staff) =>
+                        transaction.assigns.includes(staff.lookupKey)
+                      ).length > 0 ? (
+                        cleanerStaffList
+                          .filter((staff) =>
+                            transaction.assigns.includes(staff.lookupKey)
+                          )
+                          .map((staff) => (
+                            <div
+                              key={staff.lookupKey}
+                              className="inline-block m-1 bg-baseLight/50 text-sm dark:bg-baseDark/50 text-teal-800 dark:text-teal-400 border-mainColor dark:border-teal-400 mx-1 rounded-full px-2 py-0.5 flex-shrink-0"
+                            >
+                              {staff.lookupValue}
+                            </div>
+                          ))
                       ) : (
-                        <p className="text-gray-500">Tidak ada petugas cleaning</p>
+                        <p className="text-gray-500">
+                          Tidak ada petugas cleaning
+                        </p>
                       )}
                     </div>
                     {/* <Textarea
@@ -563,14 +612,25 @@ export default function InquiryTransaksiDetail() {
                       Petugas Blower
                     </Label>
                     {/* blower list */}
-                    {blowerStaffList.filter(staff => transaction.assigns.includes(staff.lookupKey)).length > 0 ? (
-                      blowerStaffList.filter(staff => transaction.assigns.includes(staff.lookupKey)).map((staff) => (
-                        <div key={staff.lookupKey} className="inline-block m-1 bg-baseLight/50 text-sm dark:bg-baseDark/50 text-teal-800 dark:text-teal-400 border-mainColor dark:border-teal-400 mx-1 rounded-full px-2 py-0.5 flex-shrink-0">
-                          {staff.lookupValue}
-                        </div>
-                      ))
+                    {blowerStaffList.filter((staff) =>
+                      transaction.assigns.includes(staff.lookupKey)
+                    ).length > 0 ? (
+                      blowerStaffList
+                        .filter((staff) =>
+                          transaction.assigns.includes(staff.lookupKey)
+                        )
+                        .map((staff) => (
+                          <div
+                            key={staff.lookupKey}
+                            className="inline-block m-1 bg-baseLight/50 text-sm dark:bg-baseDark/50 text-teal-800 dark:text-teal-400 border-mainColor dark:border-teal-400 mx-1 rounded-full px-2 py-0.5 flex-shrink-0"
+                          >
+                            {staff.lookupValue}
+                          </div>
+                        ))
                     ) : (
-                      <p className="text-gray-500 text-center">Tidak ada petugas blower</p>
+                      <p className="text-gray-500 text-center">
+                        Tidak ada petugas blower
+                      </p>
                     )}
                     {/* <Textarea
                       disabled
@@ -584,75 +644,87 @@ export default function InquiryTransaksiDetail() {
                     /> */}
                   </div>
 
-                  {transaction.blowers.length > 0 && transaction.deliveryDate && (
-                    <>
-                      <div className="flex items-center space-x-4">
-                        <Label className="w-[40%] font-semibold shrink-0">
-                          Tanggal Pengantaran
-                        </Label>
-                        <DatePicker
-                          withTime
-                          disabled
-                          value={
-                            transaction.deliveryDate
-                              ? new Date(transaction.deliveryDate)
-                              : undefined
-                          }
-                          defaultTime={
-                            transaction?.deliveryDate
-                              ? `${formatTime(transaction.deliveryDate)}`
-                              : '08:00'
-                          }
-                        />
-                        {/* <Textarea
+                  {transaction.blowers.length > 0 &&
+                    transaction.deliveryDate && (
+                      <>
+                        <div className="flex items-center space-x-4">
+                          <Label className="w-[40%] font-semibold shrink-0">
+                            Tanggal Pengantaran
+                          </Label>
+                          <DatePicker
+                            withTime
+                            disabled
+                            value={
+                              transaction.deliveryDate
+                                ? new Date(transaction.deliveryDate)
+                                : undefined
+                            }
+                            defaultTime={
+                              transaction?.deliveryDate
+                                ? `${formatTime(transaction.deliveryDate)}`
+                                : '08:00'
+                            }
+                          />
+                          {/* <Textarea
                             disabled
                             className="resize-none"
                             value={transaction.deliveryDate ? formatDate(transaction.deliveryDate) : "-"}
                             rows={1}
                           /> */}
-                      </div>
+                        </div>
 
-                      <div className="flex items-center space-x-4">
-                        <Label className="w-[40%] font-semibold shrink-0">
-                          Tanggal Pengambilan
-                        </Label>
-                        <DatePicker
-                          withTime
-                          disabled
-                          value={
-                            transaction.pickupDate
-                              ? new Date(transaction.pickupDate)
-                              : new Date(transaction.deliveryDate)
-                          }
-                          defaultTime={
-                            transaction?.pickupDate
-                              ? `${formatTime(transaction.pickupDate)}`
-                              : `${formatTime(transaction.deliveryDate)}`
-                          }
-                        />
-                        {/* <Textarea
+                        <div className="flex items-center space-x-4">
+                          <Label className="w-[40%] font-semibold shrink-0">
+                            Tanggal Pengambilan
+                          </Label>
+                          <DatePicker
+                            withTime
+                            disabled
+                            value={
+                              transaction.pickupDate
+                                ? new Date(transaction.pickupDate)
+                                : new Date(transaction.deliveryDate)
+                            }
+                            defaultTime={
+                              transaction?.pickupDate
+                                ? `${formatTime(transaction.pickupDate)}`
+                                : `${formatTime(transaction.deliveryDate)}`
+                            }
+                          />
+                          {/* <Textarea
                             disabled
                             className="resize-none"
                             value={transaction.pickupDate ? formatDate(transaction.pickupDate) : "-"}
                             rows={1}
                           /> */}
-                      </div>
-                    </>
-                  )}
+                        </div>
+                      </>
+                    )}
 
                   <div className="flex items-center space-x-4">
                     <Label className="w-[40%] font-semibold shrink-0">
                       Dikerjakan Ulang
                     </Label>
                     {/* blower list */}
-                    {cleanerStaffList.filter(staff => transaction.reassigns.includes(staff.lookupKey)).length > 0 ? (
-                      cleanerStaffList.filter(staff => transaction.reassigns.includes(staff.lookupKey)).map((staff) => (
-                        <div key={staff.lookupKey} className="inline-block m-1 bg-baseLight/50 text-sm dark:bg-baseDark/50 text-teal-800 dark:text-teal-400 border-mainColor dark:border-teal-400 mx-1 rounded-full px-2 py-0.5 flex-shrink-0">
-                          {staff.lookupValue}
-                        </div>
-                      ))
+                    {cleanerStaffList.filter((staff) =>
+                      transaction.reassigns.includes(staff.lookupKey)
+                    ).length > 0 ? (
+                      cleanerStaffList
+                        .filter((staff) =>
+                          transaction.reassigns.includes(staff.lookupKey)
+                        )
+                        .map((staff) => (
+                          <div
+                            key={staff.lookupKey}
+                            className="inline-block m-1 bg-baseLight/50 text-sm dark:bg-baseDark/50 text-teal-800 dark:text-teal-400 border-mainColor dark:border-teal-400 mx-1 rounded-full px-2 py-0.5 flex-shrink-0"
+                          >
+                            {staff.lookupValue}
+                          </div>
+                        ))
                     ) : (
-                      <p className="text-gray-500 text-center">Tidak ada petugas pekerja ulang</p>
+                      <p className="text-gray-500 text-center">
+                        Tidak ada petugas pekerja ulang
+                      </p>
                     )}
                     {/* <Textarea
                       disabled
@@ -713,11 +785,19 @@ export default function InquiryTransaksiDetail() {
                 {/* Kolom Kanan - Summary */}
                 <div className="col-span-1 space-y-4">
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold shrink-0">Total Harga SPK</Label>
-                    <Input className="text-right" disabled value={formatRupiah(transaction.originPrice)} />
+                    <Label className="w-[40%] font-semibold shrink-0">
+                      Total Harga SPK
+                    </Label>
+                    <Input
+                      className="text-right"
+                      disabled
+                      value={formatRupiah(transaction.originPrice)}
+                    />
                   </div>
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold shrink-0">Total Harga</Label>
+                    <Label className="w-[40%] font-semibold shrink-0">
+                      Total Harga
+                    </Label>
                     <Input
                       disabled
                       value={formatRupiah(totals.totalPrice)}
@@ -726,7 +806,9 @@ export default function InquiryTransaksiDetail() {
                   </div>
 
                   <div className="flex items-center space-x-4">
-                    <Label className="w-[40%] font-semibold shrink-0">Total Promo</Label>
+                    <Label className="w-[40%] font-semibold shrink-0">
+                      Total Promo
+                    </Label>
                     <Input
                       disabled
                       value={formatRupiah(totals.totalPromo)}
@@ -865,8 +947,12 @@ export default function InquiryTransaksiDetail() {
               transaction={transaction}
               customer={customer}
               locationLabels={locationLabels}
-              cleaningStaffList={cleanerStaffList.filter(staff => transaction.assigns.includes(staff.lookupKey))}
-              blowerStaffList={blowerStaffList.filter(staff => transaction.blowers.includes(staff.lookupKey))}
+              cleaningStaffList={cleanerStaffList.filter((staff) =>
+                transaction.assigns.includes(staff.lookupKey)
+              )}
+              blowerStaffList={blowerStaffList.filter((staff) =>
+                transaction.blowers.includes(staff.lookupKey)
+              )}
               spkItems={spkItems}
               totals={{
                 totalPrice: totals.totalPrice,
@@ -875,6 +961,7 @@ export default function InquiryTransaksiDetail() {
                 isInvalidTotal: totals.isInvalidTotal,
                 manualDiscount: transaction.discountPrice,
               }}
+              readonly={true}
             />
           </TabsContent>
         </Tabs>

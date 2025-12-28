@@ -626,6 +626,7 @@ export default function PhotoSection({
                         : null
                     }
                     disabled={
+                      readonly ||
                       !(
                         transactionReview?.status === 3 ||
                         transactionReview?.status === 4
@@ -659,7 +660,7 @@ export default function PhotoSection({
                       !(
                         transactionReview?.status === 3 ||
                         transactionReview?.status === 4
-                      )
+                      ) || readonly
                     }
                   />
                 </div>
@@ -674,7 +675,7 @@ export default function PhotoSection({
                       display: !(
                         transactionReview?.status === 3 ||
                         transactionReview?.status === 4
-                      )
+                      ) || readonly
                         ? 'none'
                         : 'block',
                     }}
