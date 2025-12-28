@@ -63,9 +63,9 @@ export default function SPKPage() {
   const router = useRouter();
 
   const search = searchParams.get("search") || "";
-  const status = parseInt(searchParams.get("status") || "-1", 10);
+  const status = Number(searchParams.get("status") || "-1");
   const branch = searchParams.get("branchId") || "";
-  const include = parseInt(searchParams.get("includeBlower") || "1", 10);
+  const include = searchParams.get("includeBlower") || "all";
 
   const [dataSPK, setDataSPK] = useState<SPKData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -86,14 +86,14 @@ export default function SPKPage() {
   const [branchFilter, setBranchFilter] = useState<string>(branch);
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
-  const [includeBlower, setIncludeBlower] = useState<number>(include);
+  const [includeBlower, setIncludeBlower] = useState<string>(include);
 
   // filter sementara
   const [tempStatus, setTempStatus] = useState<number>(status);
   const [tempBranch, setTempBranch] = useState<string>(branch);
   const [tempStartDate, setTempStartDate] = useState<Date>();
   const [tempEndDate, setTempEndDate] = useState<Date>();
-  const [tempIncludeBlower, setTempIncludeBlower] = useState<number>(include);
+  const [tempIncludeBlower, setTempIncludeBlower] = useState<string>(include);
 
   const { branchMapping, loading: loadingParams } = useParameterStore();
 
@@ -148,8 +148,8 @@ export default function SPKPage() {
       if (branch) url += `&branchId=${branch}`;
       if (start) url += `&startDate=${formatDateAPI(start)}`;
       if (end) url += `&endDate=${formatDateAPI(end)}`;
-      if (include) {
-        url += `&includeBlower=${include === 2 ? "true" : "false"}`;
+      if (include !== 'all') {
+        url += `&includeBlower=${include === '2' ? "true" : "false"}`;
       }
 
       const result = await apiClient(url);
@@ -273,9 +273,10 @@ export default function SPKPage() {
                   id="include-blower"
                   placeholder="Pilih Include Blower"
                   value={tempIncludeBlower}
-                  optionsNumber={[
-                    { label: "Tidak", value: 1 },
-                    { label: "Ya", value: 2 },
+                  optionsString={[
+                    { label: "Semua", value: 'all' },
+                    { label: "Tidak", value: '1' },
+                    { label: "Ya", value: '2' },
                   ]}
                   onChange={setTempIncludeBlower}
                 />
