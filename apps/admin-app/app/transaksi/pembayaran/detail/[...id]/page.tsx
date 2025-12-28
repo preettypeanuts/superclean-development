@@ -770,7 +770,7 @@ export default function PembayaranDetail() {
         description: "Transaksi berhasil diselesaikan.",
         variant: "success"
       });
-    } catch (error: any) {
+    } catch {
       toast({
         title: "Error",
         description: "Gagal menyelesaikan transaksi.",

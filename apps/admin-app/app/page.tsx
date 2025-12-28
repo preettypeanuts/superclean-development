@@ -1,5 +1,5 @@
 "use client"
-import { BirthdayReminder } from "@shared/components/BirthdayReminder";
+// import { BirthdayReminder } from "@shared/components/BirthdayReminder";
 import { ChartKaryawan } from "@shared/components/ChartKaryawan";
 import { SalesChart } from "@shared/components/SalesChart";
 import { Breadcrumbs } from "@shared/components/ui/Breadcrumbs";
@@ -117,9 +117,9 @@ export default function Dashboard() {
       <div className="h-fit -mx-2 -mb-2">
         <Breadcrumbs label="Dashboard" />
       </div>
-      <div className="h-fit">
+      {/* <div className="h-fit">
         <BirthdayReminder />
-      </div>
+      </div> */}
 
       {/* Bagian Atas: Widget (Tinggi Sesuai Konten) */}
       <div className="grid grid-cols-5 gap-2 h-fit">

@@ -3,6 +3,7 @@
 import { api } from "@shared/utils/apiClient";
 import { apiFormdata } from '@shared/utils/apiFormdataClient';
 import { formatDate } from "@shared/utils/formatDate";
+import { formatDateInput } from "libs/utils/formatDate";
 import { formatRupiah } from "@shared/utils/formatRupiah";
 import { AttachmentImage } from "@ui-components/components/attachment-image";
 import { StarRating } from "@ui-components/components/star-rating";
@@ -13,8 +14,9 @@ import { Customer, Transaction } from "apps/admin-app/app/transaksi/spk/edit/[..
 import domtoimage from "dom-to-image";
 import { Button } from "libs/ui-components/src/components/ui/button";
 import { Label } from "libs/ui-components/src/components/ui/label";
-import { Textarea } from "libs/ui-components/src/components/ui/textarea";
+import { Textarea } from "@ui-components/components/ui/textarea";
 import { useEffect, useState } from "react";
+import { DatePicker } from "@ui-components/components/date-picker";
 
 export type PhotoSectionProps = {
   transaction: Transaction;
@@ -58,6 +60,7 @@ interface TransactionReview {
   paymentAt: string | null,
   rating: number,
   review: string | null,
+  notes: string | null,
   transactionDocument: {
     id: string,
     trxNumber: string,
@@ -82,22 +85,23 @@ interface TransactionReviewImage {
   tempFile?: File;
 }
 
-const downloadImage = (blob: string, fileName: string) => {
-  try {
-    const fakeLink: any = window.document.createElement("a");
-    fakeLink.style = "display:none;";
-    fakeLink.download = fileName;
+interface Pembayaran {
+  paymentAt: string | null;
+  notes: string;
+}
 
-    fakeLink.href = blob;
+const downloadImage = (blob: string, fileName: string) => {  
+  const fakeLink: any = window.document.createElement("a");
+  fakeLink.style = "display:none;";
+  fakeLink.download = fileName;
 
-    document.body.appendChild(fakeLink);
-    fakeLink.click();
-    document.body.removeChild(fakeLink);
+  fakeLink.href = blob;
 
-    fakeLink.remove();
-  } catch (error) {
-    throw error
-  }
+  document.body.appendChild(fakeLink);
+  fakeLink.click();
+  document.body.removeChild(fakeLink);
+
+  fakeLink.remove();
 };
 
 const exportAsImage = async (element: HTMLElement, filename: string) => {
@@ -154,7 +158,6 @@ export default function PhotoSection({
   totals,
   readonly = false
 }: PhotoSectionProps) {
-  console.log(cleaningStaffList, blowerStaffList);
 
 
   const { toast } = useToast();
@@ -175,6 +178,10 @@ export default function PhotoSection({
   const [originalAfterImages, setOriginalAfterImages] = useState<TransactionReviewImage[]>([]);
 
   const [parameters, setParameters] = useState<Parameter[]>([]);
+  const [pembayaranData, setPembayaranData] = useState<Pembayaran>({
+      paymentAt: null,
+      notes: ""
+    });
 
   // reload indicator
   const [reload, setReload] = useState(false)
@@ -315,7 +322,7 @@ export default function PhotoSection({
       });
       setIsDownloadInvoice(false);
     }
-  };;;
+  };
 
   useEffect(() => {
     const fetchTransactionReview = async () => {
@@ -323,6 +330,10 @@ export default function PhotoSection({
         const result = await api.get(`/transaction/${transaction.id}/review`);
         const review = result.data as TransactionReview;
 
+        setPembayaranData({
+          paymentAt: review.paymentAt ? formatDateInput(review.paymentAt) : null,
+          notes: review.notes ?? ''
+        })
         setTransactionReview(review);
       }
       catch (error) {
@@ -420,14 +431,6 @@ export default function PhotoSection({
         imagesToUpload.push(img);
       }
     });
-    //   if (!originalBeforeImages.find((oImg) => oImg.id === img.id)) {
-    //     imagesToUpload.push(img);
-    //   }
-
-    //   if (originalBeforeImages.find((oImg) => oImg.id === img.id)) {
-    //     imagesToDelete.push(img.id);
-    //   }
-    // });
 
     // compare after images by unique ID
     // Find images to delete (in original but not in current)
@@ -445,9 +448,6 @@ export default function PhotoSection({
     });
 
     const promises: Promise<any>[] = [];
-
-    console.log(imagesToDelete, imagesToUpload);
-
 
     for (const file of imagesToUpload) {
       const formData = new FormData();
@@ -504,56 +504,86 @@ export default function PhotoSection({
   const bankName = bankNameParam ? bankNameParam.paramValue : "Bank";
 
 
-  return <>
-    <div className="space-y-8">
-      <div className="flex justify-between items-center px-2">
-        <h3 className="text-lg font-semibold !text-mainDark dark:!text-mainColor">Bukti Pembayaran</h3>
-        <Button
-          onClick={() => { setShowInvoice(true) }}
-          variant="main"
-          size="default"
-        // disabled={historyLoading}
-        >
-          Download Invoice
-        </Button>
-      </div>
+  const handleNoteChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = e.target.value;
+    setPembayaranData(prev => ({
+      ...prev,
+      notes: value,
+    }))
+  }
 
-      <div className="mb-8">
-        {/* foto bukti transfer */}
-        <div className="flex flex-1">
-          <div className="mr-8 flex flex-1">
-            <AttachmentImage
-              readonly={readonly}
-              src={paymentImage?.docUrl}
-              className="object-cover w-full h-full min-w-[400px] mr-4"
-              width={200}
-              height={200}
-              label="Foto Bukti Transfer"
-              onChange={(file: File) => {
-                setPaymentImage({
-                  id: "",
-                  createdAt: "",
-                  createdBy: "",
-                  docType: "PAYMENT",
-                  trxNumber: transaction.trxNumber,
-                  docUrl: URL.createObjectURL(file),
-                  updatedAt: "",
-                  updatedBy: null,
-                  tempFile: file
-                })
-              }}
-              onDelete={() => setPaymentImage(null)}
-            />
-          </div>
+  const handleSubmitPembayaran = async () => {
+    try {
+      await api.put(`/transaction/${transaction?.id}/pembayaran`, pembayaranData);
 
-          <div className="flex-[3] flex flex-col ">
-            {/* ratings */}
-            <div className="flex items-center space-x-2 mb-4">
-              <Label className="w-[40%] font-semibold">Rating</Label>
-              <div className="flex items-center space-x-1">
-                {/* create placeholder stars */}
-                {
-                  Number(transactionReview?.rating) > 0 ? (
+      toast({
+        title: "Sukses",
+        description: "Pembayaran berhasil disimpan.",
+        variant: "success"
+      });
+    } catch {
+      toast({
+        title: "Error",
+        description: "Gagal menyimpan data pembayaran.",
+        variant: "destructive"
+      });
+    }
+  }
+
+  return (
+    <>
+      <div className="space-y-8">
+        <div className="flex justify-between items-center px-2">
+          <h3 className="text-lg font-semibold !text-mainDark dark:!text-mainColor">
+            Bukti Pembayaran
+          </h3>
+          <Button
+            onClick={() => {
+              setShowInvoice(true);
+            }}
+            variant="main"
+            size="default"
+            // disabled={historyLoading}
+          >
+            Download Invoice
+          </Button>
+        </div>
+
+        <div className="mb-8">
+          {/* foto bukti transfer */}
+          <div className="flex flex-1">
+            <div className="mr-8 flex flex-1">
+              <AttachmentImage
+                readonly={readonly}
+                src={paymentImage?.docUrl}
+                className="object-cover w-full h-full min-w-[400px] mr-4"
+                width={200}
+                height={200}
+                label="Foto Bukti Transfer"
+                onChange={(file: File) => {
+                  setPaymentImage({
+                    id: '',
+                    createdAt: '',
+                    createdBy: '',
+                    docType: 'PAYMENT',
+                    trxNumber: transaction.trxNumber,
+                    docUrl: URL.createObjectURL(file),
+                    updatedAt: '',
+                    updatedBy: null,
+                    tempFile: file,
+                  });
+                }}
+                onDelete={() => setPaymentImage(null)}
+              />
+            </div>
+
+            <div className="flex-[3] flex flex-col ">
+              {/* ratings */}
+              <div className="flex items-center space-x-2 mb-4">
+                <Label className="w-[40%] font-semibold">Rating</Label>
+                <div className="flex items-center space-x-1">
+                  {/* create placeholder stars */}
+                  {Number(transactionReview?.rating) > 0 ? (
                     <div className="flex space-x-1">
                       <StarRating
                         readonly
@@ -564,215 +594,291 @@ export default function PhotoSection({
                     </div>
                   ) : (
                     <span className="text-gray-500">Belum ada rating</span>
-                  )
-                }
-              </div>
-            </div>
-
-            {/* payment date */}
-            {true && (
-              <div className="flex items-center space-x-2 mb-4">
-                <Label className="w-[40%] font-semibold">Tanggal Pembayaran</Label>
-                <div className="flex items-center space-x-1">
-                  {
-                    transactionReview?.paymentAt ? (
-                      <span>{formatDateTime(transactionReview.paymentAt)}</span>
-                    ) : (
-                      <span className="text-gray-500">Belum ada pembayaran</span>
-                    )
-                  }
+                  )}
                 </div>
               </div>
-            )}
 
-            {/* Remarks */}
-            <div className="flex flex-1 justify-center space-x-2">
-              <Label className="w-[40%] font-semibold">Catatan</Label>
-              <div className="flex-1 flex">
-                {
-                  transactionReview?.review ? (
-                    <Textarea
-                      className="flex flex-1"
-                      value={transactionReview?.review || "Belum ada catatan"}
-                      disabled
-                    />)
-                    : (<span className="text-gray-500">Belum ada catatan</span>)
-                }
+              {/* Remarks */}
+              <div className="flex items-center space-x-2 mb-4">
+                <Label className="w-[40%] font-semibold">Review</Label>
+                <div className="flex items-center space-x-1">
+                  {transactionReview?.review ? (
+                    <span>{transactionReview.review}</span>
+                  ) : (
+                    <span className="text-gray-500">Belum ada catatan</span>
+                  )}
+                </div>
+              </div>
+
+              {/* payment date */}
+              <div className="flex items-center space-x-2 mb-4">
+                <Label className="w-[40%] font-semibold">
+                  Tanggal Pembayaran
+                </Label>
+                <div
+                  className="flex items-center space-x-1"
+                  style={{ width: '300px' }}
+                >
+                  <DatePicker
+                    value={
+                      pembayaranData.paymentAt
+                        ? new Date(pembayaranData.paymentAt)
+                        : null
+                    }
+                    disabled={
+                      !(
+                        transactionReview?.status === 3 ||
+                        transactionReview?.status === 4
+                      )
+                    }
+                    onChange={(date) => {
+                      if (date) {
+                        setPembayaranData((prev) => ({
+                          ...prev,
+                          paymentAt: formatDateInput(date.toISOString()),
+                        }));
+                      }
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* catatan */}
+              <div className="flex space-x-2 mb-4">
+                <Label className="w-[40%] font-semibold">Catatan</Label>
+                <div
+                  className="flex items-center space-x-1"
+                  style={{ width: '300px' }}
+                >
+                  <Textarea
+                    rows={3}
+                    value={pembayaranData.notes}
+                    placeholder="Tulis sesuatu..."
+                    onChange={handleNoteChange}
+                    disabled={
+                      !(
+                        transactionReview?.status === 3 ||
+                        transactionReview?.status === 4
+                      )
+                    }
+                  />
+                </div>
+              </div>
+              <div className="flex space-x-2 mb-4">
+                <Label className="w-[40%] font-semibold"></Label>
+                <div className="flex items-center space-x-1">
+                  <Button
+                    type="button"
+                    className="shadow-lg"
+                    style={{
+                      display: !(
+                        transactionReview?.status === 3 ||
+                        transactionReview?.status === 4
+                      )
+                        ? 'none'
+                        : 'block',
+                    }}
+                    onClick={handleSubmitPembayaran}
+                  >
+                    Simpan
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
+
+          {/* rating and remarks */}
+          <div className=""></div>
         </div>
 
-        {/* rating and remarks */}
-        <div className=""></div>
-      </div>
-
-      <div className="flex justify-between items-center px-2">
-        <h3 className="text-lg font-semibold !text-mainDark dark:!text-mainColor">Bukti Pengerjaan</h3>
-      </div>
-
-      {/* list bukti pengerjaan per product */}
-      <div className="flex flex-col gap-2">
-        <div className="flex">
-          <div className="flex-1 flex flex-col overflow-x-auto">
-            <h4 className="font-semibold mb-2 !text-mainDark dark:!text-mainColor">Sebelum</h4>
-          </div>
-          <div className="flex-1 flex flex-col mr-4 overflow-x-auto ml-4">
-            <h4 className="font-semibold mb-2 !text-mainDark dark:!text-mainColor">Sesudah</h4>
-          </div>
+        <div className="flex justify-between items-center px-2">
+          <h3 className="text-lg font-semibold !text-mainDark dark:!text-mainColor">
+            Bukti Pengerjaan
+          </h3>
         </div>
 
-        {
-          [0].map(() => {
+        {/* list bukti pengerjaan per product */}
+        <div className="flex flex-col gap-2">
+          <div className="flex">
+            <div className="flex-1 flex flex-col overflow-x-auto">
+              <h4 className="font-semibold mb-2 !text-mainDark dark:!text-mainColor">
+                Sebelum
+              </h4>
+            </div>
+            <div className="flex-1 flex flex-col mr-4 overflow-x-auto ml-4">
+              <h4 className="font-semibold mb-2 !text-mainDark dark:!text-mainColor">
+                Sesudah
+              </h4>
+            </div>
+          </div>
+
+          {[0].map(() => {
             let beforePlaceholderUsed = false;
             let afterPlaceholderUsed = false;
 
             {
-              return Array.from({ length: imageRowCount }).map((_, rowIndex) => {
-                const startIndex = rowIndex * 3;
-                const endIndex = startIndex + 3;
+              return Array.from({ length: imageRowCount }).map(
+                (_, rowIndex) => {
+                  const startIndex = rowIndex * 3;
+                  const endIndex = startIndex + 3;
 
-                const beforeRowImages = beforeImages.slice(startIndex, endIndex);
-                const afterRowImages = afterImages.slice(startIndex, endIndex);
+                  const beforeRowImages = beforeImages.slice(
+                    startIndex,
+                    endIndex
+                  );
+                  const afterRowImages = afterImages.slice(
+                    startIndex,
+                    endIndex
+                  );
 
-                return (
-                  <div className="flex" key={rowIndex}>
-                    <div className="flex-1 flex flex-col overflow-x-auto">
-                      <div className="flex mt-2">
-                        {[0, 1, 2].map((image, index) => {
-                          const img = beforeRowImages[index];
+                  return (
+                    <div className="flex" key={rowIndex}>
+                      <div className="flex-1 flex flex-col overflow-x-auto">
+                        <div className="flex mt-2">
+                          {[0, 1, 2].map((image, index) => {
+                            const img = beforeRowImages[index];
 
-                          if (!img && !readonly) {
-                            if (!beforePlaceholderUsed) {
-                              beforePlaceholderUsed = true;
-                              return (<AttachmentImage
+                            if (!img && !readonly) {
+                              if (!beforePlaceholderUsed) {
+                                beforePlaceholderUsed = true;
+                                return (
+                                  <AttachmentImage
+                                    readonly={readonly}
+                                    key={`before-${startIndex + index}`}
+                                    className="flex-1 aspect-square mr-6"
+                                    label={`Upload Foto Sebelum`}
+                                    width={200}
+                                    height={200}
+                                    onChange={(file: File) => {
+                                      const newImage: TransactionReviewImage = {
+                                        id: '',
+                                        createdAt: '',
+                                        createdBy: '',
+                                        docType: 'BEFORE',
+                                        trxNumber: transaction.trxNumber,
+                                        docUrl: URL.createObjectURL(file),
+                                        updatedAt: '',
+                                        updatedBy: null,
+                                        tempFile: file,
+                                      };
+
+                                      const newImages = [...beforeImages];
+                                      newImages[startIndex + index] = newImage;
+                                      setBeforeImages(newImages);
+                                    }}
+                                    onDelete={() => {
+                                      const newImages = beforeImages.filter(
+                                        (_, i) => i !== startIndex + index
+                                      );
+                                      setBeforeImages(newImages);
+                                    }}
+                                  />
+                                );
+                              }
+                              return (
+                                <div className="flex-1 aspect-square mr-6"></div>
+                              );
+                            }
+
+                            return (
+                              <AttachmentImage
                                 readonly={readonly}
                                 key={`before-${startIndex + index}`}
+                                src={`${beforeRowImages[index]?.docUrl}`}
                                 className="flex-1 aspect-square mr-6"
-                                label={`Upload Foto Sebelum`}
+                                label={`Foto Sebelum`}
                                 width={200}
                                 height={200}
-                                onChange={(file: File) => {
-                                  const newImage: TransactionReviewImage = {
-                                    id: "",
-                                    createdAt: "",
-                                    createdBy: "",
-                                    docType: "BEFORE",
-                                    trxNumber: transaction.trxNumber,
-                                    docUrl: URL.createObjectURL(file),
-                                    updatedAt: "",
-                                    updatedBy: null,
-                                    tempFile: file
-                                  };
-
-                                  const newImages = [...beforeImages];
-                                  newImages[startIndex + index] = newImage;
-                                  setBeforeImages(newImages);
-                                }}
                                 onDelete={() => {
-                                  const newImages = beforeImages.filter((_, i) => i !== startIndex + index);
+                                  const newImages = beforeImages.filter(
+                                    (_, i) => i !== startIndex + index
+                                  );
                                   setBeforeImages(newImages);
                                 }}
-                              />)
-                            }
-                            return (
-                              <div className="flex-1 aspect-square mr-6"></div>
+                              />
                             );
-                          }
-
-                          return (
-                            <AttachmentImage
-                              readonly={readonly}
-                              key={`before-${startIndex + index}`}
-                              src={`${beforeRowImages[index]?.docUrl}`}
-                              className="flex-1 aspect-square mr-6"
-                              label={`Foto Sebelum`}
-                              width={200}
-                              height={200}
-                              onDelete={() => {
-                                const newImages = beforeImages.filter((_, i) => i !== startIndex + index);
-                                setBeforeImages(newImages);
-                              }}
-                            />
-                          )
-                        })}
+                          })}
+                        </div>
                       </div>
-                    </div>
 
-                    <div className="w-0 border-l mx-4"></div>
+                      <div className="w-0 border-l mx-4"></div>
 
-                    <div className="flex-1 flex flex-col mr-4 overflow-x-auto">
-                      <div className="flex mt-2">
-                        {[0, 1, 2].map((image, index) => {
-                          const img = afterRowImages[index];
-                          if (!img && !readonly) {
-                            if (!afterPlaceholderUsed) {
-                              afterPlaceholderUsed = true;
-                              return (<AttachmentImage
+                      <div className="flex-1 flex flex-col mr-4 overflow-x-auto">
+                        <div className="flex mt-2">
+                          {[0, 1, 2].map((image, index) => {
+                            const img = afterRowImages[index];
+                            if (!img && !readonly) {
+                              if (!afterPlaceholderUsed) {
+                                afterPlaceholderUsed = true;
+                                return (
+                                  <AttachmentImage
+                                    readonly={readonly}
+                                    key={`after-${startIndex + index}`}
+                                    className="flex-1 aspect-square mr-6"
+                                    label={`Upload Foto Sesudah`}
+                                    width={200}
+                                    height={200}
+                                    onChange={(file: File) => {
+                                      const newImage: TransactionReviewImage = {
+                                        id: '',
+                                        createdAt: '',
+                                        createdBy: '',
+                                        docType: 'AFTER',
+                                        trxNumber: transaction.trxNumber,
+                                        docUrl: URL.createObjectURL(file),
+                                        updatedAt: '',
+                                        updatedBy: null,
+                                        tempFile: file,
+                                      };
+
+                                      const newImages = [...afterImages];
+                                      newImages[startIndex + index] = newImage;
+                                      setAfterImages(newImages);
+                                    }}
+                                    onDelete={() => {
+                                      const newImages = afterImages.filter(
+                                        (_, i) => i !== startIndex + index
+                                      );
+                                      setAfterImages(newImages);
+                                    }}
+                                  />
+                                );
+                              }
+                              return (
+                                <div className="flex-1 aspect-square mr-6"></div>
+                              );
+                            }
+
+                            return (
+                              <AttachmentImage
                                 readonly={readonly}
-                                key={`after-${startIndex + index}`}
+                                key={`before-${startIndex + index}`}
+                                src={afterRowImages[index]?.docUrl}
                                 className="flex-1 aspect-square mr-6"
-                                label={`Upload Foto Sesudah`}
+                                label={`Foto Sesudah`}
                                 width={200}
                                 height={200}
-                                onChange={(file: File) => {
-                                  const newImage: TransactionReviewImage = {
-                                    id: "",
-                                    createdAt: "",
-                                    createdBy: "",
-                                    docType: "AFTER",
-                                    trxNumber: transaction.trxNumber,
-                                    docUrl: URL.createObjectURL(file),
-                                    updatedAt: "",
-                                    updatedBy: null,
-                                    tempFile: file
-                                  };
-
-                                  const newImages = [...afterImages];
-                                  newImages[startIndex + index] = newImage;
-                                  setAfterImages(newImages);
-                                }}
                                 onDelete={() => {
-                                  const newImages = afterImages.filter((_, i) => i !== startIndex + index);
+                                  const newImages = afterImages.filter(
+                                    (_, i) => i !== startIndex + index
+                                  );
                                   setAfterImages(newImages);
                                 }}
-                              />)
-                            }
-                            return (
-                              <div className="flex-1 aspect-square mr-6"></div>
+                              />
                             );
-                          }
-
-                          return (
-                            <AttachmentImage
-                              readonly={readonly}
-                              key={`before-${startIndex + index}`}
-                              src={afterRowImages[index]?.docUrl}
-                              className="flex-1 aspect-square mr-6"
-                              label={`Foto Sesudah`}
-                              width={200}
-                              height={200}
-                              onDelete={() => {
-                                const newImages = afterImages.filter((_, i) => i !== startIndex + index);
-                                setAfterImages(newImages);
-                              }}
-                            />
-                          )
-                        })}
+                          })}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                );
-              })
+                  );
+                }
+              );
             }
-          })
-        }
+          })}
+        </div>
 
-      </div>
-
-      {/*  */}
-      {
-        !readonly && (
+        {/*  */}
+        {!readonly && (
           <>
             <div className="flex justify-end mt-6 gap-2">
               <Button
@@ -786,31 +892,32 @@ export default function PhotoSection({
               </Button>
             </div>
           </>
-        )
-      }
-    </div>
+        )}
+      </div>
 
-    {/* center using flex */}
-    {
-      showInvoice && (
+      {/* center using flex */}
+      {showInvoice && (
         <>
           {/* Overlay with backdrop */}
-          <div
-            className="fixed inset-0 z-[200] flex items-center justify-center bg-gray-900/50 dark:bg-gray-950/70 overflow-hidden"
-          >
+          <div className="fixed inset-0 z-[200] flex items-center justify-center bg-gray-900/50 dark:bg-gray-950/70 overflow-hidden">
             {/* Loading Overlay - Fixed position above everything */}
             {isDownloadInvoice && (
               <div className="fixed inset-0 z-[250] bg-black/50 backdrop-blur-sm flex items-center justify-center">
                 <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-xl flex flex-col items-center gap-3">
                   <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-mainColor"></div>
-                  <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">Mengunduh Invoice...</p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Mohon tunggu sebentar</p>
+                  <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                    Mengunduh Invoice...
+                  </p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    Mohon tunggu sebentar
+                  </p>
                 </div>
               </div>
             )}
 
             {/* Modal Container - prevents background scroll */}
-            <div className="relative w-full h-full flex flex-col items-center justify-center p-4 overflow-hidden"
+            <div
+              className="relative w-full h-full flex flex-col items-center justify-center p-4 overflow-hidden"
               onClick={(e) => {
                 // Close when clicking on the overlay background
                 if (e.target === e.currentTarget) {
@@ -819,11 +926,15 @@ export default function PhotoSection({
               }}
             >
               {/* Scrollable Invoice Container */}
-              <div
-                className="relative w-full max-w-[1200px] max-h-[calc(100vh-120px)] bg-gray-200 dark:bg-gray-800 rounded-lg overflow-y-auto overflow-x-hidden shadow-2xl"
-              >
-                <div id="invoice-container" className="invoice-container bg-white dark:bg-gray-900">
-                  <div id="invoice" className="invoice bg-white dark:bg-gray-900">
+              <div className="relative w-full max-w-[1200px] max-h-[calc(100vh-120px)] bg-gray-200 dark:bg-gray-800 rounded-lg overflow-y-auto overflow-x-hidden shadow-2xl">
+                <div
+                  id="invoice-container"
+                  className="invoice-container bg-white dark:bg-gray-900"
+                >
+                  <div
+                    id="invoice"
+                    className="invoice bg-white dark:bg-gray-900"
+                  >
                     {/* header */}
                     <div className="bg-mainColor p-4 flex items-center justify-between sticky top-0 z-10">
                       <h2 className="font-semibold text-mainDark">Invoice</h2>
@@ -843,25 +954,35 @@ export default function PhotoSection({
                           <div className="flex mb-5 items-center space-x-4">
                             <p className="flex-1 font-semibold">No Transaksi</p>
                             <p className="font-semibold">:</p>
-                            <p className="flex-1 font-light">{transaction?.trxNumber}</p>
+                            <p className="flex-1 font-light">
+                              {transaction?.trxNumber}
+                            </p>
                           </div>
 
                           <div className="flex mb-5 items-center space-x-4">
                             <p className="flex-1 font-semibold">No Whatsapp</p>
                             <p className="font-semibold">:</p>
-                            <p className="flex-1 font-light">{customer?.noWhatsapp}</p>
+                            <p className="flex-1 font-light">
+                              {customer?.noWhatsapp}
+                            </p>
                           </div>
 
                           <div className="flex mb-5 items-center space-x-4">
-                            <p className="flex-1 font-semibold">Nama Pelanggan</p>
+                            <p className="flex-1 font-semibold">
+                              Nama Pelanggan
+                            </p>
                             <p className="font-semibold">:</p>
-                            <p className="flex-1 font-light">{customer?.fullname}</p>
+                            <p className="flex-1 font-light">
+                              {customer?.fullname}
+                            </p>
                           </div>
 
                           <div className="flex mb-5 justify-start space-x-4">
                             <p className="flex-1 font-semibold">Alamat</p>
                             <p className="font-semibold">:</p>
-                            <p className="flex-1 font-light">{customer?.address}</p>
+                            <p className="flex-1 font-light">
+                              {customer?.address}
+                            </p>
                           </div>
                         </div>
 
@@ -870,25 +991,33 @@ export default function PhotoSection({
                           <div className="flex mb-5 items-center space-x-4">
                             <p className="flex-1 font-semibold">Provinsi</p>
                             <p className="font-semibold">:</p>
-                            <p className="flex-1 font-light">{locationLabels.provinceName}</p>
+                            <p className="flex-1 font-light">
+                              {locationLabels.provinceName}
+                            </p>
                           </div>
 
                           <div className="flex mb-5 items-center space-x-4">
                             <p className="flex-1 font-semibold">Kab/Kota</p>
                             <p className="font-semibold">:</p>
-                            <p className="flex-1 font-light">{locationLabels.cityName}</p>
+                            <p className="flex-1 font-light">
+                              {locationLabels.cityName}
+                            </p>
                           </div>
 
                           <div className="flex mb-5 items-center space-x-4">
                             <p className="flex-1 font-semibold">Kecamatan</p>
                             <p className="font-semibold">:</p>
-                            <p className="flex-1 font-light">{locationLabels.districtName}</p>
+                            <p className="flex-1 font-light">
+                              {locationLabels.districtName}
+                            </p>
                           </div>
 
                           <div className="flex mb-5 justify-start space-x-4">
                             <p className="flex-1 font-semibold">Kelurahan</p>
                             <p className="font-semibold">:</p>
-                            <p className="flex-1 font-light">{locationLabels.subDistrictName}</p>
+                            <p className="flex-1 font-light">
+                              {locationLabels.subDistrictName}
+                            </p>
                           </div>
                         </div>
                       </div>
@@ -902,44 +1031,68 @@ export default function PhotoSection({
                         {/* left content */}
                         <div className="flex-1 p-4">
                           <div className="flex mb-5 items-center space-x-4 justify-start">
-                            <p className="flex-1 font-semibold ">Petugas Cleaning</p>
+                            <p className="flex-1 font-semibold ">
+                              Petugas Cleaning
+                            </p>
                             <p className="font-semibold">:</p>
                             <div className="flex-1">
                               {/* cleaning list */}
                               {cleaningStaffList.length > 0 ? (
                                 cleaningStaffList.map((staff) => (
-                                  <div key={staff.lookupKey} className="inline-block bg-baseLight/50 text-sm dark:bg-baseDark/50 text-teal-800 dark:text-teal-400 border border-mainColor dark:border-teal-400 rounded-full px-3 py-1 flex-shrink-0">
+                                  <div
+                                    key={staff.lookupKey}
+                                    className="inline-block bg-baseLight/50 text-sm dark:bg-baseDark/50 text-teal-800 dark:text-teal-400 border border-mainColor dark:border-teal-400 rounded-full px-3 py-1 flex-shrink-0"
+                                  >
                                     {staff.lookupValue}
                                   </div>
                                 ))
                               ) : (
-                                <p className="text-gray-500">Tidak ada petugas cleaning</p>
+                                <p className="text-gray-500">
+                                  Tidak ada petugas cleaning
+                                </p>
                               )}
                             </div>
                           </div>
 
                           <div className="flex mb-5 items-center space-x-4">
-                            <p className="flex-1 font-semibold">Tanggal Pengerjaan</p>
+                            <p className="flex-1 font-semibold">
+                              Tanggal Pengerjaan
+                            </p>
                             <p className="font-semibold">:</p>
-                            <p className="flex-1 font-light">{transaction?.trxDate ? <>{formatDate(transaction.trxDate)}</> : <span className="text-gray-500">Tidak ada tanggal</span>}</p>
+                            <p className="flex-1 font-light">
+                              {transaction?.trxDate ? (
+                                <>{formatDate(transaction.trxDate)}</>
+                              ) : (
+                                <span className="text-gray-500">
+                                  Tidak ada tanggal
+                                </span>
+                              )}
+                            </p>
                           </div>
                         </div>
 
                         {/* right content */}
                         <div className="flex-1 p-4">
                           <div className="flex mb-5 items-center space-x-4 justify-start">
-                            <p className="flex-1 font-semibold">Petugas Blower</p>
+                            <p className="flex-1 font-semibold">
+                              Petugas Blower
+                            </p>
                             <p className="font-semibold">:</p>
                             <div className="flex-1">
                               {/* cleaning list */}
                               {blowerStaffList.length > 0 ? (
                                 blowerStaffList.map((staff) => (
-                                  <div key={staff.lookupKey} className="inline-block bg-baseLight/50 text-sm dark:bg-baseDark/50 text-teal-800 dark:text-teal-400 border border-mainColor dark:border-teal-400 rounded-full px-3 py-1 flex-shrink-0">
+                                  <div
+                                    key={staff.lookupKey}
+                                    className="inline-block bg-baseLight/50 text-sm dark:bg-baseDark/50 text-teal-800 dark:text-teal-400 border border-mainColor dark:border-teal-400 rounded-full px-3 py-1 flex-shrink-0"
+                                  >
                                     {staff.lookupValue}
                                   </div>
                                 ))
                               ) : (
-                                <p className="text-gray-500">Tidak ada petugas blower</p>
+                                <p className="text-gray-500">
+                                  Tidak ada petugas blower
+                                </p>
                               )}
                             </div>
                           </div>
@@ -953,35 +1106,76 @@ export default function PhotoSection({
                       <div className="transaction-items-table w-full">
                         {/* header */}
                         <div className="flex w-full rounded-t-md px-2 bg-mainColor/40">
-                          <div className="flex w-6 p-2 mx-1 py-4 text-baseDark/70 dark:text-baseLight font-semibold">#</div>
-                          <div className="flex-[3] p-2 mx-1 py-4 text-baseDark/70 dark:text-baseLight font-semibold">Kode</div>
-                          <div className="flex-1 p-2 mx-1 py-4 text-baseDark/70 dark:text-baseLight font-semibold">Layanan</div>
-                          <div className="flex-1 p-2 mx-1 py-4 text-baseDark/70 dark:text-baseLight font-semibold">kategori</div>
-                          <div className="flex-1 p-2 mx-1 py-4 text-baseDark/70 dark:text-baseLight font-semibold">Jumlah</div>
-                          <div className="flex-1 p-2 mx-1 py-4 text-baseDark/70 dark:text-baseLight font-semibold">Satuan</div>
-                          <div className="flex-1 p-2 mx-1 py-4 text-baseDark/70 dark:text-baseLight font-semibold">Harga</div>
-                          <div className="flex-1 p-2 mx-1 py-4 text-baseDark/70 dark:text-baseLight font-semibold">Promo</div>
+                          <div className="flex w-6 p-2 mx-1 py-4 text-baseDark/70 dark:text-baseLight font-semibold">
+                            #
+                          </div>
+                          <div className="flex-[3] p-2 mx-1 py-4 text-baseDark/70 dark:text-baseLight font-semibold">
+                            Kode
+                          </div>
+                          <div className="flex-1 p-2 mx-1 py-4 text-baseDark/70 dark:text-baseLight font-semibold">
+                            Layanan
+                          </div>
+                          <div className="flex-1 p-2 mx-1 py-4 text-baseDark/70 dark:text-baseLight font-semibold">
+                            kategori
+                          </div>
+                          <div className="flex-1 p-2 mx-1 py-4 text-baseDark/70 dark:text-baseLight font-semibold">
+                            Jumlah
+                          </div>
+                          <div className="flex-1 p-2 mx-1 py-4 text-baseDark/70 dark:text-baseLight font-semibold">
+                            Satuan
+                          </div>
+                          <div className="flex-1 p-2 mx-1 py-4 text-baseDark/70 dark:text-baseLight font-semibold">
+                            Harga
+                          </div>
+                          <div className="flex-1 p-2 mx-1 py-4 text-baseDark/70 dark:text-baseLight font-semibold">
+                            Promo
+                          </div>
                         </div>
 
                         {spkItems.map((item, index) => {
                           const {
-                            kode, layanan, kategori, jumlah, satuan, harga, promo
+                            kode,
+                            layanan,
+                            kategori,
+                            jumlah,
+                            satuan,
+                            harga,
+                            promo,
                           } = item;
 
                           const totalPrice = harga * jumlah;
 
                           return (
-                            <div key={item.id} className="flex w-full px-2 items-center">
-                              <div className="flex w-6 p-2 mx-1 py-4 dark:text-baseLight text-gray-500">{index + 1}</div>
-                              <div className="flex-[3] p-2 mx-1 py-4 dark:text-baseLight text-gray-500">{item.kode}</div>
-                              <div className="flex-1 p-2 mx-1 py-4 dark:text-baseLight text-gray-500">{item.layanan}</div>
-                              <div className="flex-1 p-2 mx-1 py-4 dark:text-baseLight text-gray-500">{item.kategori}</div>
-                              <div className="flex-1 p-2 mx-1 py-4 dark:text-baseLight text-gray-500">{item.jumlah}</div>
-                              <div className="flex-1 p-2 mx-1 py-4 dark:text-baseLight text-gray-500">{item.satuan}</div>
-                              <div className="flex-1 p-2 mx-1 py-4 dark:text-baseLight text-gray-500">Rp. {totalPrice.toLocaleString()}</div>
-                              <div className="flex-1 p-2 mx-1 py-4 dark:text-baseLight text-gray-500">Rp. {item.promo.toLocaleString()}</div>
+                            <div
+                              key={item.id}
+                              className="flex w-full px-2 items-center"
+                            >
+                              <div className="flex w-6 p-2 mx-1 py-4 dark:text-baseLight text-gray-500">
+                                {index + 1}
+                              </div>
+                              <div className="flex-[3] p-2 mx-1 py-4 dark:text-baseLight text-gray-500">
+                                {item.kode}
+                              </div>
+                              <div className="flex-1 p-2 mx-1 py-4 dark:text-baseLight text-gray-500">
+                                {item.layanan}
+                              </div>
+                              <div className="flex-1 p-2 mx-1 py-4 dark:text-baseLight text-gray-500">
+                                {item.kategori}
+                              </div>
+                              <div className="flex-1 p-2 mx-1 py-4 dark:text-baseLight text-gray-500">
+                                {item.jumlah}
+                              </div>
+                              <div className="flex-1 p-2 mx-1 py-4 dark:text-baseLight text-gray-500">
+                                {item.satuan}
+                              </div>
+                              <div className="flex-1 p-2 mx-1 py-4 dark:text-baseLight text-gray-500">
+                                Rp. {totalPrice.toLocaleString()}
+                              </div>
+                              <div className="flex-1 p-2 mx-1 py-4 dark:text-baseLight text-gray-500">
+                                Rp. {item.promo.toLocaleString()}
+                              </div>
                             </div>
-                          )
+                          );
                         })}
                       </div>
 
@@ -992,34 +1186,52 @@ export default function PhotoSection({
                       <div className="flex items-center p-4">
                         {/* left content - logo and payment */}
                         <div className="flex-1 flex items-center space-x-4 mr-6">
-                          <img src="/assets/image.png" alt="Logo" width={200} height={100} />
+                          <img
+                            src="/assets/image.png"
+                            alt="Logo"
+                            width={200}
+                            height={100}
+                          />
                           <div className="">
-                            <p className="font-semibold">Nama Rekening & No Rekening</p>
-                            <p className=" text-gray-600 dark:text-baseLight mb-4">a/n ({bankName}) {bankAccountName} - {bankAccount}</p>
+                            <p className="font-semibold">
+                              Nama Rekening & No Rekening
+                            </p>
+                            <p className=" text-gray-600 dark:text-baseLight mb-4">
+                              a/n ({bankName}) {bankAccountName} - {bankAccount}
+                            </p>
                           </div>
-
                         </div>
 
                         {/* right content - total price and promos */}
                         <div className="flex-1 flex flex-col">
                           <div className="flex my-3 px-1 items-center justify-between">
                             <p className="flex-1 font-semibold">Total Harga</p>
-                            <p className="font-normal">{formatRupiah(totals.totalPrice)}</p>
+                            <p className="font-normal">
+                              {formatRupiah(totals.totalPrice)}
+                            </p>
                           </div>
 
                           <div className="flex my-3 px-1 items-center justify-between">
                             <p className="flex-1 font-semibold">Promo</p>
-                            <p className="font-normal">{formatRupiah(totals.totalPromo)}</p>
+                            <p className="font-normal">
+                              {formatRupiah(totals.totalPromo)}
+                            </p>
                           </div>
 
                           <div className="flex my-3 px-1 items-center justify-between">
                             <p className="flex-1 font-semibold">Diskon</p>
-                            <p className="font-normal">{formatRupiah(totals.manualDiscount)}</p>
+                            <p className="font-normal">
+                              {formatRupiah(totals.manualDiscount)}
+                            </p>
                           </div>
 
                           <div className="flex my-4 items-center justify-between p-2 bg-gray-100 dark:bg-gray-800 rounded-lg">
-                            <p className="flex-1 text-lg font-bold">Total Akhir</p>
-                            <p className="font-bold text-lg">{formatRupiah(totals.finalPrice)}</p>
+                            <p className="flex-1 text-lg font-bold">
+                              Total Akhir
+                            </p>
+                            <p className="font-bold text-lg">
+                              {formatRupiah(totals.finalPrice)}
+                            </p>
                           </div>
                         </div>
                       </div>
@@ -1031,23 +1243,19 @@ export default function PhotoSection({
                       className="shadow-lg"
                       loading={isDownloadInvoice}
                       onClick={() => {
-                        handleDownloadInvoice()
+                        handleDownloadInvoice();
                       }}
                     >
                       Download Invoice
                     </Button>
                   </div>
                 </div>
-
-
               </div>
-
-
             </div>
           </div>
         </>
-      )
-    }
-  </>
+      )}
+    </>
+  );
 }
 
