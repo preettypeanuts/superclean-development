@@ -1,5 +1,5 @@
 import { useToast } from "libs/ui-components/src/hooks/use-toast";
-import { formatRupiah } from "libs/utils/formatRupiah";
+import { formatRupiah, removeTrailingZeros } from "libs/utils/formatRupiah";
 import { HiMiniPencilSquare } from "react-icons/hi2";
 import { IoMdTrash } from "react-icons/io";
 import { Button } from "./ui/button";
@@ -59,7 +59,6 @@ export const SPKTableDetail: React.FC<DataTableProps> = ({
     if (onDelete) {
       onDelete(item.id);
     } else {
-      console.log(`Menghapus SPK dengan ID: ${item.id}`);
       toast({
         title: "Sukses!",
         description: `SPK ${item?.kode} berhasil dihapus.`,
@@ -73,7 +72,6 @@ export const SPKTableDetail: React.FC<DataTableProps> = ({
     if (onEdit) {
       onEdit(item);
     } else {
-      console.log(`Mengedit SPK dengan ID: ${item.id}`);
       toast({
         title: "Info",
         description: `Edit functionality untuk ${item.kode} belum diimplementasi.`,
@@ -88,7 +86,7 @@ export const SPKTableDetail: React.FC<DataTableProps> = ({
       case "no":
         return index + 1; // Nomor urut mulai dari 1
       case "jumlah":
-        return `${item.jumlah} ${item.satuan}`;
+        return `${removeTrailingZeros(item.jumlah)} ${item.satuan}`;
       case "harga":
       case "servicePrice":
       case "totalPrice":

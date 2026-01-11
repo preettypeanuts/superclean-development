@@ -132,7 +132,7 @@ const formatDetailsForTable = (details: TransactionItem[], isOriginal: boolean =
     promo: detail.promoPrice / Number(detail.quantity || 1),
     id: detail.id,
     isOriginal: isOriginal,
-    tipe: detail.serviceType === 0 ? "vakum" : "cuci",
+    tipe: detail.serviceType === 1 ? 'Cuci' : 'Vakum'
   }));
 };
 
@@ -372,8 +372,8 @@ export default function TransactionDetail() {
       { key: "kode", label: "Kode Service" },
       { key: "layanan", label: "Layanan" },
       { key: "kategori", label: "Kategori" },
+      { key: "tipe", label: "Tipe Layanan" },
       { key: "jumlah", label: "Jumlah" },
-      // { key: "satuan", label: "Satuan" },
       { key: "harga", label: "Harga Satuan" },
       { key: "totalHarga", label: "Total" },
       // { key: "promo", label: "Promo Satuan" },
@@ -407,7 +407,7 @@ export default function TransactionDetail() {
       category: selectedCategory ? selectedCategory[0] : item.kategoriCode,
       serviceCode: item.kode,
       jumlah: item.jumlah.toString(),
-      tipe: item.tipe || "vakum",
+      tipe: item.tipe === 'Cuci' ? 'cuci' : 'vakum',
       harga: item.harga,
       promo: item.promo,
       promoCode: item.promoCode || "",

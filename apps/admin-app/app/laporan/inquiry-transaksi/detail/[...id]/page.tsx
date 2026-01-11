@@ -60,6 +60,7 @@ const formatDetailsForTable = (details: TransactionItem[]) => {
     totalHarga: detail.totalPrice,
     promo: detail.promoPrice / Number(detail.quantity || 1),
     id: detail.id,
+    tipe: detail.serviceType === 1 ? 'Cuci' : 'Vakum'
   }));
 };
 
@@ -267,8 +268,8 @@ export default function InquiryTransaksiDetail() {
       { key: "kode", label: "Kode Service" },
       { key: "layanan", label: "Layanan" },
       { key: "kategori", label: "Kategori" },
+      { key: "tipe", label: "Tipe Layanan" },
       { key: "jumlah", label: "Jumlah" },
-      // { key: "satuan", label: "Satuan" },
       { key: "harga", label: "Harga Satuan" },
       { key: "totalHarga", label: "Total" },
       // { key: "promo", label: "Promo Satuan" },

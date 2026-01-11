@@ -1,21 +1,34 @@
 export function formatRupiah(amount: number | string): string {
-    try {
-        const numeric = typeof amount === 'number'
-            ? amount
-            : parseInt(amount.toString().replace(/[^0-9]/g, ''), 10);
+  try {
+    const numeric =
+      typeof amount === 'number' ? amount : parseFloat(amount.toString()); // Changed from parseInt with replace
 
-        if (isNaN(numeric)) return 'Rp 0';
+    if (isNaN(numeric)) return 'Rp 0';
 
-        return 'Rp ' + numeric.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-    }
-    catch (e) {
-        return "Rp 0"
-    }
+    return (
+      'Rp ' +
+      Math.round(numeric)
+        .toString()
+        .replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+    );
+  } catch (e) {
+    return 'Rp 0';
+  }
 }
 
-
-
 export const unformatRupiah = (formatted: number | string): number => {
-    const cleaned: string = formatted.toString().replace(/[^0-9]/g, '');
-    return parseInt(cleaned, 10) || 0;
+  if (typeof formatted === 'number') return formatted;
+
+  // Remove "Rp" and thousand separators (dots), but keep decimal point
+  const cleaned: string = formatted
+    .toString()
+    .replace(/Rp\s?/g, '') // Remove "Rp" prefix
+    .replace(/\./g, '') // Remove thousand separators (dots)
+    .replace(/,/g, '.'); // Replace decimal comma with dot if exists
+
+  return parseFloat(cleaned) || 0;
+};
+
+export const removeTrailingZeros = (value: number | string): number => {
+  return parseFloat(value.toString()) || 0;
 };

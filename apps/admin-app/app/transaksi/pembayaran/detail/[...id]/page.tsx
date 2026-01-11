@@ -46,30 +46,12 @@ interface Customer {
   subDistrict: string;
 }
 
-const HeaderPembayaran = [
-  { key: "id", label: "#" },
-  { key: "serviceCode", label: "Kode Layanan" },
-  { key: "serviceCategory", label: "Kategori" },
-  { key: "serviceType", label: "Jenis Layanan" },
-  { key: "quantity", label: "Jumlah" },
-  { key: "servicePrice", label: "Harga" },
-  { key: "promoCode", label: "Kode Promo" },
-  { key: "promoAmount", label: "Diskon Promo" }
-];
-
 // Mapping untuk status
 const statusMapping = {
   3: "Menunggu Pembayaran",
   4: "Sudah Dibayar",
   5: "Selesai",
   6: "Dikerjakan Kembali"
-};
-
-// Mapping untuk service type
-const serviceTypeMapping = {
-  1: "Regular",
-  2: "Express",
-  3: "Premium"
 };
 
 const formatDetailsForTable = (details: TransactionItem[]) => {
@@ -85,10 +67,9 @@ const formatDetailsForTable = (details: TransactionItem[]) => {
     totalHarga: detail.totalPrice,
     promo: detail.promoPrice / Number(detail.quantity || 1),
     id: detail.id,
+    tipe: detail.serviceType === 1 ? 'Cuci' : 'Vakum'
   }));
 };
-
-
 
 export default function PembayaranDetail() {
   const pathname = usePathname();
@@ -105,7 +86,8 @@ export default function PembayaranDetail() {
 
   // Get user profile for role checking
   const { user } = useUserProfile();
-  const isSuperAdmin = user?.roleId === "Super Admin";
+  const isSuperAdmin = user?.roleIdCode === "SA";
+  const isSupervisor = user?.roleIdCode === "SPV";
 
   // States for editing items
   const [spkItems, setSPKItems] = useState<SPKItem[]>([]);
@@ -177,7 +159,6 @@ export default function PembayaranDetail() {
   const IS_WAITING_PAYMENT = transaction?.status === 3;
   const IS_PAID = transaction?.status === 4;
   const IS_COMPLETED = transaction?.status === 5;
-  const IS_REWORKED = transaction?.status === 6;
 
   const handleReworkStaffChange = (selected: string[]) => {
     setSelectedReworkStaff(selected);
@@ -343,11 +324,11 @@ export default function PembayaranDetail() {
       category: selectedCategory ? selectedCategory[0] : item.kategoriCode,
       serviceCode: item.kode,
       jumlah: item.jumlah.toString(),
-      tipe: item.tipe || "vakum",
+      tipe: item.tipe === 'Cuci' ? 'cuci' : 'vakum',
       harga: item.harga,
       promo: item.promo,
-      promoCode: item.promoCode || "",
-      promoType: item.promoType || "",
+      promoCode: item.promoCode || '',
+      promoType: item.promoType || '',
     });
 
     setEditMode(item.id);
@@ -689,28 +670,14 @@ export default function PembayaranDetail() {
     }
   }, [customer?.city])
 
-  // Transform transaction details for table
-  // const transformedDetails = transaction?.details?.map((detail, index) => ({
-  //   id: (index + 1).toString(),
-  //   serviceCode: detail.serviceCode,
-  //   serviceCategory: detail.serviceCategory,
-  //   serviceType: serviceTypeMapping[detail.serviceType as keyof typeof serviceTypeMapping] || "Unknown",
-  //   quantity: detail.quantity,
-  //   servicePrice: formatRupiah(detail.servicePrice),
-  //   promoCode: detail.promoCode || "-",
-  //   promoAmount: detail.promoAmount ? formatRupiah(detail.promoAmount) : "-",
-  // })) || [];
-
-  // Remove this line - spkItems is now managed in state
-
   const DataHeaderSPKDetail = useMemo(() => {
     const columns = [
       { key: "no", label: "#" },
       { key: "kode", label: "Kode Service" },
       { key: "layanan", label: "Layanan" },
       { key: "kategori", label: "Kategori" },
+      { key: "tipe", label: "Tipe Layanan" },
       { key: "jumlah", label: "Jumlah" },
-      // { key: "satuan", label: "Satuan" },
       { key: "harga", label: "Harga Satuan" },
       { key: "totalHarga", label: "Total" },
       // { key: "promo", label: "Promo Satuan" },
@@ -1069,36 +1036,9 @@ export default function PembayaranDetail() {
                           </>
                         )}
                       </>
-                    ) : (
-                      <>
-                        <p className="text-gray-500">Tidak ada petugas blower</p>
-                      </>
+                    ) : (                      
+                        <p className="text-gray-500">Tidak ada petugas blower</p>                      
                     )}
-
-                    {/* {!IS_COMPLETED ? (
-                      <>
-                        {isUsingBlower ? (
-                          <MultiSelect
-                            staffList={blowerStaffList.sort((a, b) => a.lookupValue.localeCompare(b.lookupValue))}
-                            selected={transaction?.blowers || []}
-                            onSelectionChange={handleBlowerStaffChange}
-                            placeholder="Pilih petugas blower"
-                            loading={loadingBlowerStaff}
-                          />
-                        ) : (
-                          <Textarea
-                            disabled
-                            className="resize-none"
-                            placeholder="Tidak ada petugas blower"
-                            value={selectedLockedBlowerStaffList.map(staff => staff?.fullname).join(", ") || "-"}
-                            rows={2}
-                          />
-                        )}
-                      </>
-                    ) : (
-                      <>
-                      </>
-                    )} */}
                   </div>
 
                   {
@@ -1257,6 +1197,14 @@ export default function PembayaranDetail() {
                 {/* Kolom Kanan - Summary */}
                 <div className="col-span-1 space-y-4">
                   <div className="flex items-center space-x-4">
+                    <Label className="w-[40%] shrink-0 font-semibold">Total Harga SPK</Label>
+                    <Input
+                      disabled
+                      value={formatRupiah(transaction.originPrice)}
+                      className="text-right bg-muted/50 cursor-not-allowed"
+                    />
+                  </div>
+                  <div className="flex items-center space-x-4">
                     <Label className="w-[40%] shrink-0 font-semibold flex items-center gap-1">
                       <span>Total Harga</span>
                       {!totals.isTotalPriceValid && (
@@ -1284,7 +1232,7 @@ export default function PembayaranDetail() {
                     />
                   </div>
 
-                  {isSuperAdmin && !IS_COMPLETED ? (
+                  {(isSuperAdmin || isSupervisor) && !IS_COMPLETED ? (
                     <>
                       <div className="flex items-center space-x-4">
                         <Label className="w-[40%] shrink-0 font-semibold flex items-center gap-1">
@@ -1372,19 +1320,11 @@ export default function PembayaranDetail() {
                     )
                   }
 
-                  {IS_PAID && (
+                  {isSuperAdmin && IS_PAID && (
                     <Button onClick={handleComplete} variant="main">
                       Konfirmasi
                     </Button>
                   )}
-
-                  {/* {IS_WAITING_PAYMENT && (
-                    <Button
-                      disabled={selectedReworkStaff.length === 0}
-                      onClick={handleRework} variant="main">
-                      Simpan
-                    </Button>
-                  )} */}
                 </div>
               </div>
             </div>
