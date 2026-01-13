@@ -605,6 +605,17 @@ export default function PhotoSection({
                   {transactionReview?.review ? (
                     <span>{transactionReview.review}</span>
                   ) : (
+                    <span className="text-gray-500">Belum ada tip</span>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex items-center space-x-2 mb-4">
+                <Label className="w-[40%] font-semibold">Tip</Label>
+                <div className="flex items-center space-x-1">
+                  {transaction?.tip ? (
+                    <span>{formatRupiah(transaction.tip)}</span>
+                  ) : (
                     <span className="text-gray-500">Belum ada catatan</span>
                   )}
                 </div>

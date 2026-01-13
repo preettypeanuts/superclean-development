@@ -255,7 +255,10 @@ export default function SPKPage() {
                   <DatePicker
                     label="DD/MM/YYYY"
                     value={tempStartDate}
-                    onChange={(date) => setTempStartDate(date)}
+                    onChange={(date) => {
+                      setTempStartDate(date);
+                      setStartDate(date);
+                    }}
                   />
                 </div>
                 <div className="flex items-center space-x-4">
@@ -265,7 +268,10 @@ export default function SPKPage() {
                   <DatePicker
                     label="DD/MM/YYYY"
                     value={tempEndDate}
-                    onChange={(date) => setTempEndDate(date)}
+                    onChange={(date) => {
+                      setTempEndDate(date);
+                      setEndDate(date);
+                    }}
                   />
                 </div>
                 <SelectFilter

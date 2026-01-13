@@ -317,7 +317,10 @@ export default function InquiryTransaksiPage() {
                   <DatePicker
                     label="DD/MM/YYYY"
                     value={tempStartDate}
-                    onChange={(date) => setTempStartDate(date)}
+                    onChange={(date) => {
+                      setStartDate(date);
+                      setTempStartDate(date);
+                    }}
                   />
                 </div>
                 <div className="flex items-center space-x-4">
@@ -325,7 +328,10 @@ export default function InquiryTransaksiPage() {
                   <DatePicker
                     label="DD/MM/YYYY"
                     value={tempEndDate}
-                    onChange={(date) => setTempEndDate(date)}
+                    onChange={(date) => {
+                      setEndDate(date);
+                      setTempEndDate(date);
+                    }}
                   />
                 </div>
                 <SelectFilter
