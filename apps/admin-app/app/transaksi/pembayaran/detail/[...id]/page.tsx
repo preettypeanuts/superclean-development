@@ -86,8 +86,7 @@ export default function PembayaranDetail() {
 
   // Get user profile for role checking
   const { user } = useUserProfile();
-  const isSuperAdmin = user?.roleIdCode === "SA";
-  const isSupervisor = user?.roleIdCode === "SPV";
+  const isSuperAdmin = user?.roleIdCode === "SA" || user?.roleIdCode === "SPV";
 
   // States for editing items
   const [spkItems, setSPKItems] = useState<SPKItem[]>([]);
@@ -1232,7 +1231,7 @@ export default function PembayaranDetail() {
                     />
                   </div>
 
-                  {(isSuperAdmin || isSupervisor) && !IS_COMPLETED ? (
+                  {isSuperAdmin && !IS_COMPLETED ? (
                     <>
                       <div className="flex items-center space-x-4">
                         <Label className="w-[40%] shrink-0 font-semibold flex items-center gap-1">

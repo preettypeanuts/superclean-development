@@ -605,7 +605,7 @@ export default function PhotoSection({
                   {transactionReview?.review ? (
                     <span>{transactionReview.review}</span>
                   ) : (
-                    <span className="text-gray-500">Belum ada tip</span>
+                    <span className="text-gray-500">Belum ada review</span>
                   )}
                 </div>
               </div>
@@ -616,7 +616,7 @@ export default function PhotoSection({
                   {transaction?.tip ? (
                     <span>{formatRupiah(transaction.tip)}</span>
                   ) : (
-                    <span className="text-gray-500">Belum ada catatan</span>
+                    <span className="text-gray-500">Belum ada tip</span>
                   )}
                 </div>
               </div>
