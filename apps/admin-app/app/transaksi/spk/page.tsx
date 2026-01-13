@@ -91,8 +91,6 @@ export default function SPKPage() {
   // filter sementara
   const [tempStatus, setTempStatus] = useState<number>(status);
   const [tempBranch, setTempBranch] = useState<string>(branch);
-  const [tempStartDate, setTempStartDate] = useState<Date>();
-  const [tempEndDate, setTempEndDate] = useState<Date>();
   const [tempIncludeBlower, setTempIncludeBlower] = useState<string>(include);
 
   const { branchMapping, loading: loadingParams } = useParameterStore();
@@ -113,8 +111,6 @@ export default function SPKPage() {
       search = tempSearchQuery;
       status = tempStatus;
       branch = tempBranch;
-      start = tempStartDate;
-      end = tempEndDate;
       include = tempIncludeBlower;
 
       const queryParams = new URLSearchParams();
@@ -136,8 +132,6 @@ export default function SPKPage() {
       setSearchQuery(tempSearchQuery)
       setStatusFilter(tempStatus)
       setBranchFilter(tempBranch)
-      setStartDate(tempStartDate)
-      setEndDate(tempEndDate)
       setIncludeBlower(tempIncludeBlower)
     }
 
@@ -182,8 +176,8 @@ export default function SPKPage() {
   const handleResetFilters = () => {
     setTempStatus(0);
     setTempBranch("");
-    setTempStartDate(undefined);
-    setTempEndDate(undefined);
+    setStartDate(undefined);
+    setEndDate(undefined);
   };
 
   const processedSPK = dataSPK.map((item) => ({
@@ -205,7 +199,7 @@ export default function SPKPage() {
                   value={tempSearchQuery}
                   onChange={(e) => setTempSearchQuery(e.target.value)}
                   onKeyDown={(i) => {
-                    if (i.key === "Enter") {
+                    if (i.key === 'Enter') {
                       handleSearch();
                     }
                   }}
@@ -233,10 +227,12 @@ export default function SPKPage() {
                   id="branch"
                   placeholder="Pilih Cabang"
                   value={tempBranch}
-                  optionsString={Object.entries(branchMapping).map(([value, label]) => ({
-                    value,
-                    label,
-                  }))}
+                  optionsString={Object.entries(branchMapping).map(
+                    ([value, label]) => ({
+                      value,
+                      label,
+                    })
+                  )}
                   onChange={setTempBranch}
                 />
                 <SelectFilter
@@ -254,11 +250,8 @@ export default function SPKPage() {
 
                   <DatePicker
                     label="DD/MM/YYYY"
-                    value={tempStartDate}
-                    onChange={(date) => {
-                      setTempStartDate(date);
-                      setStartDate(date);
-                    }}
+                    value={startDate}
+                    onChange={(date) => setStartDate(date)}
                   />
                 </div>
                 <div className="flex items-center space-x-4">
@@ -267,11 +260,8 @@ export default function SPKPage() {
                   </Label>
                   <DatePicker
                     label="DD/MM/YYYY"
-                    value={tempEndDate}
-                    onChange={(date) => {
-                      setTempEndDate(date);
-                      setEndDate(date);
-                    }}
+                    value={endDate}
+                    onChange={(date) => setEndDate(date)}
                   />
                 </div>
                 <SelectFilter
@@ -280,14 +270,13 @@ export default function SPKPage() {
                   placeholder="Pilih Include Blower"
                   value={tempIncludeBlower}
                   optionsString={[
-                    { label: "Semua", value: 'all' },
-                    { label: "Tidak", value: '1' },
-                    { label: "Ya", value: '2' },
+                    { label: 'Semua', value: 'all' },
+                    { label: 'Tidak', value: '1' },
+                    { label: 'Ya', value: '2' },
                   ]}
                   onChange={setTempIncludeBlower}
                 />
               </GroupFilter>
-
 
               <Button variant="main" onClick={handleSearch}>
                 Cari
@@ -304,9 +293,7 @@ export default function SPKPage() {
           {loading || loadingParams ? (
             <p className="text-center py-4">Memuat data...</p>
           ) : dataSPK.length === 0 ? (
-            <p className="text-center py-4">
-              SPK tidak ditemukan.
-            </p>
+            <p className="text-center py-4">SPK tidak ditemukan.</p>
           ) : (
             <SPKTable
               data={processedSPK}
@@ -314,9 +301,9 @@ export default function SPKPage() {
               key={`${currentPage}-${limit}`}
               currentPage={currentPage.page}
               limit={limit}
-                  fetchData={() => {
-                    fetchSPK();
-                  }}
+              fetchData={() => {
+                fetchSPK();
+              }}
             />
           )}
         </div>

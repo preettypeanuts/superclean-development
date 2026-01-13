@@ -96,8 +96,6 @@ export default function SettlementPage() {
   // filter sementara
   const [tempStatus, setTempStatus] = useState<number>(status);
   const [tempBranch, setTempBranch] = useState<string>(branch);
-  const [tempStartDate, setTempStartDate] = useState<Date>();
-  const [tempEndDate, setTempEndDate] = useState<Date>();
   const [tempIncludeBlower, setTempIncludeBlower] = useState<string>(include);
 
   const { branchMapping, loading: loadingParams } = useParameterStore();
@@ -118,8 +116,6 @@ export default function SettlementPage() {
       search = tempSearchQuery;
       status = tempStatus;
       branch = tempBranch;
-      start = tempStartDate;
-      end = tempEndDate;
       include = tempIncludeBlower;
 
       const queryParams = new URLSearchParams();
@@ -141,8 +137,6 @@ export default function SettlementPage() {
       setSearchQuery(tempSearchQuery)
       setStatusFilter(tempStatus)
       setBranchFilter(tempBranch)
-      setStartDate(tempStartDate)
-      setEndDate(tempEndDate)
       setIncludeBlower(tempIncludeBlower)
     }
 
@@ -190,8 +184,8 @@ export default function SettlementPage() {
   const handleResetFilters = () => {
     setTempStatus(0);
     setTempBranch("");
-    setTempStartDate(undefined);
-    setTempEndDate(undefined);
+    setStartDate(undefined);
+    setEndDate(undefined);
   };
 
   const handleCancelFilters = () => {
@@ -215,7 +209,7 @@ export default function SettlementPage() {
                   placeholder="Cari No Transaksi, Nama, No. Whatsapp"
                   value={tempSearchQuery}
                   onKeyDown={(i) => {
-                    if (i.key === "Enter") {
+                    if (i.key === 'Enter') {
                       handleSearch();
                     }
                   }}
@@ -246,10 +240,12 @@ export default function SettlementPage() {
                   id="branch"
                   placeholder="Pilih Cabang"
                   value={tempBranch}
-                  optionsString={Object.entries(branchMapping).map(([value, label]) => ({
-                    value,
-                    label,
-                  }))}
+                  optionsString={Object.entries(branchMapping).map(
+                    ([value, label]) => ({
+                      value,
+                      label,
+                    })
+                  )}
                   onChange={setTempBranch}
                 />
                 <SelectFilter
@@ -267,11 +263,8 @@ export default function SettlementPage() {
 
                   <DatePicker
                     label="DD/MM/YYYY"
-                    value={tempStartDate}
-                    onChange={(date) => {
-                      setStartDate(date);
-                      setTempStartDate(date);
-                    }}
+                    value={startDate}
+                    onChange={(date) => setStartDate(date)}
                   />
                 </div>
                 <div className="flex items-center space-x-4">
@@ -280,11 +273,8 @@ export default function SettlementPage() {
                   </Label>
                   <DatePicker
                     label="DD/MM/YYYY"
-                    value={tempEndDate}
-                    onChange={(date) => {
-                      setEndDate(date);
-                      setTempEndDate(date);
-                    }}
+                    value={endDate}
+                    onChange={(date) => setEndDate(date)}
                   />
                 </div>
                 <SelectFilter
@@ -293,9 +283,9 @@ export default function SettlementPage() {
                   placeholder="Pilih Include Blower"
                   value={tempIncludeBlower}
                   optionsString={[
-                    { label: "Semua", value: 'all' },
-                    { label: "Tidak", value: '1' },
-                    { label: "Ya", value: '2' },
+                    { label: 'Semua', value: 'all' },
+                    { label: 'Tidak', value: '1' },
+                    { label: 'Ya', value: '2' },
                   ]}
                   onChange={setTempIncludeBlower}
                 />
@@ -310,17 +300,15 @@ export default function SettlementPage() {
           {loading || loadingParams ? (
             <p className="text-center py-4">Memuat data...</p>
           ) : dataSettlement.length === 0 ? (
-            <p className="text-center py-4">
-                Data pembayaran tidak ditemukan.
-            </p>
+            <p className="text-center py-4">Data pembayaran tidak ditemukan.</p>
           ) : (
             <PembayaranTable
               data={processedSettlement}
               columns={DataHeaderSettlement}
               key={`${currentPage}-${limit}`}
-                  currentPage={currentPage.page}
+              currentPage={currentPage.page}
               limit={limit}
-              fetchData={() => { }}
+              fetchData={() => {}}
             />
           )}
         </div>
