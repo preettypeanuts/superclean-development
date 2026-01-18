@@ -59,6 +59,8 @@ export interface Transaction {
   rating: number;
   review: string;
   tip: number;
+  percentDiscountPrice: number;
+  percentAdditionalFee: number;
 }
 
 // Customer interface
@@ -167,7 +169,14 @@ export default function TransactionDetail() {
   const [originalSPKItems, setOriginalSPKItems] = useState<SPKItem[]>([]);
 
   const [manualDiscount, setManualDiscount] = useState<number>(0);
+  const [manualDiscountPercent, setManualDiscountPercent] = useState<number>(0);
+  const [disabledDiscount, setDisabledDiscount] = useState<boolean>(false);
+  const [disabledDiscountPercent, setDisabledDiscountPercent] = useState<boolean>(false);
+
   const [additionalFee, setAdditionalFee] = useState<number>(0);
+  const [additionalFeePercent, setAdditionalFeePercent] = useState<number>(0);
+  const [disabledAdditionalFee, setDisabledAdditionalFee] = useState<boolean>(false);
+  const [disabledAdditionalFeePercent, setDisabledAdditionalFeePercent] = useState<boolean>(false);
   const [loadingPromo, setLoadingPromo] = useState(false);
 
   const [cleaningStaffList, setCleaningStaffList] = useState<LookupUser[]>([]);
@@ -255,11 +264,32 @@ export default function TransactionDetail() {
 
       setOriginalTransactionDate(transactionData.trxDate);
 
-      const totalDiscount = transactionData.discountPrice || 0;
-      const totalPromo = transactionData.promoPrice || 0;
-
-      setManualDiscount(totalDiscount - totalPromo);
+      setManualDiscount(transactionData.discountPrice || 0);
+      setManualDiscountPercent(transactionData.percentDiscountPrice || 0);
       setAdditionalFee(transactionData.additionalFee || 0);
+      setAdditionalFeePercent(transactionData.percentAdditionalFee || 0);
+
+      if (transactionData.percentDiscountPrice > 0) {
+        setDisabledDiscount(true);
+        setDisabledDiscountPercent(false);
+      } else {
+        setDisabledDiscount(false);
+      }
+
+      if (transactionData.discountPrice > 0 && transactionData.percentDiscountPrice === 0) {
+        setDisabledDiscountPercent(true);
+      }
+
+      if (transactionData.percentAdditionalFee > 0) {
+        setDisabledAdditionalFee(true);
+        setDisabledAdditionalFeePercent(false);
+      } else {
+        setDisabledAdditionalFee(false);
+      }
+
+      if (transactionData.additionalFee > 0 && transactionData.percentAdditionalFee === 0) {
+        setDisabledAdditionalFeePercent(true);
+      }
 
       // Fetch customer data
       if (transactionData.customerId) {
@@ -733,8 +763,10 @@ export default function TransactionDetail() {
 
     // Prepare data sesuai expected request body
     const updateData = {
-      discountPrice: manualDiscount,
-      additionalFee: additionalFee,
+      discountPrice: Number(manualDiscount),
+      additionalFee: Number(additionalFee),
+      percentDiscountPrice: Number(manualDiscountPercent),
+      percentAdditionalFee: Number(additionalFeePercent),
       trxDate: transaction?.trxDate ? new Date(transaction.trxDate).toISOString() : new Date().toISOString(),
       // Ubah bagian ini - set null jika tidak ada blower
       deliveryDate: transaction?.deliveryDate && transaction.blowers.length > 0
@@ -825,13 +857,6 @@ export default function TransactionDetail() {
     }
   }
 
-  // const formatTime = (dateString: string) => {
-  //   const date = new Date(dateString);
-  //   // make only format with hh:mm:ss
-  //   return date.toString().split(' ')[4];
-  // }
-
-
   if (loading) {
     return (
       <Wrapper>
@@ -858,7 +883,66 @@ export default function TransactionDetail() {
 
   const isEditingOriginal = (editMode && originalSPKItems.some(item => item.id === editMode)) as boolean;
   const reversedHistory = history ? [...history].reverse() : [];
+  
+  const parseRupiah = (value: string) => {
+    return parseInt(value.replace(/[^\d]/g, ""), 10) || 0;
+  };
 
+  const handleDiscountPercentChange = (e) => {
+    const value = e.target.value ?? "0";
+    const numericValue = parseRupiah(value);
+
+    setManualDiscountPercent(numericValue);
+    setManualDiscount(totals.totalPrice * value / 100);
+
+    if (numericValue > 0) {
+      setDisabledDiscount(true);
+    } else {
+      setDisabledDiscount(false);
+    }
+  }
+
+  const handleDiscountChange = (e) => {
+    const value = e.target.value ?? 0;
+    const numericValue = parseRupiah(value);
+
+    setManualDiscount(numericValue);
+
+    if (numericValue > 0) {
+      setManualDiscountPercent(0);
+      setDisabledDiscountPercent(true);
+    } else {
+      setDisabledDiscountPercent(false);
+    }
+  }
+
+  const handleAddFeePercentChange = (e) => {
+    const value = e.target.value ?? "0";
+    const numericValue = parseRupiah(value);
+
+    setAdditionalFeePercent(numericValue);
+    setAdditionalFee(totals.totalPrice * value / 100);
+
+    if (numericValue > 0) {
+      setDisabledAdditionalFee(true);
+    } else {
+      setDisabledAdditionalFee(false);
+    }
+  }
+
+  const handleAddFeeChange = (e) => {
+    const value = e.target.value ?? 0;
+    const numericValue = parseRupiah(value);
+
+    setAdditionalFee(numericValue);
+
+    if (numericValue > 0) {
+      setAdditionalFeePercent(0);
+      setDisabledAdditionalFeePercent(true);
+    } else {
+      setDisabledAdditionalFeePercent(false);
+    }
+  }
 
   return (
     <>
@@ -1195,7 +1279,7 @@ export default function TransactionDetail() {
                     <Input className="text-right" disabled value={formatRupiah(totals.totalPromo)} />
                   </div>
 
-                  {!IS_CANCELLED && (
+                  {!IS_CANCELLED ? (
                     <>
                       <div className="flex items-center space-x-4">
                         <Label className="w-[40%] font-semibold shrink-0 flex items-center gap-1">
@@ -1209,24 +1293,102 @@ export default function TransactionDetail() {
                             </div>
                           )}
                         </Label>
-
-                        <RupiahInput
-                          placeholder="Rp. 0"
-                          value={formatRupiah(manualDiscount)}
-                          onValueChange={setManualDiscount}
-                          className={`text-right ${totals.isInvalidTotal ? 'border-red-500 bg-red-50 dark:bg-red-500/40' : ''}`}
-                        />
+                        <div className="flex items-center relative">
+                          <span className="absolute inset-y-0 left-3 flex items-center font-semibold">Rp</span>
+                          <Input
+                            className={`text-right placeholder:text-start pr-7 no-spinner ${totals.isInvalidTotal ? 'border-red-500' : ''}`}
+                            type="number"
+                            id="discountAmount"
+                            value={manualDiscount}
+                            disabled={disabledDiscount}
+                            onChange={handleDiscountChange}
+                          />
+                        </div>
+                        <div className="flex items-center relative">
+                          <Input
+                            className={`text-right placeholder:text-start pr-7 no-spinner ${totals.isInvalidTotal ? 'border-red-500' : ''}`}
+                            type="number"
+                            id="discountPercent"
+                            value={manualDiscountPercent}
+                            disabled={disabledDiscountPercent}
+                            onChange={handleDiscountPercentChange}
+                          />
+                          <span className="absolute inset-y-0 right-3 flex items-center font-semibold">%</span>
+                        </div>
                       </div>
                       <div className="flex items-center space-x-4">
                         <Label className="w-[40%] font-semibold shrink-0">Biaya Tambahan</Label>
-                        <RupiahInput
-                          placeholder="Rp. 0"
-                          value={formatRupiah(additionalFee)}
-                          onValueChange={(e) => { setAdditionalFee(e); }}
-                          className="text-right"
-                        />
+                        <div className="flex items-center relative">
+                          <span className="absolute inset-y-0 left-3 flex items-center font-semibold">Rp</span>
+                          <Input
+                            className={`text-right placeholder:text-start pr-7 no-spinner ${totals.isInvalidTotal ? 'border-red-500' : ''}`}
+                            type="number"
+                            id="additionalFee"
+                            value={additionalFee}
+                            disabled={disabledAdditionalFee}
+                            onChange={handleAddFeeChange}
+                          />
+                        </div>
+                        <div className="flex items-center relative">
+                          <Input
+                            className={`text-right placeholder:text-start pr-7 no-spinner ${totals.isInvalidTotal ? 'border-red-500' : ''}`}
+                            type="number"
+                            id="additionalFeePercent"
+                            value={additionalFeePercent}
+                            disabled={disabledAdditionalFeePercent}
+                            onChange={handleAddFeePercentChange}
+                          />
+                          <span className="absolute inset-y-0 right-3 flex items-center font-semibold">%</span>
+                        </div>
                       </div>
                     </>
+                  ) : (                    
+                    <>
+                        <div className="flex items-center space-x-4">
+                          <Label className="w-[40%] shrink-0 font-semibold">Diskon Manual</Label>
+                          <div className="flex items-center relative">
+                            <span className="absolute inset-y-0 left-3 flex items-center font-semibold">Rp</span>
+                            <Input
+                              className="text-right bg-muted/50 cursor-not-allowed"
+                              id="discountAmount"
+                              value={formatRupiah(manualDiscount, false)}
+                              disabled
+                            />
+                          </div>
+                          <div className="flex items-center relative">
+                            <Input
+                              className="text-right placeholder:text-start pr-7 no-spinner"
+                              id="discountPercent"
+                              value={manualDiscountPercent}
+                              disabled
+                            />
+                            <span className="absolute inset-y-0 right-3 flex items-center font-semibold">%</span>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center space-x-4">
+                          <Label className="w-[40%] shrink-0 font-semibold">Biaya Tambahan</Label>                         
+
+                          <div className="flex items-center relative">
+                            <span className="absolute inset-y-0 left-3 flex items-center font-semibold">Rp</span>
+                            <Input
+                              className="text-right bg-muted/50 cursor-not-allowed"
+                              id="additionalFee"
+                              value={formatRupiah(additionalFee, false)}
+                              disabled
+                            />
+                          </div>
+                          <div className="flex items-center relative">
+                            <Input
+                              className="text-right placeholder:text-start pr-7 no-spinner"
+                              id="additionalFeePercent"
+                              value={additionalFeePercent}
+                              disabled
+                            />
+                            <span className="absolute inset-y-0 right-3 flex items-center font-semibold">%</span>
+                          </div>
+                        </div>
+                    </>                  
                   )}
 
                   <div className="flex items-center justify-between mt-5 px-3 py-2 bg-neutral-200 dark:bg-darkColor rounded-lg">

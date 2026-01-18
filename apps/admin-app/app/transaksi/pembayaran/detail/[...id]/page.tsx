@@ -97,7 +97,15 @@ export default function PembayaranDetail() {
 
   // States for manual discount and additional fee
   const [manualDiscount, setManualDiscount] = useState<number>(0);
+  const [manualDiscountPercent, setManualDiscountPercent] = useState<number>(0);
+  const [disabledDiscount, setDisabledDiscount] = useState<boolean>(false);
+  const [disabledDiscountPercent, setDisabledDiscountPercent] = useState<boolean>(false);
+
   const [additionalFee, setAdditionalFee] = useState<number>(0);
+  const [additionalFeePercent, setAdditionalFeePercent] = useState<number>(0);
+  const [disabledAdditionalFee, setDisabledAdditionalFee] = useState<boolean>(false);
+  const [disabledAdditionalFeePercent, setDisabledAdditionalFeePercent] = useState<boolean>(false);
+
   const [copied, setCopied] = useState(false);
 
   const [formDataTable, setFormDataTable] = useState({
@@ -142,14 +150,8 @@ export default function PembayaranDetail() {
     customer?.district
   );
 
-  const [selectedLockedCleaningStaffList, setSelectedLockedCleaningStaffList] = useState<any[]>([]);
-  const [selectedLockedBlowerStaffList, setSelectedLockedBlowerStaffList] = useState<any[]>([]);
-  const [selectedLockedReworkStaffList, setSelectedLockedReworkStaffList] = useState<any[]>([]);
-
   const [isUsingBlower, setIsUsingBlower] = useState(false);
-
   const [blowerStaffList, setBlowerStaffList] = useState<LookupUser[]>([]);
-  const [loadingBlowerStaff, setLoadingBlowerStaff] = useState(false);
 
   // State untuk rework staff
   const [reworkStaffList, setReworkStaffList] = useState<any[]>([]);
@@ -496,8 +498,10 @@ export default function PembayaranDetail() {
 
     // Prepare data sesuai expected request body
     const updateData = {
-      discountPrice: manualDiscount,
-      additionalFee: additionalFee,
+      discountPrice: Number(manualDiscount),
+      additionalFee: Number(additionalFee),
+      percentDiscountPrice: Number(manualDiscountPercent),
+      percentAdditionalFee: Number(additionalFeePercent),
 
       trxDate: transaction?.trxDate,
       deliveryDate: transaction?.deliveryDate && transaction.blowers.length > 0
@@ -562,19 +566,6 @@ export default function PembayaranDetail() {
     }
   }
 
-  // Fetch staff data
-  const fetchStaffData = async (staffIds: string[], setStaffState: Function) => {
-    try {
-      const staffPromises = staffIds.map(id => api.get(`/user/username/${id}`));
-      const staffResults = await Promise.all(staffPromises);
-      const staffData = staffResults.map(result => result.data || { fullname: "Unknown" });
-      setStaffState(staffData);
-    } catch (error) {
-      console.error("Gagal mengambil data staff:", error);
-      setStaffState([]);
-    }
-  };
-
   const fetchStaffListData = async (roleId: string, city: string, setStaffList: Function) => {
     if (!roleId || !city) {
       setStaffList([]);
@@ -623,27 +614,36 @@ export default function PembayaranDetail() {
           }
 
           // Initialize pricing states
-          const totalDiscount = transactionData.discountPrice || 0;
-          const totalPromo = transactionData.promoPrice || 0;
-          setManualDiscount(totalDiscount - totalPromo);
+          setManualDiscount(transactionData.discountPrice || 0);
+          setManualDiscountPercent(transactionData.percentDiscountPrice || 0);
           setAdditionalFee(transactionData.additionalFee || 0);
+          setAdditionalFeePercent(transactionData.percentAdditionalFee || 0);
+
+          if (transactionData.percentDiscountPrice > 0) {
+            setDisabledDiscount(true);
+            setDisabledDiscountPercent(false);
+          } else {
+            setDisabledDiscount(false);
+          }
+
+          if (transactionData.discountPrice > 0 && transactionData.percentDiscountPrice === 0) {
+            setDisabledDiscountPercent(true);
+          }
+
+          if (transactionData.percentAdditionalFee > 0) {
+            setDisabledAdditionalFee(true);
+            setDisabledAdditionalFeePercent(false);
+          } else {
+            setDisabledAdditionalFee(false);
+          }
+
+          if (transactionData.additionalFee > 0 && transactionData.percentAdditionalFee === 0) {
+            setDisabledAdditionalFeePercent(true);
+          }
 
           // Fetch customer data using customerId
           if (transactionData.customerId) {
             await fetchCustomerData(transactionData.customerId);
-          }
-
-          // Fetch staff data
-          if (transactionData.assigns && transactionData.assigns.length > 0) {
-            await fetchStaffData(transactionData.assigns, setSelectedLockedCleaningStaffList);
-          }
-
-          if (transactionData.blowers && transactionData.blowers.length > 0) {
-            await fetchStaffData(transactionData.blowers, setSelectedLockedBlowerStaffList);
-          }
-
-          if (transactionData.reassigns && transactionData.reassigns.length > 0) {
-            await fetchStaffData(transactionData.reassigns, setSelectedLockedReworkStaffList);
           }
 
         } else {
@@ -786,6 +786,66 @@ export default function PembayaranDetail() {
     const date = new Date(dateString);
     // make only format with hh:mm:ss
     return date.toString().split(' ')[4];
+  }
+
+  const parseRupiah = (value: string) => {
+    return parseInt(value.replace(/[^\d]/g, ""), 10) || 0;
+  };
+
+  const handleDiscountPercentChange = (e) => {
+    const value = e.target.value ?? "0";
+    const numericValue = parseRupiah(value);
+
+    setManualDiscountPercent(numericValue);
+    setManualDiscount(totals.totalPrice * value / 100);
+
+    if (numericValue > 0) {
+      setDisabledDiscount(true);
+    } else {
+      setDisabledDiscount(false);
+    }
+  }
+
+  const handleDiscountChange = (e) => {
+    const value = e.target.value ?? 0;
+    const numericValue = parseRupiah(value);
+
+    setManualDiscount(numericValue);
+
+    if (numericValue > 0) {
+      setManualDiscountPercent(0);
+      setDisabledDiscountPercent(true);
+    } else {
+      setDisabledDiscountPercent(false);
+    }
+  }
+
+  const handleAddFeePercentChange = (e) => {
+    const value = e.target.value ?? "0";
+    const numericValue = parseRupiah(value);
+
+    setAdditionalFeePercent(numericValue);
+    setAdditionalFee(totals.totalPrice * value / 100);
+
+    if (numericValue > 0) {
+      setDisabledAdditionalFee(true);
+    } else {
+      setDisabledAdditionalFee(false);
+    }
+  }
+
+  const handleAddFeeChange = (e) => {
+    const value = e.target.value ?? 0;
+    const numericValue = parseRupiah(value);
+
+    setAdditionalFee(numericValue);
+
+    if (numericValue > 0) {
+      setAdditionalFeePercent(0);
+      setDisabledAdditionalFeePercent(true);
+    } else {
+      setDisabledAdditionalFeePercent(false);
+    }
   }
 
   return (
@@ -990,11 +1050,6 @@ export default function PembayaranDetail() {
 
                   <div className="flex items-center space-x-4">
                     <Label className="w-[40%] shrink-0 font-semibold">Tanggal Pengerjaan</Label>
-                    {/* <Input
-                      disabled
-                      value={formatDate(transaction.trxDate)}
-                      className="bg-muted/50 cursor-not-allowed"
-                    /> */}
                     <DatePicker
                       withTime
                       disabled
@@ -1016,7 +1071,6 @@ export default function PembayaranDetail() {
                             selected={transaction?.blowers || []}
                             onSelectionChange={handleBlowerStaffChange}
                             placeholder="Pilih petugas blower"
-                            loading={loadingBlowerStaff}
                           />
                         ) : (
                           <>
@@ -1245,42 +1299,101 @@ export default function PembayaranDetail() {
                             </div>
                           )}
                         </Label>
-                        <RupiahInput
-                          placeholder="Rp. 0"
-                          value={formatRupiah(manualDiscount)}
-                          onValueChange={setManualDiscount}
-                          className={`text-right ${totals.isInvalidTotal ? 'border-red-500 bg-red-50 dark:bg-red-500/40' : ''}`}
-                        />
+                        <div className="flex items-center relative">
+                          <span className="absolute inset-y-0 left-3 flex items-center font-semibold">Rp</span>
+                          <Input
+                            className={`text-right placeholder:text-start pr-7 no-spinner ${totals.isInvalidTotal ? 'border-red-500' : ''}`}
+                            type="number"
+                            id="discountAmount"
+                            value={manualDiscount}
+                            disabled={disabledDiscount}
+                            onChange={handleDiscountChange}
+                          />
+                        </div>
+                        <div className="flex items-center relative">
+                          <Input
+                            className={`text-right placeholder:text-start pr-7 no-spinner ${totals.isInvalidTotal ? 'border-red-500' : ''}`}
+                            type="number"
+                            id="discountPercent"
+                            value={manualDiscountPercent}
+                            disabled={disabledDiscountPercent}
+                            onChange={handleDiscountPercentChange}
+                          />
+                          <span className="absolute inset-y-0 right-3 flex items-center font-semibold">%</span>
+                        </div>
                       </div>
 
                       <div className="flex items-center space-x-4">
                         <Label className="w-[40%] shrink-0 font-semibold">Biaya Tambahan</Label>
-                        <RupiahInput
-                          placeholder="Rp. 0"
-                          value={formatRupiah(additionalFee)}
-                          onValueChange={setAdditionalFee}
-                          className="text-right"
-                        />
+                        <div className="flex items-center relative">
+                          <span className="absolute inset-y-0 left-3 flex items-center font-semibold">Rp</span>
+                          <Input
+                            className={`text-right placeholder:text-start pr-7 no-spinner ${totals.isInvalidTotal ? 'border-red-500' : ''}`}
+                            type="number"
+                            id="additionalFee"
+                            value={additionalFee}
+                            disabled={disabledAdditionalFee}
+                            onChange={handleAddFeeChange}
+                          />
+                        </div>
+                        <div className="flex items-center relative">
+                          <Input
+                            className={`text-right placeholder:text-start pr-7 no-spinner ${totals.isInvalidTotal ? 'border-red-500' : ''}`}
+                            type="number"
+                            id="additionalFeePercent"
+                            value={additionalFeePercent}
+                            disabled={disabledAdditionalFeePercent}
+                            onChange={handleAddFeePercentChange}
+                          />
+                          <span className="absolute inset-y-0 right-3 flex items-center font-semibold">%</span>
+                        </div>
                       </div>
                     </>
                   ) : (
                     <>
                         <div className="flex items-center space-x-4">
                           <Label className="w-[40%] shrink-0 font-semibold">Diskon Manual</Label>
-                          <Input
-                            disabled
-                            value={formatRupiah(manualDiscount)}
-                            className="text-right bg-muted/50 cursor-not-allowed"
-                          />
+                          <div className="flex items-center relative">
+                            <span className="absolute inset-y-0 left-3 flex items-center font-semibold">Rp</span>
+                            <Input
+                              className="text-right bg-muted/50 cursor-not-allowed"
+                              id="discountAmount"
+                              value={formatRupiah(manualDiscount, false)}
+                              disabled
+                            />
+                          </div>
+                          <div className="flex items-center relative">
+                            <Input
+                              className="text-right placeholder:text-start pr-7 no-spinner"
+                              id="discountPercent"
+                              value={manualDiscountPercent}
+                              disabled
+                            />
+                            <span className="absolute inset-y-0 right-3 flex items-center font-semibold">%</span>
+                          </div>
                         </div>
 
                         <div className="flex items-center space-x-4">
-                          <Label className="w-[40%] shrink-0 font-semibold">Biaya Tambahan</Label>
-                          <Input
-                            disabled
-                            value={formatRupiah(additionalFee)}
-                            className="text-right bg-muted/50 cursor-not-allowed"
-                          />
+                          <Label className="w-[40%] shrink-0 font-semibold">Biaya Tambahan</Label>                         
+
+                          <div className="flex items-center relative">
+                            <span className="absolute inset-y-0 left-3 flex items-center font-semibold">Rp</span>
+                            <Input
+                              className="text-right bg-muted/50 cursor-not-allowed"
+                              id="additionalFee"
+                              value={formatRupiah(additionalFee, false)}
+                              disabled
+                            />
+                          </div>
+                          <div className="flex items-center relative">
+                            <Input
+                              className="text-right placeholder:text-start pr-7 no-spinner"
+                              id="additionalFeePercent"
+                              value={additionalFeePercent}
+                              disabled
+                            />
+                            <span className="absolute inset-y-0 right-3 flex items-center font-semibold">%</span>
+                          </div>
                         </div>
                     </>
                   )}

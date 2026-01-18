@@ -117,10 +117,6 @@ export default function InquiryTransaksiDetail() {
     customer?.district
   );
 
-  const [selectedCleaningStaffList, setSelectedCleaningStaffList] = useState<any[]>([]);
-  const [selectedBlowerStaffList, setSelectedBlowerStaffList] = useState<any[]>([]);
-  const [selectedreworkStaffList, setSelectedReworkStaffList] = useState<any[]>([]);
-
   const [cleanerStaffList, setCleanerStaffList] = useState<any[]>([]);
   const [blowerStaffList, setBlowerStaffList] = useState<any[]>([]);
 
@@ -233,19 +229,6 @@ export default function InquiryTransaksiDetail() {
           if (transactionData.customerId) {
             await fetchCustomerData(transactionData.customerId);
           }
-
-          // Fetch staff data
-          if (transactionData.assigns && transactionData.assigns.length > 0) {
-            await fetchStaffData(transactionData.assigns, setSelectedCleaningStaffList);
-          }
-
-          if (transactionData.blowers && transactionData.blowers.length > 0) {
-            await fetchStaffData(transactionData.blowers, setSelectedBlowerStaffList);
-          }
-
-          if (transactionData.reassigns && transactionData.reassigns.length > 0) {
-            await fetchStaffData(transactionData.reassigns, setSelectedReworkStaffList);
-          }
         } else {
           setError("Data transaksi tidak ditemukan");
         }
@@ -272,7 +255,6 @@ export default function InquiryTransaksiDetail() {
       { key: "jumlah", label: "Jumlah" },
       { key: "harga", label: "Harga Satuan" },
       { key: "totalHarga", label: "Total" },
-      // { key: "promo", label: "Promo Satuan" },
     ];
 
     return columns;
@@ -568,16 +550,6 @@ export default function InquiryTransaksiDetail() {
                         </p>
                       )}
                     </div>
-                    {/* <Textarea
-                      disabled
-                      className="resize-none"
-                      value={
-                        selectedCleaningStaffList
-                          .map((staff) => staff.fullname)
-                          .join(', ') || '-'
-                      }
-                      rows={2}
-                    /> */}
                   </div>
 
                   <div className="flex items-center space-x-4">
@@ -598,11 +570,6 @@ export default function InquiryTransaksiDetail() {
                           : '08:00'
                       }
                     />
-                    {/* <Input
-                      disabled
-                      value={formatDate(transaction.trxDate)}
-                      className="bg-muted/50 cursor-not-allowed"
-                    /> */}
                   </div>
                 </div>
 
@@ -633,16 +600,6 @@ export default function InquiryTransaksiDetail() {
                         Tidak ada petugas blower
                       </p>
                     )}
-                    {/* <Textarea
-                      disabled
-                      className="resize-none"
-                      value={
-                        selectedBlowerStaffList
-                          .map((staff) => staff.fullname)
-                          .join(', ') || '-'
-                      }
-                      rows={2}
-                    /> */}
                   </div>
 
                   {transaction.blowers.length > 0 &&
@@ -666,12 +623,6 @@ export default function InquiryTransaksiDetail() {
                                 : '08:00'
                             }
                           />
-                          {/* <Textarea
-                            disabled
-                            className="resize-none"
-                            value={transaction.deliveryDate ? formatDate(transaction.deliveryDate) : "-"}
-                            rows={1}
-                          /> */}
                         </div>
 
                         <div className="flex items-center space-x-4">
@@ -692,12 +643,6 @@ export default function InquiryTransaksiDetail() {
                                 : `${formatTime(transaction.deliveryDate)}`
                             }
                           />
-                          {/* <Textarea
-                            disabled
-                            className="resize-none"
-                            value={transaction.pickupDate ? formatDate(transaction.pickupDate) : "-"}
-                            rows={1}
-                          /> */}
                         </div>
                       </>
                     )}
@@ -727,32 +672,12 @@ export default function InquiryTransaksiDetail() {
                         Tidak ada petugas pekerja ulang
                       </p>
                     )}
-                    {/* <Textarea
-                      disabled
-                      className="resize-none"
-                      value={
-                        selectedreworkStaffList
-                          .map((staff) => staff.fullname)
-                          .join(', ') || '-'
-                      }
-                      rows={2}
-                    /> */}
                   </div>
                 </div>
               </div>
 
               {/* Detail Transaksi Table */}
               <div className="mt-5 space-y-3">
-                {/* <PembayaranTableDetail
-                  data={transformedDetails}
-                  columns={HeaderPembayaran}
-                  currentPage={1}
-                  limit={10}
-                  fetchData={() => {
-                    console.log("Fetching data...");
-                  }}
-                /> */}
-
                 <SPKTableDetail
                   data={spkItems}
                   columns={DataHeaderSPKDetail}
@@ -821,22 +746,48 @@ export default function InquiryTransaksiDetail() {
                     <Label className="w-[40%] font-semibold shrink-0">
                       Diskon Manual
                     </Label>
-                    <Input
-                      disabled
-                      value={formatRupiah(transaction.discountPrice)}
-                      className="text-right bg-muted/50 cursor-not-allowed"
-                    />
+                    <div className="flex items-center relative">
+                      <span className="absolute inset-y-0 left-3 flex items-center font-semibold">Rp</span>
+                      <Input
+                        className="text-right bg-muted/50 cursor-not-allowed"
+                        id="discountPrice"
+                        value={formatRupiah(transaction.discountPrice, false)}
+                        disabled
+                      />
+                    </div>
+                    <div className="flex items-center relative">
+                      <Input
+                        className="text-right placeholder:text-start pr-7 no-spinner"
+                        id="percentDiscountPrice"
+                        value={transaction.percentDiscountPrice}
+                        disabled
+                      />
+                      <span className="absolute inset-y-0 right-3 flex items-center font-semibold">%</span>
+                    </div>
                   </div>
 
                   <div className="flex items-center space-x-4">
                     <Label className="w-[40%] font-semibold shrink-0">
                       Biaya Tambahan
                     </Label>
-                    <Input
-                      disabled
-                      value={formatRupiah(transaction.additionalFee || 0)}
-                      className="text-right bg-muted/50 cursor-not-allowed"
-                    />
+                    <div className="flex items-center relative">
+                      <span className="absolute inset-y-0 left-3 flex items-center font-semibold">Rp</span>
+                      <Input
+                        className="text-right bg-muted/50 cursor-not-allowed"
+                        id="additionalFee"
+                        value={formatRupiah(transaction.additionalFee, false)}
+                        disabled
+                      />
+                    </div>
+                    <div className="flex items-center relative">
+                      <Input
+                        className="text-right placeholder:text-start pr-7 no-spinner"
+                        id="additionalFeePercent"
+                        value={transaction.percentAdditionalFee}
+                        disabled
+                      />
+                      <span className="absolute inset-y-0 right-3 flex items-center font-semibold">%</span>
+                    </div>
                   </div>
 
                   <div className="flex items-center justify-between mt-5 px-3 py-2 bg-neutral-200 rounded-lg dark:bg-neutral-800">

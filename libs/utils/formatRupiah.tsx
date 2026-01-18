@@ -1,16 +1,27 @@
-export function formatRupiah(amount: number | string): string {
+export function formatRupiah(
+  amount: number | string,
+  isPrefix: boolean = true
+): string {
   try {
     const numeric =
       typeof amount === 'number' ? amount : parseFloat(amount.toString()); // Changed from parseInt with replace
 
     if (isNaN(numeric)) return 'Rp 0';
 
+    if (isPrefix) {
+      return (
+        'Rp ' +
+        Math.round(numeric)
+          .toString()
+          .replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+      );
+    }
+
     return (
-      'Rp ' +
-      Math.round(numeric)
-        .toString()
-        .replace(/\B(?=(\d{3})+(?!\d))/g, '.')
-    );
+        Math.round(numeric)
+          .toString()
+          .replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+      );
   } catch (e) {
     return 'Rp 0';
   }
