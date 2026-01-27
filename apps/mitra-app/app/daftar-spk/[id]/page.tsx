@@ -304,7 +304,7 @@ const EditItemModal = ({ isOpen = false, item, onClose = () => { } }: EditItemMo
               <Select
                 onValueChange={(value) => handleChangeTable("category", value)}
                 value={formData.category}
-                disabled={loadingCat || itemId}
+                disabled={loadingCat || isEdit}
               >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Pilih Kategori" />
@@ -335,7 +335,7 @@ const EditItemModal = ({ isOpen = false, item, onClose = () => { } }: EditItemMo
               <Select
                 onValueChange={(value) => handleChangeTable("service", value)}
                 value={formData.service}
-                disabled={loadingServices || !formData.category || formData.category === "" || itemId}
+                disabled={loadingServices || !formData.category || formData.category === "" || isEdit }
               >
                 <SelectTrigger className="w-full">
                   <SelectValue
