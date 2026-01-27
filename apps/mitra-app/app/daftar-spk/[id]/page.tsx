@@ -581,8 +581,9 @@ const TimelineItemCompleted = ({
   const beforeImages = transaction.beforeImages || [];
   const afterImages = transaction.afterImages || [];
 
-  const TASK_INDEX = 1;
-  const isOpenable = TASK_INDEX <= transaction.transactionDetail?.stateProcess!;
+  const TASK_INDEX = 2;
+  const TASK_INDEX_OPEN = 1;
+  const isOpenable = TASK_INDEX_OPEN <= transaction.transactionDetail?.stateProcess!;
   const isCurrent = TASK_INDEX === transaction.transactionDetail?.stateProcess!;
 
   const [jobCompleted, setJobCompleted] = useState(false);
