@@ -304,7 +304,7 @@ const EditItemModal = ({ isOpen = false, item, onClose = () => { } }: EditItemMo
               <Select
                 onValueChange={(value) => handleChangeTable("category", value)}
                 value={formData.category}
-                disabled={loadingCat}
+                disabled={loadingCat || itemId}
               >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Pilih Kategori" />
@@ -335,7 +335,7 @@ const EditItemModal = ({ isOpen = false, item, onClose = () => { } }: EditItemMo
               <Select
                 onValueChange={(value) => handleChangeTable("service", value)}
                 value={formData.service}
-                disabled={loadingServices || !formData.category || formData.category === ""}
+                disabled={loadingServices || !formData.category || formData.category === "" || itemId}
               >
                 <SelectTrigger className="w-full">
                   <SelectValue
@@ -581,7 +581,7 @@ const TimelineItemCompleted = ({
   const beforeImages = transaction.beforeImages || [];
   const afterImages = transaction.afterImages || [];
 
-  const TASK_INDEX = 2;
+  const TASK_INDEX = 1;
   const isOpenable = TASK_INDEX <= transaction.transactionDetail?.stateProcess!;
   const isCurrent = TASK_INDEX === transaction.transactionDetail?.stateProcess!;
 
