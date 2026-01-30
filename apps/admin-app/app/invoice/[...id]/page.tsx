@@ -95,7 +95,7 @@ function InvoicePreview({
             <Label className="font-semibold">{transaction?.trxNumber}</Label>
           </div>
           <div className="flex items-center justify-between">
-            <Label>Nominal</Label>
+            <Label>Total Transaksi</Label>
             <Label className="font-semibold">
               {transaction.finalPrice?.toLocaleString('id-ID', {
                 style: 'currency',
@@ -240,7 +240,7 @@ function InvoicePreview({
         </div>
 
         <div className="space-y-1">
-          <p className="text-sm font-semibold">Tip Nominal Lain</p>
+          <p className="text-sm font-semibold">Tip</p>
           <Input
             placeholder="Rp. Nominal Lain"
             value={formatRupiah(reviewData.tip || 0)}
