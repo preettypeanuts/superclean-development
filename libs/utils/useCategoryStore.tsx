@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { api } from "libs/utils/apiClient";
+import { format } from "date-fns";
 
 // Tipe data untuk hasil mapping
 type ParameterMapping = Record<string, string>;
@@ -93,7 +94,7 @@ export interface PromoResponse {
   type: "Persentase" | "Nominal"
 }
 
-export function usePromoLookup(serviceCode: string, quantity: number) {
+export function usePromoLookup(serviceCode: string, quantity: number, trxDate?: string) {
   const [promo, setPromo] = useState<PromoResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -109,7 +110,8 @@ export function usePromoLookup(serviceCode: string, quantity: number) {
       setError(null);
 
       try {
-        const response = await api.get(`/promo/current?serviceCode=${serviceCode}&quantity=${quantity}`);
+        const trxDateParam = trxDate ? `&currentDate=${format(new Date(trxDate), "yyyy-MM-dd")}` : "";
+        const response = await api.get(`/promo/current?serviceCode=${serviceCode}&quantity=${quantity}${trxDateParam}`);
         const data: PromoResponse = {
           amount: response.data?.amount || 0,
           code: response.data?.code || "",

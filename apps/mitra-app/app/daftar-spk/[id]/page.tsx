@@ -98,9 +98,10 @@ type EditItemModalProps = {
   isOpen?: boolean;
   item: MitraSPKItemDetail | null;
   onClose?: () => void;
+  transaction: MitraSPKDetail | null;
 };
 
-const EditItemModal = ({ isOpen = false, item, onClose = () => { } }: EditItemModalProps) => {
+const EditItemModal = ({ isOpen = false, item, transaction, onClose = () => { } }: EditItemModalProps) => {
   const context = useContext(TransactionContext);
   const handleAddItem = context.handleAddItem!;
   const handleEditItem = context.handleEditItem!;
@@ -184,8 +185,7 @@ const EditItemModal = ({ isOpen = false, item, onClose = () => { } }: EditItemMo
 
   const { catLayananMapping, loading: loadingCat } = useCategoryStore();
   const { services, loading: loadingServices } = useServiceLookup(formData.category);
-  const { promo, loading: loadingPromo, error: promoError } = usePromoLookup(formData.service, formData.quantity);
-
+  const { promo, loading: loadingPromo, error: promoError } = usePromoLookup(formData.service, formData.quantity, transaction?.trxDate);
 
   useEffect(() => {
     // set prices when edit
@@ -857,11 +857,11 @@ const TimelineItemInProgress = ({
                                   <Trash2Icon className="w-4 h-4" />
                                 </button>
 
-                                <button
+                                {/* <button
                                   onClick={() => onEditItem(item)}
                                   className="text-blue-600 p-2 bg-blue-500/10 rounded-md hover:bg-blue-500/20 transition-colors">
                                   <PenLine className="w-4 h-4" />
-                                </button>
+                                </button> */}
                               </div>
                             )
                           }
@@ -1109,7 +1109,7 @@ const TaskTimeline = ({
   );
 }
 
-const DetailTab = () => {
+const DetailTab = ({ transaction }: { transaction: MitraSPKDetail | null }) => {
   const [editItem, setEditItem] = useState<MitraSPKItemDetail | null>(null);
   const [deleteItem, setDeleteItem] = useState<MitraSPKItemDetail | null>(null);
 
@@ -1117,7 +1117,7 @@ const DetailTab = () => {
     <>
       <p className="mb-6 font-bold text-lg">Status Pengerjaan</p>
       <TaskTimeline setDeleteItem={setDeleteItem} setEditItem={setEditItem} />
-      <EditItemModal isOpen={!!editItem} onClose={() => setEditItem(null)} item={editItem} />
+      <EditItemModal isOpen={!!editItem} onClose={() => setEditItem(null)} item={editItem} transaction={transaction} />
       <DeleteItemModal isOpen={!!deleteItem} onClose={() => setDeleteItem(null)} itemId={deleteItem?.id!} />
     </>
   );
@@ -1988,7 +1988,7 @@ export default function PekerjaanBerlangsung() {
           <div className="mt-2 p-4">
             {/* content based on current tab */}
             {currentTab === "detail" && (
-              <DetailTab />
+              <DetailTab transaction={transactionDetail}/>
             )}
             {currentTab === "riwayat" && (
               <RiwayatTab />
