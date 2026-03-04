@@ -26,6 +26,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { BsInfoCircleFill } from "react-icons/bs";
 import { LuPlus } from "react-icons/lu";
+import { format } from 'date-fns';
 
 // Interface untuk SPK Item (tanpa total)
 export interface SPKItem {
@@ -336,7 +337,8 @@ export default function NewSPK() {
 
     setLoadingPromo(true);
     try {
-      const response = await api.get(`/promo/current?serviceCode=${serviceCode}&quantity=${quantity}`);
+      const trxDateParam = formData.trxDate ? `&currentDate=${format(formData.trxDate, 'yyyy-MM-dd')}` : "";
+      const response = await api.get(`/promo/current?serviceCode=${serviceCode}&quantity=${quantity}${trxDateParam}`);
 
       return {
         amount: response.data?.amount || 0,
@@ -456,12 +458,16 @@ export default function NewSPK() {
 
   // Function untuk menghitung total dari semua SPK items (update)
   const calculateTotals = () => {
-    let totalPrice = spkItems.reduce((sum, item) => sum + item.harga * item.jumlah, 0);
-    const isTotalPriceValid = totalPrice >= 250_000;
+    let totalPrice = 0;
+    const totalPriceBlower = spkItems.filter(item => item.kode === 'BLOWER').reduce((sum, item) => sum + item.harga * item.jumlah, 0) ?? 0;
+    let totalPriceWithoutBlower = spkItems.filter(item => item.kode !== 'BLOWER').reduce((sum, item) => sum + item.harga * item.jumlah, 0) ?? 0;
+    const isTotalPriceValid = totalPriceWithoutBlower >= 250_000;
 
     if (!isTotalPriceValid) {
-      totalPrice = 250_000;
+      totalPriceWithoutBlower = 250_000;
     }
+
+    totalPrice = totalPriceWithoutBlower + totalPriceBlower;
 
     const totalPromo = spkItems.reduce((sum, item) => {
       const promoAmount = item.promoType === "Persentase" ? (item.promo * item.harga * item.jumlah) / 100 : item.promo * item.jumlah;

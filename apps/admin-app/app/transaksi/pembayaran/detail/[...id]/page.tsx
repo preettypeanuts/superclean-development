@@ -34,7 +34,7 @@ import { LuPlus } from "react-icons/lu";
 import { PiWarningCircleFill } from "react-icons/pi";
 import { RiCheckLine, RiFileCopyLine, RiPagesLine } from "react-icons/ri";
 import { TbArrowBack } from "react-icons/tb";
-
+import { format } from 'date-fns';
 interface Customer {
   id: string;
   fullname: string;
@@ -232,7 +232,8 @@ export default function PembayaranDetail() {
 
     setLoadingPromo(true);
     try {
-      const response = await api.get(`/promo/current?serviceCode=${serviceCode}&quantity=${quantity}`);
+      const trxDateParam = transaction?.trxDate ? `&currentDate=${format(transaction?.trxDate, 'yyyy-MM-dd')}` : "";
+      const response = await api.get(`/promo/current?serviceCode=${serviceCode}&quantity=${quantity}${trxDateParam}`);
 
       return {
         amount: response.data?.amount || 0,
@@ -691,12 +692,16 @@ export default function PembayaranDetail() {
   }, [transaction, isSuperAdmin]);
 
   const calculateTotals = () => {
-    let totalPrice = spkItems.reduce((sum, item) => sum + item.harga * item.jumlah, 0);
-    const isTotalPriceValid = totalPrice >= 250_000;
+    let totalPrice = 0;
+    const totalPriceBlower = spkItems.filter(item => item.kode === 'BLOWER').reduce((sum, item) => sum + item.harga * item.jumlah, 0) ?? 0;
+    let totalPriceWithoutBlower = spkItems.filter(item => item.kode !== 'BLOWER').reduce((sum, item) => sum + item.harga * item.jumlah, 0) ?? 0;
+    const isTotalPriceValid = totalPriceWithoutBlower >= 250_000;
 
     if (!isTotalPriceValid) {
-      totalPrice = 250_000;
+      totalPriceWithoutBlower = 250_000;
     }
+
+    totalPrice = totalPriceWithoutBlower + totalPriceBlower;
 
     const totalPromo = spkItems.reduce((sum, item) => {
       const promoAmount = item.promoType === "Persentase" ? (item.promo * item.harga * item.jumlah) / 100 : item.promo * item.jumlah;

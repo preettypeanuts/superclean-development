@@ -264,14 +264,16 @@ export default function InquiryTransaksiDetail() {
 
 
   const calculateTotals = () => {
-    let totalPrice = transaction?.details.reduce((sum, item) => sum + item.servicePrice * item.quantity, 0) || 0;
-    const totalPromo = transaction?.details.reduce((sum, item) => sum + item.promoPrice, 0) || 0;
-
-    const isTotalPriceValid = totalPrice >= 250_000;
+    let totalPrice = 0;
+    const totalPriceBlower = spkItems.filter(item => item.kode === 'BLOWER').reduce((sum, item) => sum + item.harga * item.jumlah, 0) ?? 0;
+    let totalPriceWithoutBlower = spkItems.filter(item => item.kode !== 'BLOWER').reduce((sum, item) => sum + item.harga * item.jumlah, 0) ?? 0;
+    const isTotalPriceValid = totalPriceWithoutBlower >= 250_000;
 
     if (!isTotalPriceValid) {
-      totalPrice = 250_000;
+      totalPriceWithoutBlower = 250_000;
     }
+
+    totalPrice = totalPriceWithoutBlower + totalPriceBlower;
     
     const manualDiscount = transaction?.discountPrice || 0;
     const additionalFee = transaction?.additionalFee || 0;
