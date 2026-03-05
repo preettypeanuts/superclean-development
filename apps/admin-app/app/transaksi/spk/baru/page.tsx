@@ -459,8 +459,8 @@ export default function NewSPK() {
   // Function untuk menghitung total dari semua SPK items (update)
   const calculateTotals = () => {
     let totalPrice = 0;
-    const totalPriceBlower = spkItems.filter(item => item.kode === 'BLOWER').reduce((sum, item) => sum + item.harga * item.jumlah, 0) ?? 0;
-    let totalPriceWithoutBlower = spkItems.filter(item => item.kode !== 'BLOWER').reduce((sum, item) => sum + item.harga * item.jumlah, 0) ?? 0;
+    const totalPriceBlower = spkItems.filter(item => item.kategori.toUpperCase() === 'BLOWER').reduce((sum, item) => sum + item.harga * item.jumlah, 0) ?? 0;
+    let totalPriceWithoutBlower = spkItems.filter(item => item.kategori.toUpperCase() !== 'BLOWER').reduce((sum, item) => sum + item.harga * item.jumlah, 0) ?? 0;
     const isTotalPriceValid = totalPriceWithoutBlower >= 250_000;
 
     if (!isTotalPriceValid) {
