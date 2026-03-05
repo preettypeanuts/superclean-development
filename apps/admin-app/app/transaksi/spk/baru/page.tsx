@@ -768,7 +768,8 @@ export default function NewSPK() {
             promo: formDataTable.promo,
             tipe: formDataTable.tipe,
             promoCode: formDataTable.promoCode,
-            promoType: formDataTable.promoType
+            promoType: formDataTable.promoType,
+            totalHarga: totalHargaSebelumPromo
           }
           : item
       ));
@@ -1095,6 +1096,7 @@ export default function NewSPK() {
                   fetchData={() => console.log("Fetching data...")}
                   onDelete={handleDeleteSPKItem}
                   onEdit={handleEditSPKItem}
+                  ableEdit={true}
                 />
               </div>
 

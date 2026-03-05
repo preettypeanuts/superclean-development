@@ -43,6 +43,7 @@ interface DataTableProps {
   onDelete?: (id: string) => void;
   onEdit?: (item: SPKItem) => void;
   ableDelete?: boolean;
+  ableEdit?: boolean;
 }
 
 export const SPKTableDetail: React.FC<DataTableProps> = ({
@@ -51,7 +52,8 @@ export const SPKTableDetail: React.FC<DataTableProps> = ({
   fetchData,
   onDelete,
   onEdit,
-  ableDelete = true
+  ableDelete = true,
+  ableEdit = false
 }) => {
   const { toast } = useToast();
 
@@ -81,7 +83,7 @@ export const SPKTableDetail: React.FC<DataTableProps> = ({
   };
 
   // Render value berdasarkan column key
-  const renderCellValue = (item: SPKItem, columnKey: string, index: number, disabled = false) => {
+  const renderCellValue = (item: SPKItem, columnKey: string, index: number, disabled = false, editEnabled = false) => {
     switch (columnKey) {
       case "no":
         return index + 1; // Nomor urut mulai dari 1
@@ -99,13 +101,15 @@ export const SPKTableDetail: React.FC<DataTableProps> = ({
       case "menu":
         return (
           <div className="w-fit flex gap-2">
-            <Button
-              size="icon"
-              variant="main"
-              onClick={() => handleEdit(item)}
-            >
-              <HiMiniPencilSquare />
-            </Button>
+            {editEnabled && (            
+              <Button
+                size="icon"
+                variant="main"
+                onClick={() => handleEdit(item)}
+              >
+                <HiMiniPencilSquare />
+              </Button>
+            )}
             <Dialog>
               <DialogTrigger asChild>
                 <Button
@@ -187,7 +191,7 @@ export const SPKTableDetail: React.FC<DataTableProps> = ({
                     key={header.key}
                     className={`${header.key === "menu" ? "!w-fit" : ""}`}
                   >
-                    {renderCellValue(item, header.key, rowIndex, !ableDelete)}
+                    {renderCellValue(item, header.key, rowIndex, !ableDelete, ableEdit)}
                   </TableCell>
                 )
               })}
