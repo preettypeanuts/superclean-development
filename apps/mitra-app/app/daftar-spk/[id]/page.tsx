@@ -1025,11 +1025,11 @@ const TimelineItemPending = ({
                                     <Trash2Icon className="w-4 h-4" />
                                   </button>
 
-                                  <button
+                                  {/* <button
                                     onClick={() => onEditItem(item)}
                                     className="text-blue-600 p-2 bg-blue-500/10 rounded-md hover:bg-blue-500/20 transition-colors">
                                     <PenLine className="w-4 h-4" />
-                                  </button>
+                                  </button> */}
                                 </div>
                               )
                             }
